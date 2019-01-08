@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>
+<channel>
+<atom:link href='http://krymtkts.github.io/' rel='self' type='application/rss+xml'/>
+<title>
+krymtkts
+</title>
+<link>
+http://krymtkts.github.io/
+</link>
+<description>
+krymtkts's personal blog
+</description>
+<lastBuildDate>
+Tue, 08 Jan 2019 17:12:11 +0900
+</lastBuildDate>
+<generator>
+clj-rss
+</generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-01-08-first-post
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-01-08-first-post
+</link>
+<title>
+ブログを始めた
+</title>
+<description>
+&lt;p&gt;ブログを始めてみた。&lt;/p&gt;&lt;p&gt;自分のメモを取るのには永らくEvernoteを使ってるのだけど、そういったものをまとめてアウトプットできるものが欲しいなー、と常々思ってた。&lt;/p&gt;&lt;p&gt;ただ過去にブログサービスを使ってたときは大して続かなく、また中等半端にやめかねないなという気持ちもあったのだが、去年アラフォーになったことであるし、不惑ということで一歩踏み出してみたのである。&lt;/p&gt;&lt;p&gt;自己紹介は&lt;a href='../../pages/about'&gt;About Me&lt;/a&gt;を参照いただきたく🙇&lt;/p&gt;&lt;p&gt;当面は自分の作業ログを清書したものを書いていくつもりやけど、もし誰かの目に留まって、何かの役に立ったなら幸いである。&lt;/p&gt;
+</description>
+<pubDate>
+Tue, 08 Jan 2019 00:00:00 +0900
+</pubDate>
+</item>
+</channel>
+</rss>
