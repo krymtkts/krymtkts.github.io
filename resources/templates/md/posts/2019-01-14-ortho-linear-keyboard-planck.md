@@ -14,7 +14,7 @@
 
 _date: 2017-10-07_
 
-![者共](./img/planck-case-keyswitches.jpg)
+![者共](/img/2019-01-14-planck/planck-case-keyswitches.jpg)
 
 ケース付き、キースイッチ付きでDIYキットを購入。キースイッチはCherry MX Clear。
 
@@ -32,13 +32,13 @@ Jack Humbert氏のYoutubeを見てイメージを掴む。
 
 #### 検品
 
-![パーツ欠品確認](./img/planck-picking.jpg)
+![パーツ欠品確認](/img/2019-01-14-planck/planck-picking.jpg)
 
 パーツは全部揃っている。数も数えたしOK
 
 一箇所Switch Plateに多分プレス時にズレかなんかあったであろう痕があってちょっと残念。
 
-![プレスミス？](./img/planck-unfortunate.jpg)
+![プレスミス？](/img/2019-01-14-planck/planck-unfortunate.jpg)
 
 PCBはUSBに接続して音がなればOKとのこと。ファンシーなnoiseが奏でられた
 
@@ -53,7 +53,7 @@ KeySwitchの端子がひん曲がっているやつはピンで直しながら�
 
 真ん中の1 or 2 keyがえらべるところはPCBにはんだ付けするまでswitchがスライドするので注意。
 
-![半分まではめ込んだ](./img/planck-half.jpg)
+![半分まではめ込んだ](/img/2019-01-14-planck/planck-half.jpg)
 
 全部はめ込んだ痕でSwitch Plateの裏表があるっぽいことに気づく。裏側のほうがピカピカしてる。でも傷が多いので今のままで行こうと決定
 
@@ -63,17 +63,17 @@ KeySwitchの端子がひん曲がっているやつはピンで直しながら�
 
 今回ハンダゴテを新調した。白光のいいやつで温度調節ができる。調べた感じだとkeyboardのPCBにはんだ付けする最適温度が350とのことなので、それがえらべるのが良い。
 
-![ハンダゴテ比較](./img/planck-solders.jpg)
+![ハンダゴテ比較](/img/2019-01-14-planck/planck-solders.jpg)
 
 ギターの配線用に使ってた旧・ハンダゴテとは随分と違う...
 
 黙々とはんだ付けする。格子状に並んでいるので非常に楽。いやハンダゴテが良いモノだからなのかも。
 
-![作業中](./img/planck-soldering.jpg)
+![作業中](/img/2019-01-14-planck/planck-soldering.jpg)
 
 はんだ付け完了したのがこちら。
 
-![はんだ付け完了](./img/planck-soldered.jpg)
+![はんだ付け完了](/img/2019-01-14-planck/planck-soldered.jpg)
 
 ところどころ熱で弾けたであろうヤニが付いてるので、組込前に掃除にした。
 
@@ -85,7 +85,7 @@ KeySwitchの端子がひん曲がっているやつはピンで直しながら�
 
 完成！
 
-![美しい完成品](./img/planck-complete.jpg)
+![美しい完成品](/img/2019-01-14-planck/planck-complete.jpg)
 
 <hr/>
 
