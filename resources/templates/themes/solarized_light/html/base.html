@@ -4,7 +4,12 @@
     <meta charset="utf-8"/>
     <title>{{title}}{% block subtitle %}{% endblock %}</title>
     <link rel="canonical" href="{{site-url}}{{uri}}">
+    <meta name="description" content="{{description}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="{{description}}" />
+    <meta property="og:site_name" content="{{site-title}}" />
+    <meta property="og:title" content="{{title}}{% block subtitle %}{% endblock %}" />
+    <meta property="og:url" content="{{site-url}}{{uri}}" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
