@@ -12,11 +12,139 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Mon, 14 Jan 2019 17:01:05 +0900
+Thu, 17 Jan 2019 23:23:14 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-01-17-build-qmk-firmware-of-planck
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-01-17-build-qmk-firmware-of-planck
+</link>
+<title>
+Planckのキーマップをビルドする
+</title>
+<description>
+&lt;blockquote&gt;&lt;p&gt; 当時使ってたPCではプログラミングしなくなったのと、改めてQMK firmwareのdocument見たらbuild toolsんとこの記事が変わってるので、今度環境構築がてら再確認してfirmwareのとこだけ新しく書こうと思う。 &lt;/p&gt;&lt;p&gt; わたしのkeymapのrepo(&lt;a href='https://github.com/krymtkts/qmk_firmware'&gt;krymtkts/qmk_firmware&lt;/a&gt;)は「デフォのキーマップをコピった」的なコミットを最後に止まってるので、旧PCに遺物が残されてそう...作り直したほうが早いわ😅 &lt;/p&gt;&lt;p&gt; 去年はWSLで書き込む方法が確か使えてたはずだけど今は非推奨になってて、MSYS2を使う方法が主流になった？？？謎い🤔 &lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;&lt;a href='./2019-01-13-planck/2019-01-13-ortho-linear-keyboard-planck'&gt;前回&lt;/a&gt;のこの辺の続き。&lt;/p&gt;&lt;h3 id=&quot;ビルド環境をセットアップする&quot;&gt;ビルド環境をセットアップする&lt;/h3&gt;&lt;p&gt;ドキュメント&lt;a href='https://docs.qmk.fm/#/getting_started_build_tools'&gt;QMK Firmware - Installing Build Tools&lt;/a&gt;に記載のWSLの手順をそのままでOK。ちょっとWSLを使いたかったのでMSYS2でのやつではあえてやらなかった。&lt;/p&gt;&lt;p&gt;WSL用のセットアップは&lt;code&gt;util/wsl&amp;#95;install.sh&lt;/code&gt;で行う。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;$ cd ./c/qmk&amp;#95;firmware/
+$ ./util/wsl&amp;#95;install.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;途中ドライバを全部入れる？と聞かれて、それは流石に...と思ったのでConnectedという接続したドライバだけ入れるやつ&lt;code&gt;C&lt;/code&gt;にした。&lt;/p&gt;&lt;p&gt;Flip入れる？と聞かれたけどつかわないだろうし必要なときに、と思ったので&lt;code&gt;N&lt;/code&gt;&lt;/p&gt;&lt;p&gt;&lt;code&gt;wsl&amp;#95;install.sh&lt;/code&gt;完了後にPlanckのrev4のdefaultキーマップを試しにコンパイルする。&lt;/p&gt;&lt;p&gt;bashを再起動してサンプルのコマンドを実行する。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;$ make planck/rev4:default
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;でバイナリが吐き出されたのでOK。&lt;/p&gt;&lt;h3 id=&quot;planckのfirmwareをビルドする&quot;&gt;Planckのfirmwareをビルドする&lt;/h3&gt;&lt;p&gt;わたしのキーマップはこちら→&lt;a href='https://github.com/krymtkts/qmk_firmware/blob/master/keyboards/planck/keymaps/krymtkts/keymap.c'&gt;qmk&amp;#95;firmware/keymap.c at master · krymtkts/qmk_firmware&lt;/a&gt;&lt;/p&gt;&lt;p&gt;2017年末頃にビルドしたころとは&lt;code&gt;keyboards/planck/&lt;/code&gt;配下のコードが結構変わってるようなので、作成済みのキーマップを削除して新しく&lt;code&gt;default&lt;/code&gt;キーマップを作成する。それ用のシェルがあるので使う。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;$ ./util/new&amp;#95;keymap.sh planck krymtkts
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これで一旦ビルドする。revisionはわからんけど時期的に5だと思う。[要出典?]&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;$ make planck/rev5:krymtkts
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;コマンドラインでfirmwareを書き込む。revision5では以下のコマンドが正しい。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;$ make planck/rev5:krymtkts:dfu
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;でもエラーになった。なんかエラーが無限に繰り返される。CTRL+Cで中断&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;$ make planck/rev5:krymtkts:dfu
+QMK Firmware 0.6.228
+Making planck/rev5 with keymap krymtkts and target dfu
+
+avr-gcc &amp;#40;GCC&amp;#41; 4.9.2
+Copyright &amp;#40;C&amp;#41; 2014 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Size before:
+text    data     bss     dec     hex filename
+    0   26614       0   26614    67f6 .build/planck&amp;#95;rev5&amp;#95;krymtkts.hex
+
+Compiling: keyboards/planck/keymaps/krymtkts/keymap.c                                               &amp;#91;OK&amp;#93;
+Linking: .build/planck&amp;#95;rev5&amp;#95;krymtkts.elf                                                            &amp;#91;OK&amp;#93;
+Creating load file for flashing: .build/planck&amp;#95;rev5&amp;#95;krymtkts.hex                                    &amp;#91;OK&amp;#93;
+Copying planck&amp;#95;rev5&amp;#95;krymtkts.hex to qmk&amp;#95;firmware folder                                             &amp;#91;OK&amp;#93;
+Checking file size of planck&amp;#95;rev5&amp;#95;krymtkts.hex                                                      &amp;#91;OK&amp;#93;
+&amp;#42; The firmware size is fine - 26614/28672 &amp;#40;2058 bytes free&amp;#41;
+Error: Bootloader not found. Trying again in 5s.
+Error: Bootloader not found. Trying again in 5s.
+Error: Bootloader not found. Trying again in 5s.
+Error: Bootloader not found. Trying again in 5s.
+Error: Bootloader not found. Trying again in 5s.
+&amp;#94;Ctmk&amp;#95;core/avr.mk:141: recipe for target 'dfu' failed
+make&amp;#91;1&amp;#93;: &amp;#42;&amp;#42;&amp;#42; &amp;#91;dfu&amp;#93; Interrupt
+Makefile:529: recipe for target 'planck/rev5:krymtkts:dfu' failed
+make: &amp;#42;&amp;#42;&amp;#42; &amp;#91;planck/rev5:krymtkts:dfu&amp;#93; Interrupt
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;エラーダイアログで「libusb0.dllがない」というような旨が表示される。WSLでやろうとしたからダメだったのか？&lt;/p&gt;&lt;p&gt;コマンドラインで焼くのを一旦諦めて、&lt;code&gt;qmk&amp;#95;tookbox.exe&lt;/code&gt;を使うことにしたら一発成功、Planckに自分のキーマップを焼くことに成功した。&lt;/p&gt;&lt;p&gt;でもコマンドラインで焼けないのは困るので、PlanckのMakefileの&lt;code&gt;rules.mk&lt;/code&gt;見てみたところ、&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;makefile&quot;&gt;ifeq &amp;#40;$&amp;#40;strip $&amp;#40;KEYBOARD&amp;#41;&amp;#41;, planck/rev4&amp;#41;
+    BOOTLOADER = atmel-dfu
+endif
+ifeq &amp;#40;$&amp;#40;strip $&amp;#40;KEYBOARD&amp;#41;&amp;#41;, planck/rev5&amp;#41;
+    BOOTLOADER = qmk-dfu
+endif
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;とあって、rev4と4rev5でbootloaderが変わってることから、あれ？わたしのPlanckもしかしてrev4じゃ？と思って試してみたところ...&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;$ make planck/rev4:krymtkts:dfu
+QMK Firmware 0.6.228
+Making planck/rev4 with keymap krymtkts and target dfu
+
+avr-gcc &amp;#40;GCC&amp;#41; 4.9.2
+Copyright &amp;#40;C&amp;#41; 2014 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Compiling: quantum/audio/muse.c                                                                     &amp;#91;OK&amp;#93;
+Compiling: keyboards/planck/planck.c                                                                &amp;#91;OK&amp;#93;
+Compiling: keyboards/planck/keymaps/krymtkts/keymap.c                                               &amp;#91;OK&amp;#93;
+Compiling: quantum/quantum.c                                                                        &amp;#91;OK&amp;#93;
+Compiling: quantum/keymap&amp;#95;common.c                                                                  &amp;#91;OK&amp;#93;
+Compiling: quantum/keycode&amp;#95;config.c                                                                 &amp;#91;OK&amp;#93;
+Compiling: quantum/matrix.c                                                                         &amp;#91;OK&amp;#93;
+Compiling: quantum/process&amp;#95;keycode/process&amp;#95;audio.c                                                  &amp;#91;OK&amp;#93;
+Compiling: quantum/process&amp;#95;keycode/process&amp;#95;clicky.c                                                 &amp;#91;OK&amp;#93;
+Compiling: quantum/audio/audio.c                                                                    &amp;#91;OK&amp;#93;
+Compiling: quantum/audio/voices.c                                                                   &amp;#91;OK&amp;#93;
+Compiling: quantum/audio/luts.c                                                                     &amp;#91;OK&amp;#93;
+Compiling: quantum/process&amp;#95;keycode/process&amp;#95;music.c                                                  &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/host.c                                                                   &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/keyboard.c                                                               &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/action.c                                                                 &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/action&amp;#95;tapping.c                                                         &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/action&amp;#95;macro.c                                                           &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/action&amp;#95;layer.c                                                           &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/action&amp;#95;util.c                                                            &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/print.c                                                                  &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/debug.c                                                                  &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/util.c                                                                   &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/eeconfig.c                                                               &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/report.c                                                                 &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/avr/suspend.c                                                            &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/avr/timer.c                                                              &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/avr/bootloader.c                                                         &amp;#91;OK&amp;#93;
+Assembling: tmk&amp;#95;core/common/avr/xprintf.S                                                           &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/common/magic.c                                                                  &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/protocol/lufa/lufa.c                                                            &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/protocol/usb&amp;#95;descriptor.c                                                       &amp;#91;OK&amp;#93;
+Compiling: tmk&amp;#95;core/protocol/lufa/outputselect.c                                                    &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Class/Common/HIDParser.c                                       &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/Device&amp;#95;AVR8.c                                        &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/EndpointStream&amp;#95;AVR8.c                                &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/Endpoint&amp;#95;AVR8.c                                      &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/Host&amp;#95;AVR8.c                                          &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/PipeStream&amp;#95;AVR8.c                                    &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/Pipe&amp;#95;AVR8.c                                          &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/USBController&amp;#95;AVR8.c                                 &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/USBInterrupt&amp;#95;AVR8.c                                  &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/ConfigDescriptors.c                                       &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/DeviceStandardReq.c                                       &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/Events.c                                                  &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/HostStandardReq.c                                         &amp;#91;OK&amp;#93;
+Compiling: lib/lufa/LUFA/Drivers/USB/Core/USBTask.c                                                 &amp;#91;OK&amp;#93;
+Linking: .build/planck&amp;#95;rev4&amp;#95;krymtkts.elf                                                            &amp;#91;OK&amp;#93;
+Creating load file for flashing: .build/planck&amp;#95;rev4&amp;#95;krymtkts.hex                                    &amp;#91;OK&amp;#93;
+Copying planck&amp;#95;rev4&amp;#95;krymtkts.hex to qmk&amp;#95;firmware folder                                             &amp;#91;OK&amp;#93;
+Checking file size of planck&amp;#95;rev4&amp;#95;krymtkts.hex                                                      &amp;#91;OK&amp;#93;
+ &amp;#42; The firmware size is fine - 26614/28672 &amp;#40;2058 bytes free&amp;#41;
+Bootloader Version: 0x00 &amp;#40;0&amp;#41;
+Erasing flash...  Success
+Checking memory from 0x0 to 0x6FFF...  Empty.
+Checking memory from 0x0 to 0x67FF...  Empty.
+0%                            100%  Programming 0x6800 bytes...
+&amp;#91;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;#93;  Success
+0%                            100%  Reading 0x7000 bytes...
+&amp;#91;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;#93;  Success
+Validating...  Success
+0x6800 bytes written into 0x7000 bytes memory &amp;#40;92.86%&amp;#41;.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;成功した。時期的にrev5だと思ってたけどrev4だったとは😅まあうまくいってよかった。&lt;/p&gt;&lt;p&gt;キーマップはまだしっくり来ていないのでちまちま更新する予定。&lt;/p&gt;
+</description>
+<pubDate>
+Thu, 17 Jan 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-01-14-ortho-linear-keyboard-planck
