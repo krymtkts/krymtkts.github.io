@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <title>krymtkts</title>
     <link rel="canonical" href="http://krymtkts.github.io/">
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
@@ -51,17 +52,19 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-02-04-Register-ArgumentCompleter.md">Register-ArgumentCompleter</a></li>
+                        
                         <li><a href="/posts/2019-01-17-build-qmk-firmware-of-planck">Planckのキーマップをビルドする</a></li>
                         
                         <li><a href="/posts/2019-01-14-ortho-linear-keyboard-planck">Ortho-Linear Keyboard &quot;Planck&quot;</a></li>
-                        
-                        <li><a href="/posts/2019-01-10-make-blog-with-clojure">Clojureでブログを作った</a></li>
                         
                         
 
                         
                         <li class="divider"></li>
                         <li class="dropdown-header">Tags</li>
+                        
+                        <li><a href="/tags/powershell">powershell</a></li>
                         
                         <li><a href="/tags/planck">planck</a></li>
                         
@@ -92,135 +95,30 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-01-17</div>
+        <div class="col-lg-6">2019-02-04</div>
         
     </div>
-    <h2>Planckのキーマップをビルドする</h2>
+    <h2>Register-ArgumentCompleter</h2>
 </div>
 <div>
     
-    <blockquote><p> 当時使ってたPCではプログラミングしなくなったのと、改めてQMK firmwareのdocument見たらbuild toolsんとこの記事が変わってるので、今度環境構築がてら再確認してfirmwareのとこだけ新しく書こうと思う。 </p><p> わたしのkeymapのrepo(<a href='https://github.com/krymtkts/qmk_firmware'>krymtkts/qmk_firmware</a>)は「デフォのキーマップをコピった」的なコミットを最後に止まってるので、旧PCに遺物が残されてそう...作り直したほうが早いわ😅 </p><p> 去年はWSLで書き込む方法が確か使えてたはずだけど今は非推奨になってて、MSYS2を使う方法が主流になった？？？謎い🤔 </p></blockquote><p><a href='./2019-01-13-planck/2019-01-13-ortho-linear-keyboard-planck'>前回</a>のこの辺の続き。</p><h3 id="ビルド環境をセットアップする">ビルド環境をセットアップする</h3><p>ドキュメント<a href='https://docs.qmk.fm/#/getting_started_build_tools'>QMK Firmware - Installing Build Tools</a>に記載のWSLの手順をそのままでOK。ちょっとWSLを使いたかったのでMSYS2でのやつではあえてやらなかった。</p><p>WSL用のセットアップは<code>util/wsl&#95;install.sh</code>で行う。</p><pre><code class="bash">$ cd ./c/qmk&#95;firmware/
-$ ./util/wsl&#95;install.sh
-</code></pre><p>途中ドライバを全部入れる？と聞かれて、それは流石に...と思ったのでConnectedという接続したドライバだけ入れるやつ<code>C</code>にした。</p><p>Flip入れる？と聞かれたけどつかわないだろうし必要なときに、と思ったので<code>N</code></p><p><code>wsl&#95;install.sh</code>完了後にPlanckのrev4のdefaultキーマップを試しにコンパイルする。</p><p>bashを再起動してサンプルのコマンドを実行する。</p><pre><code class="bash">$ make planck/rev4:default
-</code></pre><p>でバイナリが吐き出されたのでOK。</p><h3 id="planckのfirmwareをビルドする">Planckのfirmwareをビルドする</h3><p>わたしのキーマップはこちら→<a href='https://github.com/krymtkts/qmk_firmware/blob/master/keyboards/planck/keymaps/krymtkts/keymap.c'>qmk&#95;firmware/keymap.c at master · krymtkts/qmk_firmware</a></p><p>2017年末頃にビルドしたころとは<code>keyboards/planck/</code>配下のコードが結構変わってるようなので、作成済みのキーマップを削除して新しく<code>default</code>キーマップを作成する。それ用のシェルがあるので使う。</p><pre><code class="bash">$ ./util/new&#95;keymap.sh planck krymtkts
-</code></pre><p>これで一旦ビルドする。revisionはわからんけど時期的に5だと思う。[要出典?]</p><pre><code class="bash">$ make planck/rev5:krymtkts
-</code></pre><p>コマンドラインでfirmwareを書き込む。revision5では以下のコマンドが正しい。</p><pre><code class="bash">$ make planck/rev5:krymtkts:dfu
-</code></pre><p>でもエラーになった。なんかエラーが無限に繰り返される。CTRL+Cで中断</p><pre><code class="bash">$ make planck/rev5:krymtkts:dfu
-QMK Firmware 0.6.228
-Making planck/rev5 with keymap krymtkts and target dfu
+    <p>まだoutputが習慣化してなくて随分空いてしまった🤔</p><h3 id="<a href='https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/register-argumentcompleter?view=powershell-6'>Register-ArgumentCompleter</a>"><a href='https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/register-argumentcompleter?view=powershell-6'>Register-ArgumentCompleter</a></h3><p>PowerShell5から、従来の<code>TabExpansion</code>に代わる<code>Register-ArgumentCompleter</code>なるモノが現れたのは、PowerShellerなら知っているだろう(わたしは去年まで知らんかったのでPowerShellerではないのだ)。</p><h3 id="サンプル書いてみた">サンプル書いてみた</h3><p>Mavenのよく使うコマンドでお試し。</p><pre><code class="powershell">Register-ArgumentCompleter -Native -CommandName mvn -ScriptBlock {
+    param&#40;$wordToComplete, $commandAst, $cursorPosition&#41;
 
-avr-gcc &#40;GCC&#41; 4.9.2
-Copyright &#40;C&#41; 2014 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-Size before:
-text    data     bss     dec     hex filename
-    0   26614       0   26614    67f6 .build/planck&#95;rev5&#95;krymtkts.hex
-
-Compiling: keyboards/planck/keymaps/krymtkts/keymap.c                                               &#91;OK&#93;
-Linking: .build/planck&#95;rev5&#95;krymtkts.elf                                                            &#91;OK&#93;
-Creating load file for flashing: .build/planck&#95;rev5&#95;krymtkts.hex                                    &#91;OK&#93;
-Copying planck&#95;rev5&#95;krymtkts.hex to qmk&#95;firmware folder                                             &#91;OK&#93;
-Checking file size of planck&#95;rev5&#95;krymtkts.hex                                                      &#91;OK&#93;
-&#42; The firmware size is fine - 26614/28672 &#40;2058 bytes free&#41;
-Error: Bootloader not found. Trying again in 5s.
-Error: Bootloader not found. Trying again in 5s.
-Error: Bootloader not found. Trying again in 5s.
-Error: Bootloader not found. Trying again in 5s.
-Error: Bootloader not found. Trying again in 5s.
-&#94;Ctmk&#95;core/avr.mk:141: recipe for target 'dfu' failed
-make&#91;1&#93;: &#42;&#42;&#42; &#91;dfu&#93; Interrupt
-Makefile:529: recipe for target 'planck/rev5:krymtkts:dfu' failed
-make: &#42;&#42;&#42; &#91;planck/rev5:krymtkts:dfu&#93; Interrupt
-</code></pre><p>エラーダイアログで「libusb0.dllがない」というような旨が表示される。WSLでやろうとしたからダメだったのか？</p><p>コマンドラインで焼くのを一旦諦めて、<code>qmk&#95;tookbox.exe</code>を使うことにしたら一発成功、Planckに自分のキーマップを焼くことに成功した。</p><p>でもコマンドラインで焼けないのは困るので、PlanckのMakefileの<code>rules.mk</code>見てみたところ、</p><pre><code class="makefile">ifeq &#40;$&#40;strip $&#40;KEYBOARD&#41;&#41;, planck/rev4&#41;
-    BOOTLOADER = atmel-dfu
-endif
-ifeq &#40;$&#40;strip $&#40;KEYBOARD&#41;&#41;, planck/rev5&#41;
-    BOOTLOADER = qmk-dfu
-endif
-</code></pre><p>とあって、rev4と4rev5でbootloaderが変わってることから、あれ？わたしのPlanckもしかしてrev4じゃ？と思って試してみたところ...</p><pre><code class="bash">$ make planck/rev4:krymtkts:dfu
-QMK Firmware 0.6.228
-Making planck/rev4 with keymap krymtkts and target dfu
-
-avr-gcc &#40;GCC&#41; 4.9.2
-Copyright &#40;C&#41; 2014 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-Compiling: quantum/audio/muse.c                                                                     &#91;OK&#93;
-Compiling: keyboards/planck/planck.c                                                                &#91;OK&#93;
-Compiling: keyboards/planck/keymaps/krymtkts/keymap.c                                               &#91;OK&#93;
-Compiling: quantum/quantum.c                                                                        &#91;OK&#93;
-Compiling: quantum/keymap&#95;common.c                                                                  &#91;OK&#93;
-Compiling: quantum/keycode&#95;config.c                                                                 &#91;OK&#93;
-Compiling: quantum/matrix.c                                                                         &#91;OK&#93;
-Compiling: quantum/process&#95;keycode/process&#95;audio.c                                                  &#91;OK&#93;
-Compiling: quantum/process&#95;keycode/process&#95;clicky.c                                                 &#91;OK&#93;
-Compiling: quantum/audio/audio.c                                                                    &#91;OK&#93;
-Compiling: quantum/audio/voices.c                                                                   &#91;OK&#93;
-Compiling: quantum/audio/luts.c                                                                     &#91;OK&#93;
-Compiling: quantum/process&#95;keycode/process&#95;music.c                                                  &#91;OK&#93;
-Compiling: tmk&#95;core/common/host.c                                                                   &#91;OK&#93;
-Compiling: tmk&#95;core/common/keyboard.c                                                               &#91;OK&#93;
-Compiling: tmk&#95;core/common/action.c                                                                 &#91;OK&#93;
-Compiling: tmk&#95;core/common/action&#95;tapping.c                                                         &#91;OK&#93;
-Compiling: tmk&#95;core/common/action&#95;macro.c                                                           &#91;OK&#93;
-Compiling: tmk&#95;core/common/action&#95;layer.c                                                           &#91;OK&#93;
-Compiling: tmk&#95;core/common/action&#95;util.c                                                            &#91;OK&#93;
-Compiling: tmk&#95;core/common/print.c                                                                  &#91;OK&#93;
-Compiling: tmk&#95;core/common/debug.c                                                                  &#91;OK&#93;
-Compiling: tmk&#95;core/common/util.c                                                                   &#91;OK&#93;
-Compiling: tmk&#95;core/common/eeconfig.c                                                               &#91;OK&#93;
-Compiling: tmk&#95;core/common/report.c                                                                 &#91;OK&#93;
-Compiling: tmk&#95;core/common/avr/suspend.c                                                            &#91;OK&#93;
-Compiling: tmk&#95;core/common/avr/timer.c                                                              &#91;OK&#93;
-Compiling: tmk&#95;core/common/avr/bootloader.c                                                         &#91;OK&#93;
-Assembling: tmk&#95;core/common/avr/xprintf.S                                                           &#91;OK&#93;
-Compiling: tmk&#95;core/common/magic.c                                                                  &#91;OK&#93;
-Compiling: tmk&#95;core/protocol/lufa/lufa.c                                                            &#91;OK&#93;
-Compiling: tmk&#95;core/protocol/usb&#95;descriptor.c                                                       &#91;OK&#93;
-Compiling: tmk&#95;core/protocol/lufa/outputselect.c                                                    &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Class/Common/HIDParser.c                                       &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/Device&#95;AVR8.c                                        &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/EndpointStream&#95;AVR8.c                                &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/Endpoint&#95;AVR8.c                                      &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/Host&#95;AVR8.c                                          &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/PipeStream&#95;AVR8.c                                    &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/Pipe&#95;AVR8.c                                          &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/USBController&#95;AVR8.c                                 &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/AVR8/USBInterrupt&#95;AVR8.c                                  &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/ConfigDescriptors.c                                       &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/DeviceStandardReq.c                                       &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/Events.c                                                  &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/HostStandardReq.c                                         &#91;OK&#93;
-Compiling: lib/lufa/LUFA/Drivers/USB/Core/USBTask.c                                                 &#91;OK&#93;
-Linking: .build/planck&#95;rev4&#95;krymtkts.elf                                                            &#91;OK&#93;
-Creating load file for flashing: .build/planck&#95;rev4&#95;krymtkts.hex                                    &#91;OK&#93;
-Copying planck&#95;rev4&#95;krymtkts.hex to qmk&#95;firmware folder                                             &#91;OK&#93;
-Checking file size of planck&#95;rev4&#95;krymtkts.hex                                                      &#91;OK&#93;
- &#42; The firmware size is fine - 26614/28672 &#40;2058 bytes free&#41;
-Bootloader Version: 0x00 &#40;0&#41;
-Erasing flash...  Success
-Checking memory from 0x0 to 0x6FFF...  Empty.
-Checking memory from 0x0 to 0x67FF...  Empty.
-0%                            100%  Programming 0x6800 bytes...
-&#91;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&#93;  Success
-0%                            100%  Reading 0x7000 bytes...
-&#91;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&#93;  Success
-Validating...  Success
-0x6800 bytes written into 0x7000 bytes memory &#40;92.86%&#41;.
-</code></pre><p>成功した。時期的にrev5だと思ってたけどrev4だったとは😅まあうまくいってよかった。</p><p>キーマップはまだしっくり来ていないのでちまちま更新する予定。</p>
+    echo -- clean install eclipse:eclipse |
+        Where-Object { $&#95; -like &quot;$wordToComplete&#42;&quot; } |
+        Sort-Object |
+        ForEach-Object {
+            &#91;System.Management.Automation.CompletionResult&#93;::new&#40;$&#95;, $&#95;, 'ParameterValue', $&#95;&#41;
+        }
+}
+</code></pre><p>めちゃんこ簡単。</p><h3 id="作ったもの">作ったもの</h3><p>当時仕事で巨大なMavenプロジェクトを使っていて、コマンド打つのも億劫だったのでPowerShellで自動補完がほしいなと思っていたのだが、<code>TabExpantion</code>はちょっと自分には使いこなせなかった。関数のオーバーライドをしたりのおまじないが必要だし。</p><p><code>Register-ArgumentCompleter</code>なら簡単に作れたので、APIが進化してる感をひしと感じたのであった。以下成果物↓</p><p><a href='https://github.com/krymtkts/MavenAutoCompletion'>krymtkts/MavenAutoCompletion: MavenAutoCompletion provides a simple auto completion of Maven 3 to PowerShell.</a></p><h3 id="既知のバグ">既知のバグ</h3><p>PowerShell5だと<code>-Native</code>オプションありの場合に<code>-</code>を利用した補完ができないバグがあって、前述の自動補完がうまく使えなくて辛い...</p><p><a href='https://github.com/PowerShell/PowerShell/issues/2912'>Native ArgumentCompleter not invoked for inputs that begin with hyphen (-) · Issue #2912 · PowerShell/PowerShell</a></p><p>PowerShell5.xでも使えないものかと試してみたところ、Trickyな回避策として<code>&#x60;</code>で<code>-</code>をエスケープしたらイケるというのを見つけたが...posh-gitもchocolateyもそれで従来からの<code>TabExpantion</code>を使ってたのかーという気付きは得られた。</p><p>ちなみにわたしはPowerShell6を使ってるのでかんけーないのだ😜</p><h3 id="残">残</h3><p><code>Register-ArgumentCompleter</code>のScriptBlockの引数をちまちま調べたのがあるけど、長いから別に書こう。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/planck">planck</a>
-    
-    <a href="/tags/mechanicalkeyboard">mechanicalkeyboard</a>
-    
-    <a href="/tags/qmkfirmware">qmkfirmware</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -230,7 +128,7 @@ Validating...  Success
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-01-14-ortho-linear-keyboard-planck">2019-01-14 Ortho-Linear Keyboard &quot;Planck&quot; &raquo;</a>
+        <a class="right" href="/posts/2019-01-17-build-qmk-firmware-of-planck">2019-01-17 Planckのキーマップをビルドする &raquo;</a>
         
     </div>
 </div>
