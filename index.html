@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
-                        <li><a href="/posts/2019-02-04-Register-ArgumentCompleter.md">Register-ArgumentCompleter</a></li>
+                        <li><a href="/posts/2019-02-11-Register-ArgumentCompleter2">Register-ArgumentCompleterのScriptBlockの引数</a></li>
+                        
+                        <li><a href="/posts/2019-02-04-Register-ArgumentCompleter">Register-ArgumentCompleter</a></li>
                         
                         <li><a href="/posts/2019-01-17-build-qmk-firmware-of-planck">Planckのキーマップをビルドする</a></li>
-                        
-                        <li><a href="/posts/2019-01-14-ortho-linear-keyboard-planck">Ortho-Linear Keyboard &quot;Planck&quot;</a></li>
                         
                         
 
@@ -95,24 +95,85 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-02-04</div>
+        <div class="col-lg-6">2019-02-11</div>
         
     </div>
-    <h2>Register-ArgumentCompleter</h2>
+    <h2>Register-ArgumentCompleterのScriptBlockの引数</h2>
 </div>
 <div>
     
-    <p>まだoutputが習慣化してなくて随分空いてしまった🤔</p><h3 id="<a href='https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/register-argumentcompleter?view=powershell-6'>Register-ArgumentCompleter</a>"><a href='https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/register-argumentcompleter?view=powershell-6'>Register-ArgumentCompleter</a></h3><p>PowerShell5から、従来の<code>TabExpansion</code>に代わる<code>Register-ArgumentCompleter</code>なるモノが現れたのは、PowerShellerなら知っているだろう(わたしは去年まで知らんかったのでPowerShellerではないのだ)。</p><h3 id="サンプル書いてみた">サンプル書いてみた</h3><p>Mavenのよく使うコマンドでお試し。</p><pre><code class="powershell">Register-ArgumentCompleter -Native -CommandName mvn -ScriptBlock {
+    <p><a href='./2019-02-04-Register-ArgumentCompleter.md'>前回</a>の続き。</p><pre><code class="powershell">Register-ArgumentCompleter -Native -CommandName mvn -ScriptBlock {
     param&#40;$wordToComplete, $commandAst, $cursorPosition&#41;
+</code></pre><p>↑こんなんいるやん？</p><p><code>wordToComplete</code>には入力中の文字列が入ってくる。</p><p><code>$commandAst</code>にはコマンドラインが全部載ってくる。</p><p>でも実際詳しく知らんので、たとえば<code>maven clean install -pl :module1 -</code>ってとこまで入力してCtrl+Spaceやったときにはどういうパラメータになるかわからんので調べた。</p><p>結論から言うと<code>$commandAst</code>はASTが乗ってくる。<code>mvn clean install &ndash;d</code>でtabしたときのデバッガでの出力は以下の通り(デバッグ実行にはISEを利用した)。 <a href='https://docs.microsoft.com/ja-jp/powershell/scripting/components/ise/exploring-the-windows-powershell-ise?view=powershell-6'>Windows PowerShell ISE の操作 | Microsoft Docs</a></p><pre><code class="powershell">PS C:\Users\takatoshi\Desktop\maven&gt; mvn clean install --d
+ヒット 'C:\Users\takatoshi\dev\powershell\MavenAutoCompletion\MavenAutoCompletion.ps1:152' の行のブレークポイント
+&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst
 
-    echo -- clean install eclipse:eclipse |
-        Where-Object { $&#95; -like &quot;$wordToComplete&#42;&quot; } |
-        Sort-Object |
-        ForEach-Object {
-            &#91;System.Management.Automation.CompletionResult&#93;::new&#40;$&#95;, $&#95;, 'ParameterValue', $&#95;&#41;
-        }
-}
-</code></pre><p>めちゃんこ簡単。</p><h3 id="作ったもの">作ったもの</h3><p>当時仕事で巨大なMavenプロジェクトを使っていて、コマンド打つのも億劫だったのでPowerShellで自動補完がほしいなと思っていたのだが、<code>TabExpantion</code>はちょっと自分には使いこなせなかった。関数のオーバーライドをしたりのおまじないが必要だし。</p><p><code>Register-ArgumentCompleter</code>なら簡単に作れたので、APIが進化してる感をひしと感じたのであった。以下成果物↓</p><p><a href='https://github.com/krymtkts/MavenAutoCompletion'>krymtkts/MavenAutoCompletion: MavenAutoCompletion provides a simple auto completion of Maven 3 to PowerShell.</a></p><h3 id="既知のバグ">既知のバグ</h3><p>PowerShell5だと<code>-Native</code>オプションありの場合に<code>-</code>を利用した補完ができないバグがあって、前述の自動補完がうまく使えなくて辛い...</p><p><a href='https://github.com/PowerShell/PowerShell/issues/2912'>Native ArgumentCompleter not invoked for inputs that begin with hyphen (-) · Issue #2912 · PowerShell/PowerShell</a></p><p>PowerShell5.xでも使えないものかと試してみたところ、Trickyな回避策として<code>&#x60;</code>で<code>-</code>をエスケープしたらイケるというのを見つけたが...posh-gitもchocolateyもそれで従来からの<code>TabExpantion</code>を使ってたのかーという気付きは得られた。</p><p>ちなみにわたしはPowerShell6を使ってるのでかんけーないのだ😜</p><h3 id="残">残</h3><p><code>Register-ArgumentCompleter</code>のScriptBlockの引数をちまちま調べたのがあるけど、長いから別に書こう。</p>
+
+CommandElements    : {mvn, clean, install, --d}
+InvocationOperator : Unknown
+DefiningKeyword    :
+Redirections       : {}
+Extent             : mvn clean install --d
+Parent             : mvn clean install --d
+
+
+
+
+&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $wordToComplete
+--d
+</code></pre><p><code>mvn clean install &ndash;projects :</code>でtabした場合↓</p><pre><code class="powershell">&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt;
+mvn clean install --projects :
+ヒット 'C:\Users\takatoshi\dev\powershell\MavenAutoCompletion\MavenAutoCompletion.ps1:152' の行のブレークポイント
+&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst
+
+
+CommandElements    : {mvn, clean, install, --projects...}
+InvocationOperator : Unknown
+DefiningKeyword    :
+Redirections       : {}
+Extent             : mvn clean install --projects :
+Parent             : mvn clean install --projects :
+
+
+
+
+&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst.CommandElements
+
+
+StringConstantType : BareWord
+Value              : mvn
+StaticType         : System.String
+Extent             : mvn
+Parent             : mvn clean install --projects :
+
+StringConstantType : BareWord
+Value              : clean
+StaticType         : System.String
+Extent             : clean
+Parent             : mvn clean install --projects :
+
+StringConstantType : BareWord
+Value              : install
+StaticType         : System.String
+Extent             : install
+Parent             : mvn clean install --projects :
+
+StringConstantType : BareWord
+Value              : --projects
+StaticType         : System.String
+Extent             : --projects
+Parent             : mvn clean install --projects :
+
+StringConstantType : BareWord
+Value              : :
+StaticType         : System.String
+Extent             : :
+Parent             : mvn clean install --projects :
+</code></pre><p><code>wordToComplete</code> こいつはまじでただの文字列。<code>commandAst.CommandElements</code>の最後の要素の<code>value</code>が出てる。</p><p>という感じだったので、MavenAutoCompletion的には<code>commandAst.CommandElements</code>の最後から2要素を対象に正規表現してやれば、だいたい望みのことができるのがわかったのであった。</p><h3 id="余談">余談</h3><p>PowerShellで配列の任意の連続した要素を抜き出すのに、slice的なんがないんかと調べたところ、以下のようにするようだ。</p><pre><code class="powershell">&gt; $a = @&#40;'mvn', 'clean', 'install', '-pl', ':'&#41;
+&gt; $a&#91;&#40;$a.Length -2&#41;..$a.Length&#93;
+-pl
+:
+</code></pre><p>cool😉</p>
 </div>
 
 <div id="post-tags">
@@ -128,7 +189,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-01-17-build-qmk-firmware-of-planck">2019-01-17 Planckのキーマップをビルドする &raquo;</a>
+        <a class="right" href="/posts/2019-02-04-Register-ArgumentCompleter">2019-02-04 Register-ArgumentCompleter &raquo;</a>
         
     </div>
 </div>

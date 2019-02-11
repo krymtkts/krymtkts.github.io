@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
-                        <li><a href="/posts/2019-02-04-Register-ArgumentCompleter.md">Register-ArgumentCompleter</a></li>
+                        <li><a href="/posts/2019-02-11-Register-ArgumentCompleter2">Register-ArgumentCompleterのScriptBlockの引数</a></li>
+                        
+                        <li><a href="/posts/2019-02-04-Register-ArgumentCompleter">Register-ArgumentCompleter</a></li>
                         
                         <li><a href="/posts/2019-01-17-build-qmk-firmware-of-planck">Planckのキーマップをビルドする</a></li>
-                        
-                        <li><a href="/posts/2019-01-14-ortho-linear-keyboard-planck">Ortho-Linear Keyboard &quot;Planck&quot;</a></li>
                         
                         
 
@@ -102,7 +102,7 @@
 </div>
 <div>
     
-    <blockquote><p> 当時使ってたPCではプログラミングしなくなったのと、改めてQMK firmwareのdocument見たらbuild toolsんとこの記事が変わってるので、今度環境構築がてら再確認してfirmwareのとこだけ新しく書こうと思う。 </p><p> わたしのkeymapのrepo(<a href='https://github.com/krymtkts/qmk_firmware'>krymtkts/qmk_firmware</a>)は「デフォのキーマップをコピった」的なコミットを最後に止まってるので、旧PCに遺物が残されてそう...作り直したほうが早いわ😅 </p><p> 去年はWSLで書き込む方法が確か使えてたはずだけど今は非推奨になってて、MSYS2を使う方法が主流になった？？？謎い🤔 </p></blockquote><p><a href='./2019-01-13-planck/2019-01-13-ortho-linear-keyboard-planck'>前回</a>のこの辺の続き。</p><h3 id="ビルド環境をセットアップする">ビルド環境をセットアップする</h3><p>ドキュメント<a href='https://docs.qmk.fm/#/getting_started_build_tools'>QMK Firmware - Installing Build Tools</a>に記載のWSLの手順をそのままでOK。ちょっとWSLを使いたかったのでMSYS2でのやつではあえてやらなかった。</p><p>WSL用のセットアップは<code>util/wsl&#95;install.sh</code>で行う。</p><pre><code class="bash">$ cd ./c/qmk&#95;firmware/
+    <blockquote><p> 当時使ってたPCではプログラミングしなくなったのと、改めてQMK firmwareのdocument見たらbuild toolsんとこの記事が変わってるので、今度環境構築がてら再確認してfirmwareのとこだけ新しく書こうと思う。 </p><p> わたしのkeymapのrepo(<a href='https://github.com/krymtkts/qmk_firmware'>krymtkts/qmk_firmware</a>)は「デフォのキーマップをコピった」的なコミットを最後に止まってるので、旧PCに遺物が残されてそう...作り直したほうが早いわ😅 </p><p> 去年はWSLで書き込む方法が確か使えてたはずだけど今は非推奨になってて、MSYS2を使う方法が主流になった？？？謎い🤔 </p></blockquote><p><a href='./2019-01-14-ortho-linear-keyboard-planck'>前回</a>のこの辺の続き。</p><h3 id="ビルド環境をセットアップする">ビルド環境をセットアップする</h3><p>ドキュメント<a href='https://docs.qmk.fm/#/getting_started_build_tools'>QMK Firmware - Installing Build Tools</a>に記載のWSLの手順をそのままでOK。ちょっとWSLを使いたかったのでMSYS2でのやつではあえてやらなかった。</p><p>WSL用のセットアップは<code>util/wsl&#95;install.sh</code>で行う。</p><pre><code class="bash">$ cd ./c/qmk&#95;firmware/
 $ ./util/wsl&#95;install.sh
 </code></pre><p>途中ドライバを全部入れる？と聞かれて、それは流石に...と思ったのでConnectedという接続したドライバだけ入れるやつ<code>C</code>にした。</p><p>Flip入れる？と聞かれたけどつかわないだろうし必要なときに、と思ったので<code>N</code></p><p><code>wsl&#95;install.sh</code>完了後にPlanckのrev4のdefaultキーマップを試しにコンパイルする。</p><p>bashを再起動してサンプルのコマンドを実行する。</p><pre><code class="bash">$ make planck/rev4:default
 </code></pre><p>でバイナリが吐き出されたのでOK。</p><h3 id="planckのfirmwareをビルドする">Planckのfirmwareをビルドする</h3><p>わたしのキーマップはこちら→<a href='https://github.com/krymtkts/qmk_firmware/blob/master/keyboards/planck/keymaps/krymtkts/keymap.c'>qmk&#95;firmware/keymap.c at master · krymtkts/qmk_firmware</a></p><p>2017年末頃にビルドしたころとは<code>keyboards/planck/</code>配下のコードが結構変わってるようなので、作成済みのキーマップを削除して新しく<code>default</code>キーマップを作成する。それ用のシェルがあるので使う。</p><pre><code class="bash">$ ./util/new&#95;keymap.sh planck krymtkts
@@ -230,7 +230,7 @@ Validating...  Success
 
     <div id="prev-next">
         
-        <a href="/posts/2019-02-04-Register-ArgumentCompleter.md">&laquo; 2019-02-04 Register-ArgumentCompleter</a>
+        <a href="/posts/2019-02-04-Register-ArgumentCompleter">&laquo; 2019-02-04 Register-ArgumentCompleter</a>
         
         
         <a class="right" href="/posts/2019-01-14-ortho-linear-keyboard-planck">2019-01-14 Ortho-Linear Keyboard &quot;Planck&quot; &raquo;</a>
