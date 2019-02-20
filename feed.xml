@@ -12,11 +12,37 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Mon, 11 Feb 2019 22:24:22 +0900
+Wed, 20 Feb 2019 23:04:50 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-02-20-instead-of-ping
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-02-20-instead-of-ping
+</link>
+<title>
+`ping`の代わりに`Test-Connection`を使う
+</title>
+<description>
+&lt;p&gt;PowerShellには&lt;code&gt;Test-Connection&lt;/code&gt;というやつがあるのを今更ながら知った。&lt;/p&gt;&lt;p&gt;今の仕事では、仮想マシン(dockerでない)を複数立ち上げて作業することが常になってるのだが、結構立ち上げ忘れてたりしてうっかりSSHしたときに繋げないのである😢&lt;/p&gt;&lt;p&gt;疎通確認と合わせてSSHするすべを探してたところ、これを知ったので以下のようなスクリプトを作ってCmderのTaskに登録して使っている。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$waken = Test-Connection -TargetName $ip -Count 1 -Quiet
+if &amp;#40;!$waken&amp;#41; {
+    Write-Output &amp;quot;target not found. please start up $ip&amp;quot;
+    $Host.UI.RawUI.ReadKey&amp;#40;&amp;#41; | Out-Null
+    exit
+}
+ssh &amp;quot;admin@$ip&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href='https://blog.shibata.tech/entry/2016/06/16/231239'&gt;Test-Connectionが遅い理由と対策方法について - しばたテックブログ&lt;/a&gt;&lt;/p&gt;&lt;p&gt;↑このような話もあるようなので目を通しておきたいところ🤔&lt;/p&gt;&lt;h3 id=&quot;おまけ&quot;&gt;おまけ&lt;/h3&gt;&lt;p&gt;&lt;a href='https://qiita.com/twinkfrag/items/f3ecf79b68ea09eadec2'&gt;PowerShellでPause - Qiita&lt;/a&gt;&lt;/p&gt;&lt;p&gt;最近のPowerShellには&lt;code&gt;Pause&lt;/code&gt;なるもんがデフォで入ってるが、古来からの方法でEnter以外のキーでも使えるようにしておくのが良いであらうか？&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;Write-Output &amp;quot;type key to continue...&amp;quot;
+$Host.UI.RawUI.ReadKey&amp;#40;&amp;#41; | Out-Null
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;スクリプトの中でコレを呼んだら、なんかのキーを押すまで止まる。&lt;/p&gt;&lt;p&gt;戻り値が標準出力されないようにするために&lt;code&gt;Out-Null&lt;/code&gt;にパイプラインする。&lt;code&gt;$null&lt;/code&gt;に代入でもよいが。&lt;/p&gt;
+</description>
+<pubDate>
+Wed, 20 Feb 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-02-11-Register-ArgumentCompleter2

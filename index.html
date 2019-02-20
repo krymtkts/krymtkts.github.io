@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-02-20-instead-of-ping">`ping`の代わりに`Test-Connection`を使う</a></li>
+                        
                         <li><a href="/posts/2019-02-11-Register-ArgumentCompleter2">Register-ArgumentCompleterのScriptBlockの引数</a></li>
                         
                         <li><a href="/posts/2019-02-04-Register-ArgumentCompleter">Register-ArgumentCompleter</a></li>
-                        
-                        <li><a href="/posts/2019-01-17-build-qmk-firmware-of-planck">Planckのキーマップをビルドする</a></li>
                         
                         
 
@@ -95,85 +95,23 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-02-11</div>
+        <div class="col-lg-6">2019-02-20</div>
         
     </div>
-    <h2>Register-ArgumentCompleterのScriptBlockの引数</h2>
+    <h2>`ping`の代わりに`Test-Connection`を使う</h2>
 </div>
 <div>
     
-    <p><a href='./2019-02-04-Register-ArgumentCompleter.md'>前回</a>の続き。</p><pre><code class="powershell">Register-ArgumentCompleter -Native -CommandName mvn -ScriptBlock {
-    param&#40;$wordToComplete, $commandAst, $cursorPosition&#41;
-</code></pre><p>↑こんなんいるやん？</p><p><code>wordToComplete</code>には入力中の文字列が入ってくる。</p><p><code>$commandAst</code>にはコマンドラインが全部載ってくる。</p><p>でも実際詳しく知らんので、たとえば<code>maven clean install -pl :module1 -</code>ってとこまで入力してCtrl+Spaceやったときにはどういうパラメータになるかわからんので調べた。</p><p>結論から言うと<code>$commandAst</code>はASTが乗ってくる。<code>mvn clean install &ndash;d</code>でtabしたときのデバッガでの出力は以下の通り(デバッグ実行にはISEを利用した)。 <a href='https://docs.microsoft.com/ja-jp/powershell/scripting/components/ise/exploring-the-windows-powershell-ise?view=powershell-6'>Windows PowerShell ISE の操作 | Microsoft Docs</a></p><pre><code class="powershell">PS C:\Users\takatoshi\Desktop\maven&gt; mvn clean install --d
-ヒット 'C:\Users\takatoshi\dev\powershell\MavenAutoCompletion\MavenAutoCompletion.ps1:152' の行のブレークポイント
-&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst
-
-
-CommandElements    : {mvn, clean, install, --d}
-InvocationOperator : Unknown
-DefiningKeyword    :
-Redirections       : {}
-Extent             : mvn clean install --d
-Parent             : mvn clean install --d
-
-
-
-
-&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $wordToComplete
---d
-</code></pre><p><code>mvn clean install &ndash;projects :</code>でtabした場合↓</p><pre><code class="powershell">&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt;
-mvn clean install --projects :
-ヒット 'C:\Users\takatoshi\dev\powershell\MavenAutoCompletion\MavenAutoCompletion.ps1:152' の行のブレークポイント
-&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst
-
-
-CommandElements    : {mvn, clean, install, --projects...}
-InvocationOperator : Unknown
-DefiningKeyword    :
-Redirections       : {}
-Extent             : mvn clean install --projects :
-Parent             : mvn clean install --projects :
-
-
-
-
-&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst.CommandElements
-
-
-StringConstantType : BareWord
-Value              : mvn
-StaticType         : System.String
-Extent             : mvn
-Parent             : mvn clean install --projects :
-
-StringConstantType : BareWord
-Value              : clean
-StaticType         : System.String
-Extent             : clean
-Parent             : mvn clean install --projects :
-
-StringConstantType : BareWord
-Value              : install
-StaticType         : System.String
-Extent             : install
-Parent             : mvn clean install --projects :
-
-StringConstantType : BareWord
-Value              : --projects
-StaticType         : System.String
-Extent             : --projects
-Parent             : mvn clean install --projects :
-
-StringConstantType : BareWord
-Value              : :
-StaticType         : System.String
-Extent             : :
-Parent             : mvn clean install --projects :
-</code></pre><p><code>wordToComplete</code> こいつはまじでただの文字列。<code>commandAst.CommandElements</code>の最後の要素の<code>value</code>が出てる。</p><p>という感じだったので、MavenAutoCompletion的には<code>commandAst.CommandElements</code>の最後から2要素を対象に正規表現してやれば、だいたい望みのことができるのがわかったのであった。</p><h3 id="余談">余談</h3><p>PowerShellで配列の任意の連続した要素を抜き出すのに、slice的なんがないんかと調べたところ、以下のようにするようだ。</p><pre><code class="powershell">&gt; $a = @&#40;'mvn', 'clean', 'install', '-pl', ':'&#41;
-&gt; $a&#91;&#40;$a.Length -2&#41;..$a.Length&#93;
--pl
-:
-</code></pre><p>cool😉</p>
+    <p>PowerShellには<code>Test-Connection</code>というやつがあるのを今更ながら知った。</p><p>今の仕事では、仮想マシン(dockerでない)を複数立ち上げて作業することが常になってるのだが、結構立ち上げ忘れてたりしてうっかりSSHしたときに繋げないのである😢</p><p>疎通確認と合わせてSSHするすべを探してたところ、これを知ったので以下のようなスクリプトを作ってCmderのTaskに登録して使っている。</p><pre><code class="powershell">$waken = Test-Connection -TargetName $ip -Count 1 -Quiet
+if &#40;!$waken&#41; {
+    Write-Output &quot;target not found. please start up $ip&quot;
+    $Host.UI.RawUI.ReadKey&#40;&#41; | Out-Null
+    exit
+}
+ssh &quot;admin@$ip&quot;
+</code></pre><p><a href='https://blog.shibata.tech/entry/2016/06/16/231239'>Test-Connectionが遅い理由と対策方法について - しばたテックブログ</a></p><p>↑このような話もあるようなので目を通しておきたいところ🤔</p><h3 id="おまけ">おまけ</h3><p><a href='https://qiita.com/twinkfrag/items/f3ecf79b68ea09eadec2'>PowerShellでPause - Qiita</a></p><p>最近のPowerShellには<code>Pause</code>なるもんがデフォで入ってるが、古来からの方法でEnter以外のキーでも使えるようにしておくのが良いであらうか？</p><pre><code class="powershell">Write-Output &quot;type key to continue...&quot;
+$Host.UI.RawUI.ReadKey&#40;&#41; | Out-Null
+</code></pre><p>スクリプトの中でコレを呼んだら、なんかのキーを押すまで止まる。</p><p>戻り値が標準出力されないようにするために<code>Out-Null</code>にパイプラインする。<code>$null</code>に代入でもよいが。</p>
 </div>
 
 <div id="post-tags">
@@ -189,7 +127,7 @@ Parent             : mvn clean install --projects :
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-02-04-Register-ArgumentCompleter">2019-02-04 Register-ArgumentCompleter &raquo;</a>
+        <a class="right" href="/posts/2019-02-11-Register-ArgumentCompleter2">2019-02-11 Register-ArgumentCompleterのScriptBlockの引数 &raquo;</a>
         
     </div>
 </div>

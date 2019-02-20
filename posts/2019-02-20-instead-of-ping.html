@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;powershell&quot;</title>
-    <link rel="canonical" href="http://krymtkts.github.io/tags/powershell">
+    <title>krymtkts: `ping`の代わりに`Test-Connection`を使う</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-02-20-instead-of-ping">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;powershell&quot;" />
-    <meta property="og:url" content="http://krymtkts.github.io/tags/powershell" />
+    <meta property="og:title" content="krymtkts: `ping`の代わりに`Test-Connection`を使う" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-02-20-instead-of-ping" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -92,25 +92,46 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;powershell&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2019-02-20</div>
+        
     </div>
-    <ul>
+    <h2>`ping`の代わりに`Test-Connection`を使う</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2019-02-20-instead-of-ping">2019-02-20 `ping`の代わりに`Test-Connection`を使う</a>
-        </li>
+    <p>PowerShellには<code>Test-Connection</code>というやつがあるのを今更ながら知った。</p><p>今の仕事では、仮想マシン(dockerでない)を複数立ち上げて作業することが常になってるのだが、結構立ち上げ忘れてたりしてうっかりSSHしたときに繋げないのである😢</p><p>疎通確認と合わせてSSHするすべを探してたところ、これを知ったので以下のようなスクリプトを作ってCmderのTaskに登録して使っている。</p><pre><code class="powershell">$waken = Test-Connection -TargetName $ip -Count 1 -Quiet
+if &#40;!$waken&#41; {
+    Write-Output &quot;target not found. please start up $ip&quot;
+    $Host.UI.RawUI.ReadKey&#40;&#41; | Out-Null
+    exit
+}
+ssh &quot;admin@$ip&quot;
+</code></pre><p><a href='https://blog.shibata.tech/entry/2016/06/16/231239'>Test-Connectionが遅い理由と対策方法について - しばたテックブログ</a></p><p>↑このような話もあるようなので目を通しておきたいところ🤔</p><h3 id="おまけ">おまけ</h3><p><a href='https://qiita.com/twinkfrag/items/f3ecf79b68ea09eadec2'>PowerShellでPause - Qiita</a></p><p>最近のPowerShellには<code>Pause</code>なるもんがデフォで入ってるが、古来からの方法でEnter以外のキーでも使えるようにしておくのが良いであらうか？</p><pre><code class="powershell">Write-Output &quot;type key to continue...&quot;
+$Host.UI.RawUI.ReadKey&#40;&#41; | Out-Null
+</code></pre><p>スクリプトの中でコレを呼んだら、なんかのキーを押すまで止まる。</p><p>戻り値が標準出力されないようにするために<code>Out-Null</code>にパイプラインする。<code>$null</code>に代入でもよいが。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2019-02-11-Register-ArgumentCompleter2">2019-02-11 Register-ArgumentCompleterのScriptBlockの引数</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-        <li>
-            <a href="/posts/2019-02-04-Register-ArgumentCompleter">2019-02-04 Register-ArgumentCompleter</a>
-        </li>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2019-02-11-Register-ArgumentCompleter2">2019-02-11 Register-ArgumentCompleterのScriptBlockの引数 &raquo;</a>
+        
+    </div>
+
     
-    </ul>
+
+
 </div>
 
             </div>
