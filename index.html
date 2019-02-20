@@ -111,7 +111,7 @@ if &#40;!$waken&#41; {
 ssh &quot;admin@$ip&quot;
 </code></pre><p><a href='https://blog.shibata.tech/entry/2016/06/16/231239'>Test-Connectionが遅い理由と対策方法について - しばたテックブログ</a></p><p>↑このような話もあるようなので目を通しておきたいところ🤔</p><h3 id="おまけ">おまけ</h3><p><a href='https://qiita.com/twinkfrag/items/f3ecf79b68ea09eadec2'>PowerShellでPause - Qiita</a></p><p>最近のPowerShellには<code>Pause</code>なるもんがデフォで入ってるが、古来からの方法でEnter以外のキーでも使えるようにしておくのが良いであらうか？</p><pre><code class="powershell">Write-Output &quot;type key to continue...&quot;
 $Host.UI.RawUI.ReadKey&#40;&#41; | Out-Null
-</code></pre><p>スクリプトの中でコレを呼んだら、なんかのキーを押すまで止まる。</p><p>戻り値が標準出力されないようにするために<code>Out-Null</code>にパイプラインする。<code>$null</code>に代入でもよいが。</p>
+</code></pre><p>スクリプトの中でコレを呼んだら、なんかのキーを押すまで止まる。</p><p>戻り値が標準出力されないようにするために<code>Out-Null</code>にパイプラインする。<code>$null</code>に代入でもよいが。</p><h3 id="余談">余談</h3><p>この記事をしたためておるときに<code>lein ring server</code>でエラーが出るようになってたのを解消したので、メモがてら次回に記す。</p>
 </div>
 
 <div id="post-tags">
