@@ -12,11 +12,487 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Wed, 20 Feb 2019 23:12:32 +0900
+Sun, 24 Feb 2019 16:38:51 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-02-24_lein-ring-server-error
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-02-24_lein-ring-server-error
+</link>
+<title>
+lein ringでエラーが発生した
+</title>
+<description>
+&lt;p&gt;&lt;a href='./2019-02-20-instead-of-ping.md'&gt;前回&lt;/a&gt;以下のコメントを残した&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt; この記事をしたためておるときに&lt;code&gt;lein ring server&lt;/code&gt;でエラーが出るようになってたのを解消したので、メモがてら次回に記す。 &lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;どのような状況だったかを以下に記すと&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;lein ring server
+clojure.lang.Compiler$CompilerException: Syntax error macroexpanding clojure.core/fn at &amp;#40;clojure/core/unify.clj:83:18&amp;#41;.
+#:clojure.error{:phase :macro-syntax-check, :line 83, :column 18, :source &amp;quot;clojure/core/unify.clj&amp;quot;, :symbol clojure.core/fn}
+ at clojure.lang.Compiler.checkSpecs &amp;#40;Compiler.java:6971&amp;#41;
+    clojure.lang.Compiler.macroexpand1 &amp;#40;Compiler.java:6987&amp;#41;
+    clojure.lang.Compiler.analyzeSeq &amp;#40;Compiler.java:7092&amp;#41;
+    clojure.lang.Compiler.analyze &amp;#40;Compiler.java:6789&amp;#41;
+    clojure.lang.Compiler.analyzeSeq &amp;#40;Compiler.java:7094&amp;#41;
+    clojure.lang.Compiler.analyze &amp;#40;Compiler.java:6789&amp;#41;
+    clojure.lang.Compiler.access$300 &amp;#40;Compiler.java:38&amp;#41;
+    clojure.lang.Compiler$DefExpr$Parser.parse &amp;#40;Compiler.java:596&amp;#41;
+    clojure.lang.Compiler.analyzeSeq &amp;#40;Compiler.java:7106&amp;#41;
+    clojure.lang.Compiler.analyze &amp;#40;Compiler.java:6789&amp;#41;
+    clojure.lang.Compiler.analyze &amp;#40;Compiler.java:6745&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7180&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$require.invokeStatic &amp;#40;core.clj:6007&amp;#41;
+    clojure.core$require.doInvoke &amp;#40;core.clj:6007&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:421&amp;#41;
+    clojure.core.contracts.impl.transformers$eval690$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;691.invoke &amp;#40;transformers.clj:1&amp;#41;
+    clojure.core.contracts.impl.transformers$eval690.invokeStatic &amp;#40;transformers.clj:1&amp;#41;
+    clojure.core.contracts.impl.transformers$eval690.invoke &amp;#40;transformers.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$require.invokeStatic &amp;#40;core.clj:6007&amp;#41;
+    clojure.core$require.doInvoke &amp;#40;core.clj:6007&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    leinjacker.defconstrainedfn$eval684$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;685.invoke &amp;#40;defconstrainedfn.clj:1&amp;#41;
+    leinjacker.defconstrainedfn$eval684.invokeStatic &amp;#40;defconstrainedfn.clj:1&amp;#41;
+    leinjacker.defconstrainedfn$eval684.invoke &amp;#40;defconstrainedfn.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:669&amp;#41;
+    clojure.core$use.invokeStatic &amp;#40;core.clj:6093&amp;#41;
+    clojure.core$use.doInvoke &amp;#40;core.clj:6093&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    leinjacker.deps$eval676$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;677.invoke &amp;#40;deps.clj:1&amp;#41;
+    leinjacker.deps$eval676.invokeStatic &amp;#40;deps.clj:1&amp;#41;
+    leinjacker.deps$eval676.invoke &amp;#40;deps.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$require.invokeStatic &amp;#40;core.clj:6007&amp;#41;
+    clojure.core$require.doInvoke &amp;#40;core.clj:6007&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:436&amp;#41;
+    leiningen.ring.server$eval668$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;669.invoke &amp;#40;server.clj:1&amp;#41;
+    leiningen.ring.server$eval668.invokeStatic &amp;#40;server.clj:1&amp;#41;
+    leiningen.ring.server$eval668.invoke &amp;#40;server.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:669&amp;#41;
+    clojure.core$use.invokeStatic &amp;#40;core.clj:6093&amp;#41;
+    clojure.core$use.doInvoke &amp;#40;core.clj:6093&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:551&amp;#41;
+    leiningen.ring$eval662$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;663.invoke &amp;#40;ring.clj:1&amp;#41;
+    leiningen.ring$eval662.invokeStatic &amp;#40;ring.clj:1&amp;#41;
+    leiningen.ring$eval662.invoke &amp;#40;ring.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$require.invokeStatic &amp;#40;core.clj:6007&amp;#41;
+    clojure.core$require.doInvoke &amp;#40;core.clj:6007&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    leiningen.core.utils$require&amp;#95;resolve.invokeStatic &amp;#40;utils.clj:102&amp;#41;
+    leiningen.core.utils$require&amp;#95;resolve.invoke &amp;#40;utils.clj:95&amp;#41;
+    leiningen.core.utils$require&amp;#95;resolve.invokeStatic &amp;#40;utils.clj:105&amp;#41;
+    leiningen.core.utils$require&amp;#95;resolve.invoke &amp;#40;utils.clj:95&amp;#41;
+    leiningen.core.main$lookup&amp;#95;task&amp;#95;var.invokeStatic &amp;#40;main.clj:69&amp;#41;
+    leiningen.core.main$lookup&amp;#95;task&amp;#95;var.invoke &amp;#40;main.clj:65&amp;#41;
+    leiningen.core.main$pass&amp;#95;through&amp;#95;help&amp;#95;QMARK&amp;#95;.invokeStatic &amp;#40;main.clj:79&amp;#41;
+    leiningen.core.main$pass&amp;#95;through&amp;#95;help&amp;#95;QMARK&amp;#95;.invoke &amp;#40;main.clj:73&amp;#41;
+    leiningen.core.main$task&amp;#95;args.invokeStatic &amp;#40;main.clj:82&amp;#41;
+    leiningen.core.main$task&amp;#95;args.invoke &amp;#40;main.clj:81&amp;#41;
+    leiningen.core.main$resolve&amp;#95;and&amp;#95;apply.invokeStatic &amp;#40;main.clj:339&amp;#41;
+    leiningen.core.main$resolve&amp;#95;and&amp;#95;apply.invoke &amp;#40;main.clj:336&amp;#41;
+    leiningen.core.main$&amp;#95;main$fn&amp;#95;&amp;#95;6771.invoke &amp;#40;main.clj:449&amp;#41;
+    leiningen.core.main$&amp;#95;main.invokeStatic &amp;#40;main.clj:439&amp;#41;
+    leiningen.core.main$&amp;#95;main.doInvoke &amp;#40;main.clj:436&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.lang.Var.applyTo &amp;#40;Var.java:705&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:665&amp;#41;
+    clojure.main$main&amp;#95;opt.invokeStatic &amp;#40;main.clj:491&amp;#41;
+    clojure.main$main&amp;#95;opt.invoke &amp;#40;main.clj:487&amp;#41;
+    clojure.main$main.invokeStatic &amp;#40;main.clj:598&amp;#41;
+    clojure.main$main.doInvoke &amp;#40;main.clj:561&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.lang.Var.applyTo &amp;#40;Var.java:705&amp;#41;
+    clojure.main.main &amp;#40;main.java:37&amp;#41;
+Caused by: clojure.lang.ExceptionInfo: Call to clojure.core/fn did not conform to spec.
+#:clojure.spec.alpha{:problems &amp;#40;{:path &amp;#91;:fn-tail :arity-1 :params&amp;#93;, :pred clojure.core/vector?, :val clojure.core.unify/var-unify, :via &amp;#91;:clojure.core.specs.alpha/params+body :clojure.core.specs.alpha/param-list :clojure.core.specs.alpha/param-list&amp;#93;, :in &amp;#91;0&amp;#93;} {:path &amp;#91;:fn-tail :arity-n&amp;#93;, :pred &amp;#40;clojure.core/fn &amp;#91;%&amp;#93; &amp;#40;clojure.core/or &amp;#40;clojure.core/nil? %&amp;#41; &amp;#40;clojure.core/sequential? %&amp;#41;&amp;#41;&amp;#41;, :val clojure.core.unify/var-unify, :via &amp;#91;:clojure.core.specs.alpha/params+body :clojure.core.specs.alpha/params+body&amp;#93;, :in &amp;#91;0&amp;#93;}&amp;#41;,
+:spec #object&amp;#91;clojure.spec.alpha$regex&amp;#95;spec&amp;#95;impl$reify&amp;#95;&amp;#95;2509 0x4f379769 &amp;quot;clojure.spec.alpha$regex&amp;#95;spec&amp;#95;impl$reify&amp;#95;&amp;#95;2509@4f379769&amp;quot;&amp;#93;, :value &amp;#40;clojure.core.unify/var-unify &amp;#91;G&amp;#95;&amp;#95;800 G&amp;#95;&amp;#95;801 G&amp;#95;&amp;#95;802 G&amp;#95;&amp;#95;803&amp;#93; &amp;#40;clojure.core/if-let &amp;#91;vb&amp;#95;&amp;#95;793&amp;#95;&amp;#95;auto&amp;#95;&amp;#95; &amp;#40;G&amp;#95;&amp;#95;803 G&amp;#95;&amp;#95;801&amp;#41;&amp;#93; &amp;#40;clojure.core.unify/garner-unifiers G&amp;#95;&amp;#95;800 vb&amp;#95;&amp;#95;793&amp;#95;&amp;#95;auto&amp;#95;&amp;#95; G&amp;#95;&amp;#95;802 G&amp;#95;&amp;#95;803&amp;#41; &amp;#40;clojure.core/if-let &amp;#91;vexpr&amp;#95;&amp;#95;794&amp;#95;&amp;#95;auto&amp;#95;&amp;#95; &amp;#40;clojure.core/and &amp;#40;G&amp;#95;&amp;#95;800 G&amp;#95;&amp;#95;802&amp;#41; &amp;#40;G&amp;#95;&amp;#95;803 G&amp;#95;&amp;#95;802&amp;#41;&amp;#41;&amp;#93; &amp;#40;clojure.core.unify/garner-unifiers G&amp;#95;&amp;#95;800 G&amp;#95;&amp;#95;801 vexpr&amp;#95;&amp;#95;794&amp;#95;&amp;#95;auto&amp;#95;&amp;#95; G&amp;#95;&amp;#95;803&amp;#41; &amp;#40;if &amp;#40;clojure.core.unify/occurs? G&amp;#95;&amp;#95;800 G&amp;#95;&amp;#95;801 G&amp;#95;&amp;#95;802 G&amp;#95;&amp;#95;803&amp;#41; &amp;#40;throw &amp;#40;java.lang.IllegalStateException. &amp;#40;clojure.core/str &amp;quot;Cycle found in the path &amp;quot; G&amp;#95;&amp;#95;802&amp;#41;&amp;#41;&amp;#41; &amp;#40;clojure.core.unify/bind-phase G&amp;#95;&amp;#95;803 G&amp;#95;&amp;#95;801 G&amp;#95;&amp;#95;802&amp;#41;&amp;#41;&amp;#41;&amp;#41;&amp;#41;, :args &amp;#40;clojure.core.unify/var-unify &amp;#91;G&amp;#95;&amp;#95;800 G&amp;#95;&amp;#95;801 G&amp;#95;&amp;#95;802 G&amp;#95;&amp;#95;803&amp;#93; &amp;#40;clojure.core/if-let &amp;#91;vb&amp;#95;&amp;#95;793&amp;#95;&amp;#95;auto&amp;#95;&amp;#95; &amp;#40;G&amp;#95;&amp;#95;803 G&amp;#95;&amp;#95;801&amp;#41;&amp;#93; &amp;#40;clojure.core.unify/garner-unifiers G&amp;#95;&amp;#95;800 vb&amp;#95;&amp;#95;793&amp;#95;&amp;#95;auto&amp;#95;&amp;#95; G&amp;#95;&amp;#95;802 G&amp;#95;&amp;#95;803&amp;#41; &amp;#40;clojure.core/if-let &amp;#91;vexpr&amp;#95;&amp;#95;794&amp;#95;&amp;#95;auto&amp;#95;&amp;#95; &amp;#40;clojure.core/and &amp;#40;G&amp;#95;&amp;#95;800 G&amp;#95;&amp;#95;802&amp;#41; &amp;#40;G&amp;#95;&amp;#95;803 G&amp;#95;&amp;#95;802&amp;#41;&amp;#41;&amp;#93; &amp;#40;clojure.core.unify/garner-unifiers G&amp;#95;&amp;#95;800 G&amp;#95;&amp;#95;801 vexpr&amp;#95;&amp;#95;794&amp;#95;&amp;#95;auto&amp;#95;&amp;#95; G&amp;#95;&amp;#95;803&amp;#41; &amp;#40;if &amp;#40;clojure.core.unify/occurs? G&amp;#95;&amp;#95;800 G&amp;#95;&amp;#95;801 G&amp;#95;&amp;#95;802 G&amp;#95;&amp;#95;803&amp;#41; &amp;#40;throw &amp;#40;java.lang.IllegalStateException. &amp;#40;clojure.core/str &amp;quot;Cycle found in the path &amp;quot; G&amp;#95;&amp;#95;802&amp;#41;&amp;#41;&amp;#41; &amp;#40;clojure.core.unify/bind-phase G&amp;#95;&amp;#95;803 G&amp;#95;&amp;#95;801 G&amp;#95;&amp;#95;802&amp;#41;&amp;#41;&amp;#41;&amp;#41;&amp;#41;}
+ at clojure.spec.alpha$macroexpand&amp;#95;check.invokeStatic &amp;#40;alpha.clj:705&amp;#41;
+    clojure.spec.alpha$macroexpand&amp;#95;check.invoke &amp;#40;alpha.clj:697&amp;#41;
+    clojure.lang.AFn.applyToHelper &amp;#40;AFn.java:156&amp;#41;
+    clojure.lang.AFn.applyTo &amp;#40;AFn.java:144&amp;#41;
+    clojure.lang.Var.applyTo &amp;#40;Var.java:705&amp;#41;
+    clojure.lang.Compiler.checkSpecs &amp;#40;Compiler.java:6969&amp;#41;
+    clojure.lang.Compiler.macroexpand1 &amp;#40;Compiler.java:6987&amp;#41;
+    clojure.lang.Compiler.analyzeSeq &amp;#40;Compiler.java:7092&amp;#41;
+    clojure.lang.Compiler.analyze &amp;#40;Compiler.java:6789&amp;#41;
+    clojure.lang.Compiler.analyzeSeq &amp;#40;Compiler.java:7094&amp;#41;
+    clojure.lang.Compiler.analyze &amp;#40;Compiler.java:6789&amp;#41;
+    clojure.lang.Compiler.access$300 &amp;#40;Compiler.java:38&amp;#41;
+    clojure.lang.Compiler$DefExpr$Parser.parse &amp;#40;Compiler.java:596&amp;#41;
+    clojure.lang.Compiler.analyzeSeq &amp;#40;Compiler.java:7106&amp;#41;
+    clojure.lang.Compiler.analyze &amp;#40;Compiler.java:6789&amp;#41;
+    clojure.lang.Compiler.analyze &amp;#40;Compiler.java:6745&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7180&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$require.invokeStatic &amp;#40;core.clj:6007&amp;#41;
+    clojure.core$require.doInvoke &amp;#40;core.clj:6007&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:421&amp;#41;
+    clojure.core.contracts.impl.transformers$eval690$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;691.invoke &amp;#40;transformers.clj:1&amp;#41;
+    clojure.core.contracts.impl.transformers$eval690.invokeStatic &amp;#40;transformers.clj:1&amp;#41;
+    clojure.core.contracts.impl.transformers$eval690.invoke &amp;#40;transformers.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$require.invokeStatic &amp;#40;core.clj:6007&amp;#41;
+    clojure.core$require.doInvoke &amp;#40;core.clj:6007&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    leinjacker.defconstrainedfn$eval684$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;685.invoke &amp;#40;defconstrainedfn.clj:1&amp;#41;
+    leinjacker.defconstrainedfn$eval684.invokeStatic &amp;#40;defconstrainedfn.clj:1&amp;#41;
+    leinjacker.defconstrainedfn$eval684.invoke &amp;#40;defconstrainedfn.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:669&amp;#41;
+    clojure.core$use.invokeStatic &amp;#40;core.clj:6093&amp;#41;
+    clojure.core$use.doInvoke &amp;#40;core.clj:6093&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    leinjacker.deps$eval676$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;677.invoke &amp;#40;deps.clj:1&amp;#41;
+    leinjacker.deps$eval676.invokeStatic &amp;#40;deps.clj:1&amp;#41;
+    leinjacker.deps$eval676.invoke &amp;#40;deps.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$require.invokeStatic &amp;#40;core.clj:6007&amp;#41;
+    clojure.core$require.doInvoke &amp;#40;core.clj:6007&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:436&amp;#41;
+    leiningen.ring.server$eval668$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;669.invoke &amp;#40;server.clj:1&amp;#41;
+    leiningen.ring.server$eval668.invokeStatic &amp;#40;server.clj:1&amp;#41;
+    leiningen.ring.server$eval668.invoke &amp;#40;server.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:669&amp;#41;
+    clojure.core$use.invokeStatic &amp;#40;core.clj:6093&amp;#41;
+    clojure.core$use.doInvoke &amp;#40;core.clj:6093&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:551&amp;#41;
+    leiningen.ring$eval662$loading&amp;#95;&amp;#95;6706&amp;#95;&amp;#95;auto&amp;#95;&amp;#95;&amp;#95;&amp;#95;663.invoke &amp;#40;ring.clj:1&amp;#41;
+    leiningen.ring$eval662.invokeStatic &amp;#40;ring.clj:1&amp;#41;
+    leiningen.ring$eval662.invoke &amp;#40;ring.clj:1&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7176&amp;#41;
+    clojure.lang.Compiler.eval &amp;#40;Compiler.java:7165&amp;#41;
+    clojure.lang.Compiler.load &amp;#40;Compiler.java:7635&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:381&amp;#41;
+    clojure.lang.RT.loadResourceScript &amp;#40;RT.java:372&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:463&amp;#41;
+    clojure.lang.RT.load &amp;#40;RT.java:428&amp;#41;
+    clojure.core$load$fn&amp;#95;&amp;#95;6824.invoke &amp;#40;core.clj:6126&amp;#41;
+    clojure.core$load.invokeStatic &amp;#40;core.clj:6125&amp;#41;
+    clojure.core$load.doInvoke &amp;#40;core.clj:6109&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    clojure.core$load&amp;#95;one.invokeStatic &amp;#40;core.clj:5908&amp;#41;
+    clojure.core$load&amp;#95;one.invoke &amp;#40;core.clj:5903&amp;#41;
+    clojure.core$load&amp;#95;lib$fn&amp;#95;&amp;#95;6765.invoke &amp;#40;core.clj:5948&amp;#41;
+    clojure.core$load&amp;#95;lib.invokeStatic &amp;#40;core.clj:5947&amp;#41;
+    clojure.core$load&amp;#95;lib.doInvoke &amp;#40;core.clj:5928&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:142&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$load&amp;#95;libs.invokeStatic &amp;#40;core.clj:5985&amp;#41;
+    clojure.core$load&amp;#95;libs.doInvoke &amp;#40;core.clj:5969&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:667&amp;#41;
+    clojure.core$require.invokeStatic &amp;#40;core.clj:6007&amp;#41;
+    clojure.core$require.doInvoke &amp;#40;core.clj:6007&amp;#41;
+    clojure.lang.RestFn.invoke &amp;#40;RestFn.java:408&amp;#41;
+    leiningen.core.utils$require&amp;#95;resolve.invokeStatic &amp;#40;utils.clj:102&amp;#41;
+    leiningen.core.utils$require&amp;#95;resolve.invoke &amp;#40;utils.clj:95&amp;#41;
+    leiningen.core.utils$require&amp;#95;resolve.invokeStatic &amp;#40;utils.clj:105&amp;#41;
+    leiningen.core.utils$require&amp;#95;resolve.invoke &amp;#40;utils.clj:95&amp;#41;
+    leiningen.core.main$lookup&amp;#95;task&amp;#95;var.invokeStatic &amp;#40;main.clj:69&amp;#41;
+    leiningen.core.main$lookup&amp;#95;task&amp;#95;var.invoke &amp;#40;main.clj:65&amp;#41;
+    leiningen.core.main$pass&amp;#95;through&amp;#95;help&amp;#95;QMARK&amp;#95;.invokeStatic &amp;#40;main.clj:79&amp;#41;
+    leiningen.core.main$pass&amp;#95;through&amp;#95;help&amp;#95;QMARK&amp;#95;.invoke &amp;#40;main.clj:73&amp;#41;
+    leiningen.core.main$task&amp;#95;args.invokeStatic &amp;#40;main.clj:82&amp;#41;
+    leiningen.core.main$task&amp;#95;args.invoke &amp;#40;main.clj:81&amp;#41;
+    leiningen.core.main$resolve&amp;#95;and&amp;#95;apply.invokeStatic &amp;#40;main.clj:339&amp;#41;
+    leiningen.core.main$resolve&amp;#95;and&amp;#95;apply.invoke &amp;#40;main.clj:336&amp;#41;
+    leiningen.core.main$&amp;#95;main$fn&amp;#95;&amp;#95;6771.invoke &amp;#40;main.clj:449&amp;#41;
+    leiningen.core.main$&amp;#95;main.invokeStatic &amp;#40;main.clj:439&amp;#41;
+    leiningen.core.main$&amp;#95;main.doInvoke &amp;#40;main.clj:436&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.lang.Var.applyTo &amp;#40;Var.java:705&amp;#41;
+    clojure.core$apply.invokeStatic &amp;#40;core.clj:665&amp;#41;
+    clojure.main$main&amp;#95;opt.invokeStatic &amp;#40;main.clj:491&amp;#41;
+    clojure.main$main&amp;#95;opt.invoke &amp;#40;main.clj:487&amp;#41;
+    clojure.main$main.invokeStatic &amp;#40;main.clj:598&amp;#41;
+    clojure.main$main.doInvoke &amp;#40;main.clj:561&amp;#41;
+    clojure.lang.RestFn.applyTo &amp;#40;RestFn.java:137&amp;#41;
+    clojure.lang.Var.applyTo &amp;#40;Var.java:705&amp;#41;
+    clojure.main.main &amp;#40;main.java:37&amp;#41;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;lein ring server&lt;/code&gt;がエラーを吐くようになった。&lt;/p&gt;&lt;p&gt;&lt;code&gt;lein help&lt;/code&gt;で見てみてもringだけエラーが出てる&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;lein help
+Leiningen is a tool for working with Clojure projects.
+
+Several tasks are available:
+change              Rewrite project.clj with f applied to the value at key-or-path.
+check               Check syntax and warn on reflection.
+classpath           Write the classpath of the current project to output-file.
+clean               Removes all files from paths in clean-targets for a project
+compile             Compile Clojure source into .class files.
+deploy              Deploy jar and pom to remote repository.
+deps                Show details about dependencies.
+do                  Higher-order task to perform other tasks in succession.
+help                Display a list of tasks or help for a given task or subtask.
+install             Install jar and pom to the local repository; typically &amp;#126;/.m2.
+jar                 Package up all the project's files into a jar file.
+javac               Compile Java source files.
+new                 Generate scaffolding for a new project based on a template.
+plugin              DEPRECATED. Please use the :user profile instead.
+pom                 Write a pom.xml file to disk for Maven interoperability.
+release             Perform release tasks.
+repl                Start a repl session either with the current project or standalone.
+retest              Run only the test namespaces which failed last time around.
+leiningen.ring  Problem loading: Syntax error macroexpanding clojure.core/fn at &amp;#40;clojure/core/unify.clj:83:18&amp;#41;.
+run                 Run the project's -main function.
+search              Search Central and Clojars for published artifacts.
+show-profiles       List all available profiles or display one if given an argument.
+test                Run the project's tests.
+trampoline          Run a task without nesting the project's JVM inside Leiningen's.
+uberjar             Package up the project files and all dependencies into a jar file.
+update-in           Perform arbitrary transformations on your project map.
+upgrade             Upgrade Leiningen to specified version or latest stable.
+vcs                 Interact with the version control system.
+version             Print version for Leiningen and the current JVM.
+with-profile        Apply the given task with the profile&amp;#40;s&amp;#41; specified.
+
+Run `lein help $TASK` for details.
+
+Global Options:
+  -o             Run a task offline.
+  -U             Run a task after forcing update of snapshots.
+  -h, --help     Print this help or help for a specific task.
+  -v, --version  Print Leiningen's version.
+
+These aliases are available:
+downgrade, expands to upgrade
+
+See also: readme, faq, tutorial, news, sample, profiles, deploying, gpg,
+mixed-source, templates, and copying.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;この前後にPCのソフトウェア更新など諸々してたしJDK更新したからか？と云う気もしたが原因はわからず。&lt;/p&gt;&lt;p&gt;ブログを作るだけなら&lt;code&gt;lein run&lt;/code&gt;すりゃいいだけなのでなくてもよいのだが、見れたほうが良いので他のversionだとどうか試してみたところ、 0.12.5以上でならイケることがわかったので、cryogenの&lt;code&gt;project.clj&lt;/code&gt;に記述されてる&lt;code&gt;lein-ring&lt;/code&gt;のversionを上げることで障害を解消した。&lt;/p&gt;&lt;p&gt;ブログを書くための見えない部分の障害なので最も楽な解決方法でいったが、プロダクトでこれが起こってたらもっとエラーの原因を深掘りしたであろうな🤔&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 24 Feb 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-02-20-instead-of-ping
