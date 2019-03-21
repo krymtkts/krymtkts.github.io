@@ -12,11 +12,74 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 24 Feb 2019 16:38:51 +0900
+Thu, 21 Mar 2019 23:05:25 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-03-21_want-to-run-qunit-in-cli
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-03-21_want-to-run-qunit-in-cli
+</link>
+<title>
+QUnitでCIしたい その1
+</title>
+<description>
+&lt;p&gt;2月に転職した。&lt;/p&gt;&lt;p&gt;へーしゃでの初めての仕事はフロントエンド、と言ってもトラッキングに関わる部分である。&lt;/p&gt;&lt;p&gt;生のES5で書かれてて&lt;a href='https://github.com/google/closure-compiler'&gt;Google Closure Compiler&lt;/a&gt;でminifyされてるようなのだけど、困ったことにユニットテストがない様子？ どこそこのチームで作ってたことがあったらしいという情報は得たので、それをCIに組み込めたらいいかなと思っていた。&lt;/p&gt;&lt;p&gt;蓋を開けてみると、2年間ほどメンテされていない死んだユニットテストで、最新のコードベースに対するテストでなかった(テストコードと同ディレクトリにテスト対象のコードがコピられてて)🤔&lt;/p&gt;&lt;p&gt;CIに組み込まれないテストは陳腐化すると云うが、まさかそれを身をもって実感することになろうとは思わなんだ。&lt;/p&gt;&lt;p&gt;&lt;del&gt;仕方ないので&lt;/del&gt;既存の資産を活かすためにも、テスティングフレームワークなど既存のものを利用して少なくともCIに組み込めるところまでは持っていこうと考えた。CIに組み込まれればビルド失敗の通知を恐れてみんなユニットテストを書くのをサボらなくなる。&lt;/p&gt;&lt;p&gt;というわけで、許可を取り付けた上で仕事の合間を縫ってユニットテストの整備を行うことにした。&lt;/p&gt;&lt;h3 id=&quot;現状把握と展望&quot;&gt;現状把握と展望&lt;/h3&gt;&lt;p&gt;ユニットテストは&lt;a href='https://qunitjs.com/'&gt;QUnit&lt;/a&gt;で書かれていて、モッキングフレームワークには&lt;a href='https://sinonjs.org/'&gt;Sinon.JS&lt;/a&gt;が使われていた。&lt;/p&gt;&lt;p&gt;linterは&lt;a href='https://eslint.org/'&gt;ESLint - Pluggable JavaScript linter&lt;/a&gt;を用意してあるようなのだけどどうも長らく利用されてなかったようで、試しに実行すると41件のautofix可能なエラーが...😅&lt;/p&gt;&lt;p&gt;ブラウザで&lt;code&gt;index.html&lt;/code&gt;を開くことでテストが実行されるタイプのやつで、CLIでの実行は用意されてなかった。 プロダクトコードが&lt;code&gt;window&lt;/code&gt;オブジェクトに依存してることもあって、QUnitのテストをヘッドレスブラウザで実行するのが良さげかな。&lt;/p&gt;&lt;p&gt;ここにカバレッジ計測も追加して、最終的にはプルリクをトリガーにした自動テストがCIに組み込まれるのが良さげかなと思う。&lt;/p&gt;&lt;h3 id=&quot;やったこと＆やらなかったこと&quot;&gt;やったこと＆やらなかったこと&lt;/h3&gt;&lt;p&gt;とりあえずカバレッジは置いといて今あるQUnitのCLI実行を優先した。&lt;/p&gt;&lt;p&gt;nodeでのカバレッジ計測に関しては知らないことが多かったので軽く下調べだけした。 istabulというやつがnode界隈で強かったみたいだが、こいつは2年ほどメンテされてなくて、後続の&lt;a href='https://www.npmjs.com/package/nyc'&gt;nyc - npm&lt;/a&gt;と言うやつがみつかる👀 puppeteerもそれ単体でカバレッジが測れるようす↓&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://www.philkrie.me/2018/07/04/extracting-coverage.html'&gt;Using Puppeteer to Extract Code Coverage Data from Chrome Dev Tools&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://github.com/istanbuljs/puppeteer-to-istanbul'&gt;istanbuljs/puppeteer-to-istanbul: given coverage information output by puppeteer's API output a format consumable by Istanbul reports&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;h4 id=&quot;やったこと&quot;&gt;やったこと&lt;/h4&gt;&lt;p&gt;まず元々あるQUnitもそのまま使えないとブラウザで見つつの開発の利便性も下がっちゃうので、そこは担保したかった。 (&lt;code&gt;window&lt;/code&gt;オブジェクトがないのでCommonJSは死ぬ)&lt;/p&gt;&lt;p&gt;&lt;a href='https://www.npmjs.com/package/qunit-puppeteer'&gt;qunit-puppeteer - npm&lt;/a&gt;は簡単にテスト実行できて楽だったのだけど、テストのurlを絶対パスで指定しないといけず＆自分でURLをこねくり回せなくて却下。&lt;/p&gt;&lt;p&gt;なのでそのへん柔軟な&lt;a href='https://www.npmjs.com/package/node-qunit-puppeteer'&gt;node-qunit-puppeteer - npm&lt;/a&gt;しか選択肢が残らなかったわけだ。&lt;/p&gt;&lt;p&gt;とりま&lt;code&gt;eslint&lt;/code&gt;だけあるからソイツはそのままに、QUnitをheadless browser実行するためのmoduleだけ足す。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;npm install --save-dev node-qunit-puppeteer
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;package.json&lt;/code&gt;は以下のような感じにした&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;json&quot;&gt;  &amp;quot;scripts&amp;quot;: {
+    &amp;quot;lint&amp;quot;: &amp;quot;eslint --fix ./&amp;quot;,
+    &amp;quot;test&amp;quot;: &amp;quot;node test/run.js&amp;quot;
+  },
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;lint&lt;/code&gt;はメンテされてなかった関係で40件くらいのerrorがあるけど、最終的には実行できるようになる(ハズな)ので用意しておく。&lt;/p&gt;&lt;p&gt;&lt;code&gt;test/run.js&lt;/code&gt;は以下の通りで、&lt;a href='https://github.com/ameshkov/node-qunit-puppeteer'&gt;ameshkov/node-qunit-puppeteer: A simple node module for running qunit tests with headless Chromium&lt;/a&gt;のExampleとほぼ同じで行ける便利さ。しびれる。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;#! /usr/bin/env node
+// almost the same as the sample code :-p
+// https://github.com/ameshkov/node-qunit-puppeteer
+
+const path = require&amp;#40;'path'&amp;#41;;
+const { runQunitPuppeteer, printOutput } = require&amp;#40;'node-qunit-puppeteer'&amp;#41;;
+
+const qunitArgs = {
+  targetUrl: `file://${path.join&amp;#40;&amp;#95;&amp;#95;dirname, '/index.html'&amp;#41;}`,
+  redirectConsole: true
+};
+
+runQunitPuppeteer&amp;#40;qunitArgs&amp;#41;
+  .then&amp;#40;&amp;#40;result&amp;#41; =&amp;gt; {
+    // Print the test result to the output
+    printOutput&amp;#40;result, console&amp;#41;;
+    if &amp;#40;result.stats.failed &amp;gt; 0&amp;#41; {
+      // Handle the failed test run
+      // currently notghing to do.
+    }
+  }&amp;#41;
+  .catch&amp;#40;&amp;#40;ex&amp;#41; =&amp;gt; {
+    console.error&amp;#40;ex&amp;#41;;
+  }&amp;#41;;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;実行結果は以下のような感じで出る。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$ npm run test
+
+&amp;gt; qunit@1.0.0 test C:\Users\takatoshi\dev\javascript\qunit
+&amp;gt; node test/run.js
+
+Module: hello module
+  hello test
+    Status: success
+    Passed assertions: 2 of 2
+    Elapsed: 1ms
+
+Test run result: success
+Total tests: 1
+  Assertions: 2
+  Passed assertions: 2
+  Failed assertions: 0
+  Elapsed: 8ms
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;と、ここまで書いた内容を会社のコードに組み込んだのだけど、会社で作ったものは外に出せないので模倣したゴミプロジェクトを作った↓&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/krymtkts/qunit-trial'&gt;krymtkts/qunit-trial: sandbox to enhance legacy QUnit test.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;今後いじくり回すときの砂場としても使おうかな。&lt;/p&gt;&lt;h4 id=&quot;あとやりたいこと&quot;&gt;あとやりたいこと&lt;/h4&gt;&lt;p&gt;ユニットテストだけあってカバレッジ計測がないのはちょっとアレなので早々に追加したい所存🤔&lt;/p&gt;&lt;p&gt;そもそもユニットテスト書くにしてもどの経路通ったとかわからないのでテスト品質を保証しづらく、コード網羅率 Level C1を100%にしたいマンなのもありカバレッジ必須。&lt;/p&gt;&lt;p&gt;でも事前に調べてたnycやpuppeteerでの方法だと、現状のnode-qunit-puppeteerを使ったテストのカバレッジ計測できなさそう...&lt;/p&gt;&lt;p&gt;もう少し調べる必要がありそう😳&lt;/p&gt;&lt;p&gt;続く&lt;/p&gt;
+</description>
+<pubDate>
+Thu, 21 Mar 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-02-24_lein-ring-server-error
