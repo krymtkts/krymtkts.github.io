@@ -12,11 +12,48 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Thu, 21 Mar 2019 23:05:25 +0900
+Sun, 24 Mar 2019 16:29:11 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-03-24_coverage-of-qunt-puppeteer
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-03-24_coverage-of-qunt-puppeteer
+</link>
+<title>
+QUnitでCIしたい その2
+</title>
+<description>
+&lt;p&gt;&lt;a href='./2019-03-21_want-to-run-qunit-in-cli.md'&gt;前回&lt;/a&gt;、QUnitのユニットテストをpuppeteerでCLI実行できるようにした&lt;/p&gt;&lt;p&gt;今回はcode coverageを計測できるようにする。&lt;/p&gt;&lt;h3 id=&quot;前回のおさらい&quot;&gt;前回のおさらい&lt;/h3&gt;&lt;p&gt;puppeteerでJavaScriptのカバレッジを計測することができる(&lt;a href='https://developers.google.com/web/updates/2017/04/devtools-release-notes'&gt;What's New In DevTools (Chrome 59)  |  Web  |  Google Developers&lt;/a&gt;)のだが、現状利用している&lt;a href='https://www.npmjs.com/package/node-qunit-puppeteer'&gt;node-qunit-puppeteer&lt;/a&gt;だと、puppeteerの部分をモジュール外部から触れないので利用できなくて困った、ということろまで書いた。&lt;/p&gt;&lt;p&gt;理想ではユニットテストの実施と同時にカバレッジを計測したいところなのだが、一旦は簡単のために別々に、つまりユニットテストの実行後さらにカバレッジ取得のためにユニットテスを再実行する、というかたちで楽しようと考えた。ユニットテストの実行が軽いうちは2度実行したところで大した負荷にならないというのもあり。&lt;/p&gt;&lt;h3 id=&quot;やったこと&quot;&gt;やったこと&lt;/h3&gt;&lt;p&gt;これ↓&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/istanbuljs/puppeteer-to-istanbul'&gt;istanbuljs/puppeteer-to-istanbul: given coverage information output by puppeteer's API output a format consumable by Istanbul reports&lt;/a&gt;&lt;/p&gt;&lt;p&gt;puppeteerで計測したカバレッジをistanbul(nyc)で利用できる形に書き出すモジュールを使う。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/krymtkts/qunit-trial/blob/master/test/run.js'&gt;すでにあるnode-qunit-puppeteerのテストランナー&lt;/a&gt;と一緒には使えないので、カバレッジ計測のためのスクリプトも新たに書く(無駄)。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;js&quot;&gt;const pti = require&amp;#40;'puppeteer-to-istanbul'&amp;#41;;
+const puppeteer = require&amp;#40;'puppeteer'&amp;#41;;
+const path = require&amp;#40;'path'&amp;#41;;
+
+&amp;#40;async &amp;#40;&amp;#41; =&amp;gt; {
+  try {
+    const browser = await puppeteer.launch&amp;#40;&amp;#41;;
+    const page = await browser.newPage&amp;#40;&amp;#41;;
+
+    await page.coverage.startJSCoverage&amp;#40;&amp;#41;;
+    await page.goto&amp;#40;`file://${path.join&amp;#40;&amp;#95;&amp;#95;dirname, '/index.html'&amp;#41;}`&amp;#41;;
+    const jsCoverage = await page.coverage.stopJSCoverage&amp;#40;&amp;#41;;
+
+    pti.write&amp;#40;jsCoverage&amp;#41;;
+    await browser.close&amp;#40;&amp;#41;;
+  } catch &amp;#40;error&amp;#41; {
+    console.error&amp;#40;error&amp;#41;;
+  }
+}&amp;#41;&amp;#40;&amp;#41;;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これもほぼサンプルママで使えた。読み込ませるページのパスだけ工夫が必要ってだけ。&lt;/p&gt;&lt;p&gt;あとはカバレッジ計測に成功したらnycのレポート作成を実行するだけでおｋ。これをnpmのタスクにする。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;sh&quot;&gt;node test/coverage.js &amp;amp;&amp;amp; nyc report --reporter=html
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これでページを開いたときに読み込まれるJSのカバレッジを計測できた。ただしこのままだと、QUnitやユニットテスト自体のカバレッジも含まれてしまうので、仕事のCIで使う場合なんかには特定のファイルのカバレッジだけを見るか、あるいは除外設定があればいいのだけど。&lt;/p&gt;&lt;h3 id=&quot;まとめ&quot;&gt;まとめ&lt;/h3&gt;&lt;p&gt;また今回試した内容は以下のrepoに反映してある&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/krymtkts/qunit-trial'&gt;krymtkts/qunit-trial: sandbox to enhance legacy QUnit test.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;2回ユニットテストを実行していて無駄感があるので、node-qunit-puppeteerに手を入れることも検討していいかも🤔&lt;/p&gt;&lt;p&gt;続く&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 24 Mar 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-03-21_want-to-run-qunit-in-cli
