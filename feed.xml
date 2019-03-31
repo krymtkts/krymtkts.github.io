@@ -12,11 +12,155 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 24 Mar 2019 16:29:11 +0900
+Sun, 31 Mar 2019 22:46:27 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-03-31-win-openssh-is-gone
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-03-31-win-openssh-is-gone
+</link>
+<title>
+Windows10の更新でOpenSSHが逝った
+</title>
+<description>
+&lt;p&gt;今更ながら、Raser Blade Stealth 2018にもWindows10 ver1809の更新が来てたようだった。&lt;/p&gt;&lt;p&gt;何の気なしに更新してみたところ、更新自体はすぐに終わってあっさりいったなと思っていたのだが、terminalを立ち上げると...&lt;/p&gt;&lt;h3 id=&quot;tl;dr&quot;&gt;TL;DR&lt;/h3&gt;&lt;p&gt;Windows10 ver1809のOpenSSHは既知のバグがあるのでOpenSSH Portableを入れ直そう。&lt;/p&gt;&lt;h3 id=&quot;まずssh&amp;#95;agentのサービスが無効になってた&quot;&gt;まずSSH Agentのサービスが無効になってた&lt;/h3&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;Get-Process : Cannot find a process with the name &amp;quot;ssh-agent&amp;quot;. Verify the process name and call the cmdlet again.
+At C:\Users\takatoshi\OneDrive\Documents\PowerShell\Microsoft.PowerShell&amp;#95;profile.ps1:40 char:8
++ if &amp;#40;! &amp;#40;Get-Process -Name 'ssh-agent'&amp;#41;&amp;#41; {
++        &amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;
++ CategoryInfo          : ObjectNotFound: &amp;#40;ssh-agent:String&amp;#41; &amp;#91;Get-Process&amp;#93;, ProcessCommandException
++ FullyQualifiedErrorId : NoProcessFoundForGivenName,Microsoft.PowerShell.Commands.GetProcessCommand
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;PowerShellのprofileで&lt;code&gt;ssh-agent&lt;/code&gt;のプロセスの存在を確認するようにしてたのだけど、Windowsの更新でサービスの自動実行が無効になってたようなのでこのエラーが...とりあえず今回は手動で自動実行するように変えて終わった。&lt;/p&gt;&lt;p&gt;あとどういうわけかわからないが、PC起動時のサービスの立ち上がりがめちゃくちゃ遅くなった気がする(体感)。PC起動後にすぐterminalを立ち上げると同じエラーがまだ出るから。根治させるにはprofileをいじらないといけないかな🤔&lt;/p&gt;&lt;p&gt;後述の問題に比べれば、こちらは楽しいアクシデント程度のものだ。&lt;/p&gt;&lt;h3 id=&quot;win10備え付けのopensshに既知のバグが有るとか云々&quot;&gt;Win10備え付けのOpenSSHに既知のバグが有るとか云々&lt;/h3&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$ git remote show origin
+warning: agent returned different signature type ssh-rsa &amp;#40;expected rsa-sha2-512&amp;#41;
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;↑この警告が常時出るようになった。むかつく💢&lt;/p&gt;&lt;p&gt;直さな...😭と思ってググってみると...&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/PowerShell/Win32-OpenSSH/issues/1263'&gt;ssh-agent: agent returned different signature type · Issue #1263 · PowerShell/Win32-OpenSSH&lt;/a&gt;&lt;/p&gt;&lt;p&gt;これの様子🤔&lt;/p&gt;&lt;p&gt;更に調べると、これマジIssueやなと思わざるを得ない... -&gt; &lt;a href='https://github.com/PowerShell/openssh-portable/pull/366'&gt;Fixes to ssh-agent issues by manojampalam · Pull Request #366 · PowerShell/openssh-portable&lt;/a&gt;&lt;/p&gt;&lt;p&gt;つまりはバグが直ったOpenSSH-Portbale入れないと解決しないってんでFAかな...キレそう❤&lt;/p&gt;&lt;p&gt;&lt;a href='https://blog.frankfu.com.au/2019/03/21/moving-from-windows-1809s-openssh-to-openssh-portable/'&gt;Moving from Windows 1809's OpenSSH to OpenSSH Portable&lt;/a&gt;&lt;/p&gt;&lt;p&gt;幸いにも同じ障害を解消したブログがあったので助かる🙏&lt;/p&gt;&lt;h4 id=&quot;処置する&quot;&gt;処置する&lt;/h4&gt;&lt;p&gt;&lt;a href='https://blog.frankfu.com.au/2019/03/21/moving-from-windows-1809s-openssh-to-openssh-portable/'&gt;Moving from Windows 1809's OpenSSH to OpenSSH Portable&lt;/a&gt;&lt;/p&gt;&lt;p&gt;この記事にそのまま従えばいける。&lt;/p&gt;&lt;p&gt;Windowsに関わる操作はPowerShell Coreではできないので、PowerShell CoreとWindowsPowerShellを使い分けた(WindowsPowerShellで全部やればいいものを...😅)&lt;/p&gt;&lt;p&gt;Coreでできる範囲から始める。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$ Get-Service -Name ssh-agent | Stop-Service
+$ sc.exe delete ssh-agent
+&amp;#91;SC&amp;#93; DeleteService SUCCESS
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;WindowsPowerShellでしかできない範囲&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$ Remove-WindowsCapability -Online -Name &amp;quot;OpenSSH.Client&amp;#126;&amp;#126;&amp;#126;&amp;#126;0.0.1.0&amp;quot;
+
+
+Path          :
+Online        : True
+RestartNeeded : False
+
+
+
+$  Remove-WindowsCapability -Online -Name &amp;quot;OpenSSH.Server&amp;#126;&amp;#126;&amp;#126;&amp;#126;0.0.1.0&amp;quot;
+
+
+Path          :
+Online        : True
+RestartNeeded : False
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Coreで続きをやる&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$ choco install openssh --package-parameters=&amp;quot;/SSHAgentFeature&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code&gt;Chocolatey v0.10.13
+2 validations performed. 1 success&amp;#40;es&amp;#41;, 1 warning&amp;#40;s&amp;#41;, and 0 error&amp;#40;s&amp;#41;.
+
+Validation Warnings:
+ - A pending system reboot request has been detected, however, this is
+   being ignored due to the current Chocolatey configuration.  If you
+   want to halt when this occurs, then either set the global feature
+   using:
+     choco feature enable -name=exitOnRebootDetected
+   or pass the option --exit-when-reboot-detected.
+
+Installing the following packages:
+openssh
+By installing you accept licenses for the packages.
+Progress: Downloading openssh 7.9.0.1... 100%
+
+openssh v7.9.0.1 &amp;#91;Approved&amp;#93;
+openssh package files install completed. Performing other installation steps.
+The package openssh wants to run 'chocolateyinstall.ps1'.
+Note: If you don't run this script, the installation will fail.
+Note: To confirm automatically next time, use '-y' or consider:
+choco feature enable -n allowGlobalConfirmation
+Do you want to run the script?&amp;#40;&amp;#91;Y&amp;#93;es/&amp;#91;N&amp;#93;o/&amp;#91;P&amp;#93;rint&amp;#41;: y
+
+Running on: Windows 10 Home, &amp;#40;Core&amp;#41;
+Windows Version: 10.0.17763
+
+&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;
+&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;
+This package is a Universal Installer and can ALSO install Win32-OpenSSH on
+Nano, Server Core, Docker Containers and more WITHOUT using Chocolatey.
+
+See the following for more details:
+https://github.com/DarwinJS/ChocoPackages/blob/master/openssh/readme.md
+&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;
+&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;&amp;#42;
+
+/SSHAgentFeature was used, including SSH Agent Service.
+Extracting C:\ProgramData\chocolatey\lib\openssh\tools\OpenSSH-Win64.zip to C:\Users\takatoshi\AppData\Local\Temp\chocolatey\OpenSSHTemp...
+C:\Users\takatoshi\AppData\Local\Temp\chocolatey\OpenSSHTemp
+Source files are internal to the package, checksums are not required nor checked.
+C:\Program Files\OpenSSH-Win64
+C:\Program Files\OpenSSH-Win64\FixHostFilePermissions.ps1
+C:\Program Files\OpenSSH-Win64\FixUserFilePermissions.ps1
+C:\Program Files\OpenSSH-Win64\install-sshd.ps1
+C:\Program Files\OpenSSH-Win64\libcrypto.dll
+C:\Program Files\OpenSSH-Win64\openssh-events.man
+C:\Program Files\OpenSSH-Win64\OpenSSHUtils.psd1
+C:\Program Files\OpenSSH-Win64\OpenSSHUtils.psm1
+C:\Program Files\OpenSSH-Win64\scp.exe
+C:\Program Files\OpenSSH-Win64\sftp-server.exe
+C:\Program Files\OpenSSH-Win64\sftp.exe
+C:\Program Files\OpenSSH-Win64\ssh-add.exe
+C:\Program Files\OpenSSH-Win64\ssh-agent.exe
+C:\Program Files\OpenSSH-Win64\ssh-keygen.exe
+C:\Program Files\OpenSSH-Win64\ssh-keyscan.exe
+C:\Program Files\OpenSSH-Win64\ssh-shellhost.exe
+C:\Program Files\OpenSSH-Win64\ssh.exe
+C:\Program Files\OpenSSH-Win64\sshd.exe
+C:\Program Files\OpenSSH-Win64\sshd&amp;#95;config&amp;#95;default
+C:\Program Files\OpenSSH-Win64\uninstall-sshd.ps1
+C:\Program Files\OpenSSH-Win64\Set-SSHDefaultShell.ps1
+PATH environment variable does not have C:\Program Files\OpenSSH-Win64 in it. Adding...
+Updating machine environment variable TERM from &amp;quot;&amp;quot; to &amp;quot;&amp;quot;
+&amp;#91;SC&amp;#93; SetServiceObjectSecurity SUCCESS
+Starting SSH-Agent...
+
+NEW VERSIONS OF SSH EXES:
+
+FileName                                         FileVersion
+--------                                         -----------
+C:\Program Files\OpenSSH-Win64\scp.exe           7.9.0.0
+C:\Program Files\OpenSSH-Win64\sftp-server.exe   7.9.0.0
+C:\Program Files\OpenSSH-Win64\sftp.exe          7.9.0.0
+C:\Program Files\OpenSSH-Win64\ssh-add.exe       7.9.0.0
+C:\Program Files\OpenSSH-Win64\ssh-agent.exe     7.9.0.0
+C:\Program Files\OpenSSH-Win64\ssh-keygen.exe    7.9.0.0
+C:\Program Files\OpenSSH-Win64\ssh-keyscan.exe   7.9.0.0
+C:\Program Files\OpenSSH-Win64\ssh-shellhost.exe 7.9.0.0
+C:\Program Files\OpenSSH-Win64\ssh.exe           7.9.0.0
+C:\Program Files\OpenSSH-Win64\sshd.exe          7.9.0.0
+
+
+
+
+WARNING: You must start a new prompt, or use the command 'refreshenv' &amp;#40;provided by your chocolatey install&amp;#41; to re-read the environment for the tools to be available in this shell session.
+Environment Vars &amp;#40;like PATH&amp;#41; have changed. Close/reopen your shell to
+ see the changes &amp;#40;or in powershell/cmd.exe just type `refreshenv`&amp;#41;.
+ The install of openssh was successful.
+  Software installed to 'C:\Users\takatoshi\AppData\Local\Temp\chocolatey\OpenSSHTemp'
+
+Chocolatey installed 1/1 packages.
+ See the log for details &amp;#40;C:\ProgramData\chocolatey\logs\chocolatey.log&amp;#41;.
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$ Get-Service ssh-agent
+
+Status   Name               DisplayName
+------   ----               -----------
+Running  ssh-agent          ssh-agent
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$ git config --global core.sshCommand &amp;quot;'C:\Program Files\OpenSSH-Win64\ssh.exe'&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;環境変数PATHを反映させてから、terminalでwariningが消えたのを確認&lt;/p&gt;&lt;h3 id=&quot;振り返り&quot;&gt;振り返り&lt;/h3&gt;&lt;p&gt;Windowsのでかい更新の際はちゃんと注意して取り組まなあかんな🤔(めんどい)&lt;/p&gt;&lt;p&gt;あとこれまた既知の別件なのだけど、ver1809だとterminalのemojiの表示が中点とかに化けるので、これもなんとかしたいわ...&lt;/p&gt;&lt;p&gt;Cmder/ConEmuじゃなくてWindows自体の問題みたい。&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 31 Mar 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-03-24_coverage-of-qunt-puppeteer
