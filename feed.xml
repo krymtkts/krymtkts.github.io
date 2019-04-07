@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Tue, 02 Apr 2019 23:04:41 +0900
+Mon, 08 Apr 2019 00:17:01 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-04-07-lint-my-statement
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-04-07-lint-my-statement
+</link>
+<title>
+下手な文章をLintする
+</title>
+<description>
+&lt;p&gt;転職してから2ヶ月の間、海外労働者の同僚から、日本語のドキュメントも英語のドキュメントもレビューコメントをいただいていてつらい。&lt;/p&gt;&lt;p&gt;英語だけならまだしろ、わしゃ日本語もろくに扱えん日本人なんかと思うと涙ちょちょぎれる次第であります。&lt;/p&gt;&lt;p&gt;なので自分の文章にLintをかけようと思った。&lt;/p&gt;&lt;h3 id=&quot;textlint&quot;&gt;textlint&lt;/h3&gt;&lt;p&gt;いつだったか文章のLinterについてググってたら、以下のようなものを見つけた。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://github.com/textlint/textlint'&gt;GitHub - textlint/textlint&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://qiita.com/azu/items/2c565a38df5ed4c9f4e1'&gt;Qiita - VS Codeでtextlintを使って文章をチェックする&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing'&gt;textlint-ja/textlint-rule-preset-ja-technical-writing: 技術文書向けのtextlintルールプリセット&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;...すげえな！近い内に使えるようにしよう。と思ってから数ヶ月後、実務でまともな文章を書く能力が必要になるとわ...😭 というかvscode-textlintってホイル焼きで有名な方の作品なのですね。敬意を払うべきプロダクトだ。&lt;/p&gt;&lt;p&gt;以下にわたしのセットアップ手順を記す(実行はPowerShellだよ)。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;VSCodeでvscode-textlinを入れる&lt;/li&gt;&lt;li&gt;&lt;code&gt;npm i -g textlint textlint-rule-preset-ja-technical-writing&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;cd &amp;#126;&lt;/code&gt;で&lt;code&gt;textlint &amp;ndash;init&lt;/code&gt;してルールを書き込み&lt;/li&gt;&lt;li&gt;VSCodeでは設定ファイルを絶対パスで利用するからどうしたものか...(複数端末でSyncしてる関係で)&lt;ol&gt;&lt;li&gt;&lt;code&gt;&amp;#126;/,textlint&lt;/code&gt;にしたらユーザ名とか考えなくていいから、なんかいい😁&lt;/li&gt;&lt;/ol&gt;&lt;/li&gt;&lt;li&gt;ついかパッケージ &lt;code&gt;npm i -g textlint-rule-date-weekday-mismatch textlint-rule-terminology textlint-rule-ginger&lt;/code&gt;&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;これで簡単なtypoは減らせるんじゃないかな。&lt;/p&gt;&lt;p&gt;お気に入りのルールは&lt;code&gt;textlint-rule-date-weekday-mismatch&lt;/code&gt;。これからのオレが曜日を間違うことはないぜええええ？(フラグ&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 07 Apr 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-04-02-pubslish-first-module-to-powershell-gallery

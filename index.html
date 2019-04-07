@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-04-07-lint-my-statement">下手な文章をLintする</a></li>
+                        
                         <li><a href="/posts/2019-04-02-pubslish-first-module-to-powershell-gallery">はじめてのPowerShell Galleryへの公開</a></li>
                         
                         <li><a href="/posts/2019-03-31-win-openssh-is-gone">Windows10の更新でOpenSSHが逝った</a></li>
-                        
-                        <li><a href="/posts/2019-03-24_coverage-of-qunt-puppeteer">QUnitでCIしたい その2</a></li>
                         
                         
 
@@ -74,6 +74,8 @@
                         
                         <li><a href="/tags/clojure">clojure</a></li>
                         
+                        <li><a href="/tags/vscode">vscode</a></li>
+                        
                         <li><a href="/tags/openssh">openssh</a></li>
                         
                         <li><a href="/tags/powershell">powershell</a></li>
@@ -85,6 +87,8 @@
                         <li><a href="/tags/windows">windows</a></li>
                         
                         <li><a href="/tags/maven">maven</a></li>
+                        
+                        <li><a href="/tags/textlin">textlin</a></li>
                         
                         <li><a href="/tags/qmkfirmware">qmkfirmware</a></li>
                         
@@ -111,118 +115,24 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-04-02</div>
+        <div class="col-lg-6">2019-04-07</div>
         
     </div>
-    <h2>はじめてのPowerShell Galleryへの公開</h2>
+    <h2>下手な文章をLintする</h2>
 </div>
 <div>
     
-    <p>先日、自前のモジュールをPowerShell Galleryに公開したので、その時のメモを記す。</p><p><a href='https://www.powershellgallery.com/packages/MavenAutoCompletion/0.1'>PowerShell Gallery | MavenAutoCompletion 0.1</a></p><p>PowerShell Galleryのアカウントを作るだとか、モジュールのAnalysisだとかはまた別で書こう。ここではモジュールの公開の部分だけ。</p><h3 id="tl;dr">TL;DR</h3><p><code>Poblish-Module</code>は除外ファイル設定とかないから公開時には注意しましょう😭</p><h3 id="モジュールの公開">モジュールの公開</h3><p>以下の手順に従う。</p><p><a href='https://docs.microsoft.com/ja-jp/powershell/gallery/how-to/publishing-packages/publishing-a-package'>アイテムの作成と公開 | Microsoft Docs</a></p><p>事前にチェックしろよな！！！と書いてるのでそれに従い以下のコマンドを実行する</p><pre><code class="powershell">Publish-Module -Path &quot;.\MavenAutoCompletion&quot; -NugetAPIKey &quot;キーは見せられないよ&quot; -WhatIf -Verbose
-</code></pre><p>途中で最新のNuGet入れるかい？と聞かれるのでそれはYesで。</p><pre><code class="powershell">$ Publish-Module -Path &quot;.\MavenAutoCompletion&quot; -NugetAPIKey &quot;キーは見せられないよ&quot; -WhatIf -Verbose
-VERBOSE: Acquiring providers for assembly: C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\PackageManagement\1.3.1\coreclr\netstandard2.0\Microsoft.PackageManagement.NuGetProvider.dll
-VERBOSE: Acquiring providers for assembly: C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\PackageManagement\1.3.1\coreclr\netstandard2.0\Microsoft.PackageManagement.MetaProvider.PowerShell.dll
-VERBOSE: Acquiring providers for assembly: C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\PackageManagement\1.3.1\coreclr\netstandard2.0\Microsoft.PackageManagement.ArchiverProviders.dll
-VERBOSE: Acquiring providers for assembly: C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\PackageManagement\1.3.1\coreclr\netstandard2.0\Microsoft.PackageManagement.CoreProviders.dll
-
-NuGet.exe is required to continue
-This version of PowerShellGet requires minimum version '4.1.0' of NuGet.exe to publish an item to the
-NuGet-based repositories. NuGet.exe must be available in
-'C:\ProgramData\Microsoft\Windows\PowerShell\PowerShellGet\' or
-'C:\Users\takatoshi\AppData\Local\Microsoft\Windows\PowerShell\PowerShellGet\', or under one of the
-paths specified in PATH environment variable value. NuGet.exe can be downloaded from
-https://aka.ms/psget-nugetexe. For more information, see https://aka.ms/installing-powershellget . Do
-you want PowerShellGet to install the latest version of NuGet.exe now?
-&#91;Y&#93; Yes  &#91;N&#93; No  &#91;S&#93; Suspend  &#91;?&#93; Help &#40;default is &quot;Y&quot;&#41;: y
-VERBOSE: Installing NuGet.exe.
-VERBOSE: GET https://aka.ms/psget-nugetexe with 0-byte payload
-VERBOSE: received 5690456-byte response of content type application/x-msdownload
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Publish Location:'https://www.powershellgallery.com/api/v2/package/'.
-VERBOSE: Module 'MavenAutoCompletion' was found in 'C:\Users\takatoshi\dev\powershell\MavenAutoCompletion'.
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Using the provider 'PowerShellGet' for searching packages.
-VERBOSE: Using the specified source names : 'PSGallery'.
-VERBOSE: Getting the provider object for the PackageManagement Provider 'NuGet'.
-VERBOSE: The specified Location is 'https://www.powershellgallery.com/api/v2/items/psscript/' and PackageManagementProvider is 'NuGet'.
-VERBOSE: Searching repository 'https://www.powershellgallery.com/api/v2/items/psscript/FindPackagesById&#40;&#41;?id='MavenAutoCompletion'' for ''.
-VERBOSE: Total package yield:'0' for the specified package 'MavenAutoCompletion'.
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Using the provider 'PowerShellGet' for searching packages.
-VERBOSE: Using the specified source names : 'PSGallery'.
-VERBOSE: Getting the provider object for the PackageManagement Provider 'NuGet'.
-VERBOSE: The specified Location is 'https://www.powershellgallery.com/api/v2/' and PackageManagementProvider is 'NuGet'.
-VERBOSE: Searching repository 'https://www.powershellgallery.com/api/v2/FindPackagesById&#40;&#41;?id='MavenAutoCompletion'' for ''.
-VERBOSE: Total package yield:'0' for the specified package 'MavenAutoCompletion'.
-What if: Performing the operation &quot;Publish-Module&quot; on target &quot;Version '0.0.1' of module 'MavenAutoCompletion'&quot;.
-</code></pre><p>それらしいエラーも警告も出ないので、実行に移す。</p><pre><code class="powershell">$ Publish-Module -Path &quot;.\MavenAutoCompletion&quot; -NugetAPIKey &quot;キーは見せられないよ&quot; -Verbose
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Publish Location:'https://www.powershellgallery.com/api/v2/package/'.
-VERBOSE: Module 'MavenAutoCompletion' was found in 'C:\Users\takatoshi\dev\powershell\MavenAutoCompletion'.
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Using the provider 'PowerShellGet' for searching packages.
-VERBOSE: Using the specified source names : 'PSGallery'.
-VERBOSE: Getting the provider object for the PackageManagement Provider 'NuGet'.
-VERBOSE: The specified Location is 'https://www.powershellgallery.com/api/v2/items/psscript/' and PackageManagementProvider is 'NuGet'.
-VERBOSE: Searching repository 'https://www.powershellgallery.com/api/v2/items/psscript/FindPackagesById&#40;&#41;?id='MavenAutoCompletion'' for ''.
-VERBOSE: Total package yield:'0' for the specified package 'MavenAutoCompletion'.
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Using the provider 'PowerShellGet' for searching packages.
-VERBOSE: Using the specified source names : 'PSGallery'.
-VERBOSE: Getting the provider object for the PackageManagement Provider 'NuGet'.
-VERBOSE: The specified Location is 'https://www.powershellgallery.com/api/v2/' and PackageManagementProvider is 'NuGet'.
-VERBOSE: Searching repository 'https://www.powershellgallery.com/api/v2/FindPackagesById&#40;&#41;?id='MavenAutoCompletion'' for ''.
-VERBOSE: Total package yield:'0' for the specified package 'MavenAutoCompletion'.
-VERBOSE: Performing the operation &quot;Publish-Module&quot; on target &quot;Version '0.0.1' of module 'MavenAutoCompletion'&quot;.
-VERBOSE: Pushing MavenAutoCompletion.0.0.1.nupkg to 'https://www.powershellgallery.com/api/v2/package/'...
-  PUT https://www.powershellgallery.com/api/v2/package/
-�x��: &lt;licenseUrl&gt; element will be deprecated, please consider switching to specifying the license in
-the package. Learn more: https://aka.ms/deprecateLicenseUrl.
-  Created https://www.powershellgallery.com/api/v2/package/ 3489ms
-Your package was pushed.
-
-VERBOSE: Successfully published module 'MavenAutoCompletion' to the module publish location 'https://www.powershellgallery.com/api/v2/package/'. Please allow few minutes for 'MavenAutoCompletion' to show up in the search results.
-</code></pre><blockquote><p> �x��: <licenseUrl> element will be deprecated, please consider switching to specifying the license in  the package. Learn more: https://aka.ms/deprecateLicenseUrl. </p></blockquote><p>う、モジュールのマニフェストでdeprecatedな属性があるが...いけたっぽい。この文字化けはemojiかな(Win10 1809ではterminalでemoji化けがあるのは既知)</p><h3 id="いけて...ない！">いけて...ない！</h3><p>困ったことにイケてなかった...gitのオブジェクトとかそういうのまで全部publishedなかんじでまじで笑えねえ...とりあえずPowerShell Gallery上でリスト表示しないリクエストを出しておいたが笑えねえ😭</p><p>どうもこれはPowerShell Getの既知の問題？みたい...事前調査が足りてなかったぜえ...😭</p><p><a href='https://github.com/PowerShell/PowerShellGet/issues/191'>Ignore files when using <code>Publish-Module</code> · Issue #191 · PowerShell/PowerShellGet</a></p><p>現状できることとしては、別にモジュールと同名のフォルダを作って、その中にpublishしたいファイルをコピーし、<code>Publish-Module</code>を実行するしかないのではないかなと思う🤔</p><p>この際なので↑の取りなしでvr0.1として公開することにする。</p><pre><code class="powershell">$ Publish-Module -Path &quot;.\MavenAutoCompletion&quot; -NugetAPIKey &quot;キーは見せられないよ&quot; -Verbose
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Publish Location:'https://www.powershellgallery.com/api/v2/package/'.
-VERBOSE: Module 'MavenAutoCompletion' was found in 'C:\Users\takatoshi\dev\powershell\MavenAutoCompletion\publish\MavenAutoCompletion'.
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Using the provider 'PowerShellGet' for searching packages.
-VERBOSE: Using the specified source names : 'PSGallery'.
-VERBOSE: Getting the provider object for the PackageManagement Provider 'NuGet'.
-VERBOSE: The specified Location is 'https://www.powershellgallery.com/api/v2/items/psscript/' and PackageManagementProvider is 'NuGet'.
-VERBOSE: Searching repository 'https://www.powershellgallery.com/api/v2/items/psscript/FindPackagesById&#40;&#41;?id='MavenAutoCompletion'' for ''.
-VERBOSE: Total package yield:'0' for the specified package 'MavenAutoCompletion'.
-VERBOSE: Repository details, Name = 'PSGallery', Location = 'https://www.powershellgallery.com/api/v2/'; IsTrusted = 'True'; IsRegistered = 'True'.
-VERBOSE: Using the provider 'PowerShellGet' for searching packages.
-VERBOSE: Using the specified source names : 'PSGallery'.
-VERBOSE: Getting the provider object for the PackageManagement Provider 'NuGet'.
-VERBOSE: The specified Location is 'https://www.powershellgallery.com/api/v2/' and PackageManagementProvider is 'NuGet'.
-VERBOSE: Searching repository 'https://www.powershellgallery.com/api/v2/FindPackagesById&#40;&#41;?id='MavenAutoCompletion'' for ''.
-VERBOSE: Total package yield:'1' for the specified package 'MavenAutoCompletion'.
-VERBOSE: Performing the operation &quot;Publish-Module&quot; on target &quot;Version '0.1' of module 'MavenAutoCompletion'&quot;.
-VERBOSE: Pushing MavenAutoCompletion.0.1.0.nupkg to 'https://www.powershellgallery.com/api/v2/package/'...
-  PUT https://www.powershellgallery.com/api/v2/package/
-�x��: &lt;licenseUrl&gt; element will be deprecated, please consider switching to specifying the license in
-the package. Learn more: https://aka.ms/deprecateLicenseUrl.
-  Created https://www.powershellgallery.com/api/v2/package/ 4558ms
-Your package was pushed.
-
-VERBOSE: Successfully published module 'MavenAutoCompletion' to the module publish location 'https://www.powershellgallery.com/api/v2/package/'. Please allow few minutes for 'MavenAutoCompletion' to show up in the search results.
-</code></pre><p>これによって一応無事にPowerShell Getでの公開はできたし、一旦コレでええか😅</p><p>今度非推奨になってる<code>&lt;licenseUrl&gt;</code>を変えなあかんな。</p><p>ファイルコピって公開するためのスクリプトを起こしたので、次回はそれでやろうと思う。</p>
+    <p>転職してから2ヶ月の間、海外労働者の同僚から、日本語のドキュメントも英語のドキュメントもレビューコメントをいただいていてつらい。</p><p>英語だけならまだしろ、わしゃ日本語もろくに扱えん日本人なんかと思うと涙ちょちょぎれる次第であります。</p><p>なので自分の文章にLintをかけようと思った。</p><h3 id="textlint">textlint</h3><p>いつだったか文章のLinterについてググってたら、以下のようなものを見つけた。</p><ul><li><a href='https://github.com/textlint/textlint'>GitHub - textlint/textlint</a></li><li><a href='https://qiita.com/azu/items/2c565a38df5ed4c9f4e1'>Qiita - VS Codeでtextlintを使って文章をチェックする</a></li><li><a href='https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing'>textlint-ja/textlint-rule-preset-ja-technical-writing: 技術文書向けのtextlintルールプリセット</a></li></ul><p>...すげえな！近い内に使えるようにしよう。と思ってから数ヶ月後、実務でまともな文章を書く能力が必要になるとわ...😭 というかvscode-textlintってホイル焼きで有名な方の作品なのですね。敬意を払うべきプロダクトだ。</p><p>以下にわたしのセットアップ手順を記す(実行はPowerShellだよ)。</p><ol><li>VSCodeでvscode-textlinを入れる</li><li><code>npm i -g textlint textlint-rule-preset-ja-technical-writing</code></li><li><code>cd &#126;</code>で<code>textlint &ndash;init</code>してルールを書き込み</li><li>VSCodeでは設定ファイルを絶対パスで利用するからどうしたものか...(複数端末でSyncしてる関係で)<ol><li><code>&#126;/,textlint</code>にしたらユーザ名とか考えなくていいから、なんかいい😁</li></ol></li><li>ついかパッケージ <code>npm i -g textlint-rule-date-weekday-mismatch textlint-rule-terminology textlint-rule-ginger</code></li></ol><p>これで簡単なtypoは減らせるんじゃないかな。</p><p>お気に入りのルールは<code>textlint-rule-date-weekday-mismatch</code>。これからのオレが曜日を間違うことはないぜええええ？(フラグ</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/vscode">vscode</a>
     
-    <a href="/tags/maven">maven</a>
+    <a href="/tags/textlin">textlin</a>
     
-    <a href="/tags/powershellgallery">powershellgallery</a>
+    <a href="/tags/node">node</a>
     
 </div>
 
@@ -232,7 +142,7 @@ VERBOSE: Successfully published module 'MavenAutoCompletion' to the module publi
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-03-31-win-openssh-is-gone">2019-03-31 Windows10の更新でOpenSSHが逝った &raquo;</a>
+        <a class="right" href="/posts/2019-04-02-pubslish-first-module-to-powershell-gallery">2019-04-02 はじめてのPowerShell Galleryへの公開 &raquo;</a>
         
     </div>
 </div>
