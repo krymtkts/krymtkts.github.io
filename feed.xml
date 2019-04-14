@@ -12,11 +12,29 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Mon, 08 Apr 2019 00:17:01 +0900
+Sun, 14 Apr 2019 16:35:47 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-04-14-add-a-badge
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-04-14-add-a-badge
+</link>
+<title>
+プロジェクトにバッジを貼ろう
+</title>
+<description>
+&lt;p&gt;&lt;a href='https://www.powershellgallery.com/packages/MavenAutoCompletion/0.1'&gt;先日PowerShell Galleryにモジュールを公開した&lt;/a&gt;ついでに、プロジェクトのGitHubにバッジを貼ってみた。&lt;/p&gt;&lt;p&gt;のでその覚書。&lt;/p&gt;&lt;h3 id=&quot;バッジを貼ろう&quot;&gt;バッジを貼ろう&lt;/h3&gt;&lt;p&gt;なんかいろいろサービスがあるようだけど、わたしは&lt;a href='https://shields.io/'&gt;Shields.io: Quality metadata badges for open source projects&lt;/a&gt;にしてみた。&lt;/p&gt;&lt;p&gt;いろんなバッジが提供されてるみたいやし、利用するためのハードルが低い(とにかく楽な)のが良い。&lt;/p&gt;&lt;p&gt;PowerShell GalleryのDownload数を表示するバッチがあったので、それを利用してみた。&lt;/p&gt;&lt;p&gt;&lt;a href='https://shields.io/category/downloads'&gt;Shields.io: Quality metadata badges for open source projects&lt;/a&gt;&lt;/p&gt;&lt;p&gt;利用は簡単でURLを貼るだけ。なんかよそのOSSとか見ててたらもっと簡単な方法がありそうだが、普通のMarkdownで書いた。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/krymtkts/MavenAutoCompletion/blob/master/README.md'&gt;MavenAutoCompletion/README.md at master · krymtkts/MavenAutoCompletion&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;md&quot;&gt;&amp;#91;!&amp;#91;PowerShell Gallery&amp;#93;&amp;#40;https://img.shields.io/powershellgallery/dt/MavenAutoCompletion.svg?style=flat-square&amp;#41;&amp;#93;&amp;#40;https://www.powershellgallery.com/packages/MavenAutoCompletion&amp;#41;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;コレがこうなる↓&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;/img/2019-04-14-badge/badge.png&quot; alt=&quot;バッジ&quot; /&gt;&lt;/p&gt;&lt;p&gt;いいね～😚&lt;/p&gt;&lt;p&gt;つかDLすっくねえ！！！&lt;/p&gt;&lt;p&gt;まあ自分のDLは、家、家リトライ、職場の3回だけで、残りの7回は世界のどこかで使われてるということがわかった。 ので良しとしよう🤔&lt;/p&gt;&lt;p&gt;こうなるともっとバッジをペタペタ貼りたくなりますな～。&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 14 Apr 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-04-07-lint-my-statement
