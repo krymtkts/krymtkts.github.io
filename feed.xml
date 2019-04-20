@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 14 Apr 2019 16:35:47 +0900
+Sat, 20 Apr 2019 23:26:15 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-04-20_disable-touch-screen
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-04-20_disable-touch-screen
+</link>
+<title>
+Windows10でタッチスクリーンを無効化する
+</title>
+<description>
+&lt;p&gt;小ネタ。&lt;/p&gt;&lt;p&gt;自機は、Razer Blade Stealth 2018のタッチスクリーン対応のやつだ。&lt;/p&gt;&lt;p&gt;たま～に画面を閉じた状態から再度開いたときに、謎に画面が連続タップされまくって制御不能になるポルターガイスト現象(偽)が起こることがあった。&lt;/p&gt;&lt;p&gt;それ以来タッチスクリーンの無効化をしているんやが、これがWindowsの大規模アップデートがあると設定が無効になって、都度再設定が必要になってる感じ🤔&lt;/p&gt;&lt;p&gt;最近ver1803が降りてきたことで再度必要になったので覚書。&lt;/p&gt;&lt;h3 id=&quot;手順&quot;&gt;手順&lt;/h3&gt;&lt;p&gt;&lt;a href='https://support.microsoft.com/ja-jp/help/4028019/windows-enable-and-disable-your-touchscreen-in-windows-10'&gt;Windows 10 でタッチスクリーンを有効/無効にする&lt;/a&gt;&lt;/p&gt;&lt;ol&gt;&lt;li&gt;デバイスマネージャを開く&lt;/li&gt;&lt;li&gt;HID準拠タッチスクリーンのデバイスを無効化する&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;THE END&lt;/p&gt;
+</description>
+<pubDate>
+Sat, 20 Apr 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-04-14-add-a-badge
