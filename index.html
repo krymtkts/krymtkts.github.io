@@ -52,17 +52,19 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-04-29-bias-amp-2issue">BIAS Amp 2で保存したアンプが消える問題</a></li>
+                        
                         <li><a href="/posts/2019-04-20_disable-touch-screen">Windows10でタッチスクリーンを無効化する</a></li>
                         
                         <li><a href="/posts/2019-04-14-add-a-badge">プロジェクトにバッジを貼ろう</a></li>
-                        
-                        <li><a href="/posts/2019-04-07-lint-my-statement">下手な文章をLintする</a></li>
                         
                         
 
                         
                         <li class="divider"></li>
                         <li class="dropdown-header">Tags</li>
+                        
+                        <li><a href="/tags/biasamp">biasamp</a></li>
                         
                         <li><a href="/tags/tips">tips</a></li>
                         
@@ -121,22 +123,20 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-04-20</div>
+        <div class="col-lg-6">2019-04-29</div>
         
     </div>
-    <h2>Windows10でタッチスクリーンを無効化する</h2>
+    <h2>BIAS Amp 2で保存したアンプが消える問題</h2>
 </div>
 <div>
     
-    <p>小ネタ。</p><p>自機は、Razer Blade Stealth 2018のタッチスクリーン対応のやつだ。</p><p>たま～に画面を閉じた状態から再度開いたときに、謎に画面が連続タップされまくって制御不能になるポルターガイスト現象(偽)が起こることがあった。</p><p>それ以来タッチスクリーンの無効化をしているんやが、これがWindowsの大規模アップデートがあると設定が無効になって、都度再設定が必要になってる感じ🤔</p><p>最近ver1803が降りてきたことで再度必要になったので覚書。</p><h3 id="手順">手順</h3><p><a href='https://support.microsoft.com/ja-jp/help/4028019/windows-enable-and-disable-your-touchscreen-in-windows-10'>Windows 10 でタッチスクリーンを有効/無効にする</a></p><ol><li>デバイスマネージャを開く</li><li>HID準拠タッチスクリーンのデバイスを無効化する</li></ol><p>THE END</p>
+    <p>小ネタ。</p><p>個人的に、2019年からPositive Grid社のBIAS Amp miniを導入した。</p><p><a href='https://www.positivegrid.com/bias-mini-guitar/'>BIAS MINI Guitar - Positive Grid</a></p><p>平たく言うと、ギターアンプの部品をいじくり回すことでサウンドメイクする、というアイデアのデジタルアンプ。そのサウンドメイクの幅の広さ、自分好みのサウンドを手探りする面白さから、とても気に入っている。</p><p>ただちょっと、バグが多いように思う。現時点で2つのバグらしい挙動を見つけている。</p><h3 id="1.line&#95;outが出力されない問題">1.Line OUTが出力されない問題</h3><p>見出しの通りである。出る場合と出ない場合があるのか、パターンを絞り出せていない。</p><p>Line OUTはスタジオで試したときに気づいたので、まだすべての状況において出力がないのかは調べ尽くしていない。</p><h3 id="2.保存したアンプが消える問題">2.保存したアンプが消える問題</h3><p>購入したBIAS Amp miniには、同社のモデリングソフトウェアBIAS Amp 2が付属し、それで作ったアンプモデルをBIAS Amp miniに書き込むことができる。</p><p>今確認している範囲では、以下のパターンで書き込んだアンプが、消失する時がある。</p><ol><li>BIAS Amp 2でキャプチャしたアンプ(AMP MATCH)をTone Cloudで入手する</li><li>入手したアンプのパラメータを変える</li><li>BIAS Amp miniをdesconnect後にスキンを変更する</li><li>再度BIAS Amp miniを接続し、変更したアンプを書き込む</li><li>電源OFFから数時間後に消失</li></ol><p>ただ、このパターンで2回消えたのだが、3回目の再現ができていないので別の変数が関与してそう🤔ややこしい。</p><h3 id="まとめ">まとめ</h3><p>いずれも割とまじで困る系の障害なので、ちゃんと条件を調べた上でサポートに問い合わせしたいところだけど、まだ全然出来てない状態...</p><p>2の保存したアンプが消える問題は一応着手中。ライブ本番とかにモデルが消えてたらほんま笑い事じゃないからな...</p><p>しょうもないネタを書き記すことが増えてきたので、次回は仕事で経験を得た、2019年のイケてそうなPython開発環境構築について書きたい所存🤔</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/tips">tips</a>
-    
-    <a href="/tags/windows">windows</a>
+    <a href="/tags/biasamp">biasamp</a>
     
 </div>
 
@@ -146,7 +146,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-04-14-add-a-badge">2019-04-14 プロジェクトにバッジを貼ろう &raquo;</a>
+        <a class="right" href="/posts/2019-04-20_disable-touch-screen">2019-04-20 Windows10でタッチスクリーンを無効化する &raquo;</a>
         
     </div>
 </div>

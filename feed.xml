@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sat, 20 Apr 2019 23:26:15 +0900
+Mon, 29 Apr 2019 23:18:35 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-04-29-bias-amp-2issue
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-04-29-bias-amp-2issue
+</link>
+<title>
+BIAS Amp 2で保存したアンプが消える問題
+</title>
+<description>
+&lt;p&gt;小ネタ。&lt;/p&gt;&lt;p&gt;個人的に、2019年からPositive Grid社のBIAS Amp miniを導入した。&lt;/p&gt;&lt;p&gt;&lt;a href='https://www.positivegrid.com/bias-mini-guitar/'&gt;BIAS MINI Guitar - Positive Grid&lt;/a&gt;&lt;/p&gt;&lt;p&gt;平たく言うと、ギターアンプの部品をいじくり回すことでサウンドメイクする、というアイデアのデジタルアンプ。そのサウンドメイクの幅の広さ、自分好みのサウンドを手探りする面白さから、とても気に入っている。&lt;/p&gt;&lt;p&gt;ただちょっと、バグが多いように思う。現時点で2つのバグらしい挙動を見つけている。&lt;/p&gt;&lt;h3 id=&quot;1.line&amp;#95;outが出力されない問題&quot;&gt;1.Line OUTが出力されない問題&lt;/h3&gt;&lt;p&gt;見出しの通りである。出る場合と出ない場合があるのか、パターンを絞り出せていない。&lt;/p&gt;&lt;p&gt;Line OUTはスタジオで試したときに気づいたので、まだすべての状況において出力がないのかは調べ尽くしていない。&lt;/p&gt;&lt;h3 id=&quot;2.保存したアンプが消える問題&quot;&gt;2.保存したアンプが消える問題&lt;/h3&gt;&lt;p&gt;購入したBIAS Amp miniには、同社のモデリングソフトウェアBIAS Amp 2が付属し、それで作ったアンプモデルをBIAS Amp miniに書き込むことができる。&lt;/p&gt;&lt;p&gt;今確認している範囲では、以下のパターンで書き込んだアンプが、消失する時がある。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;BIAS Amp 2でキャプチャしたアンプ(AMP MATCH)をTone Cloudで入手する&lt;/li&gt;&lt;li&gt;入手したアンプのパラメータを変える&lt;/li&gt;&lt;li&gt;BIAS Amp miniをdesconnect後にスキンを変更する&lt;/li&gt;&lt;li&gt;再度BIAS Amp miniを接続し、変更したアンプを書き込む&lt;/li&gt;&lt;li&gt;電源OFFから数時間後に消失&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;ただ、このパターンで2回消えたのだが、3回目の再現ができていないので別の変数が関与してそう🤔ややこしい。&lt;/p&gt;&lt;h3 id=&quot;まとめ&quot;&gt;まとめ&lt;/h3&gt;&lt;p&gt;いずれも割とまじで困る系の障害なので、ちゃんと条件を調べた上でサポートに問い合わせしたいところだけど、まだ全然出来てない状態...&lt;/p&gt;&lt;p&gt;2の保存したアンプが消える問題は一応着手中。ライブ本番とかにモデルが消えてたらほんま笑い事じゃないからな...&lt;/p&gt;&lt;p&gt;しょうもないネタを書き記すことが増えてきたので、次回は仕事で経験を得た、2019年のイケてそうなPython開発環境構築について書きたい所存🤔&lt;/p&gt;
+</description>
+<pubDate>
+Mon, 29 Apr 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-04-20_disable-touch-screen
@@ -28,7 +45,7 @@ http://krymtkts.github.io/posts/2019-04-20_disable-touch-screen
 Windows10でタッチスクリーンを無効化する
 </title>
 <description>
-&lt;p&gt;小ネタ。&lt;/p&gt;&lt;p&gt;自機は、Razer Blade Stealth 2018のタッチスクリーン対応のやつだ。&lt;/p&gt;&lt;p&gt;たま～に画面を閉じた状態から再度開いたときに、謎に画面が連続タップされまくって制御不能になるポルターガイスト現象(偽)が起こることがあった。&lt;/p&gt;&lt;p&gt;それ以来タッチスクリーンの無効化をしているんやが、これがWindowsの大規模アップデートがあると設定が無効になって、都度再設定が必要になってる感じ🤔&lt;/p&gt;&lt;p&gt;最近ver1803が降りてきたことで再度必要になったので覚書。&lt;/p&gt;&lt;h3 id=&quot;手順&quot;&gt;手順&lt;/h3&gt;&lt;p&gt;&lt;a href='https://support.microsoft.com/ja-jp/help/4028019/windows-enable-and-disable-your-touchscreen-in-windows-10'&gt;Windows 10 でタッチスクリーンを有効/無効にする&lt;/a&gt;&lt;/p&gt;&lt;ol&gt;&lt;li&gt;デバイスマネージャを開く&lt;/li&gt;&lt;li&gt;HID準拠タッチスクリーンのデバイスを無効化する&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;THE END&lt;/p&gt;
+&lt;p&gt;小ネタ。&lt;/p&gt;&lt;p&gt;自機は、Razer Blade Stealth 2018のタッチスクリーン対応のやつだ。&lt;/p&gt;&lt;p&gt;ディスプレイを閉じた状態から再度開いたときに、たま～に謎に画面が連続タップされまくって制御不能になるポルターガイスト現象(偽)が起こることがあった。&lt;/p&gt;&lt;p&gt;それ以来タッチスクリーンの無効化をしているんやが、これがWindowsの大規模アップデートがあると設定が無効になって、都度再設定が必要になってる感じ🤔&lt;/p&gt;&lt;p&gt;最近ver1803が降りてきたことで再度必要になったので覚書。&lt;/p&gt;&lt;h3 id=&quot;手順&quot;&gt;手順&lt;/h3&gt;&lt;p&gt;&lt;a href='https://support.microsoft.com/ja-jp/help/4028019/windows-enable-and-disable-your-touchscreen-in-windows-10'&gt;Windows 10 でタッチスクリーンを有効/無効にする&lt;/a&gt;&lt;/p&gt;&lt;ol&gt;&lt;li&gt;デバイスマネージャを開く&lt;/li&gt;&lt;li&gt;HID準拠タッチスクリーンのデバイスを無効化する&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;THE END&lt;/p&gt;
 </description>
 <pubDate>
 Sat, 20 Apr 2019 00:00:00 +0900
