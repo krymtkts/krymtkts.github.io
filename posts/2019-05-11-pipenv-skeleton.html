@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;cryogen&quot;</title>
-    <link rel="canonical" href="http://krymtkts.github.io/tags/cryogen">
+    <title>krymtkts: Pipenvのテンプレを作った</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-05-11-pipenv-skeleton">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;cryogen&quot;" />
-    <meta property="og:url" content="http://krymtkts.github.io/tags/cryogen" />
+    <meta property="og:title" content="krymtkts: Pipenvのテンプレを作った" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-05-11-pipenv-skeleton" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -122,17 +122,37 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;cryogen&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2019-05-11</div>
+        
     </div>
-    <ul>
+    <h2>Pipenvのテンプレを作った</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2019-01-10-make-blog-with-clojure">2019-01-10 Clojureでブログを作った</a>
-        </li>
+    <p><a href='./2019-04-29-bias-amp-2issue.md'>前回</a>の最後に触れた、仕事で経験を得た2019年のイケてそうなPython開発環境構築について。</p><p>この度新し目と思われるPythonのプロジェクト構築について学んだので、次回Pythonを触ることがあったとしてもぱぱっと始められるようにテンプレートを作ろうと思った次第である。</p><p>過去のeasy_installとかpipまでで知識が止まってたが、新たにpipenvを知ってかなり便利に使えるいい感じの印象を得たのもあって、動機付けされた感じ。</p><p>なので、勉強がてらGW中のお楽しみにちょろっと作った。</p><h3 id="作ったもの">作ったもの</h3><p><a href='https://github.com/krymtkts/pipenv-skeleton'>krymtkts/pipenv-skeleton</a></p><p>いろいろとググって、pipとかvirtualenvの時代は過ぎ去っており、いまはpienvがイケていると直感を得た。 なのでpipenvについて以下の記事などを参考にこのテンプレを作った。</p><ul><li><a href='https://pipenv-ja.readthedocs.io/ja/translate-ja/'>Pipenv: 人間のためのPython開発ワークフロー — pipenv 2018.11.27.dev0 ドキュメント</a></li><li><a href='https://www.natsukium.com/blog/2019-02-18/python/'>Python環境構築ベストプラクティス2019 - ばいおいんふぉっぽいの！</a></li><li><a href='https://qiita.com/youkidkk/items/b6a6e39ee3a109001c75'>Windows + Python 3.6 + PipEnv + Visual Studio Code でPython開発環境 - Qiita</a></li><li><a href='https://qiita.com/tonluqclml/items/b09f4a5ed04ebcbd0af1'>既存プロジェクトに pipenv を導入した方法 - Qiita</a></li></ul><p>予めLinterやらFormatterやらをdevPackageとして用意している。LinterにはPylintを用意したが、エラーの自動修正がないようなのでautopep8も用意した。</p><p>あと静的型付けに守られた世界で仕事できるように、MyPyも用意している。Better Bashとして使うときは大げさかもしれないけど、その時は単にMyPyを使わなかったらいいだけ。</p><p>このプロジェクトをコピペして、moduleのところをこねこねして使うイメージ。</p><p>Pythonのモジュールシステムについてはまだ理解が浅い。以下を参考にドキュメントをあたって、<code>&#95;&#95;init.py&#95;&#95;</code>,<code>&#95;&#95;main.py&#95;&#95;</code>のらへんを定型化した感じ。</p><ul><li><a href='https://stackoverflow.com/questions/448271/what-is-init-py-for'>python - What is <b>init</b>.py for? - Stack Overflow</a></li><li><a href='https://stackoverflow.com/questions/4042905/what-is-main-py'>python - What is <b>main</b>.py? - Stack Overflow</a></li></ul><p>ただ、<code>&#95;&#95;init.py&#95;&#95;</code>は名前空間パッケージではなくていいようだし、よりモダンな方法に寄せたいので再検討するかな。単に今はわたしの知識がそこまで及んでない😭Pythonの言語仕様もちゃんと勉強したいのう。</p><p>いろいろ足りない点があるが、それらは今後改善できれば良いかな。</p><ul><li>moduleの名前をいろいろ変えないといけないのが面倒なので、なんか改善ができれば良。</li><li>テストがないので足したい。</li><li>なんかバッジ足したい。ビルドとか...</li><li>mypyで</li></ul><h3 id="まとめ">まとめ</h3><p>Python3たのしい。</p><p>せっかくテンプレを作ったので、なんかゴミスクリプトでも良いのでちまちま書いていきたい所存🤔</p><p>mypyについてもメモためていこ。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-    </ul>
+    <a href="/tags/python">python</a>
+    
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2019-04-29-bias-amp-2issue">2019-04-29 BIAS Amp 2で保存したアンプが消える問題 &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>

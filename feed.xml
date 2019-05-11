@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Mon, 29 Apr 2019 23:18:35 +0900
+Sat, 11 May 2019 10:43:17 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-05-11-pipenv-skeleton
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-05-11-pipenv-skeleton
+</link>
+<title>
+Pipenvのテンプレを作った
+</title>
+<description>
+&lt;p&gt;&lt;a href='./2019-04-29-bias-amp-2issue.md'&gt;前回&lt;/a&gt;の最後に触れた、仕事で経験を得た2019年のイケてそうなPython開発環境構築について。&lt;/p&gt;&lt;p&gt;この度新し目と思われるPythonのプロジェクト構築について学んだので、次回Pythonを触ることがあったとしてもぱぱっと始められるようにテンプレートを作ろうと思った次第である。&lt;/p&gt;&lt;p&gt;過去のeasy_installとかpipまでで知識が止まってたが、新たにpipenvを知ってかなり便利に使えるいい感じの印象を得たのもあって、動機付けされた感じ。&lt;/p&gt;&lt;p&gt;なので、勉強がてらGW中のお楽しみにちょろっと作った。&lt;/p&gt;&lt;h3 id=&quot;作ったもの&quot;&gt;作ったもの&lt;/h3&gt;&lt;p&gt;&lt;a href='https://github.com/krymtkts/pipenv-skeleton'&gt;krymtkts/pipenv-skeleton&lt;/a&gt;&lt;/p&gt;&lt;p&gt;いろいろとググって、pipとかvirtualenvの時代は過ぎ去っており、いまはpienvがイケていると直感を得た。 なのでpipenvについて以下の記事などを参考にこのテンプレを作った。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://pipenv-ja.readthedocs.io/ja/translate-ja/'&gt;Pipenv: 人間のためのPython開発ワークフロー — pipenv 2018.11.27.dev0 ドキュメント&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://www.natsukium.com/blog/2019-02-18/python/'&gt;Python環境構築ベストプラクティス2019 - ばいおいんふぉっぽいの！&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://qiita.com/youkidkk/items/b6a6e39ee3a109001c75'&gt;Windows + Python 3.6 + PipEnv + Visual Studio Code でPython開発環境 - Qiita&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://qiita.com/tonluqclml/items/b09f4a5ed04ebcbd0af1'&gt;既存プロジェクトに pipenv を導入した方法 - Qiita&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;予めLinterやらFormatterやらをdevPackageとして用意している。LinterにはPylintを用意したが、エラーの自動修正がないようなのでautopep8も用意した。&lt;/p&gt;&lt;p&gt;あと静的型付けに守られた世界で仕事できるように、MyPyも用意している。Better Bashとして使うときは大げさかもしれないけど、その時は単にMyPyを使わなかったらいいだけ。&lt;/p&gt;&lt;p&gt;このプロジェクトをコピペして、moduleのところをこねこねして使うイメージ。&lt;/p&gt;&lt;p&gt;Pythonのモジュールシステムについてはまだ理解が浅い。以下を参考にドキュメントをあたって、&lt;code&gt;&amp;#95;&amp;#95;init.py&amp;#95;&amp;#95;&lt;/code&gt;,&lt;code&gt;&amp;#95;&amp;#95;main.py&amp;#95;&amp;#95;&lt;/code&gt;のらへんを定型化した感じ。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://stackoverflow.com/questions/448271/what-is-init-py-for'&gt;python - What is &lt;b&gt;init&lt;/b&gt;.py for? - Stack Overflow&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://stackoverflow.com/questions/4042905/what-is-main-py'&gt;python - What is &lt;b&gt;main&lt;/b&gt;.py? - Stack Overflow&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;ただ、&lt;code&gt;&amp;#95;&amp;#95;init.py&amp;#95;&amp;#95;&lt;/code&gt;は名前空間パッケージではなくていいようだし、よりモダンな方法に寄せたいので再検討するかな。単に今はわたしの知識がそこまで及んでない😭Pythonの言語仕様もちゃんと勉強したいのう。&lt;/p&gt;&lt;p&gt;いろいろ足りない点があるが、それらは今後改善できれば良いかな。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;moduleの名前をいろいろ変えないといけないのが面倒なので、なんか改善ができれば良。&lt;/li&gt;&lt;li&gt;テストがないので足したい。&lt;/li&gt;&lt;li&gt;なんかバッジ足したい。ビルドとか...&lt;/li&gt;&lt;li&gt;mypyで&lt;/li&gt;&lt;/ul&gt;&lt;h3 id=&quot;まとめ&quot;&gt;まとめ&lt;/h3&gt;&lt;p&gt;Python3たのしい。&lt;/p&gt;&lt;p&gt;せっかくテンプレを作ったので、なんかゴミスクリプトでも良いのでちまちま書いていきたい所存🤔&lt;/p&gt;&lt;p&gt;mypyについてもメモためていこ。&lt;/p&gt;
+</description>
+<pubDate>
+Sat, 11 May 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-04-29-bias-amp-2issue
