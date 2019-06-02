@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-06-02_install-shfmt-to-win-using-cli">シェルスクリプトのフォーマッタをCLIでインストールする</a></li>
+                        
                         <li><a href="/posts/2019-05-11-pipenv-skeleton">Pipenvのテンプレを作った</a></li>
                         
                         <li><a href="/posts/2019-04-29-bias-amp-2issue">BIAS Amp 2で保存したアンプが消える問題</a></li>
-                        
-                        <li><a href="/posts/2019-04-20_disable-touch-screen">Windows10でタッチスクリーンを無効化する</a></li>
                         
                         
 
@@ -96,9 +96,13 @@
                         
                         <li><a href="/tags/maven">maven</a></li>
                         
+                        <li><a href="/tags/sh">sh</a></li>
+                        
                         <li><a href="/tags/textlin">textlin</a></li>
                         
                         <li><a href="/tags/python">python</a></li>
+                        
+                        <li><a href="/tags/golang">golang</a></li>
                         
                         <li><a href="/tags/qmkfirmware">qmkfirmware</a></li>
                         
@@ -125,20 +129,24 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-05-11</div>
+        <div class="col-lg-6">2019-06-02</div>
         
     </div>
-    <h2>Pipenvのテンプレを作った</h2>
+    <h2>シェルスクリプトのフォーマッタをCLIでインストールする</h2>
 </div>
 <div>
     
-    <p><a href='./2019-04-29-bias-amp-2issue.md'>前回</a>の最後に触れた、仕事で経験を得た2019年のイケてそうなPython開発環境構築について。</p><p>この度新し目と思われるPythonのプロジェクト構築について学んだので、次回Pythonを触ることがあったとしてもぱぱっと始められるようにテンプレートを作ろうと思った次第である。</p><p>過去のeasy_installとかpipまでで知識が止まってたが、新たにpipenvを知ってかなり便利に使えるいい感じの印象を得たのもあって、動機付けされた感じ。</p><p>なので、勉強がてらGW中のお楽しみにちょろっと作った。</p><h3 id="作ったもの">作ったもの</h3><p><a href='https://github.com/krymtkts/pipenv-skeleton'>krymtkts/pipenv-skeleton</a></p><p>いろいろとググって、pipとかvirtualenvの時代は過ぎ去っており、いまはpienvがイケていると直感を得た。 なのでpipenvについて以下の記事などを参考にこのテンプレを作った。</p><ul><li><a href='https://pipenv-ja.readthedocs.io/ja/translate-ja/'>Pipenv: 人間のためのPython開発ワークフロー — pipenv 2018.11.27.dev0 ドキュメント</a></li><li><a href='https://www.natsukium.com/blog/2019-02-18/python/'>Python環境構築ベストプラクティス2019 - ばいおいんふぉっぽいの！</a></li><li><a href='https://qiita.com/youkidkk/items/b6a6e39ee3a109001c75'>Windows + Python 3.6 + PipEnv + Visual Studio Code でPython開発環境 - Qiita</a></li><li><a href='https://qiita.com/tonluqclml/items/b09f4a5ed04ebcbd0af1'>既存プロジェクトに pipenv を導入した方法 - Qiita</a></li></ul><p>予めLinterやらFormatterやらをdevPackageとして用意している。LinterにはPylintを用意したが、エラーの自動修正がないようなのでautopep8も用意した。</p><p>あと静的型付けに守られた世界で仕事できるように、MyPyも用意している。Better Bashとして使うときは大げさかもしれないけど、その時は単にMyPyを使わなかったらいいだけ。</p><p>このプロジェクトをコピペして、moduleのところをこねこねして使うイメージ。</p><p>Pythonのモジュールシステムについてはまだ理解が浅い。以下を参考にドキュメントをあたって、<code>&#95;&#95;init.py&#95;&#95;</code>,<code>&#95;&#95;main.py&#95;&#95;</code>のらへんを定型化した感じ。</p><ul><li><a href='https://stackoverflow.com/questions/448271/what-is-init-py-for'>python - What is <b>init</b>.py for? - Stack Overflow</a></li><li><a href='https://stackoverflow.com/questions/4042905/what-is-main-py'>python - What is <b>main</b>.py? - Stack Overflow</a></li></ul><p>ただ、<code>&#95;&#95;init.py&#95;&#95;</code>は名前空間パッケージではなくていいようだし、よりモダンな方法に寄せたいので再検討するかな。単に今はわたしの知識がそこまで及んでない😭Pythonの言語仕様もちゃんと勉強したいのう。</p><p>いろいろ足りない点があるが、それらは今後改善できれば良いかな。</p><ul><li>moduleの名前をいろいろ変えないといけないのが面倒なので、なんか改善ができれば良。</li><li>テストがないので足したい。</li><li>なんかバッジ足したい。ビルドとか...</li><li>mypyで</li></ul><h3 id="まとめ">まとめ</h3><p>Python3たのしい。</p><p>せっかくテンプレを作ったので、なんかゴミスクリプトでも良いのでちまちま書いていきたい所存🤔</p><p>mypyについてもメモためていこ。</p>
+    <p>小ネタ。</p><p>へーしゃの仕事では、Bashで書かれたスクリプトの出番がめちゃくちゃ多い。</p><p>Bashが得意じゃないマンのわたしにとっては、そういったスクリプトを読み書きに慣れてないこともあり、結構疲れる仕事である。</p><p>そこでせめて書くのだけは少しでも楽したいと思って、フォーマッタを導入しようと思った。</p><h3 id="ツールを導入する">ツールを導入する</h3><p>shfmtというgolang製のツールがあるので、それを採択。</p><p><a href='https://github.com/mvdan/sh'>mvdan/sh: A shell parser, formatter, and interpreter (POSIX/Bash/mksh)</a></p><p>しかし悲しいかな、Windows用に提供されてるパッケージはScoopのみ(リンク切れてるけど)でChocolateyにない様子🤔(筆者はChocolateyユーザである)。</p><p>代わりにCLIでのインストールを使うことにする。</p><pre><code class="sh">cd $&#40;mktemp -d&#41;; go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt
+</code></pre><p>でも<code>mktemp</code>コマンドはPowerShellにはないし...そこは<code>mkdir</code>で茶を濁す。あとtmpフォルダの後始末もする。</p><pre><code class="powershell">cd $&#40;mkdir tmp&#41;; go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt; cd ../; rm -r tmp
+</code></pre><p>ええがな。</p><h3 id="雑記">雑記</h3><p>5月後半はうまく波に乗れずブログを書けなかった。まだアウトプットが習慣化していないようなので、きちんと積み重ねしていきたいもんやで🤔</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/python">python</a>
+    <a href="/tags/sh">sh</a>
+    
+    <a href="/tags/golang">golang</a>
     
 </div>
 
@@ -148,7 +156,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-04-29-bias-amp-2issue">2019-04-29 BIAS Amp 2で保存したアンプが消える問題 &raquo;</a>
+        <a class="right" href="/posts/2019-05-11-pipenv-skeleton">2019-05-11 Pipenvのテンプレを作った &raquo;</a>
         
     </div>
 </div>

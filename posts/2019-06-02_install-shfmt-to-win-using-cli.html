@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;shieldsio&quot;</title>
-    <link rel="canonical" href="http://krymtkts.github.io/tags/shieldsio">
+    <title>krymtkts: シェルスクリプトのフォーマッタをCLIでインストールする</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-06-02_install-shfmt-to-win-using-cli">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;shieldsio&quot;" />
-    <meta property="og:url" content="http://krymtkts.github.io/tags/shieldsio" />
+    <meta property="og:title" content="krymtkts: シェルスクリプトのフォーマッタをCLIでインストールする" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-06-02_install-shfmt-to-win-using-cli" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -126,17 +126,41 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;shieldsio&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2019-06-02</div>
+        
     </div>
-    <ul>
+    <h2>シェルスクリプトのフォーマッタをCLIでインストールする</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2019-04-14-add-a-badge">2019-04-14 プロジェクトにバッジを貼ろう</a>
-        </li>
+    <p>小ネタ。</p><p>へーしゃの仕事では、Bashで書かれたスクリプトの出番がめちゃくちゃ多い。</p><p>Bashが得意じゃないマンのわたしにとっては、そういったスクリプトを読み書きに慣れてないこともあり、結構疲れる仕事である。</p><p>そこでせめて書くのだけは少しでも楽したいと思って、フォーマッタを導入しようと思った。</p><h3 id="ツールを導入する">ツールを導入する</h3><p>shfmtというgolang製のツールがあるので、それを採択。</p><p><a href='https://github.com/mvdan/sh'>mvdan/sh: A shell parser, formatter, and interpreter (POSIX/Bash/mksh)</a></p><p>しかし悲しいかな、Windows用に提供されてるパッケージはScoopのみ(リンク切れてるけど)でChocolateyにない様子🤔(筆者はChocolateyユーザである)。</p><p>代わりにCLIでのインストールを使うことにする。</p><pre><code class="sh">cd $&#40;mktemp -d&#41;; go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt
+</code></pre><p>でも<code>mktemp</code>コマンドはPowerShellにはないし...そこは<code>mkdir</code>で茶を濁す。あとtmpフォルダの後始末もする。</p><pre><code class="powershell">cd $&#40;mkdir tmp&#41;; go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt; cd ../; rm -r tmp
+</code></pre><p>ええがな。</p><h3 id="雑記">雑記</h3><p>5月後半はうまく波に乗れずブログを書けなかった。まだアウトプットが習慣化していないようなので、きちんと積み重ねしていきたいもんやで🤔</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-    </ul>
+    <a href="/tags/sh">sh</a>
+    
+    <a href="/tags/golang">golang</a>
+    
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2019-05-11-pipenv-skeleton">2019-05-11 Pipenvのテンプレを作った &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>
