@@ -12,11 +12,31 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 02 Jun 2019 16:01:40 +0900
+Sun, 23 Jun 2019 22:45:09 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-06-23-poco
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-06-23-poco
+</link>
+<title>
+Poco
+</title>
+<description>
+&lt;p&gt;5月以降outputのリズムが崩れております🤔&lt;/p&gt;&lt;p&gt;時間の使い方の改善を目論み、ポモドーロを導入するなど。まだ効果の程は見えていないので今日はPowerShell版pecoのpocoを紹介する。&lt;/p&gt;&lt;h3 id=&quot;peco&quot;&gt;peco&lt;/h3&gt;&lt;p&gt;まずpecoってなんじゃこらって感じでもあるのだが、linuxなどで使えるインクリメンタルなフィルタリングコマンドらしい。&lt;/p&gt;&lt;p&gt;[Unix :: コマンド / peco [Tipsというかメモ]](http://tm.root-n.com/unix:command:peco)&lt;/p&gt;&lt;p&gt;こんなに便利な機能なので、もちろんWindowsでも使えるようになってある &lt;a href='https://github.com/peco/peco'&gt;peco/peco: Simplistic interactive filtering tool&lt;/a&gt;&lt;/p&gt;&lt;p&gt;ただ日常使いのシェルをPowerShellにしている身としては、単純なテキストの絞り込みじゃなくてオブジェクトを扱えるやつが望ましいわけで...&lt;/p&gt;&lt;h3 id=&quot;poco&quot;&gt;poco&lt;/h3&gt;&lt;p&gt;というふうに思ってたら普通にPowerShell Galleryにあったわ😲&lt;/p&gt;&lt;p&gt;PowerShellの場合は&lt;a href='https://gist.github.com/yumura/8df37c22ae1b7942dec7'&gt;powershell peco&lt;/a&gt;というのがあって、それを使ったPSModuleがPSGalleryに上がっている...!!!これは使わない手はないぞよ🤔&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://www.powershellgallery.com/packages/poco/1.1.0'&gt;PowerShell Gallery | poco 1.1.0&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://github.com/jasonmarcher/poco'&gt;jasonmarcher/poco: Interactive pipeline filtering in PowerShell (a port of peco).&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;ただしこのモジュール、&lt;a href='https://gist.github.com/yumura/8df37c22ae1b7942dec7'&gt;powershell peco&lt;/a&gt;のコードをそのまま使ってるのが現状みたいで、作者の方が書かれている改善点そのまま残ってるくさい😭&lt;/p&gt;&lt;p&gt;&lt;a href='https://qiita.com/yumura_s/items/a068329769c6338471dd'&gt;PowerShell で peco (インタラクティブ・フィルタリングツール)っぽいものを作った - Qiita&lt;/a&gt;&lt;/p&gt;&lt;p&gt;という具合に不完全なできであるのは確かなんやが、雰囲気でCLIにPowerShellを使っているようなワイには非常に便利なツールなのである。&lt;/p&gt;&lt;h3 id=&quot;pocoを使ってなにか書こう&quot;&gt;pocoを使ってなにか書こう&lt;/h3&gt;&lt;p&gt;例えば、PowerShellではCLIの完全な入力履歴を取ろうとしたら&lt;code&gt;PSReadLine&lt;/code&gt;に頼ることになるのだが、こいつをインタラクティブにフィルタリングするコマンドをぺぺっと書いてしまうこともできる↓&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;function Show-ReadLineHistory&amp;#40;&amp;#41; {
+    Get-Content -Path &amp;#40;Get-PSReadlineOption&amp;#41;.HistorySavePath | poco
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;こんな風な単純なやつは正直なところpecoで十分なのだけど...&lt;/p&gt;&lt;p&gt;あと、検索結果の1行を選んで即実行なんしたいのだけど、pocoの機能不足でリストアップされた検索結果をarrow keyで選んだりとかできないので、今のところかなり癖のある使い方になってる😅&lt;/p&gt;&lt;p&gt;そんな感じPowerShellにも育てたい？ツールがあって使っていくモチベーションみたいなもんが湧いてきますな？🤔現状至らないところ多いからなんかコントリビュートしたい。 でもまず時間を作らなあかんな🤔&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 23 Jun 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-06-02_install-shfmt-to-win-using-cli

@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-06-23-poco">Poco</a></li>
+                        
                         <li><a href="/posts/2019-06-02_install-shfmt-to-win-using-cli">シェルスクリプトのフォーマッタをCLIでインストールする</a></li>
                         
                         <li><a href="/posts/2019-05-11-pipenv-skeleton">Pipenvのテンプレを作った</a></li>
-                        
-                        <li><a href="/posts/2019-04-29-bias-amp-2issue">BIAS Amp 2で保存したアンプが消える問題</a></li>
                         
                         
 
@@ -65,6 +65,8 @@
                         <li class="dropdown-header">Tags</li>
                         
                         <li><a href="/tags/biasamp">biasamp</a></li>
+                        
+                        <li><a href="/tags/poco">poco</a></li>
                         
                         <li><a href="/tags/tips">tips</a></li>
                         
@@ -129,24 +131,25 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-06-02</div>
+        <div class="col-lg-6">2019-06-23</div>
         
     </div>
-    <h2>シェルスクリプトのフォーマッタをCLIでインストールする</h2>
+    <h2>Poco</h2>
 </div>
 <div>
     
-    <p>小ネタ。</p><p>へーしゃの仕事では、Bashで書かれたスクリプトの出番がめちゃくちゃ多い。</p><p>Bashが得意じゃないマンのわたしにとっては、そういったスクリプトを読み書きに慣れてないこともあり、結構疲れる仕事である。</p><p>そこでせめて書くのだけは少しでも楽したいと思って、フォーマッタを導入しようと思った。</p><h3 id="ツールを導入する">ツールを導入する</h3><p>shfmtというgolang製のツールがあるので、それを採択。</p><p><a href='https://github.com/mvdan/sh'>mvdan/sh: A shell parser, formatter, and interpreter (POSIX/Bash/mksh)</a></p><p>しかし悲しいかな、Windows用に提供されてるパッケージはScoopのみ(リンク切れてるけど)でChocolateyにない様子🤔(筆者はChocolateyユーザである)。</p><p>代わりにCLIでのインストールを使うことにする。</p><pre><code class="sh">cd $&#40;mktemp -d&#41;; go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt
-</code></pre><p>でも<code>mktemp</code>コマンドはPowerShellにはないし...そこは<code>mkdir</code>で茶を濁す。あとtmpフォルダの後始末もする。</p><pre><code class="powershell">cd $&#40;mkdir tmp&#41;; go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt; cd ../; rm -r tmp
-</code></pre><p>ええがな。</p><h3 id="雑記">雑記</h3><p>5月後半はうまく波に乗れずブログを書けなかった。まだアウトプットが習慣化していないようなので、きちんと積み重ねしていきたいもんやで🤔</p>
+    <p>5月以降outputのリズムが崩れております🤔</p><p>時間の使い方の改善を目論み、ポモドーロを導入するなど。まだ効果の程は見えていないので今日はPowerShell版pecoのpocoを紹介する。</p><h3 id="peco">peco</h3><p>まずpecoってなんじゃこらって感じでもあるのだが、linuxなどで使えるインクリメンタルなフィルタリングコマンドらしい。</p><p>[Unix :: コマンド / peco [Tipsというかメモ]](http://tm.root-n.com/unix:command:peco)</p><p>こんなに便利な機能なので、もちろんWindowsでも使えるようになってある <a href='https://github.com/peco/peco'>peco/peco: Simplistic interactive filtering tool</a></p><p>ただ日常使いのシェルをPowerShellにしている身としては、単純なテキストの絞り込みじゃなくてオブジェクトを扱えるやつが望ましいわけで...</p><h3 id="poco">poco</h3><p>というふうに思ってたら普通にPowerShell Galleryにあったわ😲</p><p>PowerShellの場合は<a href='https://gist.github.com/yumura/8df37c22ae1b7942dec7'>powershell peco</a>というのがあって、それを使ったPSModuleがPSGalleryに上がっている...!!!これは使わない手はないぞよ🤔</p><ul><li><a href='https://www.powershellgallery.com/packages/poco/1.1.0'>PowerShell Gallery | poco 1.1.0</a></li><li><a href='https://github.com/jasonmarcher/poco'>jasonmarcher/poco: Interactive pipeline filtering in PowerShell (a port of peco).</a></li></ul><p>ただしこのモジュール、<a href='https://gist.github.com/yumura/8df37c22ae1b7942dec7'>powershell peco</a>のコードをそのまま使ってるのが現状みたいで、作者の方が書かれている改善点そのまま残ってるくさい😭</p><p><a href='https://qiita.com/yumura_s/items/a068329769c6338471dd'>PowerShell で peco (インタラクティブ・フィルタリングツール)っぽいものを作った - Qiita</a></p><p>という具合に不完全なできであるのは確かなんやが、雰囲気でCLIにPowerShellを使っているようなワイには非常に便利なツールなのである。</p><h3 id="pocoを使ってなにか書こう">pocoを使ってなにか書こう</h3><p>例えば、PowerShellではCLIの完全な入力履歴を取ろうとしたら<code>PSReadLine</code>に頼ることになるのだが、こいつをインタラクティブにフィルタリングするコマンドをぺぺっと書いてしまうこともできる↓</p><pre><code class="powershell">function Show-ReadLineHistory&#40;&#41; {
+    Get-Content -Path &#40;Get-PSReadlineOption&#41;.HistorySavePath | poco
+}
+</code></pre><p>こんな風な単純なやつは正直なところpecoで十分なのだけど...</p><p>あと、検索結果の1行を選んで即実行なんしたいのだけど、pocoの機能不足でリストアップされた検索結果をarrow keyで選んだりとかできないので、今のところかなり癖のある使い方になってる😅</p><p>そんな感じPowerShellにも育てたい？ツールがあって使っていくモチベーションみたいなもんが湧いてきますな？🤔現状至らないところ多いからなんかコントリビュートしたい。 でもまず時間を作らなあかんな🤔</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/sh">sh</a>
+    <a href="/tags/poco">poco</a>
     
-    <a href="/tags/golang">golang</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -156,7 +159,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-05-11-pipenv-skeleton">2019-05-11 Pipenvのテンプレを作った &raquo;</a>
+        <a class="right" href="/posts/2019-06-02_install-shfmt-to-win-using-cli">2019-06-02 シェルスクリプトのフォーマッタをCLIでインストールする &raquo;</a>
         
     </div>
 </div>
