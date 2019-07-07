@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sat, 29 Jun 2019 14:51:36 +0900
+Sun, 07 Jul 2019 22:41:05 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-07-07-cement-the-cli-framework
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-07-07-cement-the-cli-framework
+</link>
+<title>
+CementというCLIフレームワーク
+</title>
+<description>
+&lt;p&gt;仕事で、なんかDBに通信しながらAWSのAPIをぶん殴ってゴニョゴニョするバックエンド処理を書く必要があって、Pythonで書くことになった。&lt;/p&gt;&lt;p&gt;&lt;a href='https://python-guideja.readthedocs.io/ja/latest/index.html'&gt;Python ヒッチハイク・ガイド — The Hitchhiker's Guide to Python&lt;/a&gt;を参考にCLIのフレームワークを見ていって、サンプル的に作ってみた感じや継続的にメンテされてることとかで&lt;a href='https://builtoncement.com/'&gt;Cement Framework&lt;/a&gt;を採用することにした。&lt;/p&gt;&lt;p&gt;簡潔に説明すると、CLIアプリケーション作成を容易にするためのフレームワーク。なんとAWS Elastic Beanstalkに使われてるらしい。&lt;/p&gt;&lt;p&gt;数少ない日本語の資料。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://qiita.com/ma2saka/items/9aacc46e20b9886ec156'&gt;自分が必要とする最低限の Cement の情報 - Qiita&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;ほんとに少ないのでなんか自分用にメモを取ろうとこの記事をしたためた次第である。&lt;/p&gt;&lt;p&gt;ボイラープレートでCLIのベースはできてしまうので、あとはその中身を書いていくだけ。ちょっとAPIドキュメントがわかりにくい気もするが、YAMLの設定ファイル読み込みやロギングなども拡張機能としてある。今の所はとてもよくできた使いやすいFWだと思っている。こんどコードの生成らへんの簡単な手順をまとめてみたい。&lt;/p&gt;&lt;p&gt;すでに途中までCementをベースに開発しているのだけど、少し困った点がある。&lt;/p&gt;&lt;h3 id=&quot;困った点&quot;&gt;困った点&lt;/h3&gt;&lt;p&gt;&lt;a href='https://github.com/datafolklabs/cement/issues/549'&gt;Cement not compatible with pipenv · Issue #549 · datafolklabs/cement&lt;/a&gt;&lt;/p&gt;&lt;p&gt;バグでpipenvは&lt;code&gt;setup.py&lt;/code&gt;をインストール出来ないのでエラーで死ぬのだ😭わたしが考えた対策としてはイカのトーリである。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;開発環境&lt;ul&gt;&lt;li&gt;&lt;code&gt;pipenv install -r requirement.txt&lt;/code&gt;などを使いつつ開発&lt;/li&gt;&lt;li&gt;実行時には作業ディレクトリでスクリプト実行する感じ&lt;code&gt;python -m myapp.main&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;製品環境&lt;ul&gt;&lt;li&gt;&lt;code&gt;pip&lt;/code&gt;を使ったインストール及び&lt;code&gt;setup.py&lt;/code&gt;でモジュールをインストール&lt;/li&gt;&lt;li&gt;モジュール実行を行うのでどこでもok(なはず)&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;まだ開発途上なので、製品環境の想定がそのままうまくいくかはビミョーなところ🤔また試行錯誤しなくては。&lt;/p&gt;&lt;p&gt;最近は[Poetry(https://cocoatomo.github.io/poetry-ja/index.html)のほうがイケてると聞くし、はじめからPipenvを使わないようにしてたら良かった感はしなくはない😭&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 07 Jul 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-06-29-season-of-openssh-error
