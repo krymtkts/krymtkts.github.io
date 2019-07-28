@@ -2,7 +2,7 @@
  :layout :post
  :tags  ["powershell", "poco"]}
 
-[以前ちょっとだけ触れたpoco](posts/2019-06-23-poco)を使いだしてから、よく使うディレクトリへの移動とか、`PSReadline`のHistoryからよく使うコマンドを引っ張り出すとかの、インタラクティブなコマンドが作りやすくとて捗っている。
+[以前ちょっとだけ触れたpoco](/posts/2019-06-23-poco)を使いだしてから、よく使うディレクトリへの移動とか、`PSReadline`のHistoryからよく使うコマンドを引っ張り出すとかの、インタラクティブなコマンドが作りやすくとて捗っている。
 
 [Gistにあげたプロファイル](https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be)にまるっと書いているのだけど、ココではコメントも添えて書いておく。
 
@@ -43,7 +43,7 @@ Set-Alias pihy Invoke-ReadLineHistory -Option AllScope
 
 [Big Sky :: Windows のコマンドプロンプトを10倍便利にするコマンド「peco」](https://mattn.kaoriya.net/software/peco.htm)
 
-あと編集機能は未実装😅わたしの用途では編集よりも削除機能のほうが良いかなと思ったりしてるところ🤔
+あと編集機能は未実装。わたしの用途では編集よりも削除機能のほうが良いかなと思ったりしてるところ🤔
 
 ```powershell
 function Set-SelectedLocation {
