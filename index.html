@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-07-28-have-a-good-day-with-poco">pocoで捗る日常生活</a></li>
+                        
                         <li><a href="/posts/2019-07-07-cement-the-cli-framework">CementというCLIフレームワーク</a></li>
                         
                         <li><a href="/posts/2019-06-29-season-of-openssh-error">またOpenSSHが動かなくなる季節がやってきた</a></li>
-                        
-                        <li><a href="/posts/2019-06-23-poco">Poco</a></li>
                         
                         
 
@@ -133,22 +133,53 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-07-07</div>
+        <div class="col-lg-6">2019-07-28</div>
         
     </div>
-    <h2>CementというCLIフレームワーク</h2>
+    <h2>pocoで捗る日常生活</h2>
 </div>
 <div>
     
-    <p>仕事で、なんかDBに通信しながらAWSのAPIをぶん殴ってゴニョゴニョするバックエンド処理を書く必要があって、Pythonで書くことになった。</p><p><a href='https://python-guideja.readthedocs.io/ja/latest/index.html'>Python ヒッチハイク・ガイド — The Hitchhiker's Guide to Python</a>を参考にCLIのフレームワークを見ていって、サンプル的に作ってみた感じや継続的にメンテされてることとかで<a href='https://builtoncement.com/'>Cement Framework</a>を採用することにした。</p><p>簡潔に説明すると、CLIアプリケーション作成を容易にするためのフレームワーク。なんとAWS Elastic Beanstalkに使われてるらしい。</p><p>数少ない日本語の資料。</p><ul><li><a href='https://qiita.com/ma2saka/items/9aacc46e20b9886ec156'>自分が必要とする最低限の Cement の情報 - Qiita</a></li></ul><p>ほんとに少ないのでなんか自分用にメモを取ろうとこの記事をしたためた次第である。</p><p>ボイラープレートでCLIのベースはできてしまうので、あとはその中身を書いていくだけ。ちょっとAPIドキュメントがわかりにくい気もするが、YAMLの設定ファイル読み込みやロギングなども拡張機能としてある。今の所はとてもよくできた使いやすいFWだと思っている。こんどコードの生成らへんの簡単な手順をまとめてみたい。</p><p>すでに途中までCementをベースに開発しているのだけど、少し困った点がある。</p><h3 id="困った点">困った点</h3><p><a href='https://github.com/datafolklabs/cement/issues/549'>Cement not compatible with pipenv · Issue #549 · datafolklabs/cement</a></p><p>バグでpipenvは<code>setup.py</code>をインストール出来ないのでエラーで死ぬのだ😭わたしが考えた対策としてはイカのトーリである。</p><ul><li>開発環境<ul><li><code>pipenv install -r requirement.txt</code>などを使いつつ開発</li><li>実行時には作業ディレクトリでスクリプト実行する感じ<code>python -m myapp.main</code></li></ul></li><li>製品環境<ul><li><code>pip</code>を使ったインストール及び<code>setup.py</code>でモジュールをインストール</li><li>モジュール実行を行うのでどこでもok(なはず)</li></ul></li></ul><p>まだ開発途上なので、製品環境の想定がそのままうまくいくかはビミョーなところ🤔また試行錯誤しなくては。</p><p>最近は[Poetry(https://cocoatomo.github.io/poetry-ja/index.html)のほうがイケてると聞くし、はじめからPipenvを使わないようにしてたら良かった感はしなくはない😭</p>
+    <p><a href='posts/2019-06-23-poco'>以前ちょっとだけ触れたpoco</a>を使いだしてから、よく使うディレクトリへの移動とか、<code>PSReadline</code>のHistoryからよく使うコマンドを引っ張り出すとかの、インタラクティブなコマンドが作りやすくとて捗っている。</p><p><a href='https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be'>Gistにあげたプロファイル</a>にまるっと書いているのだけど、ココではコメントも添えて書いておく。</p><h3 id="<code>psreadline</code>のhistoryを見る/実行する"><code>PSReadline</code>のhistoryを見る/実行する</h3><p>作った関数は以下の通り。似たようなモジュールはPSGalleryに何個かあるけど、pocoで書きたかったので自作した次第。</p><pre><code class="powershell">function Show-ReadLineHistory&#40;&#41; {
+    Get-Content -Path &#40;Get-PSReadlineOption&#41;.HistorySavePath | Select-Object -Unique | Select-Poco -CaseSensitive
+}
+Set-Alias pghy Show-ReadLineHistory -Option AllScope
+
+function Invoke-ReadLineHistory&#40;&#41; {
+    Show-ReadLineHistory | Select-Object -First 1 | Invoke-Expression
+}
+Set-Alias pihy Invoke-ReadLineHistory -Option AllScope
+</code></pre><p>途中で<code>Select-Object -Unique</code>を挟んでいるのは、わたしがやたら同じコマンドを繰り返すので重複を省くため😅</p><p><code>Select-Object -First 1</code>はpoco自体の機能不足(選択機能がない)のを補うためである😭</p><p>ちなみにPowerShellのHistoryが謎な件についてはソースはこの辺。</p><ul><li><a href='https://qiita.com/yuta0801/items/ad0cf608144fb1546e54'>PowerShellの完全な履歴を取得する - Qiita</a><ul><li><a href='https://stackoverflow.com/questions/44104043/how-can-i-see-the-command-history-across-all-powershell-sessions-in-windows-serv'>How can I see the command history across all PowerShell sessions in Windows Server 2016? - Stack Overflow</a></li></ul></li></ul><p><code>Get-History</code>は現在のセッションの情報しか取らない。でも実は<code>&#40;Get-PSREeadlineOption&#41;.HistorySavePath</code>に保存されている、という話🤔</p><p><code>&#126;\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost&#95;history.txt</code>な感じでテキストファイルに保存されている。</p><p>ちなみに本来の<code>Get-History</code>実行結果のような履歴ごとにIDを振るのはやってない。</p><h3 id="お気に入りのディレクトリへ移動する">お気に入りのディレクトリへ移動する</h3><p>これはパクリ。仕事で使うリポジトリはghqを使わないで決められたディレクトリへcloneすることを期待されてたりするので、そのときにこういう任意のディレクトリへの移動ができるやつが重宝してる。</p><p><a href='https://mattn.kaoriya.net/software/peco.htm'>Big Sky :: Windows のコマンドプロンプトを10倍便利にするコマンド「peco」</a></p><p>あと編集機能は未実装😅わたしの用途では編集よりも削除機能のほうが良いかなと思ったりしてるところ🤔</p><pre><code class="powershell">function Set-SelectedLocation {
+    param&#40;
+        &#91;ValidateSet&#40;&quot;Add&quot;, &quot;Move&quot;, &quot;Edit&quot;&#41;&#93;$Mode = &quot;Move&quot;,
+        &#91;string&#93;$Location
+    &#41;
+    switch &#40;$Mode&#41; {
+        &quot;Add&quot; {
+            if &#40;$Location&#41; {
+                Write-Output &quot;$Location&quot; | Out-File -Append -Encoding UTF8 &quot;&#126;/.poco-cd&quot;
+                break
+            }
+        }
+        &quot;Move&quot; {
+            Get-Content -Path &quot;&#126;/.poco-cd&quot; | Select-Poco -CaseSensitive | Select-Object -First 1 | Set-Location
+            break
+        }
+        &quot;Edit&quot; {
+            break
+        }
+    }
+}
+Set-Alias pcd Set-SelectedLocation -Option AllScope
+</code></pre><h3 id="雑なまとめ">雑なまとめ</h3><p>これらのツールをpocoの補完ツールとしてもうちと洗練してもいいかもしれんなあと思ったりしてる🤔</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/cement">cement</a>
+    <a href="/tags/poco">poco</a>
     
-    <a href="/tags/python">python</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -158,7 +189,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-06-29-season-of-openssh-error">2019-06-29 またOpenSSHが動かなくなる季節がやってきた &raquo;</a>
+        <a class="right" href="/posts/2019-07-07-cement-the-cli-framework">2019-07-07 CementというCLIフレームワーク &raquo;</a>
         
     </div>
 </div>
