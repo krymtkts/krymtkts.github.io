@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-08-11-test-lambda-with-pwsh">AWS LambdaをPowershellでテスト実行する</a></li>
+                        
                         <li><a href="/posts/2019-07-28-have-a-good-day-with-poco">pocoで捗る日常生活</a></li>
                         
                         <li><a href="/posts/2019-07-07-cement-the-cli-framework">CementというCLIフレームワーク</a></li>
-                        
-                        <li><a href="/posts/2019-06-29-season-of-openssh-error">またOpenSSHが動かなくなる季節がやってきた</a></li>
                         
                         
 
@@ -84,6 +84,8 @@
                         
                         <li><a href="/tags/vscode">vscode</a></li>
                         
+                        <li><a href="/tags/aws">aws</a></li>
+                        
                         <li><a href="/tags/shieldsio">shieldsio</a></li>
                         
                         <li><a href="/tags/openssh">openssh</a></li>
@@ -107,6 +109,8 @@
                         <li><a href="/tags/python">python</a></li>
                         
                         <li><a href="/tags/golang">golang</a></li>
+                        
+                        <li><a href="/tags/lambda">lambda</a></li>
                         
                         <li><a href="/tags/qmkfirmware">qmkfirmware</a></li>
                         
@@ -133,53 +137,25 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-07-28</div>
+        <div class="col-lg-6">2019-08-11</div>
         
     </div>
-    <h2>pocoで捗る日常生活</h2>
+    <h2>AWS LambdaをPowershellでテスト実行する</h2>
 </div>
 <div>
     
-    <p><a href='/posts/2019-06-23-poco'>以前ちょっとだけ触れたpoco</a>を使いだしてから、よく使うディレクトリへの移動とか、<code>PSReadline</code>のHistoryからよく使うコマンドを引っ張り出すとかの、インタラクティブなコマンドが作りやすくとて捗っている。</p><p><a href='https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be'>Gistにあげたプロファイル</a>にまるっと書いているのだけど、ココではコメントも添えて書いておく。</p><h3 id="<code>psreadline</code>のhistoryを見る/実行する"><code>PSReadline</code>のhistoryを見る/実行する</h3><p>作った関数は以下の通り。似たようなモジュールはPSGalleryに何個かあるけど、pocoで書きたかったので自作した次第。</p><pre><code class="powershell">function Show-ReadLineHistory&#40;&#41; {
-    Get-Content -Path &#40;Get-PSReadlineOption&#41;.HistorySavePath | Select-Object -Unique | Select-Poco -CaseSensitive
-}
-Set-Alias pghy Show-ReadLineHistory -Option AllScope
-
-function Invoke-ReadLineHistory&#40;&#41; {
-    Show-ReadLineHistory | Select-Object -First 1 | Invoke-Expression
-}
-Set-Alias pihy Invoke-ReadLineHistory -Option AllScope
-</code></pre><p>途中で<code>Select-Object -Unique</code>を挟んでいるのは、わたしがやたら同じコマンドを繰り返すので重複を省くため😅</p><p><code>Select-Object -First 1</code>はpoco自体の機能不足(選択機能がない)のを補うためである😭</p><p>ちなみにPowerShellのHistoryが謎な件についてはソースはこの辺。</p><ul><li><a href='https://qiita.com/yuta0801/items/ad0cf608144fb1546e54'>PowerShellの完全な履歴を取得する - Qiita</a><ul><li><a href='https://stackoverflow.com/questions/44104043/how-can-i-see-the-command-history-across-all-powershell-sessions-in-windows-serv'>How can I see the command history across all PowerShell sessions in Windows Server 2016? - Stack Overflow</a></li></ul></li></ul><p><code>Get-History</code>は現在のセッションの情報しか取らない。でも実は<code>&#40;Get-PSREeadlineOption&#41;.HistorySavePath</code>に保存されている、という話🤔</p><p><code>&#126;\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost&#95;history.txt</code>な感じでテキストファイルに保存されている。</p><p>ちなみに本来の<code>Get-History</code>実行結果のような履歴ごとにIDを振るのはやってない。</p><h3 id="お気に入りのディレクトリへ移動する">お気に入りのディレクトリへ移動する</h3><p>これはパクリ。仕事で使うリポジトリはghqを使わないで決められたディレクトリへcloneすることを期待されてたりするので、そのときにこういう任意のディレクトリへの移動ができるやつが重宝してる。</p><p><a href='https://mattn.kaoriya.net/software/peco.htm'>Big Sky :: Windows のコマンドプロンプトを10倍便利にするコマンド「peco」</a></p><p>あと編集機能は未実装。わたしの用途では編集よりも削除機能のほうが良いかなと思ったりしてるところ🤔</p><pre><code class="powershell">function Set-SelectedLocation {
-    param&#40;
-        &#91;ValidateSet&#40;&quot;Add&quot;, &quot;Move&quot;, &quot;Edit&quot;&#41;&#93;$Mode = &quot;Move&quot;,
-        &#91;string&#93;$Location
-    &#41;
-    switch &#40;$Mode&#41; {
-        &quot;Add&quot; {
-            if &#40;$Location&#41; {
-                Write-Output &quot;$Location&quot; | Out-File -Append -Encoding UTF8 &quot;&#126;/.poco-cd&quot;
-                break
-            }
-        }
-        &quot;Move&quot; {
-            Get-Content -Path &quot;&#126;/.poco-cd&quot; | Select-Poco -CaseSensitive | Select-Object -First 1 | Set-Location
-            break
-        }
-        &quot;Edit&quot; {
-            break
-        }
-    }
-}
-Set-Alias pcd Set-SelectedLocation -Option AllScope
-</code></pre><h3 id="雑なまとめ">雑なまとめ</h3><p>これらのツールをpocoの補完ツールとしてもうちと洗練してもいいかもしれんなあと思ったりしてる🤔</p>
+    <p>へーしゃの支援によりGoogle Cloud Next Tokyo 2019へ参加できた。</p><p>とても有意義な時間を過ごせたのでブログをしたためたかったのだけど、日が経つにつれ仕事もメモもとっ散らかってしまい清書もできず、現時点でのブログへのまとめは断念中😫</p><p>代わりに小ネタを投稿する。</p><h3 id="curlの代わりのpowershell">curlの代わりのPowershell</h3><p>最近仕事でAWS Lambdaを使う機会を得た。へーしゃはAWSもGCPもどっちでもアリだが、現状はAWS優勢。わたしはGCPがいいけど。 元々最初にCloud WatchとAWS Lambdaで作った方が良いのでは？という提案をしていたのだが、大した理由もなく却下。その後追加された機能がLambdaじゃないと実行環境を準備するのが難しいというのが判明して、棚からぼた餅なチャンス到来。</p><p>本題に入ろう。今回作ったLambdaはAPI Gatewayと組み合わせてWeb APIとして利用する。</p><p>そのためAPI Key(<code>x-api-key</code>)をRequest Headerに付与してリクエストされる想定でいる(現時点で)。</p><p>なのでブラウザなんかでテスト実行出来ないので、大抵のやつはcurlなんかでURLを叩く。しかしここはPowershellでやってみよう。</p><p>Web-APIを叩くのなら<code>Invoke-WebRequest</code>がよかろう。追加のヘッダーは<code>-Headers</code>にhashtableとして渡せるのだ。</p><pre><code class="powershell">Invoke-WebRequest -Uri https://omae-no-api-endpoint/helloworld -Headers @{'x-api-key' = 'omae-no-api-key!!!'}
+</code></pre><p>こうなる。そんだけ😉</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/poco">poco</a>
+    <a href="/tags/aws">aws</a>
     
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/lambda">lambda</a>
     
 </div>
 
@@ -189,7 +165,7 @@ Set-Alias pcd Set-SelectedLocation -Option AllScope
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-07-07-cement-the-cli-framework">2019-07-07 CementというCLIフレームワーク &raquo;</a>
+        <a class="right" href="/posts/2019-07-28-have-a-good-day-with-poco">2019-07-28 pocoで捗る日常生活 &raquo;</a>
         
     </div>
 </div>

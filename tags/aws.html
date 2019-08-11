@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: 下手な文章をLintする</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-04-07-lint-my-statement">
+    <title>krymtkts: Posts Tagged &quot;aws&quot;</title>
+    <link rel="canonical" href="http://krymtkts.github.io/tags/aws">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: 下手な文章をLintする" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-04-07-lint-my-statement" />
+    <meta property="og:title" content="krymtkts: Posts Tagged &quot;aws&quot;" />
+    <meta property="og:url" content="http://krymtkts.github.io/tags/aws" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -134,43 +134,17 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="post">
-    <div class="post-header">
-    <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-04-07</div>
-        
+<div id="posts-by-tag">
+    <div id="page-header">
+        <h2>Posts Tagged &quot;aws&quot;</h2>
     </div>
-    <h2>下手な文章をLintする</h2>
-</div>
-<div>
+    <ul>
     
-    <p>転職してから2ヶ月の間、海外労働者の同僚から、日本語のドキュメントも英語のドキュメントもレビューコメントをいただいていてつらい。</p><p>英語だけならまだしろ、わしゃ日本語もろくに扱えん日本人なんかと思うと涙ちょちょぎれる次第であります。</p><p>なので自分の文章にLintをかけようと思った。</p><h3 id="textlint">textlint</h3><p>いつだったか文章のLinterについてググってたら、以下のようなものを見つけた。</p><ul><li><a href='https://github.com/textlint/textlint'>GitHub - textlint/textlint</a></li><li><a href='https://qiita.com/azu/items/2c565a38df5ed4c9f4e1'>Qiita - VS Codeでtextlintを使って文章をチェックする</a></li><li><a href='https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing'>textlint-ja/textlint-rule-preset-ja-technical-writing: 技術文書向けのtextlintルールプリセット</a></li></ul><p>...すげえな！近い内に使えるようにしよう。と思ってから数ヶ月後、実務でまともな文章を書く能力が必要になるとわ...😭 というかvscode-textlintってホイル焼きで有名な方の作品なのですね。敬意を払うべきプロダクトだ。</p><p>以下にわたしのセットアップ手順を記す(実行はPowerShellだよ)。</p><ol><li>VSCodeでvscode-textlinを入れる</li><li><code>npm i -g textlint textlint-rule-preset-ja-technical-writing</code></li><li><code>cd &#126;</code>で<code>textlint &ndash;init</code>してルールを書き込み</li><li>VSCodeでは設定ファイルを絶対パスで利用するからどうしたものか...(複数端末でSyncしてる関係で)<ol><li><code>&#126;/,textlint</code>にしたらユーザ名とか考えなくていいから、なんかいい😁</li></ol></li><li>ついかパッケージ <code>npm i -g textlint-rule-date-weekday-mismatch textlint-rule-terminology textlint-rule-ginger</code></li></ol><p>これで簡単なtypoは減らせるんじゃないかな。</p><p>お気に入りのルールは<code>textlint-rule-date-weekday-mismatch</code>。これからのオレが曜日を間違うことはないぜええええ？(フラグ</p>
-</div>
-
-<div id="post-tags">
-    <b>Tags: </b>
+        <li>
+            <a href="/posts/2019-08-11-test-lambda-with-pwsh">2019-08-11 AWS LambdaをPowershellでテスト実行する</a>
+        </li>
     
-    <a href="/tags/vscode">vscode</a>
-    
-    <a href="/tags/textlin">textlin</a>
-    
-    <a href="/tags/node">node</a>
-    
-</div>
-
-
-    <div id="prev-next">
-        
-        <a href="/posts/2019-04-14-add-a-badge">&laquo; 2019-04-14 プロジェクトにバッジを貼ろう</a>
-        
-        
-        <a class="right" href="/posts/2019-04-02-pubslish-first-module-to-powershell-gallery">2019-04-02 はじめてのPowerShell Galleryへの公開 &raquo;</a>
-        
-    </div>
-
-    
-
-
+    </ul>
 </div>
 
             </div>

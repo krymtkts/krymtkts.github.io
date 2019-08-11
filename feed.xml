@@ -12,11 +12,29 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 28 Jul 2019 23:25:12 +0900
+Sun, 11 Aug 2019 23:16:12 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh
+</link>
+<title>
+AWS LambdaをPowershellでテスト実行する
+</title>
+<description>
+&lt;p&gt;へーしゃの支援によりGoogle Cloud Next Tokyo 2019へ参加できた。&lt;/p&gt;&lt;p&gt;とても有意義な時間を過ごせたのでブログをしたためたかったのだけど、日が経つにつれ仕事もメモもとっ散らかってしまい清書もできず、現時点でのブログへのまとめは断念中😫&lt;/p&gt;&lt;p&gt;代わりに小ネタを投稿する。&lt;/p&gt;&lt;h3 id=&quot;curlの代わりのpowershell&quot;&gt;curlの代わりのPowershell&lt;/h3&gt;&lt;p&gt;最近仕事でAWS Lambdaを使う機会を得た。へーしゃはAWSもGCPもどっちでもアリだが、現状はAWS優勢。わたしはGCPがいいけど。 元々最初にCloud WatchとAWS Lambdaで作った方が良いのでは？という提案をしていたのだが、大した理由もなく却下。その後追加された機能がLambdaじゃないと実行環境を準備するのが難しいというのが判明して、棚からぼた餅なチャンス到来。&lt;/p&gt;&lt;p&gt;本題に入ろう。今回作ったLambdaはAPI Gatewayと組み合わせてWeb APIとして利用する。&lt;/p&gt;&lt;p&gt;そのためAPI Key(&lt;code&gt;x-api-key&lt;/code&gt;)をRequest Headerに付与してリクエストされる想定でいる(現時点で)。&lt;/p&gt;&lt;p&gt;なのでブラウザなんかでテスト実行出来ないので、大抵のやつはcurlなんかでURLを叩く。しかしここはPowershellでやってみよう。&lt;/p&gt;&lt;p&gt;Web-APIを叩くのなら&lt;code&gt;Invoke-WebRequest&lt;/code&gt;がよかろう。追加のヘッダーは&lt;code&gt;-Headers&lt;/code&gt;にhashtableとして渡せるのだ。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;Invoke-WebRequest -Uri https://omae-no-api-endpoint/helloworld -Headers @{'x-api-key' = 'omae-no-api-key!!!'}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;こうなる。そんだけ😉&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 11 Aug 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-07-28-have-a-good-day-with-poco
