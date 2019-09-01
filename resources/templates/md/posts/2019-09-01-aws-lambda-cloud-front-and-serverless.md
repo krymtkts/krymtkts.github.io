@@ -21,7 +21,18 @@ Plugin: 1.3.10
 SDK: 2.1.0
 
 # generate boilerplate
-serverless create --template aws-python3
+$ serverless create --template aws-python3
+Serverless: Generating boilerplate...
+ _______                             __
+|   _   .-----.----.--.--.-----.----|  .-----.-----.-----.
+|   |___|  -__|   _|  |  |  -__|   _|  |  -__|__ --|__ --|
+|____   |_____|__|  \___/|_____|__| |__|_____|_____|_____|
+|   |   |             The Serverless Application Framework
+|       |                           serverless.com, v1.51.0
+ -------'
+
+Serverless: Successfully generated boilerplate for template: "aws-python3"
+Serverless: NOTE: Please update the "service" property in serverless.yml with your service name
 ```
 
 これで生成された関数に処理を書くだけ。あ～らかんたん😁
