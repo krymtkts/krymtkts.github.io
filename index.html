@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">Serverless FrameworkでAWS LambdaとCloudFront</a></li>
+                        
                         <li><a href="/posts/2019-08-11-test-lambda-with-pwsh">AWS LambdaをPowershellでテスト実行する</a></li>
                         
                         <li><a href="/posts/2019-07-28-have-a-good-day-with-poco">pocoで捗る日常生活</a></li>
-                        
-                        <li><a href="/posts/2019-07-07-cement-the-cli-framework">CementというCLIフレームワーク</a></li>
                         
                         
 
@@ -112,6 +112,8 @@
                         
                         <li><a href="/tags/lambda">lambda</a></li>
                         
+                        <li><a href="/tags/serverless">serverless</a></li>
+                        
                         <li><a href="/tags/qmkfirmware">qmkfirmware</a></li>
                         
                         <li><a href="/tags/node">node</a></li>
@@ -137,15 +139,80 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-08-11</div>
+        <div class="col-lg-6">2019-09-01</div>
         
     </div>
-    <h2>AWS LambdaをPowershellでテスト実行する</h2>
+    <h2>Serverless FrameworkでAWS LambdaとCloudFront</h2>
 </div>
 <div>
     
-    <p>へーしゃの支援によりGoogle Cloud Next Tokyo 2019へ参加できた。</p><p>とても有意義な時間を過ごせたのでブログをしたためたかったのだけど、日が経つにつれ仕事もメモもとっ散らかってしまい清書もできず、現時点でのブログへのまとめは断念中😫</p><p>代わりに小ネタを投稿する。</p><h3 id="curlの代わりのpowershell">curlの代わりのPowershell</h3><p>最近仕事でAWS Lambdaを使う機会を得た。へーしゃはAWSもGCPもどっちでもアリだが、現状はAWS優勢。わたしはGCPがいいけど。 元々最初にCloud WatchとAWS Lambdaで作った方が良いのでは？という提案をしていたのだが、大した理由もなく却下。その後追加された機能がLambdaじゃないと実行環境を準備するのが難しいというのが判明して、棚からぼた餅なチャンス到来。</p><p>本題に入ろう。今回作ったLambdaはAPI Gatewayと組み合わせてWeb APIとして利用する。</p><p>そのためAPI Key(<code>x-api-key</code>)をRequest Headerに付与してリクエストされる想定でいる(現時点で)。</p><p>なのでブラウザなんかでテスト実行出来ないので、大抵のやつはcurlなんかでURLを叩く。しかしここはPowershellでやってみよう。</p><p>Web-APIを叩くのなら<code>Invoke-WebRequest</code>がよかろう。追加のヘッダーは<code>-Headers</code>にhashtableとして渡せるのだ。</p><pre><code class="powershell">Invoke-WebRequest -Uri https://omae-no-api-endpoint/helloworld -Headers @{'x-api-key' = 'omae-no-api-key!!!'}
-</code></pre><p>こうなる。そんだけ😉</p>
+    <p>AWS Lambdaって書くのはホント簡単。</p><p>でも手動でデプロイするのはほんまに勘弁してほしいわ...って感じだったのでAWS強メンの同僚に相談してみたところ、<a href='https://serverless.com/framework/'>Serverless Framework</a>ってのがいい具合に抽象化してくれてるので試しに使ってみては？と助言いただけた。</p><h3 id="使ってみた">使ってみた</h3><p>事前にNodeが必要なことくらい。</p><pre><code class="powershell"># global install
+$ npm install -g serverless
+
+# installed version
+$ serverless --version
+Framework Core: 1.51.0
+Plugin: 1.3.10
+SDK: 2.1.0
+
+# generate boilerplate
+serverless create --template aws-python3
+</code></pre><p>これで生成された関数に処理を書くだけ。あ～らかんたん😁</p><p>デプロイも超簡単なので、これならCDに組み込むのも楽そう。</p><pre><code class="powershell"># deploy
+serverless deploy -v
+
+# deploy to specific stage
+serverless deploy -v --stage dev
+</code></pre><h3 id="cloudfrontを添えて">CloudFrontを添えて</h3><p>今回の仕事ではちょっと特殊な事情でCloudFrontを経由してLambdaのエンドポイントURLへリクエストする必要があった。</p><p>プラグインを使えばかんたんに記述することもできる。</p><p><a href='https://github.com/Droplr/serverless-api-cloudfront'>Droplr/serverless-api-cloudfront: Serverless Plugin - CloudFront distribution in front of your API Gateway</a></p><p>が、かんたんに記述できる＝かんたんな内容しかいじれない、のため片手落ちな点が多かった。諸々のパラメータの指定ができなくて細かな指定をする場合は結局<code>resources</code>セクションに自力でCloudFormationを書くことになった。</p><p>以下はresourceセクションのサンプル。<code>DomainName</code>の解決は以下のStackoverflowからヒントを得た。</p><p><a href='https://stackoverflow.com/questions/50931730/deploying-lambda-api-gateway-cloudfront-through-serverless-framework-at-a-ti'>amazon web services - Deploying Lambda + API-gateway + CloudFront through serverless framework at a time - Stack Overflow</a></p><pre><code class="yaml">resources:
+  Resources:
+    LambdaDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Enabled: true
+          Comment: &quot;managed by serverless framewrok&quot;
+          HttpVersion: http2
+          PriceClass: PriceClass&#95;All
+          Origins:
+            - Id: ApiGateway
+              DomainName: !Join
+                - &quot;.&quot;
+                - - !Ref ApiGatewayRestApi
+                  - execute-api
+                  - !Ref AWS::Region
+                  - amazonaws.com
+              OriginPath: /
+              CustomOriginConfig:
+                HTTPPort: 80
+                HTTPSPort: 443
+                OriginProtocolPolicy: https-only
+                OriginReadTimeout: 10
+                OriginSSLProtocols:
+                  - &quot;SSLv3&quot;
+                  - &quot;TLSv1&quot;
+                  - &quot;TLSv1.1&quot;
+                  - &quot;TLSv1.2&quot;
+          DefaultCacheBehavior:
+            AllowedMethods:
+              - HEAD
+              - DELETE
+              - POST
+              - GET
+              - OPTIONS
+              - PUT
+              - PATCH
+            Compress: false
+            DefaultTTL: 0
+            MaxTTL: 0
+            MinTTL: 0
+            ForwardedValues:
+              Cookies:
+                Forward: none
+              Headers:
+                - x-api-key
+              QueryString: false
+            TargetOriginId: ApiGateway
+            ViewerProtocolPolicy: redirect-to-https
+</code></pre><p>ちなみにLambda@Edgeにはまだ対応していないみたいでプラグインの利用が必須となっている様子。</p><p><a href='https://github.com/serverless/serverless/issues/3944'>Support for Lambda@Edge · Issue #3944 · serverless/serverless</a></p><h3 id="感想">感想</h3><p>AWSだけにベンダーロックインせずServeless Computingの開発ができるよーな抽象化層を提供するようなCLIのイメージ。</p><p>誕生は数年前でまだまだ新し目のため、web上には新旧の情報が玉石混交の状態であるからして、細かなYAMLの記述内容の確認なんかは<a href='https://serverless.com/framework/docs/'>Serverless Framework Documentation</a>を参考にし、大まかな書き方はそのへんのブログなどから引っこ抜いてくるのが良いと思われる。</p><p>まだ1プロダクトでしか使ってないけど、いい感触を得た。YAMLの記述内容は、AWSの場合でいうとresourcesはまんまCloudFormationなので、そのへんの知識があれば使いこなせそう。SaaSのやつはまだ使ってないので感触なし。</p><h3 id="おまけ:&#95;<code>sls</code>というコマンド名">おまけ: <code>sls</code>というコマンド名</h3><p>ばかみたいな話なんやけど、Serverless Frameworkの短縮形コマンド<code>sls</code>はPowerShellで言うところの<code>Select-String</code>コマンドレットにエイリアスされてるので使えねえｗ</p><p>ではアデュー😘</p>
 </div>
 
 <div id="post-tags">
@@ -153,9 +220,9 @@
     
     <a href="/tags/aws">aws</a>
     
-    <a href="/tags/powershell">powershell</a>
-    
     <a href="/tags/lambda">lambda</a>
+    
+    <a href="/tags/serverless">serverless</a>
     
 </div>
 
@@ -165,7 +232,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-07-28-have-a-good-day-with-poco">2019-07-28 pocoで捗る日常生活 &raquo;</a>
+        <a class="right" href="/posts/2019-08-11-test-lambda-with-pwsh">2019-08-11 AWS LambdaをPowershellでテスト実行する &raquo;</a>
         
     </div>
 </div>
