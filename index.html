@@ -156,7 +156,18 @@ Plugin: 1.3.10
 SDK: 2.1.0
 
 # generate boilerplate
-serverless create --template aws-python3
+$ serverless create --template aws-python3
+Serverless: Generating boilerplate...
+ &#95;&#95;&#95;&#95;&#95;&#95;&#95;                             &#95;&#95;
+|   &#95;   .-----.----.--.--.-----.----|  .-----.-----.-----.
+|   |&#95;&#95;&#95;|  -&#95;&#95;|   &#95;|  |  |  -&#95;&#95;|   &#95;|  |  -&#95;&#95;|&#95;&#95; --|&#95;&#95; --|
+|&#95;&#95;&#95;&#95;   |&#95;&#95;&#95;&#95;&#95;|&#95;&#95;|  \&#95;&#95;&#95;/|&#95;&#95;&#95;&#95;&#95;|&#95;&#95;| |&#95;&#95;|&#95;&#95;&#95;&#95;&#95;|&#95;&#95;&#95;&#95;&#95;|&#95;&#95;&#95;&#95;&#95;|
+|   |   |             The Serverless Application Framework
+|       |                           serverless.com, v1.51.0
+ -------'
+
+Serverless: Successfully generated boilerplate for template: &quot;aws-python3&quot;
+Serverless: NOTE: Please update the &quot;service&quot; property in serverless.yml with your service name
 </code></pre><p>これで生成された関数に処理を書くだけ。あ～らかんたん😁</p><p>デプロイも超簡単なので、これならCDに組み込むのも楽そう。</p><pre><code class="powershell"># deploy
 serverless deploy -v
 

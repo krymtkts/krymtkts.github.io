@@ -12,7 +12,7 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 01 Sep 2019 22:17:22 +0900
+Sun, 01 Sep 2019 22:25:50 +0900
 </lastBuildDate>
 <generator>
 clj-rss
@@ -38,7 +38,18 @@ Plugin: 1.3.10
 SDK: 2.1.0
 
 # generate boilerplate
-serverless create --template aws-python3
+$ serverless create --template aws-python3
+Serverless: Generating boilerplate...
+ &amp;#95;&amp;#95;&amp;#95;&amp;#95;&amp;#95;&amp;#95;&amp;#95;                             &amp;#95;&amp;#95;
+|   &amp;#95;   .-----.----.--.--.-----.----|  .-----.-----.-----.
+|   |&amp;#95;&amp;#95;&amp;#95;|  -&amp;#95;&amp;#95;|   &amp;#95;|  |  |  -&amp;#95;&amp;#95;|   &amp;#95;|  |  -&amp;#95;&amp;#95;|&amp;#95;&amp;#95; --|&amp;#95;&amp;#95; --|
+|&amp;#95;&amp;#95;&amp;#95;&amp;#95;   |&amp;#95;&amp;#95;&amp;#95;&amp;#95;&amp;#95;|&amp;#95;&amp;#95;|  \&amp;#95;&amp;#95;&amp;#95;/|&amp;#95;&amp;#95;&amp;#95;&amp;#95;&amp;#95;|&amp;#95;&amp;#95;| |&amp;#95;&amp;#95;|&amp;#95;&amp;#95;&amp;#95;&amp;#95;&amp;#95;|&amp;#95;&amp;#95;&amp;#95;&amp;#95;&amp;#95;|&amp;#95;&amp;#95;&amp;#95;&amp;#95;&amp;#95;|
+|   |   |             The Serverless Application Framework
+|       |                           serverless.com, v1.51.0
+ -------'
+
+Serverless: Successfully generated boilerplate for template: &amp;quot;aws-python3&amp;quot;
+Serverless: NOTE: Please update the &amp;quot;service&amp;quot; property in serverless.yml with your service name
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これで生成された関数に処理を書くだけ。あ～らかんたん😁&lt;/p&gt;&lt;p&gt;デプロイも超簡単なので、これならCDに組み込むのも楽そう。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;# deploy
 serverless deploy -v
 
