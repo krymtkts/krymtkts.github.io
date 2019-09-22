@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-09-22-limitaion-of-remove-certificates">ALBのListenerから証明書を削除するときの制限</a></li>
+                        
                         <li><a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">Serverless FrameworkでAWS LambdaとCloudFront</a></li>
                         
                         <li><a href="/posts/2019-08-11-test-lambda-with-pwsh">AWS LambdaをPowershellでテスト実行する</a></li>
-                        
-                        <li><a href="/posts/2019-07-28-have-a-good-day-with-poco">pocoで捗る日常生活</a></li>
                         
                         
 
@@ -88,11 +88,15 @@
                         
                         <li><a href="/tags/shieldsio">shieldsio</a></li>
                         
+                        <li><a href="/tags/elb">elb</a></li>
+                        
                         <li><a href="/tags/openssh">openssh</a></li>
                         
                         <li><a href="/tags/powershell">powershell</a></li>
                         
                         <li><a href="/tags/planck">planck</a></li>
+                        
+                        <li><a href="/tags/acm">acm</a></li>
                         
                         <li><a href="/tags/mechanicalkeyboard">mechanicalkeyboard</a></li>
                         
@@ -139,91 +143,27 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-09-01</div>
+        <div class="col-lg-6">2019-09-22</div>
         
     </div>
-    <h2>Serverless FrameworkでAWS LambdaとCloudFront</h2>
+    <h2>ALBのListenerから証明書を削除するときの制限</h2>
 </div>
 <div>
     
-    <p>AWS Lambdaって書くのはホント簡単。</p><p>でも手動でデプロイするのはほんまに勘弁してほしいわ...って感じだったのでAWS強メンの同僚に相談してみたところ、<a href='https://serverless.com/framework/'>Serverless Framework</a>ってのがいい具合に抽象化してくれてるので試しに使ってみては？と助言いただけた。</p><h3 id="使ってみた">使ってみた</h3><p>事前にNodeが必要なことくらい。</p><pre><code class="powershell"># global install
-$ npm install -g serverless
-
-# installed version
-$ serverless --version
-Framework Core: 1.51.0
-Plugin: 1.3.10
-SDK: 2.1.0
-
-# generate boilerplate
-$ serverless create --template aws-python3
-Serverless: Generating boilerplate...
- &#95;&#95;&#95;&#95;&#95;&#95;&#95;                             &#95;&#95;
-|   &#95;   .-----.----.--.--.-----.----|  .-----.-----.-----.
-|   |&#95;&#95;&#95;|  -&#95;&#95;|   &#95;|  |  |  -&#95;&#95;|   &#95;|  |  -&#95;&#95;|&#95;&#95; --|&#95;&#95; --|
-|&#95;&#95;&#95;&#95;   |&#95;&#95;&#95;&#95;&#95;|&#95;&#95;|  \&#95;&#95;&#95;/|&#95;&#95;&#95;&#95;&#95;|&#95;&#95;| |&#95;&#95;|&#95;&#95;&#95;&#95;&#95;|&#95;&#95;&#95;&#95;&#95;|&#95;&#95;&#95;&#95;&#95;|
-|   |   |             The Serverless Application Framework
-|       |                           serverless.com, v1.51.0
- -------'
-
-Serverless: Successfully generated boilerplate for template: &quot;aws-python3&quot;
-Serverless: NOTE: Please update the &quot;service&quot; property in serverless.yml with your service name
-</code></pre><p>これで生成された関数に処理を書くだけ。あ～らかんたん😁</p><p>デプロイも超簡単なので、これならCDに組み込むのも楽そう。</p><pre><code class="powershell"># deploy
-serverless deploy -v
-
-# deploy to specific stage
-serverless deploy -v --stage dev
-</code></pre><h3 id="cloudfrontを添えて">CloudFrontを添えて</h3><p>今回の仕事ではちょっと特殊な事情でCloudFrontを経由してLambdaのエンドポイントURLへリクエストする必要があった。</p><p>プラグインを使えばかんたんに記述することもできる。</p><p><a href='https://github.com/Droplr/serverless-api-cloudfront'>Droplr/serverless-api-cloudfront: Serverless Plugin - CloudFront distribution in front of your API Gateway</a></p><p>が、かんたんに記述できる＝かんたんな内容しかいじれない、のため片手落ちな点が多かった。諸々のパラメータの指定ができなくて細かな指定をする場合は結局<code>resources</code>セクションに自力でCloudFormationを書くことになった。</p><p>以下はresourceセクションのサンプル。<code>DomainName</code>の解決は以下のStackoverflowからヒントを得た。</p><p><a href='https://stackoverflow.com/questions/50931730/deploying-lambda-api-gateway-cloudfront-through-serverless-framework-at-a-ti'>amazon web services - Deploying Lambda + API-gateway + CloudFront through serverless framework at a time - Stack Overflow</a></p><pre><code class="yaml">resources:
-  Resources:
-    LambdaDistribution:
-      Type: AWS::CloudFront::Distribution
-      Properties:
-        DistributionConfig:
-          Enabled: true
-          Comment: &quot;managed by serverless framewrok&quot;
-          HttpVersion: http2
-          PriceClass: PriceClass&#95;All
-          Origins:
-            - Id: ApiGateway
-              DomainName: !Join
-                - &quot;.&quot;
-                - - !Ref ApiGatewayRestApi
-                  - execute-api
-                  - !Ref AWS::Region
-                  - amazonaws.com
-              OriginPath: /
-              CustomOriginConfig:
-                HTTPPort: 80
-                HTTPSPort: 443
-                OriginProtocolPolicy: https-only
-                OriginReadTimeout: 10
-                OriginSSLProtocols:
-                  - &quot;SSLv3&quot;
-                  - &quot;TLSv1&quot;
-                  - &quot;TLSv1.1&quot;
-                  - &quot;TLSv1.2&quot;
-          DefaultCacheBehavior:
-            AllowedMethods:
-              - HEAD
-              - DELETE
-              - POST
-              - GET
-              - OPTIONS
-              - PUT
-              - PATCH
-            Compress: false
-            DefaultTTL: 0
-            MaxTTL: 0
-            MinTTL: 0
-            ForwardedValues:
-              Cookies:
-                Forward: none
-              Headers:
-                - x-api-key
-              QueryString: false
-            TargetOriginId: ApiGateway
-            ViewerProtocolPolicy: redirect-to-https
-</code></pre><p>ちなみにLambda@Edgeにはまだ対応していないみたいでプラグインの利用が必須となっている様子。</p><p><a href='https://github.com/serverless/serverless/issues/3944'>Support for Lambda@Edge · Issue #3944 · serverless/serverless</a></p><h3 id="感想">感想</h3><p>AWSだけにベンダーロックインせずServeless Computingの開発ができるよーな抽象化層を提供するようなCLIのイメージ。</p><p>誕生は数年前でまだまだ新し目のため、web上には新旧の情報が玉石混交の状態であるからして、細かなYAMLの記述内容の確認なんかは<a href='https://serverless.com/framework/docs/'>Serverless Framework Documentation</a>を参考にし、大まかな書き方はそのへんのブログなどから引っこ抜いてくるのが良いと思われる。</p><p>まだ1プロダクトでしか使ってないけど、いい感触を得た。YAMLの記述内容は、AWSの場合でいうとresourcesはまんまCloudFormationなので、そのへんの知識があれば使いこなせそう。SaaSのやつはまだ使ってないので感触なし。</p><h3 id="おまけ:&#95;<code>sls</code>というコマンド名">おまけ: <code>sls</code>というコマンド名</h3><p>ばかみたいな話なんやけど、Serverless Frameworkの短縮形コマンド<code>sls</code>はPowerShellで言うところの<code>Select-String</code>コマンドレットにエイリアスされてるので使えねえｗ</p><p>ではアデュー😘</p>
+    <p>タイトルの通り。</p><p>仕事中にわかっただけで2つある。</p><ol><li>ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい</li><li>ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない</li></ol><p>上記はPython(boto3)からAWSのリソースを操作した際のもの。boto3はpipでインストールできる最新のv1.9.233。</p><h3 id="1.&#95;albのlistenerに登録された証明書を一度にまとめて消せる上限は10件ぽい">1. ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい</h3><p>ドキュメントには書かれてない気がする。少なくとも<a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html#ElasticLoadBalancingv2.Client.remove_listener_certificates'>boto3</a>と<a href='https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_RemoveListenerCertificates.html'>ELBのAPIリファレンス</a>のどちらにも記載がない。</p><p>問い合わせして聞いてないねんけど、書いてあったら教えてほしい🤔</p><p>以下はListener Certificatesの上限25件全部を一気に消そうとしたときのログ。センシティブな部分は削ってある。</p><pre><code class="log">Traceback &#40;most recent call last&#41;:
+  File &quot;C:\workspace\alb-batch\albbatch\elbapi.py&quot;, line 102, in remove&#95;cerificates
+    Certificates=params&#41;
+  File &quot;C:\Users\takatoshi&#95;kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py&quot;, line 357, in &#95;api&#95;call
+    return self.&#95;make&#95;api&#95;call&#40;operation&#95;name, kwargs&#41;
+  File &quot;C:\Users\takatoshi&#95;kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py&quot;, line 661, in &#95;make&#95;api&#95;call
+    raise error&#95;class&#40;parsed&#95;response, operation&#95;name&#41;
+botocore.exceptions.ClientError: An error occurred &#40;ValidationError&#41; when calling the RemoveListenerCertificates operation: Up to '10' certificate ARNs can be specified, but '25' were specified
+</code></pre><h3 id="2.&#95;albのlistenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない">2. ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない</h3><p>ACMで証明書を削除する場合、その証明書が他のAWSリソースに関連付けられていると<code>ResourceInUseException</code>(boto3では<code>ClientError</code>)で削除できない。</p><p><a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/acm.html#ACM.Client.delete_certificate'>ACM.Client.delete_certificate</a> から抜粋。</p><blockquote><p> You cannot delete an ACM certificate that is being used by another AWS service. To delete a certificate that is in use, the certificate association must first be removed. </p></blockquote><p>なのでまず関連付けられたLoad BalancerのListenerなどから証明書を取り除いた後、かつ証明書の情報からもその関連付けが取り除かれたことを確認しないと安全に削除できない😱</p><p>どうすればよいかというと、ACMの<code>DescribeCertificate</code>のレスポンスに含まれる<code>InUseBy</code>リストの中が空になってたら、それらの関連付けが取り除かれた状態なので安全に削除できる。</p><p>ACMで提供されてる<code>Waiter</code>は検証待ちのみで、それ用にはないみたいなので、以下のように手動で待ち合わせする...🤔</p><pre><code class="python">def wait&#95;until&#95;certificate&#95;unused&#40;self, arn: str&#41;:
+    cert = self.acm&#95;client.describe&#95;certificate&#40;CertificateArn=arn&#41;
+    while len&#40;cert&#91;'InUseBy'&#93;&#41; &gt; 0:
+        time.sleep&#40;1&#41;
+        cert = self.acm&#95;client.describe&#95;certificate&#40;CertificateArn=arn&#41;
+</code></pre><p>めんどくせえええええ、こんなsnipetレベルのモノは<code>Waiter</code>作って欲しいわ😭</p>
 </div>
 
 <div id="post-tags">
@@ -231,9 +171,9 @@ serverless deploy -v --stage dev
     
     <a href="/tags/aws">aws</a>
     
-    <a href="/tags/lambda">lambda</a>
+    <a href="/tags/elb">elb</a>
     
-    <a href="/tags/serverless">serverless</a>
+    <a href="/tags/acm">acm</a>
     
 </div>
 
@@ -243,7 +183,7 @@ serverless deploy -v --stage dev
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-08-11-test-lambda-with-pwsh">2019-08-11 AWS LambdaをPowershellでテスト実行する &raquo;</a>
+        <a class="right" href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront &raquo;</a>
         
     </div>
 </div>

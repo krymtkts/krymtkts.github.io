@@ -12,11 +12,41 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 01 Sep 2019 22:25:50 +0900
+Sun, 22 Sep 2019 11:20:00 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-09-22-limitaion-of-remove-certificates
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-09-22-limitaion-of-remove-certificates
+</link>
+<title>
+ALBのListenerから証明書を削除するときの制限
+</title>
+<description>
+&lt;p&gt;タイトルの通り。&lt;/p&gt;&lt;p&gt;仕事中にわかっただけで2つある。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい&lt;/li&gt;&lt;li&gt;ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;上記はPython(boto3)からAWSのリソースを操作した際のもの。boto3はpipでインストールできる最新のv1.9.233。&lt;/p&gt;&lt;h3 id=&quot;1.&amp;#95;albのlistenerに登録された証明書を一度にまとめて消せる上限は10件ぽい&quot;&gt;1. ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい&lt;/h3&gt;&lt;p&gt;ドキュメントには書かれてない気がする。少なくとも&lt;a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html#ElasticLoadBalancingv2.Client.remove_listener_certificates'&gt;boto3&lt;/a&gt;と&lt;a href='https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_RemoveListenerCertificates.html'&gt;ELBのAPIリファレンス&lt;/a&gt;のどちらにも記載がない。&lt;/p&gt;&lt;p&gt;問い合わせして聞いてないねんけど、書いてあったら教えてほしい🤔&lt;/p&gt;&lt;p&gt;以下はListener Certificatesの上限25件全部を一気に消そうとしたときのログ。センシティブな部分は削ってある。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;log&quot;&gt;Traceback &amp;#40;most recent call last&amp;#41;:
+  File &amp;quot;C:\workspace\alb-batch\albbatch\elbapi.py&amp;quot;, line 102, in remove&amp;#95;cerificates
+    Certificates=params&amp;#41;
+  File &amp;quot;C:\Users\takatoshi&amp;#95;kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py&amp;quot;, line 357, in &amp;#95;api&amp;#95;call
+    return self.&amp;#95;make&amp;#95;api&amp;#95;call&amp;#40;operation&amp;#95;name, kwargs&amp;#41;
+  File &amp;quot;C:\Users\takatoshi&amp;#95;kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py&amp;quot;, line 661, in &amp;#95;make&amp;#95;api&amp;#95;call
+    raise error&amp;#95;class&amp;#40;parsed&amp;#95;response, operation&amp;#95;name&amp;#41;
+botocore.exceptions.ClientError: An error occurred &amp;#40;ValidationError&amp;#41; when calling the RemoveListenerCertificates operation: Up to '10' certificate ARNs can be specified, but '25' were specified
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;2.&amp;#95;albのlistenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない&quot;&gt;2. ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない&lt;/h3&gt;&lt;p&gt;ACMで証明書を削除する場合、その証明書が他のAWSリソースに関連付けられていると&lt;code&gt;ResourceInUseException&lt;/code&gt;(boto3では&lt;code&gt;ClientError&lt;/code&gt;)で削除できない。&lt;/p&gt;&lt;p&gt;&lt;a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/acm.html#ACM.Client.delete_certificate'&gt;ACM.Client.delete_certificate&lt;/a&gt; から抜粋。&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt; You cannot delete an ACM certificate that is being used by another AWS service. To delete a certificate that is in use, the certificate association must first be removed. &lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;なのでまず関連付けられたLoad BalancerのListenerなどから証明書を取り除いた後、かつ証明書の情報からもその関連付けが取り除かれたことを確認しないと安全に削除できない😱&lt;/p&gt;&lt;p&gt;どうすればよいかというと、ACMの&lt;code&gt;DescribeCertificate&lt;/code&gt;のレスポンスに含まれる&lt;code&gt;InUseBy&lt;/code&gt;リストの中が空になってたら、それらの関連付けが取り除かれた状態なので安全に削除できる。&lt;/p&gt;&lt;p&gt;ACMで提供されてる&lt;code&gt;Waiter&lt;/code&gt;は検証待ちのみで、それ用にはないみたいなので、以下のように手動で待ち合わせする...🤔&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;python&quot;&gt;def wait&amp;#95;until&amp;#95;certificate&amp;#95;unused&amp;#40;self, arn: str&amp;#41;:
+    cert = self.acm&amp;#95;client.describe&amp;#95;certificate&amp;#40;CertificateArn=arn&amp;#41;
+    while len&amp;#40;cert&amp;#91;'InUseBy'&amp;#93;&amp;#41; &amp;gt; 0:
+        time.sleep&amp;#40;1&amp;#41;
+        cert = self.acm&amp;#95;client.describe&amp;#95;certificate&amp;#40;CertificateArn=arn&amp;#41;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;めんどくせえええええ、こんなsnipetレベルのモノは&lt;code&gt;Waiter&lt;/code&gt;作って欲しいわ😭&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 22 Sep 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-09-01-aws-lambda-cloud-front-and-serverless
