@@ -12,11 +12,30 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 22 Sep 2019 11:20:00 +0900
+Sun, 13 Oct 2019 15:17:52 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell
+</link>
+<title>
+PowerShell で Docker Toolbox を使う
+</title>
+<description>
+&lt;p&gt;へーしゃはちょっといけてなくて、秘伝の古い VM をコンテナ化しない&lt;del&gt;できない&lt;/del&gt;まま使っている。&lt;/p&gt;&lt;p&gt;加えて社内は Windows ユーザと Mac ユーザがごちゃまぜなので VM が VirtualBox のため、Windows ユーザであるわたしは Docker on Windows を使えず。&lt;/p&gt;&lt;p&gt;Docker Toolbox を日常使いしているのだが、&lt;code&gt;docker&lt;/code&gt;に&lt;code&gt;docker-compose&lt;/code&gt;に&lt;code&gt;docker-machine&lt;/code&gt;まで現れたらコマンドやオプションが覚えきれないのが現状である 😭&lt;/p&gt;&lt;p&gt;これらを PowerShell で楽ちんに使おう。いますぐ以下のモジュールを PSGallery からゲットしよう。これらを発見したときは狂喜乱舞した。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://www.powershellgallery.com/packages/DockerCompletion/1.1903.0.190723'&gt;PowerShell Gallery | DockerCompletion 1.1903.0.190723&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://www.powershellgallery.com/packages/DockerComposeCompletion/1.24.0.190329'&gt;PowerShell Gallery | DockerComposeCompletion 1.24.0.190329&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://www.powershellgallery.com/packages/DockerMachineCompletion/0.16.2.190903'&gt;PowerShell Gallery | DockerMachineCompletion 0.16.2.190903&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;以下、雑なインストール例。もちろん PowerShell Guys(勝手にそう呼んでいる)なら自前の Profile に追記しよう。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;Install-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
+Import-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これで&lt;code&gt;docker-machine start&lt;/code&gt;に始まり&lt;code&gt;docker&lt;/code&gt;やら&lt;code&gt;docker-compose&lt;/code&gt;でのイメージ・コンテナの名前補完とか諸々できるようになる。世の中、すごいモジュールを作る方がいるもんやねえ 🤔&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 13 Oct 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-09-22-limitaion-of-remove-certificates

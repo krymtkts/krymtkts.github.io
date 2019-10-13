@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-10-13-docker-toolbox-with-powershell">PowerShell で Docker Toolbox を使う</a></li>
+                        
                         <li><a href="/posts/2019-09-22-limitaion-of-remove-certificates">ALBのListenerから証明書を削除するときの制限</a></li>
                         
                         <li><a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">Serverless FrameworkでAWS LambdaとCloudFront</a></li>
-                        
-                        <li><a href="/posts/2019-08-11-test-lambda-with-pwsh">AWS LambdaをPowershellでテスト実行する</a></li>
                         
                         
 
@@ -104,6 +104,8 @@
                         
                         <li><a href="/tags/maven">maven</a></li>
                         
+                        <li><a href="/tags/docker">docker</a></li>
+                        
                         <li><a href="/tags/sh">sh</a></li>
                         
                         <li><a href="/tags/cement">cement</a></li>
@@ -115,6 +117,8 @@
                         <li><a href="/tags/golang">golang</a></li>
                         
                         <li><a href="/tags/lambda">lambda</a></li>
+                        
+                        <li><a href="/tags/docker-toolbox">docker-toolbox</a></li>
                         
                         <li><a href="/tags/serverless">serverless</a></li>
                         
@@ -143,37 +147,26 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-09-22</div>
+        <div class="col-lg-6">2019-10-13</div>
         
     </div>
-    <h2>ALBのListenerから証明書を削除するときの制限</h2>
+    <h2>PowerShell で Docker Toolbox を使う</h2>
 </div>
 <div>
     
-    <p>タイトルの通り。</p><p>仕事中にわかっただけで2つある。</p><ol><li>ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい</li><li>ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない</li></ol><p>上記はPython(boto3)からAWSのリソースを操作した際のもの。boto3はpipでインストールできる最新のv1.9.233。</p><h3 id="1.&#95;albのlistenerに登録された証明書を一度にまとめて消せる上限は10件ぽい">1. ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい</h3><p>ドキュメントには書かれてない気がする。少なくとも<a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html#ElasticLoadBalancingv2.Client.remove_listener_certificates'>boto3</a>と<a href='https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_RemoveListenerCertificates.html'>ELBのAPIリファレンス</a>のどちらにも記載がない。</p><p>問い合わせして聞いてないねんけど、書いてあったら教えてほしい🤔</p><p>以下はListener Certificatesの上限25件全部を一気に消そうとしたときのログ。センシティブな部分は削ってある。</p><pre><code class="log">Traceback &#40;most recent call last&#41;:
-  File &quot;C:\workspace\alb-batch\albbatch\elbapi.py&quot;, line 102, in remove&#95;cerificates
-    Certificates=params&#41;
-  File &quot;C:\Users\takatoshi&#95;kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py&quot;, line 357, in &#95;api&#95;call
-    return self.&#95;make&#95;api&#95;call&#40;operation&#95;name, kwargs&#41;
-  File &quot;C:\Users\takatoshi&#95;kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py&quot;, line 661, in &#95;make&#95;api&#95;call
-    raise error&#95;class&#40;parsed&#95;response, operation&#95;name&#41;
-botocore.exceptions.ClientError: An error occurred &#40;ValidationError&#41; when calling the RemoveListenerCertificates operation: Up to '10' certificate ARNs can be specified, but '25' were specified
-</code></pre><h3 id="2.&#95;albのlistenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない">2. ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない</h3><p>ACMで証明書を削除する場合、その証明書が他のAWSリソースに関連付けられていると<code>ResourceInUseException</code>(boto3では<code>ClientError</code>)で削除できない。</p><p><a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/acm.html#ACM.Client.delete_certificate'>ACM.Client.delete_certificate</a> から抜粋。</p><blockquote><p> You cannot delete an ACM certificate that is being used by another AWS service. To delete a certificate that is in use, the certificate association must first be removed. </p></blockquote><p>なのでまず関連付けられたLoad BalancerのListenerなどから証明書を取り除いた後、かつ証明書の情報からもその関連付けが取り除かれたことを確認しないと安全に削除できない😱</p><p>どうすればよいかというと、ACMの<code>DescribeCertificate</code>のレスポンスに含まれる<code>InUseBy</code>リストの中が空になってたら、それらの関連付けが取り除かれた状態なので安全に削除できる。</p><p>ACMで提供されてる<code>Waiter</code>は検証待ちのみで、それ用にはないみたいなので、以下のように手動で待ち合わせする...🤔</p><pre><code class="python">def wait&#95;until&#95;certificate&#95;unused&#40;self, arn: str&#41;:
-    cert = self.acm&#95;client.describe&#95;certificate&#40;CertificateArn=arn&#41;
-    while len&#40;cert&#91;'InUseBy'&#93;&#41; &gt; 0:
-        time.sleep&#40;1&#41;
-        cert = self.acm&#95;client.describe&#95;certificate&#40;CertificateArn=arn&#41;
-</code></pre><p>めんどくせえええええ、こんなsnipetレベルのモノは<code>Waiter</code>作って欲しいわ😭</p>
+    <p>へーしゃはちょっといけてなくて、秘伝の古い VM をコンテナ化しない<del>できない</del>まま使っている。</p><p>加えて社内は Windows ユーザと Mac ユーザがごちゃまぜなので VM が VirtualBox のため、Windows ユーザであるわたしは Docker on Windows を使えず。</p><p>Docker Toolbox を日常使いしているのだが、<code>docker</code>に<code>docker-compose</code>に<code>docker-machine</code>まで現れたらコマンドやオプションが覚えきれないのが現状である 😭</p><p>これらを PowerShell で楽ちんに使おう。いますぐ以下のモジュールを PSGallery からゲットしよう。これらを発見したときは狂喜乱舞した。</p><ul><li><a href='https://www.powershellgallery.com/packages/DockerCompletion/1.1903.0.190723'>PowerShell Gallery | DockerCompletion 1.1903.0.190723</a></li><li><a href='https://www.powershellgallery.com/packages/DockerComposeCompletion/1.24.0.190329'>PowerShell Gallery | DockerComposeCompletion 1.24.0.190329</a></li><li><a href='https://www.powershellgallery.com/packages/DockerMachineCompletion/0.16.2.190903'>PowerShell Gallery | DockerMachineCompletion 0.16.2.190903</a></li></ul><p>以下、雑なインストール例。もちろん PowerShell Guys(勝手にそう呼んでいる)なら自前の Profile に追記しよう。</p><pre><code class="powershell">Install-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
+Import-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
+</code></pre><p>これで<code>docker-machine start</code>に始まり<code>docker</code>やら<code>docker-compose</code>でのイメージ・コンテナの名前補完とか諸々できるようになる。世の中、すごいモジュールを作る方がいるもんやねえ 🤔</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
+    <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/elb">elb</a>
+    <a href="/tags/docker">docker</a>
     
-    <a href="/tags/acm">acm</a>
+    <a href="/tags/docker-toolbox">docker-toolbox</a>
     
 </div>
 
@@ -183,7 +176,7 @@ botocore.exceptions.ClientError: An error occurred &#40;ValidationError&#41; whe
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront &raquo;</a>
+        <a class="right" href="/posts/2019-09-22-limitaion-of-remove-certificates">2019-09-22 ALBのListenerから証明書を削除するときの制限 &raquo;</a>
         
     </div>
 </div>
