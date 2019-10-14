@@ -12,11 +12,29 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 13 Oct 2019 15:17:52 +0900
+Mon, 14 Oct 2019 11:46:33 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2019-10-14-how-to-handle-waiter-of-boto3
+</guid>
+<link>
+http://krymtkts.github.io/posts/2019-10-14-how-to-handle-waiter-of-boto3
+</link>
+<title>
+boto3 の Waiter さんとの戯れ
+</title>
+<description>
+&lt;p&gt;こないだの仕事。AWS Certificate Manager で証明書をごにょごにょするアプリを書いた。&lt;/p&gt;&lt;p&gt;Python で書いたので AWS のリソースを操作するのに &lt;a href='https://boto3.amazonaws.com/v1/documentation/api/latest/index.html'&gt;Boto3&lt;/a&gt; というライブラリを利用した。証明書を発行したあと検証済みになるまでの待受処理が&lt;code&gt;Waiter&lt;/code&gt;という機能で提供されていたり、非常に便利で大変お世話になっている。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/acm.html#ACM.Waiter.CertificateValidated'&gt;ACM.Waiter.CertificateValidated — Boto 3 Docs 1.9.248 documentation&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;ただ、一つバグらせてしまったところがあった。&lt;/p&gt;&lt;p&gt;&lt;code&gt;Waiter&lt;/code&gt;さんは AWS のリソースを操作する API をラップしているだけ&lt;a href='#fn-1' id='fnref1'&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;なので、API がエラーを発生させた場合と待受処理がタイムアウトした場合のどちらとも、&lt;code&gt;WaiterError&lt;/code&gt;を発生させる。つまり単純にキャッチするだけの例外処理では違いに気づけないのだ 😱&lt;/p&gt;&lt;p&gt;どのようにハンドリングするか？&lt;code&gt;WaiterError&lt;/code&gt;さんの属性を調べてあげれば良い。&lt;/p&gt;&lt;p&gt;&lt;code&gt;dir&lt;/code&gt;したら&lt;code&gt;last&amp;#95;response&lt;/code&gt;なる属性があったのでそいつを見たら、もとのエラーが何だったのかは分かる形にはなってた。&lt;/p&gt;&lt;p&gt;エラーの場合、&lt;code&gt;WaiterError.last&amp;#95;response&amp;#91;'Error'&amp;#93;&lt;/code&gt;にエラー情報が格納される。&lt;code&gt;Waiter&lt;/code&gt;さんがリトライ回数の上限に達して&lt;code&gt;WaiterError&lt;/code&gt;をぶん投げてきた場合は、&lt;code&gt;last&amp;#95;response&lt;/code&gt;には&lt;code&gt;Waiter&lt;/code&gt;さんが内包する API の戻り値が架空されるので、それをもとにエラー処理すれば良いのがわかった。以下イメージ。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;python&quot;&gt;{'Error': {'Message': 'Could not find certificate arn:aws:acm:ap-northeast-1:xxxxxxxxxxxx:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx in account xxxxxxxxxxxx.', 'Code': 'ResourceNotFoundException'}, 'ResponseMetadata': {'RequestId': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 'HTTPStatusCode': 400, 'HTTPHeaders': {'x-amzn-requestid': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 'content-type': 'application/x-amz-json-1.1', 'content-length': '191', 'date': 'Fri, 11 Oct 2019 03:51:10 GMT', 'connection': 'close'}, 'RetryAttempts': 0}}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;👍 &lt;ol class='footnotes'&gt;&lt;li id='fn-1'&gt;証明書の検証済みを待つ&lt;code&gt;ACM.Waiter.CertificateValidated&lt;/code&gt;の場合は&lt;code&gt;ACM.Client.describe&amp;#95;certificate&amp;#40;&amp;#41;&lt;/code&gt;をラップしている。&lt;a href='#fnref1'&gt;&amp;#8617;&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/p&gt;
+</description>
+<pubDate>
+Mon, 14 Oct 2019 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell
