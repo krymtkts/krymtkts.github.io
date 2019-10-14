@@ -1,6 +1,6 @@
 {:title "PowerShell で Docker Toolbox を使う"
 :layout :post
-:tags ["powershell", "docker"]}
+:tags ["powershell", "docker", "docker-toolbox"]}
 
 へーしゃはちょっといけてなくて、秘伝の古い VM をコンテナ化しない~~できない~~まま使っている。
 
