@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2019-12-29-retrospective2019">振り返り 2019 年</a></li>
+                        
                         <li><a href="/posts/2019-10-14-how-to-handle-waiter-of-boto3">boto3 の Waiter さんとの戯れ</a></li>
                         
                         <li><a href="/posts/2019-10-13-docker-toolbox-with-powershell">PowerShell で Docker Toolbox を使う</a></li>
-                        
-                        <li><a href="/posts/2019-09-22-limitaion-of-remove-certificates">ALBのListenerから証明書を削除するときの制限</a></li>
                         
                         
 
@@ -87,6 +87,8 @@
                         <li><a href="/tags/aws">aws</a></li>
                         
                         <li><a href="/tags/shieldsio">shieldsio</a></li>
+                        
+                        <li><a href="/tags/retrospective">retrospective</a></li>
                         
                         <li><a href="/tags/boto3">boto3</a></li>
                         
@@ -149,25 +151,20 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-10-14</div>
+        <div class="col-lg-6">2019-12-29</div>
         
     </div>
-    <h2>boto3 の Waiter さんとの戯れ</h2>
+    <h2>振り返り 2019 年</h2>
 </div>
 <div>
     
-    <p>こないだの仕事。AWS Certificate Manager で証明書をごにょごにょするアプリを書いた。</p><p>Python で書いたので AWS のリソースを操作するのに <a href='https://boto3.amazonaws.com/v1/documentation/api/latest/index.html'>Boto3</a> というライブラリを利用した。証明書を発行したあと検証済みになるまでの待受処理が<code>Waiter</code>という機能で提供されていたり、非常に便利で大変お世話になっている。</p><ul><li><a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/acm.html#ACM.Waiter.CertificateValidated'>ACM.Waiter.CertificateValidated — Boto 3 Docs 1.9.248 documentation</a></li></ul><p>ただ、一つバグらせてしまったところがあった。</p><p><code>Waiter</code>さんは AWS のリソースを操作する API をラップしているだけ<a href='#fn-1' id='fnref1'><sup>1</sup></a>なので、API がエラーを発生させた場合と待受処理がタイムアウトした場合のどちらとも、<code>WaiterError</code>を発生させる。つまり単純にキャッチするだけの例外処理では違いに気づけないのだ 😱</p><p>どのようにハンドリングするか？<code>WaiterError</code>さんの属性を調べてあげれば良い。</p><p><code>dir</code>したら<code>last&#95;response</code>なる属性があったのでそいつを見たら、もとのエラーが何だったのかは分かる形にはなってた。</p><p>エラーの場合、<code>WaiterError.last&#95;response&#91;'Error'&#93;</code>にエラー情報が格納される。<code>Waiter</code>さんがリトライ回数の上限に達して<code>WaiterError</code>をぶん投げてきた場合は、<code>last&#95;response</code>には<code>Waiter</code>さんが内包する API の戻り値が架空されるので、それをもとにエラー処理すれば良いのがわかった。以下イメージ。</p><pre><code class="python">{'Error': {'Message': 'Could not find certificate arn:aws:acm:ap-northeast-1:xxxxxxxxxxxx:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx in account xxxxxxxxxxxx.', 'Code': 'ResourceNotFoundException'}, 'ResponseMetadata': {'RequestId': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 'HTTPStatusCode': 400, 'HTTPHeaders': {'x-amzn-requestid': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 'content-type': 'application/x-amz-json-1.1', 'content-length': '191', 'date': 'Fri, 11 Oct 2019 03:51:10 GMT', 'connection': 'close'}, 'RetryAttempts': 0}}
-</code></pre><p>👍 <ol class='footnotes'><li id='fn-1'>証明書の検証済みを待つ<code>ACM.Waiter.CertificateValidated</code>の場合は<code>ACM.Client.describe&#95;certificate&#40;&#41;</code>をラップしている。<a href='#fnref1'>&#8617;</a></li></ol></p>
+    <p>ことし 2019 年も残すところあと僅か。2019 年の自身の成長などを振り返ろう。</p><p>短くまとめると、2019 年は新しいことを始めた年になった。</p><p>転職し、未体験の事業領域の企業で働き始めた。 会社の後押しもあって積極的に未経験の技術を取り入れ、部分的ではあるが在宅ワークもしてみた。<h2></h2></p><p>前職は、実にチョロいかいしゃだったので、6 年ほどの在職中に入社前の 8 割ほど昇給できたのはこの会社のおかげ(前々職がリーマンのあおりもあって給料安すぎたのだけど)。 しかしながら、従業員に対する評価や報酬については不誠実極まりなかったし、自分の思い描くエンジニア像に必要な経験を積めなくなったのは一番痛かった。 やる気と実力を以て希望さえすれば挑戦させてくれる、入社時にあったような腕を磨ける環境が失われていくのは、1 度ならずこの会社を最後の会社にできそうだと心に思った自分には辛いものがあった。これは過去の話だけど。</p><p>転職して今の会社に入れたのもよかった。適切な判断を下すのにインフラ、クラウドの知識を求められ、わたしの技術スタックのうすーいところを絶妙に攻め立ててくれる。 おかげで徐々にではあるが弱いところを克服できている。 また強みである積極性と吸収スピードの高さが上手く活かせて、CI/CD の補填、未体験だったのにサーバーレスアーキテクチャや Python を選ばせてくれたり。 カンファレンスに積極的に参加して、社内に情報を持ち帰ったり、やりたかったことが色々でき始めた。 会社での評価も今のところは順調で、現場での自身の成長スピードを増幅できていると感じる。</p><p>心配事があるとしたら、前職の 1 年目年末もこんなのだったので、同じ轍を踏みたくないなというところか 😅<h2></h2></p><p>自分でも御しきれていなかったのは、在宅ワークの部分。 今は子供の面倒を見る機会を平日は週に 1 回設けて、その日を早く帰って在宅ワークの日としている。 在宅中の仕事の進め方と家族との関わり方の両立が難しくて、まだ納得の行く形になっていない。そりゃ家族からしたら、家にいるのだから色々やってほしいことができてしまうし、このままだと単純に自身の過重労働だなあと思っている。 こういった我が家のパターンだと、在宅ワークよりもちょっとカフェとかで仕事するとかがよいのか。 通勤時間を削る＆家族とも連絡を断つ、という手段がいるのかも、ただしそれは元々わたしの考えていた在宅ワークの動機と違うけど。 この辺は来年 2020 年になってからも、また別の手段を検討していきたい。<h2></h2></p><p>最後に今年密かに目標としていた、1 年間毎月投稿を書く、について。 どこにも宣言してなかったけどブログを継続するという習慣づくりのためにこの目標を据えた。 結果は未達。11 月が現職の障害対応で気持ちに余裕がなかったため。まあ投稿の数は平均月 2 のペースになってたので、この点は目をつぶろう 🙈</p><p>来年も目標をゆるくだが設定して邁進したく。もっと情報に触れて、コードを書いて、という生活に昇華しよう。</p><p>(きょうの投稿には 1 文字もコードがなかったけど、特例日 😆)</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
-    <a href="/tags/boto3">boto3</a>
-    
-    <a href="/tags/python">python</a>
+    <a href="/tags/retrospective">retrospective</a>
     
 </div>
 
@@ -177,7 +174,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-10-13-docker-toolbox-with-powershell">2019-10-13 PowerShell で Docker Toolbox を使う &raquo;</a>
+        <a class="right" href="/posts/2019-10-14-how-to-handle-waiter-of-boto3">2019-10-14 boto3 の Waiter さんとの戯れ &raquo;</a>
         
     </div>
 </div>
