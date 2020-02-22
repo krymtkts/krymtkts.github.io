@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Wed, 29 Jan 2020 15:46:11 +0900
+Sat, 22 Feb 2020 22:05:51 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2020-02-22-maven-auto-completion-0.2
+</guid>
+<link>
+http://krymtkts.github.io/posts/2020-02-22-maven-auto-completion-0.2
+</link>
+<title>
+MavenAutoCompletion v0.2
+</title>
+<description>
+&lt;p&gt;およそ 1 年の時を経て、MavenAutoCompletion を更新した。とても小さな更新だ。&lt;/p&gt;&lt;p&gt;&lt;a href='https://www.powershellgallery.com/packages/MavenAutoCompletion/0.2'&gt;PowerShell Gallery | MavenAutoCompletion 0.2&lt;/a&gt;&lt;/p&gt;&lt;p&gt;この 3 連休はひとりで暇なので、しょうもない更新をするのも億劫でない。&lt;/p&gt;&lt;p&gt;&lt;a href='/posts/2019-04-02-pubslish-first-module-to-powershell-gallery'&gt;前回&lt;/a&gt;やった PSGallery への公開でのミスは、スクリプトを作成していたおかげもあり、1 年ぶりでもミスらなかった。&lt;/p&gt;&lt;p&gt;ただ...色々イケてないところも見つかっている。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;このモジュール、公開するものをサブディレクトリへコピペして公開しているのだけど、これってもともとそのディレクトリで開発してたらいい話&lt;/li&gt;&lt;li&gt;補完の定義が大量なので 1 ファイルの見通しが悪くなってる&lt;ul&gt;&lt;li&gt;更に非推奨にしたい補完候補の説明を追加できない構造&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;対応するの忘れてる非推奨タグ残したままになってる&lt;ul&gt;&lt;li&gt;&lt;code&gt;�x��: &amp;lt;licenseUrl&amp;gt; element will be deprecated, please consider switching to specifying the license in the package. Learn more: https://aka.ms/deprecateLicenseUrl.&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;とりあえず Issue を作っといて、忘れていても暇なときに課題を解消していけるように準備しておくかあ 😅&lt;/p&gt;
+</description>
+<pubDate>
+Sat, 22 Feb 2020 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2020-01-29-plannning

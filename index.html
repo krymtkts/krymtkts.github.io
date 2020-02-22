@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2020-02-22-maven-auto-completion-0.2">MavenAutoCompletion v0.2</a></li>
+                        
                         <li><a href="/posts/2020-01-29-plannning">2020</a></li>
                         
                         <li><a href="/posts/2019-12-29-retrospective2019">振り返り 2019 年</a></li>
-                        
-                        <li><a href="/posts/2019-10-14-how-to-handle-waiter-of-boto3">boto3 の Waiter さんとの戯れ</a></li>
                         
                         
 
@@ -153,20 +153,24 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2020-01-29</div>
+        <div class="col-lg-6">2020-02-22</div>
         
     </div>
-    <h2>2020</h2>
+    <h2>MavenAutoCompletion v0.2</h2>
 </div>
 <div>
     
-    <p>書こう書こうと思って書けていなかった。 明文化する必要もないのかもしれんが、改めて書くことによって再認識したい、というのがこのポストの目的。</p><h3 id="2020&#95;年の目標">2020 年の目標</h3><p>大きく分けて 3 つ。家庭、仕事、自分のことだ。</p><h4 id="家庭">家庭</h4><ol><li>引越<ul><li>候補地の選定は終えている</li><li>永続的に住む場所ではないので次の候補も頭に浮かべておく</li></ul></li><li>親族<ul><li>10 年来の、シンプルにいってくだらないが制御不可能な、問題があるため今年上半期に対応を決める</li></ul></li></ol><h4 id="仕事">仕事</h4><ol><li>リモートワーク<ul><li>現状 5 営業日中、固定の曜日で 2 時間だけ</li><li>子供の送り迎えの関係もあり、春から毎日 4 時間は事務所、残りはリモートにする</li><li>比較的コントローラブルな部分なので必ず達成する</li></ul></li><li>昇給<ul><li>職位はないが Job Rank みたいな給与の等級はあって、それは前年上がったので、今年は金額的な上昇に注力する<ul><li>金額に注力するのは、ランクアップ時の昇給額が大したことなく、今のランクで継続的に(相対的に)良い評価を刻み続けることで上がるらしいため(へーしゃの場合)</li></ul></li></ul></li><li>リード的な活動<ul><li>主に CI/CD といった DevOps プラクティス, Serverless Architecture 面で貢献したい。ここに書く内容でもないが意思表明として</li></ul></li></ol><h4 id="自分のこと">自分のこと</h4><p>これが一番ないがしろになりがち、継続的にケアする方法も同時進行で考えたい。</p><ol><li>積ん読の消化<ul><li>月に 1 冊を消化する<ul><li>積ん読はもう何冊あるかわからないが、減らしていく習慣を今年確立する</li><li>とりあえず 1 月は、witcher① で攻略済み</li><li>これは自身の可能性を広げるためなので、最も優先する</li></ul></li></ul></li><li>OSS へのコントリビューション<ul><li>今年 5 回は PR や Issue でコントリビューションしたい</li><li>1 回目は AWS Docs への PR で攻略済み</li></ul></li><li>自作ツールの更新<ul><li><a href='https://github.com/krymtkts/MavenAutoCompletion'>MavenAutoCompletion</a></li><li><a href='https://github.com/krymtkts/mccall-bot'>mccall-bot</a></li><li>他、気が向いたら</li></ul></li><li>音楽活動<ul><li>ギター練習を 30 分/週 3 回</li><li>バンド練習を年 4 回</li></ul></li><li><a href='https://krymtkts.github.io/'>このブログ</a>を毎月更新する</li></ol><p>4 は他より優先度が低く、かつ制御不可能な部分が多いためハードルが下がりがち。なのでかならず達成したいところ。</p><p>5 は去年落とした目標なので今年こそは(それでもこのポスト時点でギリギリ 😂)</p><p>救いのない社会だが、自分・家族の人生にいい影響をもたらそう。エッセンシャル思考とマッコーリズムの実践だ。</p>
+    <p>およそ 1 年の時を経て、MavenAutoCompletion を更新した。とても小さな更新だ。</p><p><a href='https://www.powershellgallery.com/packages/MavenAutoCompletion/0.2'>PowerShell Gallery | MavenAutoCompletion 0.2</a></p><p>この 3 連休はひとりで暇なので、しょうもない更新をするのも億劫でない。</p><p><a href='/posts/2019-04-02-pubslish-first-module-to-powershell-gallery'>前回</a>やった PSGallery への公開でのミスは、スクリプトを作成していたおかげもあり、1 年ぶりでもミスらなかった。</p><p>ただ...色々イケてないところも見つかっている。</p><ul><li>このモジュール、公開するものをサブディレクトリへコピペして公開しているのだけど、これってもともとそのディレクトリで開発してたらいい話</li><li>補完の定義が大量なので 1 ファイルの見通しが悪くなってる<ul><li>更に非推奨にしたい補完候補の説明を追加できない構造</li></ul></li><li>対応するの忘れてる非推奨タグ残したままになってる<ul><li><code>�x��: &lt;licenseUrl&gt; element will be deprecated, please consider switching to specifying the license in the package. Learn more: https://aka.ms/deprecateLicenseUrl.</code></li></ul></li></ul><p>とりあえず Issue を作っといて、忘れていても暇なときに課題を解消していけるように準備しておくかあ 😅</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/goal">goal</a>
+    <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/maven">maven</a>
+    
+    <a href="/tags/powershellgallery">powershellgallery</a>
     
 </div>
 
@@ -176,7 +180,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2019-12-29-retrospective2019">2019-12-29 振り返り 2019 年 &raquo;</a>
+        <a class="right" href="/posts/2020-01-29-plannning">2020-01-29 2020 &raquo;</a>
         
     </div>
 </div>

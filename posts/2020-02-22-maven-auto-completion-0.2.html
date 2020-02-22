@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: AWS LambdaをPowershellでテスト実行する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh">
+    <title>krymtkts: MavenAutoCompletion v0.2</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-02-22-maven-auto-completion-0.2">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: AWS LambdaをPowershellでテスト実行する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh" />
+    <meta property="og:title" content="krymtkts: MavenAutoCompletion v0.2" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-02-22-maven-auto-completion-0.2" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -153,35 +153,32 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-08-11</div>
+        <div class="col-lg-6">2020-02-22</div>
         
     </div>
-    <h2>AWS LambdaをPowershellでテスト実行する</h2>
+    <h2>MavenAutoCompletion v0.2</h2>
 </div>
 <div>
     
-    <p>へーしゃの支援によりGoogle Cloud Next Tokyo 2019へ参加できた。</p><p>とても有意義な時間を過ごせたのでブログをしたためたかったのだけど、日が経つにつれ仕事もメモもとっ散らかってしまい清書もできず、現時点でのブログへのまとめは断念中😫</p><p>代わりに小ネタを投稿する。</p><h3 id="curlの代わりのpowershell">curlの代わりのPowershell</h3><p>最近仕事でAWS Lambdaを使う機会を得た。へーしゃはAWSもGCPもどっちでもアリだが、現状はAWS優勢。わたしはGCPがいいけど。 元々最初にCloud WatchとAWS Lambdaで作った方が良いのでは？という提案をしていたのだが、大した理由もなく却下。その後追加された機能がLambdaじゃないと実行環境を準備するのが難しいというのが判明して、棚からぼた餅なチャンス到来。</p><p>本題に入ろう。今回作ったLambdaはAPI Gatewayと組み合わせてWeb APIとして利用する。</p><p>そのためAPI Key(<code>x-api-key</code>)をRequest Headerに付与してリクエストされる想定でいる(現時点で)。</p><p>なのでブラウザなんかでテスト実行出来ないので、大抵のやつはcurlなんかでURLを叩く。しかしここはPowershellでやってみよう。</p><p>Web-APIを叩くのなら<code>Invoke-WebRequest</code>がよかろう。追加のヘッダーは<code>-Headers</code>にhashtableとして渡せるのだ。</p><pre><code class="powershell">Invoke-WebRequest -Uri https://omae-no-api-endpoint/helloworld -Headers @{'x-api-key' = 'omae-no-api-key!!!'}
-</code></pre><p>こうなる。そんだけ😉</p>
+    <p>およそ 1 年の時を経て、MavenAutoCompletion を更新した。とても小さな更新だ。</p><p><a href='https://www.powershellgallery.com/packages/MavenAutoCompletion/0.2'>PowerShell Gallery | MavenAutoCompletion 0.2</a></p><p>この 3 連休はひとりで暇なので、しょうもない更新をするのも億劫でない。</p><p><a href='/posts/2019-04-02-pubslish-first-module-to-powershell-gallery'>前回</a>やった PSGallery への公開でのミスは、スクリプトを作成していたおかげもあり、1 年ぶりでもミスらなかった。</p><p>ただ...色々イケてないところも見つかっている。</p><ul><li>このモジュール、公開するものをサブディレクトリへコピペして公開しているのだけど、これってもともとそのディレクトリで開発してたらいい話</li><li>補完の定義が大量なので 1 ファイルの見通しが悪くなってる<ul><li>更に非推奨にしたい補完候補の説明を追加できない構造</li></ul></li><li>対応するの忘れてる非推奨タグ残したままになってる<ul><li><code>�x��: &lt;licenseUrl&gt; element will be deprecated, please consider switching to specifying the license in the package. Learn more: https://aka.ms/deprecateLicenseUrl.</code></li></ul></li></ul><p>とりあえず Issue を作っといて、忘れていても暇なときに課題を解消していけるように準備しておくかあ 😅</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
     <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/lambda">lambda</a>
+    <a href="/tags/maven">maven</a>
+    
+    <a href="/tags/powershellgallery">powershellgallery</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">&laquo; 2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront</a>
         
-        
-        <a class="right" href="/posts/2019-07-28-have-a-good-day-with-poco">2019-07-28 pocoで捗る日常生活 &raquo;</a>
+        <a class="right" href="/posts/2020-01-29-plannning">2020-01-29 2020 &raquo;</a>
         
     </div>
 
