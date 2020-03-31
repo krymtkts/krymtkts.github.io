@@ -12,11 +12,103 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sat, 22 Feb 2020 22:05:51 +0900
+Tue, 31 Mar 2020 19:23:05 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2020-03-31_oh-my-posh-theme
+</guid>
+<link>
+http://krymtkts.github.io/posts/2020-03-31_oh-my-posh-theme
+</link>
+<title>
+My own oh-my-posh theme
+</title>
+<description>
+&lt;p&gt;oh-my-posh の話。 ご存じない？ &lt;a href='https://github.com/JanDeDobbeleer/oh-my-posh'&gt;JanDeDobbeleer/oh-my-posh: A prompt theming engine for Powershell&lt;/a&gt;&lt;/p&gt;&lt;p&gt;元々、Agnoster のシンボルを変えるだけで使ってた。&lt;/p&gt;&lt;p&gt;が、最近になって諸々の不満点 ↓ を解決したくなって、自分用のテーマを作ろうと思ったのがきっかけ。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;コマンドを打った時間を出したくなった&lt;ul&gt;&lt;li&gt;分割して Terminal を使うことが多いので仕事で CLI を使ったときにどこがいちばん最後に使ったかわかりやすくしたい&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;階層が深いディレクトリで仕事することが多く working directory の短縮表示をもっと短くしたかった&lt;ul&gt;&lt;li&gt;デフォルトの&lt;code&gt;..&lt;/code&gt;を&lt;code&gt;.&lt;/code&gt;にする(ほんとは頭文字にしたいが)&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;Windows10 のいつの Version からか忘れたが一部の絵文字の表示が化ける(管理者権限には 💪 を使ってた)&lt;ul&gt;&lt;li&gt;⚡ に戻す&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;作ったのはこれ。&lt;a href='https://gist.github.com/krymtkts/6f7e365fd1683d6edeb7e531f725d280'&gt;My own oh-my-posh theme.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;oh-my-posh のテーマを作るのはかんたん。その作り方を以下に記す。&lt;/p&gt;&lt;h2 id=&quot;how&amp;#95;to&amp;#95;make&amp;#95;it&quot;&gt;How to make it&lt;/h2&gt;&lt;p&gt;テンプレを生成してくれる機能とかはない。そのため theme の PS モジュールは手で配置することになる。ちなみに export されている function たちは以下の通りである。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/JanDeDobbeleer/oh-my-posh/blob/master/oh-my-posh.psd1#L48'&gt;oh-my-posh/oh-my-posh.psd1 at master · JanDeDobbeleer/oh-my-posh&lt;/a&gt;&lt;/p&gt;&lt;p&gt;ユーザ定義のテーマは &lt;code&gt;$ThemeSettings.MyThemesLocation&lt;/code&gt; に配置する(&lt;code&gt;Get-ThemesLocation&lt;/code&gt;でも同じ様子)。フォルダがなければ合わせて作成する。&lt;/p&gt;&lt;p&gt;元ファイルはいまあるテーマからコピって作るのが手っ取り早い。わたしは&lt;a href='https://github.com/JanDeDobbeleer/oh-my-posh/blob/master/Themes/Agnoster.psm1'&gt;Agnoster.psm1&lt;/a&gt;から作成した。 今あるテーマの配置フォルダを知るには&lt;code&gt;Get-Theme&lt;/code&gt;を実行すれば良い。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;PS&amp;gt; Get-Theme
+
+Name                  Type     Location
+----                  ----     --------
+krymtkts              User     C:\Users\takatoshi\OneDrive\Documents\PowerShell\PoshThemes\krymtkts.psm1
+Agnoster              Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\Agnoster.psm1
+Avit                  Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\Avit.psm1
+Darkblood             Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\Darkblood.psm1
+Fish                  Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\Fish.psm1
+Honukai               Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\Honukai.psm1
+Paradox               Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\Paradox.psm1
+Powerlevel10k-Classic Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\Powerlevel10k-Classic.psm1
+Powerlevel10k-Lean    Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\Powerlevel10k-Lean.psm1
+PowerLine             Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\PowerLine.psm1
+pure                  Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\pure.psm1
+robbyrussell          Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\robbyrussell.psm1
+Sorin                 Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\Sorin.psm1
+tehrob                Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\oh-my-posh\2.0.399\Themes\tehrob.psm1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Agnoster とわたしのテーマの差分は次の通り。&lt;code&gt;Compare-Object&lt;/code&gt;だと差分が見にくいことこの上なし！誰得 😂 なので wsl の bash から diff した。PowerSheller 失格だね(&lt;code&gt;Compare-Object&lt;/code&gt;がひどいのよ)。&lt;/p&gt;&lt;p&gt;Unified diff でみたらこの通り。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;sh&quot;&gt;$ diff ./Modules/oh-my-posh/2.0.399/Themes/Agnoster.psm1 ./PoshThemes/krymtkts.psm1 -u
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class=&quot;diff&quot;&gt;--- ./Modules/oh-my-posh/2.0.399/Themes/Agnoster.psm1   2020-03-13 13:22:52.000000000 +0900
++++ ./PoshThemes/krymtkts.psm1  2020-02-24 16:03:51.912063800 +0900
+@@ -11,12 +11,27 @@
+
+     $lastColor = $sl.Colors.PromptBackgroundColor
+
+-    $prompt = Write-Prompt -Object $sl.PromptSymbols.StartSymbol -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
+-
++    $now = Get-Date -UFormat '%Y-%m-%d %R'
++    $backwardSymbol = &amp;quot;$&amp;#40;$sl.PromptSymbols.SegmentBackwardSymbol&amp;#41;&amp;quot;
+     #check the last command state and indicate if failed
+     If &amp;#40;$lastCommandFailed&amp;#41; {
+-        $prompt += Write-Prompt -Object &amp;quot;$&amp;#40;$sl.PromptSymbols.FailedCommandSymbol&amp;#41; &amp;quot; -ForegroundColor $sl.Colors.CommandFailedIconForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
++        $rightText = &amp;quot; $&amp;#40;$sl.PromptSymbols.FailedCommandSymbol&amp;#41; $now &amp;quot;
++        $rightLength = $rightText.Length + $backwardSymbol.Length + 1 # care the symbol size blur.
++        $foregroundColor = $ThemeSettings.Colors.CommandFailedIconForegroundColor
+     }
++    else {
++        $rightText = &amp;quot; $now &amp;quot;
++        $rightLength = $rightText.Length + $backwardSymbol.Length
++        $foregroundColor = $ThemeSettings.Colors.PromptForegroundColor
++    }
++    $prompt += Set-CursorUp -lines 1
++    $prompt += Set-CursorForRightBlockWrite -textLength $rightLength
++    $prompt += Write-Prompt $backwardSymbol -ForegroundColor $sl.Colors.PromptBackgroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
++    $prompt += Write-Prompt $rightText -ForegroundColor $foregroundColor -BackgroundColor $sl.Colors.PromptBackgroundColor
++
++    # Write the prompt
++    $prompt += Set-Newline
++    $prompt += Write-Prompt -Object $sl.PromptSymbols.StartSymbol -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
+
+     #check for elevated prompt
+     If &amp;#40;Test-Administrator&amp;#41; {
+@@ -24,9 +39,8 @@
+     }
+
+     $user = $sl.CurrentUser
+-    $computer = $sl.CurrentHostname
+     if &amp;#40;Test-NotDefaultUser&amp;#40;$user&amp;#41;&amp;#41; {
+-        $prompt += Write-Prompt -Object &amp;quot;$user@$computer &amp;quot; -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
++        $prompt += Write-Prompt -Object &amp;quot;$user &amp;quot; -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
+     }
+
+     if &amp;#40;Test-VirtualEnv&amp;#41; {
+@@ -63,7 +77,11 @@
+ }
+
+ $sl = $global:ThemeSettings #local settings
++$sl.PromptSymbols.ElevatedSymbol = &amp;#91;char&amp;#93;::ConvertFromUtf32&amp;#40;0x26A1&amp;#41;
++$sl.PromptSymbols.FailedCommandSymbol = &amp;#91;char&amp;#93;::ConvertFromUtf32&amp;#40;0x274C&amp;#41;
+ $sl.PromptSymbols.SegmentForwardSymbol = &amp;#91;char&amp;#93;::ConvertFromUtf32&amp;#40;0xE0B0&amp;#41;
++$sl.PromptSymbols.SegmentBackwardSymbol = &amp;#91;char&amp;#93;::ConvertFromUtf32&amp;#40;0xe0b2&amp;#41;
++$sl.PromptSymbols.TruncatedFolderSymbol = '.'
+ $sl.Colors.PromptForegroundColor = &amp;#91;ConsoleColor&amp;#93;::White
+ $sl.Colors.PromptSymbolColor = &amp;#91;ConsoleColor&amp;#93;::White
+ $sl.Colors.PromptHighlightColor = &amp;#91;ConsoleColor&amp;#93;::DarkBlue
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;ちょっと実行時間のあたりが Cmder で出した場合にずれてしまうことがあって、微妙に余白をとってたりする。 でもこれでだいたい Cmder で見ても Windows Terminal でみても美しく出力される様になっている。 Windows Terminal ではシンボルフォントがめちゃくちゃ小さくなってしまうバグが有るのでまだ 100%最高とはいけないけど(&lt;a href='https://github.com/microsoft/terminal/issues/900'&gt;Certain &quot;emoji&quot; are still half-sized · Issue #900 · microsoft/terminal&lt;/a&gt;)&lt;/p&gt;&lt;p&gt;余談だが、こんかい自作テーマの作成にあたり、既存テーマの PS モジュールにフォーマットの崩れを見つけたので PR 送ったら受け入れてもらえた。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/JanDeDobbeleer/oh-my-posh/pull/211'&gt;Format some themes. by krymtkts · Pull Request #211 · JanDeDobbeleer/oh-my-posh&lt;/a&gt;&lt;/p&gt;&lt;p&gt;自分の気に入っている OSS に PR を受けれてもらえるのはちょっとした感動があるな 😚&lt;/p&gt;
+</description>
+<pubDate>
+Tue, 31 Mar 2020 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2020-02-22-maven-auto-completion-0.2
