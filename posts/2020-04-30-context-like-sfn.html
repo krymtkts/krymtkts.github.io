@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Windows10でタッチスクリーンを無効化する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-04-20_disable-touch-screen">
+    <title>krymtkts: Step Functions のステートをまたいでパラメータを伝播する</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-04-30-context-like-sfn">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Windows10でタッチスクリーンを無効化する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-04-20_disable-touch-screen" />
+    <meta property="og:title" content="krymtkts: Step Functions のステートをまたいでパラメータを伝播する" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-04-30-context-like-sfn" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -155,32 +155,50 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-04-20</div>
+        <div class="col-lg-6">2020-04-30</div>
         
     </div>
-    <h2>Windows10でタッチスクリーンを無効化する</h2>
+    <h2>Step Functions のステートをまたいでパラメータを伝播する</h2>
 </div>
 <div>
     
-    <p>小ネタ。</p><p>自機は、Razer Blade Stealth 2018のタッチスクリーン対応のやつだ。</p><p>ディスプレイを閉じた状態から再度開いたときに、たま～に謎に画面が連続タップされまくって制御不能になるポルターガイスト現象(偽)が起こることがあった。</p><p>それ以来タッチスクリーンの無効化をしているんやが、これがWindowsの大規模アップデートがあると設定が無効になって、都度再設定が必要になってる感じ🤔</p><p>最近ver1803が降りてきたことで再度必要になったので覚書。</p><h3 id="手順">手順</h3><p><a href='https://support.microsoft.com/ja-jp/help/4028019/windows-enable-and-disable-your-touchscreen-in-windows-10'>Windows 10 でタッチスクリーンを有効/無効にする</a></p><ol><li>デバイスマネージャを開く</li><li>HID準拠タッチスクリーンのデバイスを無効化する</li></ol><p>THE END</p>
+    <p>仕事でシンプルなバッチを組む必要があり、ちょうどワークフローみたいな感じだったので Step Functions で Lambda をつないで作っている。</p><p>3 つ Lambda が登場するのだけど、1 つ目の Lambda の Output を 2 つ目 3 つ目で使いたい。 でも、こいつらが Map ステートなのもあり Output でつなぐのはちょっと違う。 代わりに <code>ResultPath</code>, <code>OutputPath</code>, <code>ItemPath</code>, <code>Parameters</code> の組み合わせれば、Lambda の Output にない後続のステートにつなげるのがわかったのでメモしておく。</p><h3 id="参考資料">参考資料</h3><ul><li><a href='https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/input-output-example.html'>InputPath、ResultPath、および OutputPath 例 - AWS Step Functions</a><ul><li>これは読んでもナンノコッチャよくわからんかった</li></ul></li><li><a href='https://dev.classmethod.jp/articles/step-functions-parameters/'>Step Functions の入出力処理の制御パラメータ（InputPath、 Parameters、ResultPath および OutputPath）を理解するために参照したドキュメント | Developers.IO</a><ul><li>流石のクラスメソッドさん、わかりやすかった</li></ul></li></ul><h3 id="構成">構成</h3><ol><li>Task</li><li>Map</li><li>Map</li></ol><p>のステートがあるとする。Task は文字列、配列 A、配列 B を Output する。これらのデータについては以下の通りとする。</p><ul><li>文字列は、StateMachine 全体に渡って使用したいデータ。</li><li>配列 A は、1 つ目の Map タスクで分散したいデータ。</li><li>配列 B は、2 つ目の Map タスクで分散したいデータ。</li></ul><h4 id="1.&#95;task1">1. Task1</h4><p>Lambda からの出力がこんなのだとする。</p><pre><code class="json">{
+  &quot;string&quot;: &quot;nanigashi&quot;,
+  &quot;arrayA&quot;: &#91;
+      0, 1, 2, 3, 4, 5, 6
+  &#93;,
+  &quot;arrayB&quot;: {
+      &quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;
+  }
+}
+</code></pre><p><code>ResultPath</code>を<code>$.key</code>にしておくと Task1 ステートの出力は ↓ になる。</p><pre><code class="json">{
+  &quot;key&quot;: {
+    &quot;string&quot;: &quot;nanigashi&quot;,
+    &quot;arrayA&quot;: &#91;
+        0, 1, 2, 3, 4, 5, 6
+    &#93;,
+    &quot;arrayB&quot;: {
+        &quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;
+    }
+  }
+}
+</code></pre><h4 id="2.&#95;map1">2. Map1</h4><ul><li><code>ItemPath</code> に <code>$.key.arrayA</code> を指定し、配列 A でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.key.string</code></li></ul></li><li><code>OutputPath</code> に前のタスクの出力 <code>$.key</code> を指定する</li><li>マッピング処理の出力は無視したいので、<code>ResultPath</code>に<code>$.null</code>など<code>OutputPath</code>に含まれないパスを指定する</li></ul><h4 id="3.&#95;map2">3. Map2</h4><ul><li><code>ItemPath</code> に <code>$.arrayB</code> を指定し、配列 B でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.key.string</code></li></ul></li><li>出力を制御したい場合は、Map1 同様に<code>OutputPath</code>、<code>ResultPath</code>を指定仕分ける</li></ul><p>これで Task1 の出力を Map1 をまたいで Map2 で利用できる。</p><h3 id="まとめ">まとめ</h3><p>これで最初の Lambda の Output を加工せずそのまま後ろ 2 つの Lambda まで伝播できた。やったね 😂 文章だけじゃわからなさすぎる気がしてきた...今度サンプルコードを起こすことにする。</p><p>ただし懸念点として以下の気になる 2 点も備えており、どうしたもんかなと言う感じでもある 🤔</p><ol><li>伝播したい回数だけ階層化しないといけないのではないか<ul><li>出力を無視するためにはセクションを切り分けないといけなくなってるから</li></ul></li><li>可変長のパラメータを伝播する場合、ペイロードの上限値に注意しないといけない<ul><li>ダブルクォートは`&#8216;エスケープされるようだし計算が大変</li><li>だからセクションを切り分けるしかなくなってる</li></ul></li></ol><p>出力無視することさえできたら階層化いらんなー 🤔</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/tips">tips</a>
+    <a href="/tags/aws">aws</a>
     
-    <a href="/tags/windows">windows</a>
+    <a href="/tags/serverless">serverless</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-04-29-bias-amp-2issue">&laquo; 2019-04-29 BIAS Amp 2で保存したアンプが消える問題</a>
         
-        
-        <a class="right" href="/posts/2019-04-14-add-a-badge">2019-04-14 プロジェクトにバッジを貼ろう &raquo;</a>
+        <a class="right" href="/posts/2020-03-31_oh-my-posh-theme">2020-03-31 My own oh-my-posh theme &raquo;</a>
         
     </div>
 
