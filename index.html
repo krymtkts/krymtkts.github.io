@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2020-05-09-try-to-elm-handson">Elm のハンズオンを試した</a></li>
+                        
                         <li><a href="/posts/2020-04-30-context-like-sfn">Step Functions のステートをまたいでパラメータを伝播する</a></li>
                         
                         <li><a href="/posts/2020-03-31_oh-my-posh-theme">My own oh-my-posh theme</a></li>
-                        
-                        <li><a href="/posts/2020-02-22-maven-auto-completion-0.2">MavenAutoCompletion v0.2</a></li>
                         
                         
 
@@ -93,6 +93,8 @@
                         <li><a href="/tags/boto3">boto3</a></li>
                         
                         <li><a href="/tags/oh-my-posh">oh-my-posh</a></li>
+                        
+                        <li><a href="/tags/elm">elm</a></li>
                         
                         <li><a href="/tags/elb">elb</a></li>
                         
@@ -155,42 +157,20 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2020-04-30</div>
+        <div class="col-lg-6">2020-05-09</div>
         
     </div>
-    <h2>Step Functions のステートをまたいでパラメータを伝播する</h2>
+    <h2>Elm のハンズオンを試した</h2>
 </div>
 <div>
     
-    <p>仕事でシンプルなバッチを組む必要があり、ちょうどワークフローみたいな感じだったので Step Functions で Lambda をつないで作っている。</p><p>3 つ Lambda が登場するのだけど、1 つ目の Lambda の Output を 2 つ目 3 つ目で使いたい。 でも、こいつらが Map ステートなのもあり Output でつなぐのはちょっと違う。 代わりに <code>ResultPath</code>, <code>OutputPath</code>, <code>ItemPath</code>, <code>Parameters</code> の組み合わせれば、Lambda の Output にない後続のステートにつなげるのがわかったのでメモしておく。</p><h3 id="参考資料">参考資料</h3><ul><li><a href='https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/input-output-example.html'>InputPath、ResultPath、および OutputPath 例 - AWS Step Functions</a><ul><li>これは読んでもナンノコッチャよくわからんかった</li></ul></li><li><a href='https://dev.classmethod.jp/articles/step-functions-parameters/'>Step Functions の入出力処理の制御パラメータ（InputPath、 Parameters、ResultPath および OutputPath）を理解するために参照したドキュメント | Developers.IO</a><ul><li>流石のクラスメソッドさん、わかりやすかった</li></ul></li></ul><h3 id="構成">構成</h3><ol><li>Task</li><li>Map</li><li>Map</li></ol><p>のステートがあるとする。Task は文字列、配列 A、配列 B を Output する。これらのデータについては以下の通りとする。</p><ul><li>文字列は、StateMachine 全体に渡って使用したいデータ。</li><li>配列 A は、1 つ目の Map タスクで分散したいデータ。</li><li>配列 B は、2 つ目の Map タスクで分散したいデータ。</li></ul><h4 id="1.&#95;task1">1. Task1</h4><p>Lambda からの出力がこんなのだとする。</p><pre><code class="json">{
-  &quot;string&quot;: &quot;nanigashi&quot;,
-  &quot;arrayA&quot;: &#91;
-      0, 1, 2, 3, 4, 5, 6
-  &#93;,
-  &quot;arrayB&quot;: {
-      &quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;
-  }
-}
-</code></pre><p><code>ResultPath</code>を<code>$.key</code>にしておくと Task1 ステートの出力は ↓ になる。</p><pre><code class="json">{
-  &quot;key&quot;: {
-    &quot;string&quot;: &quot;nanigashi&quot;,
-    &quot;arrayA&quot;: &#91;
-        0, 1, 2, 3, 4, 5, 6
-    &#93;,
-    &quot;arrayB&quot;: {
-        &quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;
-    }
-  }
-}
-</code></pre><h4 id="2.&#95;map1">2. Map1</h4><ul><li><code>ItemPath</code> に <code>$.key.arrayA</code> を指定し、配列 A でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.key.string</code></li></ul></li><li><code>OutputPath</code> に前のタスクの出力 <code>$.key</code> を指定する</li><li>マッピング処理の出力は無視したいので、<code>ResultPath</code>に<code>$.null</code>など<code>OutputPath</code>に含まれないパスを指定する</li></ul><h4 id="3.&#95;map2">3. Map2</h4><ul><li><code>ItemPath</code> に <code>$.arrayB</code> を指定し、配列 B でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.key.string</code></li></ul></li><li>出力を制御したい場合は、Map1 同様に<code>OutputPath</code>、<code>ResultPath</code>を指定仕分ける</li></ul><p>これで Task1 の出力を Map1 をまたいで Map2 で利用できる。</p><h3 id="まとめ">まとめ</h3><p>これで最初の Lambda の Output を加工せずそのまま後ろ 2 つの Lambda まで伝播できた。やったね 😂 文章だけじゃわからなさすぎる気がしてきた...今度サンプルコードを起こすことにする。</p><p>ただし懸念点として以下の気になる 2 点も備えており、どうしたもんかなと言う感じでもある 🤔</p><ol><li>伝播したい回数だけ階層化しないといけないのではないか<ul><li>出力を無視するためにはセクションを切り分けないといけなくなってるから</li></ul></li><li>可変長のパラメータを伝播する場合、ペイロードの上限値に注意しないといけない<ul><li>ダブルクォートは`&#8216;エスケープされるようだし計算が大変</li><li>だからセクションを切り分けるしかなくなってる</li></ul></li></ol><p>出力無視することさえできたら階層化いらんなー 🤔</p>
+    <p>会社の勉強会で Elm のハンズオンをしてみた。それだけ。</p><h3 id="elm&#95;とわたし">Elm とわたし</h3><p>いつ頃 Elm を知ったのだろう。なんか前職ですごい H 本の輪読会をした 2015 年らへんか、2016 年とかそのあたりに知ったような気がする。</p><p>爆発炎上中の新製品開発(Backbone.js なのに誰も使えてなくてやばい製品だった)のヘルプに入ってちょっとした頃。フロントエンドを全然知らなかったので一通り新しめの情報をさらってて、その中に Elm を見つけたような気がしている。</p><p>最近までずっと Elm と付き合うことなく来た<a href='#fn-1' id='fnref1'><sup>1</sup></a>が、ちょうどへーしゃにてフロントエンド刷新の機運があると聞き、Elm 一択ですね！と押し込むためにも開催してみた。今思えばこいつ何様やねん 🤔</p><h3 id="勉強会について">勉強会について</h3><p><a href='https://github.com/mather/elm-handson'>mather/elm-handson: ハンズオン資料</a> を流用させていただいた。めちゃくちゃやりやすかったですありがとうございました。</p><p>カンペ用にわたしは回答例みたいなのを fork して添えさせていただいた。<a href='https://github.com/krymtkts/elm-handson'>krymtkts/elm-handson: ハンズオン資料</a></p><p>元々はデータストアがあって、CRUD 操作ができて、みたいなバックエンドも含めたやつをやろうとしてた。 のだけど、わたしに Elm でハンズオンを作りきるパワーもなく、「う、めんどくせえ！」となり、またインターネッツで探してみるもめぼしいものを見つけられなかった。</p><p>やはり導入部ということもあり、もっとシンプルにできるものはないか－と探していたところ、前述のハンズオンにたどり着いたのだ。</p><h3 id="やってみた感想">やってみた感想</h3><p>へーしゃのフロントエンドに Elm を採用するのには至らなそうだけど、他のエンジニアに興味を持ってもらえり静的型付け＆関数型言語のパワーを知ってもらったのは良かった。Message を足したり型変えたらめちゃくちゃ親切なコンパイルエラーになるやでー、が結構ウケた印象。 現行が複雑怪奇な PHP(Smarty)や jQuery でメンテも苦痛なところに、Elm が爽やかな風を送り込んでくれたのだから、そりゃエンジニアの認識が変わるのも必然やで。</p><p>最終的に CRUD ある画面のハンズオンを目指す。遊び用 AWS 垢が支給されてるし、Amplify で Sample 探すか。 まだ何回か企画してるので、刺激を与えていきたい所存。 <ol class='footnotes'><li id='fn-1'><a href='https://www.amazon.co.jp/dp/4863542224/'>基礎からわかる Elm</a>はもちろん読んでるで。ポチってからかなり待ったけど、無事出版され、読むことができてホッとした。<a href='#fnref1'>&#8617;</a></li></ol></p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
-    <a href="/tags/serverless">serverless</a>
+    <a href="/tags/elm">elm</a>
     
 </div>
 
@@ -200,7 +180,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2020-03-31_oh-my-posh-theme">2020-03-31 My own oh-my-posh theme &raquo;</a>
+        <a class="right" href="/posts/2020-04-30-context-like-sfn">2020-04-30 Step Functions のステートをまたいでパラメータを伝播する &raquo;</a>
         
     </div>
 </div>

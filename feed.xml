@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Thu, 30 Apr 2020 22:25:41 +0900
+Sat, 09 May 2020 16:55:40 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2020-05-09-try-to-elm-handson
+</guid>
+<link>
+http://krymtkts.github.io/posts/2020-05-09-try-to-elm-handson
+</link>
+<title>
+Elm のハンズオンを試した
+</title>
+<description>
+&lt;p&gt;会社の勉強会で Elm のハンズオンをしてみた。それだけ。&lt;/p&gt;&lt;h3 id=&quot;elm&amp;#95;とわたし&quot;&gt;Elm とわたし&lt;/h3&gt;&lt;p&gt;いつ頃 Elm を知ったのだろう。なんか前職ですごい H 本の輪読会をした 2015 年らへんか、2016 年とかそのあたりに知ったような気がする。&lt;/p&gt;&lt;p&gt;爆発炎上中の新製品開発(Backbone.js なのに誰も使えてなくてやばい製品だった)のヘルプに入ってちょっとした頃。フロントエンドを全然知らなかったので一通り新しめの情報をさらってて、その中に Elm を見つけたような気がしている。&lt;/p&gt;&lt;p&gt;最近までずっと Elm と付き合うことなく来た&lt;a href='#fn-1' id='fnref1'&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;が、ちょうどへーしゃにてフロントエンド刷新の機運があると聞き、Elm 一択ですね！と押し込むためにも開催してみた。今思えばこいつ何様やねん 🤔&lt;/p&gt;&lt;h3 id=&quot;勉強会について&quot;&gt;勉強会について&lt;/h3&gt;&lt;p&gt;&lt;a href='https://github.com/mather/elm-handson'&gt;mather/elm-handson: ハンズオン資料&lt;/a&gt; を流用させていただいた。めちゃくちゃやりやすかったですありがとうございました。&lt;/p&gt;&lt;p&gt;カンペ用にわたしは回答例みたいなのを fork して添えさせていただいた。&lt;a href='https://github.com/krymtkts/elm-handson'&gt;krymtkts/elm-handson: ハンズオン資料&lt;/a&gt;&lt;/p&gt;&lt;p&gt;元々はデータストアがあって、CRUD 操作ができて、みたいなバックエンドも含めたやつをやろうとしてた。 のだけど、わたしに Elm でハンズオンを作りきるパワーもなく、「う、めんどくせえ！」となり、またインターネッツで探してみるもめぼしいものを見つけられなかった。&lt;/p&gt;&lt;p&gt;やはり導入部ということもあり、もっとシンプルにできるものはないか－と探していたところ、前述のハンズオンにたどり着いたのだ。&lt;/p&gt;&lt;h3 id=&quot;やってみた感想&quot;&gt;やってみた感想&lt;/h3&gt;&lt;p&gt;へーしゃのフロントエンドに Elm を採用するのには至らなそうだけど、他のエンジニアに興味を持ってもらえり静的型付け＆関数型言語のパワーを知ってもらったのは良かった。Message を足したり型変えたらめちゃくちゃ親切なコンパイルエラーになるやでー、が結構ウケた印象。 現行が複雑怪奇な PHP(Smarty)や jQuery でメンテも苦痛なところに、Elm が爽やかな風を送り込んでくれたのだから、そりゃエンジニアの認識が変わるのも必然やで。&lt;/p&gt;&lt;p&gt;最終的に CRUD ある画面のハンズオンを目指す。遊び用 AWS 垢が支給されてるし、Amplify で Sample 探すか。 まだ何回か企画してるので、刺激を与えていきたい所存。 &lt;ol class='footnotes'&gt;&lt;li id='fn-1'&gt;&lt;a href='https://www.amazon.co.jp/dp/4863542224/'&gt;基礎からわかる Elm&lt;/a&gt;はもちろん読んでるで。ポチってからかなり待ったけど、無事出版され、読むことができてホッとした。&lt;a href='#fnref1'&gt;&amp;#8617;&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/p&gt;
+</description>
+<pubDate>
+Sat, 09 May 2020 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2020-04-30-context-like-sfn
