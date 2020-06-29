@@ -12,11 +12,80 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sat, 09 May 2020 16:55:40 +0900
+Mon, 29 Jun 2020 11:17:21 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2020-06-29-contextual-sfn-example
+</guid>
+<link>
+http://krymtkts.github.io/posts/2020-06-29-contextual-sfn-example
+</link>
+<title>
+Step Functions のステートをまたいでパラメータを伝播するパターン
+</title>
+<description>
+&lt;p&gt;&lt;a href='2020-04-30-context-like-sfn'&gt;前の記事&lt;/a&gt;で記したアイデアの実装例を残しておいた。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/krymtkts/contextual-sfn'&gt;krymtkts/contextual-sfn: Example for passing parameters across states.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;現時点で実際にお仕事で使っているパターンなのだけど、前述の通りペイロードが大幅に大きくなると問題になり得るので、より良くするすべはないものかと考え中。&lt;/p&gt;&lt;h3 id=&quot;おさらい&quot;&gt;おさらい&lt;/h3&gt;&lt;p&gt;StateMachine の構成。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Task&lt;/li&gt;&lt;li&gt;Map&lt;/li&gt;&lt;li&gt;Reduce&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;のステートがあるとする。Task は文字列、配列 A、配列 B を Output する。これらのデータについては以下の通りとする。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;文字列(&lt;code&gt;t&lt;/code&gt;)は、フロー全体に渡って使用したいデータ。&lt;/li&gt;&lt;li&gt;配列 A(&lt;code&gt;ia&lt;/code&gt;) は、1 つ目の Map タスクで分散したいデータ。&lt;/li&gt;&lt;li&gt;配列 B(&lt;code&gt;sa&lt;/code&gt;) は、2 つ目の Map タスクで分散したいデータ。&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;このパターンを実装した背景としては以下の通り。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Map と Reduce で使いたいデータを Aurora Serverless から取得する必要がある&lt;/li&gt;&lt;li&gt;普段停止しているクラスタは結構起動に時間がかかる&lt;/li&gt;&lt;li&gt;Map では Reduce のパラメータも利用したい&lt;/li&gt;&lt;li&gt;フローの最初に全部取ってしまおう！&lt;/li&gt;&lt;/ul&gt;&lt;h4 id=&quot;1.&amp;#95;task&quot;&gt;1. Task&lt;/h4&gt;&lt;p&gt;Lambda からの出力がこんなのだとする。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;json&quot;&gt;{
+  &amp;quot;t&amp;quot;: &amp;quot;nanigashi&amp;quot;,
+  &amp;quot;ia&amp;quot;: &amp;#91;1, 2, 4, 8, 16, 32, 64&amp;#93;,
+  &amp;quot;sa&amp;quot;: &amp;#91;&amp;quot;A&amp;quot;, &amp;quot;B&amp;quot;, &amp;quot;C&amp;quot;, &amp;quot;D&amp;quot;, &amp;quot;E&amp;quot;&amp;#93;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;ResultPath&lt;/code&gt;を&lt;code&gt;$.data&lt;/code&gt;にしておくと Task1 ステートの出力は ↓ になる。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;json&quot;&gt;{
+  &amp;quot;data&amp;quot;: {
+    &amp;quot;t&amp;quot;: &amp;quot;nanigashi&amp;quot;,
+    &amp;quot;ia&amp;quot;: &amp;#91;1, 2, 4, 8, 16, 32, 64&amp;#93;,
+    &amp;quot;sa&amp;quot;: &amp;#91;&amp;quot;A&amp;quot;, &amp;quot;B&amp;quot;, &amp;quot;C&amp;quot;, &amp;quot;D&amp;quot;, &amp;quot;E&amp;quot;&amp;#93;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;YAML はこう。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;yml&quot;&gt;Entrypoint:
+  Type: Task
+  Resource:
+    Fn::GetAtt: &amp;#91;task, Arn&amp;#93;
+  ResultPath: $.data
+  Next: Map
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;2.&amp;#95;map&quot;&gt;2. Map&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;ItemsPath&lt;/code&gt; に &lt;code&gt;$.data.ia&lt;/code&gt; を指定し、配列 A でイテレーションする&lt;/li&gt;&lt;li&gt;&lt;code&gt;Parameters&lt;/code&gt; に Lambda へ渡したいパラメータを指定する。以下の通り&lt;ul&gt;&lt;li&gt;マッピングの各要素は&lt;code&gt;$$.Map.Item.Value&lt;/code&gt;&lt;/li&gt;&lt;li&gt;追加で渡したいパラメータを &lt;code&gt;$.data.t&lt;/code&gt;, &lt;code&gt;$.data.sa&lt;/code&gt;&lt;/li&gt;&lt;li&gt;パラメータ名末尾の&lt;code&gt;.$&lt;/code&gt;忘れがち&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;OutputPath&lt;/code&gt; に前のタスクの出力 &lt;code&gt;$.data&lt;/code&gt; を指定すれば、同じパラメータを次のステートに回せる&lt;/li&gt;&lt;li&gt;ここではマッピングの出力は無視するとして、&lt;code&gt;ResultPath&lt;/code&gt;に&lt;code&gt;$.null&lt;/code&gt;など&lt;code&gt;OutputPath&lt;/code&gt;に含まれないパスを指定する&lt;/li&gt;&lt;/ul&gt;&lt;pre&gt;&lt;code class=&quot;yml&quot;&gt;Map:
+  Type: Map
+  MaxConcurrency: 10
+  Parameters:
+    k.$: $$.Map.Item.Value
+    t.$: $.data.t
+    a.$: $.data.sa
+  ItemsPath: $.data.ia
+  ResultPath: $.null
+  OutputPath: $.data
+  Iterator:
+    StartAt: MapTask
+    States:
+      MapTask:
+        Type: Task
+        Resource: !GetAtt &amp;#91;map, Arn&amp;#93;
+        End: true
+  Next: Reduce
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;3.&amp;#95;reduce&quot;&gt;3. Reduce&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;ItemsPath&lt;/code&gt; に &lt;code&gt;$.sa&lt;/code&gt; を指定し、配列 B でイテレーションする&lt;/li&gt;&lt;li&gt;&lt;code&gt;Parameters&lt;/code&gt; に Lambda へ渡したいパラメータを指定する。以下の通り&lt;ul&gt;&lt;li&gt;マッピングの各要素は&lt;code&gt;$$.Map.Item.Value&lt;/code&gt;&lt;/li&gt;&lt;li&gt;追加で渡したいパラメータを &lt;code&gt;$.data.t&lt;/code&gt;&lt;/li&gt;&lt;li&gt;パラメータ名末尾の&lt;code&gt;.$&lt;/code&gt;忘れがち(2 回目)&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;出力を制御したい場合は、Map 同様に&lt;code&gt;OutputPath&lt;/code&gt;、&lt;code&gt;ResultPath&lt;/code&gt;を指定仕分ける&lt;/li&gt;&lt;/ul&gt;&lt;pre&gt;&lt;code class=&quot;yml&quot;&gt;Reduce:
+  Type: Map
+  Parameters:
+    k.$: $$.Map.Item.Value
+    t.$: $.t
+  ItemsPath: $.sa
+  ResultPath: $.null
+  OutputPath: $.t
+  Iterator:
+    StartAt: ReduceTask
+    States:
+      ReduceTask:
+        Type: Task
+        Resource: !GetAtt &amp;#91;reduce, Arn&amp;#93;
+        End: true
+  End: true
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;まとめ&quot;&gt;まとめ&lt;/h3&gt;&lt;p&gt;こういう例、ググっても見つからずあまり使われないパターンかも知れない。 必要だった＆実現できたので制限を理解した上で、容量用法守って使えれば良いかな。&lt;/p&gt;
+</description>
+<pubDate>
+Mon, 29 Jun 2020 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2020-05-09-try-to-elm-handson
