@@ -12,11 +12,36 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Mon, 29 Jun 2020 11:17:21 +0900
+Fri, 31 Jul 2020 20:38:59 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2020-07-31-partial-decode-uniqid
+</guid>
+<link>
+http://krymtkts.github.io/posts/2020-07-31-partial-decode-uniqid
+</link>
+<title>
+title: PHP の uniqid をデコードする
+</title>
+<description>
+&lt;p&gt;なんか一意っぽい値を PHP で生成する場合の楽な手段として、 &lt;code&gt;uniqid&lt;/code&gt; がある。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://github.com/php/php-src/blob/91fbd12d5736b3cc9fc6bc2545e877dd65be1f6c/ext/standard/uniqid.c'&gt;php-src/uniqid.c at 91fbd12d5736b3cc9fc6bc2545e877dd65be1f6c · php/php-src&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;prefix を除いた先頭 8 桁が unixtime を 16 進数で出してるだけっぽいので、こいつが何時生成されたのかを知りたい時に、以下の手順が踏める。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://www.php.net/manual/ja/function.uniqid.php#95001'&gt;PHP: uniqid - Manual&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;ここのコメントのまま使える。&lt;code&gt;more&amp;#95;entropy&lt;/code&gt;が有効な値で試す。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;php&quot;&gt;// &amp;lt;?php
+$s = &amp;quot;5ef4f46e0e40f9.59913527&amp;quot;;
+$d = date&amp;#40;&amp;quot;r&amp;quot;,hexdec&amp;#40;substr&amp;#40;$s,0,8&amp;#41;&amp;#41;&amp;#41;;
+echo&amp;#40;$d . PHP&amp;#95;EOL&amp;#41;;
+// Thu, 25 Jun 2020 19:01:02 +0000
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;しかし手前は PHP をインストールしてなくて repl を持ってない(↑ の Repl.it でやった)ので、これを PowerShell でやる！(ついでに JST)&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://stackoverflow.com/questions/10781697/convert-unix-time-with-powershell'&gt;epoch - Convert Unix time with PowerShell - Stack Overflow&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$s = &amp;quot;5ef4f46e0e40f9.59913527&amp;quot;;
+&amp;#40;Get-Date '1970-1-1'&amp;#41;.AddSeconds&amp;#40;&amp;#91;System.Convert&amp;#93;::ToInt32&amp;#40;$s.Substring&amp;#40;0, 8&amp;#41;, 16&amp;#41;&amp;#41;.ToLocalTime&amp;#40;&amp;#41;
+# 2020年6月26日 04:01:02
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;ちょっとした小技が必要だったので覚書しておく。 無駄に PHP のコードを読んでしまった...😂&lt;/p&gt;
+</description>
+<pubDate>
+Fri, 31 Jul 2020 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2020-06-29-contextual-sfn-example

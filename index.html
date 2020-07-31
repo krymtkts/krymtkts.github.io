@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2020-07-31-partial-decode-uniqid">title: PHP の uniqid をデコードする</a></li>
+                        
                         <li><a href="/posts/2020-06-29-contextual-sfn-example">Step Functions のステートをまたいでパラメータを伝播するパターン</a></li>
                         
                         <li><a href="/posts/2020-05-09-try-to-elm-handson">Elm のハンズオンを試した</a></li>
-                        
-                        <li><a href="/posts/2020-04-30-context-like-sfn">Step Functions のステートをまたいでパラメータを伝播する</a></li>
                         
                         
 
@@ -107,6 +107,8 @@
                         <li><a href="/tags/planck">planck</a></li>
                         
                         <li><a href="/tags/acm">acm</a></li>
+                        
+                        <li><a href="/tags/php">php</a></li>
                         
                         <li><a href="/tags/mechanicalkeyboard">mechanicalkeyboard</a></li>
                         
@@ -159,76 +161,30 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2020-06-29</div>
+        <div class="col-lg-6">2020-07-31</div>
         
     </div>
-    <h2>Step Functions のステートをまたいでパラメータを伝播するパターン</h2>
+    <h2>title: PHP の uniqid をデコードする</h2>
 </div>
 <div>
     
-    <p><a href='2020-04-30-context-like-sfn'>前の記事</a>で記したアイデアの実装例を残しておいた。</p><p><a href='https://github.com/krymtkts/contextual-sfn'>krymtkts/contextual-sfn: Example for passing parameters across states.</a></p><p>現時点で実際にお仕事で使っているパターンなのだけど、前述の通りペイロードが大幅に大きくなると問題になり得るので、より良くするすべはないものかと考え中。</p><h3 id="おさらい">おさらい</h3><p>StateMachine の構成。</p><ol><li>Task</li><li>Map</li><li>Reduce</li></ol><p>のステートがあるとする。Task は文字列、配列 A、配列 B を Output する。これらのデータについては以下の通りとする。</p><ul><li>文字列(<code>t</code>)は、フロー全体に渡って使用したいデータ。</li><li>配列 A(<code>ia</code>) は、1 つ目の Map タスクで分散したいデータ。</li><li>配列 B(<code>sa</code>) は、2 つ目の Map タスクで分散したいデータ。</li></ul><p>このパターンを実装した背景としては以下の通り。</p><ul><li>Map と Reduce で使いたいデータを Aurora Serverless から取得する必要がある</li><li>普段停止しているクラスタは結構起動に時間がかかる</li><li>Map では Reduce のパラメータも利用したい</li><li>フローの最初に全部取ってしまおう！</li></ul><h4 id="1.&#95;task">1. Task</h4><p>Lambda からの出力がこんなのだとする。</p><pre><code class="json">{
-  &quot;t&quot;: &quot;nanigashi&quot;,
-  &quot;ia&quot;: &#91;1, 2, 4, 8, 16, 32, 64&#93;,
-  &quot;sa&quot;: &#91;&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;&#93;
-}
-</code></pre><p><code>ResultPath</code>を<code>$.data</code>にしておくと Task1 ステートの出力は ↓ になる。</p><pre><code class="json">{
-  &quot;data&quot;: {
-    &quot;t&quot;: &quot;nanigashi&quot;,
-    &quot;ia&quot;: &#91;1, 2, 4, 8, 16, 32, 64&#93;,
-    &quot;sa&quot;: &#91;&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;&#93;
-  }
-}
-</code></pre><p>YAML はこう。</p><pre><code class="yml">Entrypoint:
-  Type: Task
-  Resource:
-    Fn::GetAtt: &#91;task, Arn&#93;
-  ResultPath: $.data
-  Next: Map
-</code></pre><h4 id="2.&#95;map">2. Map</h4><ul><li><code>ItemsPath</code> に <code>$.data.ia</code> を指定し、配列 A でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.data.t</code>, <code>$.data.sa</code></li><li>パラメータ名末尾の<code>.$</code>忘れがち</li></ul></li><li><code>OutputPath</code> に前のタスクの出力 <code>$.data</code> を指定すれば、同じパラメータを次のステートに回せる</li><li>ここではマッピングの出力は無視するとして、<code>ResultPath</code>に<code>$.null</code>など<code>OutputPath</code>に含まれないパスを指定する</li></ul><pre><code class="yml">Map:
-  Type: Map
-  MaxConcurrency: 10
-  Parameters:
-    k.$: $$.Map.Item.Value
-    t.$: $.data.t
-    a.$: $.data.sa
-  ItemsPath: $.data.ia
-  ResultPath: $.null
-  OutputPath: $.data
-  Iterator:
-    StartAt: MapTask
-    States:
-      MapTask:
-        Type: Task
-        Resource: !GetAtt &#91;map, Arn&#93;
-        End: true
-  Next: Reduce
-</code></pre><h4 id="3.&#95;reduce">3. Reduce</h4><ul><li><code>ItemsPath</code> に <code>$.sa</code> を指定し、配列 B でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.data.t</code></li><li>パラメータ名末尾の<code>.$</code>忘れがち(2 回目)</li></ul></li><li>出力を制御したい場合は、Map 同様に<code>OutputPath</code>、<code>ResultPath</code>を指定仕分ける</li></ul><pre><code class="yml">Reduce:
-  Type: Map
-  Parameters:
-    k.$: $$.Map.Item.Value
-    t.$: $.t
-  ItemsPath: $.sa
-  ResultPath: $.null
-  OutputPath: $.t
-  Iterator:
-    StartAt: ReduceTask
-    States:
-      ReduceTask:
-        Type: Task
-        Resource: !GetAtt &#91;reduce, Arn&#93;
-        End: true
-  End: true
-</code></pre><h3 id="まとめ">まとめ</h3><p>こういう例、ググっても見つからずあまり使われないパターンかも知れない。 必要だった＆実現できたので制限を理解した上で、容量用法守って使えれば良いかな。</p>
+    <p>なんか一意っぽい値を PHP で生成する場合の楽な手段として、 <code>uniqid</code> がある。</p><ul><li><a href='https://github.com/php/php-src/blob/91fbd12d5736b3cc9fc6bc2545e877dd65be1f6c/ext/standard/uniqid.c'>php-src/uniqid.c at 91fbd12d5736b3cc9fc6bc2545e877dd65be1f6c · php/php-src</a></li></ul><p>prefix を除いた先頭 8 桁が unixtime を 16 進数で出してるだけっぽいので、こいつが何時生成されたのかを知りたい時に、以下の手順が踏める。</p><ul><li><a href='https://www.php.net/manual/ja/function.uniqid.php#95001'>PHP: uniqid - Manual</a></li></ul><p>ここのコメントのまま使える。<code>more&#95;entropy</code>が有効な値で試す。</p><pre><code class="php">// &lt;?php
+$s = &quot;5ef4f46e0e40f9.59913527&quot;;
+$d = date&#40;&quot;r&quot;,hexdec&#40;substr&#40;$s,0,8&#41;&#41;&#41;;
+echo&#40;$d . PHP&#95;EOL&#41;;
+// Thu, 25 Jun 2020 19:01:02 +0000
+</code></pre><p>しかし手前は PHP をインストールしてなくて repl を持ってない(↑ の Repl.it でやった)ので、これを PowerShell でやる！(ついでに JST)</p><ul><li><a href='https://stackoverflow.com/questions/10781697/convert-unix-time-with-powershell'>epoch - Convert Unix time with PowerShell - Stack Overflow</a></li></ul><pre><code class="powershell">$s = &quot;5ef4f46e0e40f9.59913527&quot;;
+&#40;Get-Date '1970-1-1'&#41;.AddSeconds&#40;&#91;System.Convert&#93;::ToInt32&#40;$s.Substring&#40;0, 8&#41;, 16&#41;&#41;.ToLocalTime&#40;&#41;
+# 2020年6月26日 04:01:02
+</code></pre><p>ちょっとした小技が必要だったので覚書しておく。 無駄に PHP のコードを読んでしまった...😂</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/stepfunctions">stepfunctions</a>
+    <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/aws">aws</a>
-    
-    <a href="/tags/serverless">serverless</a>
+    <a href="/tags/php">php</a>
     
 </div>
 
@@ -238,7 +194,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2020-05-09-try-to-elm-handson">2020-05-09 Elm のハンズオンを試した &raquo;</a>
+        <a class="right" href="/posts/2020-06-29-contextual-sfn-example">2020-06-29 Step Functions のステートをまたいでパラメータを伝播するパターン &raquo;</a>
         
     </div>
 </div>

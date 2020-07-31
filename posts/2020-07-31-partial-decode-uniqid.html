@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;lambda&quot;</title>
-    <link rel="canonical" href="http://krymtkts.github.io/tags/lambda">
+    <title>krymtkts: title: PHP の uniqid をデコードする</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-07-31-partial-decode-uniqid">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;lambda&quot;" />
-    <meta property="og:url" content="http://krymtkts.github.io/tags/lambda" />
+    <meta property="og:title" content="krymtkts: title: PHP の uniqid をデコードする" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-07-31-partial-decode-uniqid" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -158,21 +158,47 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;lambda&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2020-07-31</div>
+        
     </div>
-    <ul>
+    <h2>title: PHP の uniqid をデコードする</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront</a>
-        </li>
+    <p>なんか一意っぽい値を PHP で生成する場合の楽な手段として、 <code>uniqid</code> がある。</p><ul><li><a href='https://github.com/php/php-src/blob/91fbd12d5736b3cc9fc6bc2545e877dd65be1f6c/ext/standard/uniqid.c'>php-src/uniqid.c at 91fbd12d5736b3cc9fc6bc2545e877dd65be1f6c · php/php-src</a></li></ul><p>prefix を除いた先頭 8 桁が unixtime を 16 進数で出してるだけっぽいので、こいつが何時生成されたのかを知りたい時に、以下の手順が踏める。</p><ul><li><a href='https://www.php.net/manual/ja/function.uniqid.php#95001'>PHP: uniqid - Manual</a></li></ul><p>ここのコメントのまま使える。<code>more&#95;entropy</code>が有効な値で試す。</p><pre><code class="php">// &lt;?php
+$s = &quot;5ef4f46e0e40f9.59913527&quot;;
+$d = date&#40;&quot;r&quot;,hexdec&#40;substr&#40;$s,0,8&#41;&#41;&#41;;
+echo&#40;$d . PHP&#95;EOL&#41;;
+// Thu, 25 Jun 2020 19:01:02 +0000
+</code></pre><p>しかし手前は PHP をインストールしてなくて repl を持ってない(↑ の Repl.it でやった)ので、これを PowerShell でやる！(ついでに JST)</p><ul><li><a href='https://stackoverflow.com/questions/10781697/convert-unix-time-with-powershell'>epoch - Convert Unix time with PowerShell - Stack Overflow</a></li></ul><pre><code class="powershell">$s = &quot;5ef4f46e0e40f9.59913527&quot;;
+&#40;Get-Date '1970-1-1'&#41;.AddSeconds&#40;&#91;System.Convert&#93;::ToInt32&#40;$s.Substring&#40;0, 8&#41;, 16&#41;&#41;.ToLocalTime&#40;&#41;
+# 2020年6月26日 04:01:02
+</code></pre><p>ちょっとした小技が必要だったので覚書しておく。 無駄に PHP のコードを読んでしまった...😂</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2019-08-11-test-lambda-with-pwsh">2019-08-11 AWS LambdaをPowershellでテスト実行する</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-    </ul>
+    <a href="/tags/php">php</a>
+    
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2020-06-29-contextual-sfn-example">2020-06-29 Step Functions のステートをまたいでパラメータを伝播するパターン &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>
