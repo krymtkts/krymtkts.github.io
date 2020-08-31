@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2020-08-31-how-do-i-manage-todos">TODO の管理どないしてまっか？</a></li>
+                        
                         <li><a href="/posts/2020-07-31-partial-decode-uniqid">PHP の uniqid をデコードする</a></li>
                         
                         <li><a href="/posts/2020-06-29-contextual-sfn-example">Step Functions のステートをまたいでパラメータを伝播するパターン</a></li>
-                        
-                        <li><a href="/posts/2020-05-09-try-to-elm-handson">Elm のハンズオンを試した</a></li>
                         
                         
 
@@ -118,6 +118,8 @@
                         
                         <li><a href="/tags/docker">docker</a></li>
                         
+                        <li><a href="/tags/todo">todo</a></li>
+                        
                         <li><a href="/tags/sh">sh</a></li>
                         
                         <li><a href="/tags/cement">cement</a></li>
@@ -161,30 +163,22 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2020-07-31</div>
+        <div class="col-lg-6">2020-08-31</div>
         
     </div>
-    <h2>PHP の uniqid をデコードする</h2>
+    <h2>TODO の管理どないしてまっか？</h2>
 </div>
 <div>
     
-    <p>なんか一意っぽい値を PHP で生成する場合の楽な手段として、 <code>uniqid</code> がある。</p><ul><li><a href='https://github.com/php/php-src/blob/91fbd12d5736b3cc9fc6bc2545e877dd65be1f6c/ext/standard/uniqid.c'>php-src/uniqid.c at 91fbd12d5736b3cc9fc6bc2545e877dd65be1f6c · php/php-src</a></li></ul><p>prefix を除いた先頭 8 桁が unixtime を 16 進数で出してるだけっぽいので、こいつが何時生成されたのかを知りたい時に、以下の手順が踏める。</p><ul><li><a href='https://www.php.net/manual/ja/function.uniqid.php#95001'>PHP: uniqid - Manual</a></li></ul><p>ここのコメントのまま使える。<code>more&#95;entropy</code>が有効な値で試す。</p><pre><code class="php">// &lt;?php
-$s = &quot;5ef4f46e0e40f9.59913527&quot;;
-$d = date&#40;&quot;r&quot;,hexdec&#40;substr&#40;$s,0,8&#41;&#41;&#41;;
-echo&#40;$d . PHP&#95;EOL&#41;;
-// Thu, 25 Jun 2020 19:01:02 +0000
-</code></pre><p>しかし手前は PHP をインストールしてなくて repl を持ってない(↑ の Repl.it でやった)ので、これを PowerShell でやる！(ついでに JST)</p><ul><li><a href='https://stackoverflow.com/questions/10781697/convert-unix-time-with-powershell'>epoch - Convert Unix time with PowerShell - Stack Overflow</a></li></ul><pre><code class="powershell">$s = &quot;5ef4f46e0e40f9.59913527&quot;;
-&#40;Get-Date '1970-1-1'&#41;.AddSeconds&#40;&#91;System.Convert&#93;::ToInt32&#40;$s.Substring&#40;0, 8&#41;, 16&#41;&#41;.ToLocalTime&#40;&#41;
-# 2020年6月26日 04:01:02
-</code></pre><p>ちょっとした小技が必要だったので覚書しておく。 無駄に PHP のコードを読んでしまった...😂</p>
+    <p>最近、TODO 管理のやり方を変えたので記しておく。</p><p>いろんなタスク管理術がある。昔は Remember the Milk 使ってみたり、Evernote に TODO リスト書いたり。最近では Google Tasks 使ってみたり。へーしゃ内では Getting Things Done が優勢なんかな。 とはいえ結局の所いずれの手段もわたしにはうまく使いこなせず、結局日報的なものに落ちつていた、もう 7 年以上？日報のようなお仕事日記をつけている。</p><p>ところが、そのスタイルに狂いが生じだしたのが、COVID-19 流行による出社自粛 →WFH を始めてからだ。</p><p>WFH になってかなり仕事とプライベートの距離感が急接近。結果どういうわけか仕事と私生活の両方において、タスクの消化をそれまでの様にできない状態になりつつあった。7,8 割くらいのパフォが出たらいい感じ。実際はもっと悪い。</p><p>思うに、往復 2 時間の通勤時間でコンテキストスイッチを緩やかに行っていたり、処理すべきタスクの組み換えとかを行っていたのだろう。歩く時間も 30 分はあったし。 スキマ時間がなくなったことで、ギアが上がりきらないままタスク消化を急いで空回りでもしてたのだろうか。 もともと仕事の日記にはプライベートのタスクを書かずに続けていたのだけど、とりあえずコンテキストスイッチを抑えるために、仕事と私生活のタスクを一括管理しようと考えた。とはいえお仕事日記は自身の振り返りのためにも使っていて、あまり私生活のノイジー？な内容を書いていくのもどうかなと。 そんな時ちょうど Chrome のサジェスト記事で <a href='https://marketplace.visualstudio.com/items?itemName=davraamides.todotxt-mode'>todotxt-mode - Visual Studio Marketplace</a> の存在を知ったので、<a href='https://github.com/todotxt/todo.txt'>todo.txt</a> で、単純にタスクの管理だけを一括管理することにした。</p><p><a href='https://github.com/todotxt/todo.txt'>todo.txt</a>はシンプルにフォーマットが決まっているのがありがたい。また詳細を note に切り出せるのでタスク自体をシンプルに保てるのが気に入っている。</p><p>複数の端末でこの「TODO を記したプレーンテキスト」を同期する必要があるが、これについては現状 <a href='https://marketplace.visualstudio.com/items?itemName=GustavoASC.google-drive-vscode'>Google Drive™ for VSCode - Visual Studio Marketplace</a> を使っている。 Upload したファイルが上書きじゃなく、都度新しいファイルになるのがかなり気に食わないけど、生のテキストファイルが使えることを優先してのチョイスだ。</p><p>今の所はゆるく todo.txt のフォーマットの一部(priority, context, due ぐらいしか使えてない)だけ運用している。 数年来のタスク管理を変える機会なので慣れないことも多いが、折角の変化の機会なので楽しんで模索してみたい。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/vscode">vscode</a>
     
-    <a href="/tags/php">php</a>
+    <a href="/tags/todo">todo</a>
     
 </div>
 
@@ -194,7 +188,7 @@ echo&#40;$d . PHP&#95;EOL&#41;;
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2020-06-29-contextual-sfn-example">2020-06-29 Step Functions のステートをまたいでパラメータを伝播するパターン &raquo;</a>
+        <a class="right" href="/posts/2020-07-31-partial-decode-uniqid">2020-07-31 PHP の uniqid をデコードする &raquo;</a>
         
     </div>
 </div>
