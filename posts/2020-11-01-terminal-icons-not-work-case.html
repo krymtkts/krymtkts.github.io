@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: `ping`の代わりに`Test-Connection`を使う</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-02-20-instead-of-ping">
+    <title>krymtkts: Terminal Icons が動かなくなるケース</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-11-01-terminal-icons-not-work-case">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: `ping`の代わりに`Test-Connection`を使う" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-02-20-instead-of-ping" />
+    <meta property="og:title" content="krymtkts: Terminal Icons が動かなくなるケース" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-11-01-terminal-icons-not-work-case" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -163,23 +163,14 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-02-20</div>
+        <div class="col-lg-6">2020-11-01</div>
         
     </div>
-    <h2>`ping`の代わりに`Test-Connection`を使う</h2>
+    <h2>Terminal Icons が動かなくなるケース</h2>
 </div>
 <div>
     
-    <p>PowerShellには<code>Test-Connection</code>というやつがあるのを今更ながら知った。</p><p>今の仕事では、仮想マシン(dockerでない)を複数立ち上げて作業することが常になってるのだが、結構立ち上げ忘れてたりしてうっかりSSHしたときに繋げないのである😢</p><p>疎通確認と合わせてSSHするすべを探してたところ、これを知ったので以下のようなスクリプトを作ってCmderのTaskに登録して使っている。</p><pre><code class="powershell">$waken = Test-Connection -TargetName $ip -Count 1 -Quiet
-if &#40;!$waken&#41; {
-    Write-Output &quot;target not found. please start up $ip&quot;
-    $Host.UI.RawUI.ReadKey&#40;&#41; | Out-Null
-    exit
-}
-ssh &quot;admin@$ip&quot;
-</code></pre><p><a href='https://blog.shibata.tech/entry/2016/06/16/231239'>Test-Connectionが遅い理由と対策方法について - しばたテックブログ</a></p><p>↑このような話もあるようなので目を通しておきたいところ🤔</p><h3 id="おまけ">おまけ</h3><p><a href='https://qiita.com/twinkfrag/items/f3ecf79b68ea09eadec2'>PowerShellでPause - Qiita</a></p><p>最近のPowerShellには<code>Pause</code>なるもんがデフォで入ってるが、古来からの方法でEnter以外のキーでも使えるようにしておくのが良いであらうか？</p><pre><code class="powershell">Write-Output &quot;type key to continue...&quot;
-$Host.UI.RawUI.ReadKey&#40;&#41; | Out-Null
-</code></pre><p>スクリプトの中でコレを呼んだら、なんかのキーを押すまで止まる。</p><p>戻り値が標準出力されないようにするために<code>Out-Null</code>にパイプラインする。<code>$null</code>に代入でもよいが。</p><h3 id="余談">余談</h3><p>この記事をしたためておるときに<code>lein ring server</code>でエラーが出るようになってたのを解消したので、メモがてら次回に記す。</p>
+    <p>9 月&10 月と文字起こしするのをサボった 😪</p><p>肉親の不幸やトラブルがあったりで気乗りしなかったのもあるが、お仕事の方で WFH になって以降最高潮に忙しさのピークを迎えていたというのもある。この辺はチームビルディングぽい要素大いにあったのでまたなんかまとめたい所存 🤔</p><p>この間、OSS 活動も特に何のアクションもなく過ごしたが、ただ無為に過ごしたわけではない(と言い聞かせたい)のでなんか貢献したぽいことをネタに記事に残そうと思う。<h2></h2></p><p>先日<a href='https://devblogs.microsoft.com/commandline/windows-terminal-tips-and-tricks/'>Windows Terminal Tips and Tricks | Windows Command Line</a>を見てたら、愛すべき oh my posh の紹介の後に <a href='https://github.com/devblackops/Terminal-Icons'>Terminal-Icons: A PowerShell module to show file and folder icons in the terminal</a> が紹介されていた。 なんじゃこりゃー即導入せねばなるまいな、という感じで導入してみたのだが、初回は<code>Get-ChildItem</code>の結果に可愛らしいアイコンフォントが付与されるのに、2 回目以降は普通の見た目に戻ってしまい、なんでや...とトラシューしてみた。</p><p>わかったのは、一緒に使っていた <a href='https://github.com/joonro/Get-ChildItemColor'>Get-ChildItemColor: Add coloring to the output of Get-ChildItem Cmdlet of PowerShell.</a> の実行後に、Terminal Icons のアイコンフォントが反映されなくなること。 試しに <code>Remove-Module Get-ChildItemColor</code> すればあ～ら不思議、アイコンが復活するのである。</p><p>Terminal Icons では<code>format.ps1xml</code> で表示内容の改変を行っているのだけど、<code>Get-ChildItemColor</code>も色の改変をしてるし、競合してるのだろう。詳しくは追っていくのがめんどくて競合できないという結論だけだした。↓ の Issue で同じく困ってる人がいたので共有してあげた。</p><p><a href='https://github.com/devblackops/Terminal-Icons/issues/12'>No icons after installation. · Issue #12 · devblackops/Terminal-Icons · GitHub</a></p>
 </div>
 
 <div id="post-tags">
@@ -192,10 +183,8 @@ $Host.UI.RawUI.ReadKey&#40;&#41; | Out-Null
 
     <div id="prev-next">
         
-        <a href="/posts/2019-02-24_lein-ring-server-error">&laquo; 2019-02-24 lein ringでエラーが発生した</a>
         
-        
-        <a class="right" href="/posts/2019-02-11-Register-ArgumentCompleter2">2019-02-11 Register-ArgumentCompleterのScriptBlockの引数 &raquo;</a>
+        <a class="right" href="/posts/2020-08-31-how-do-i-manage-todos">2020-08-31 TODO の管理どないしてまっか？ &raquo;</a>
         
     </div>
 

@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2020-11-01-terminal-icons-not-work-case">Terminal Icons が動かなくなるケース</a></li>
+                        
                         <li><a href="/posts/2020-08-31-how-do-i-manage-todos">TODO の管理どないしてまっか？</a></li>
                         
                         <li><a href="/posts/2020-07-31-partial-decode-uniqid">PHP の uniqid をデコードする</a></li>
-                        
-                        <li><a href="/posts/2020-06-29-contextual-sfn-example">Step Functions のステートをまたいでパラメータを伝播するパターン</a></li>
                         
                         
 
@@ -163,22 +163,20 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2020-08-31</div>
+        <div class="col-lg-6">2020-11-01</div>
         
     </div>
-    <h2>TODO の管理どないしてまっか？</h2>
+    <h2>Terminal Icons が動かなくなるケース</h2>
 </div>
 <div>
     
-    <p>最近、TODO 管理のやり方を変えたので記しておく。</p><p>いろんなタスク管理術がある。昔は Remember the Milk 使ってみたり、Evernote に TODO リスト書いたり。最近では Google Tasks 使ってみたり。へーしゃ内では Getting Things Done が優勢なんかな。 とはいえ結局の所いずれの手段もわたしにはうまく使いこなせず、結局日報的なものに落ちつていた、もう 7 年以上？日報のようなお仕事日記をつけている。</p><p>ところが、そのスタイルに狂いが生じだしたのが、COVID-19 流行による出社自粛 →WFH を始めてからだ。</p><p>WFH になってかなり仕事とプライベートの距離感が急接近。結果どういうわけか仕事と私生活の両方において、タスクの消化をそれまでの様にできない状態になりつつあった。7,8 割くらいのパフォが出たらいい感じ。実際はもっと悪い。</p><p>思うに、往復 2 時間の通勤時間でコンテキストスイッチを緩やかに行っていたり、処理すべきタスクの組み換えとかを行っていたのだろう。歩く時間も 30 分はあったし。 スキマ時間がなくなったことで、ギアが上がりきらないままタスク消化を急いで空回りでもしてたのだろうか。 もともと仕事の日記にはプライベートのタスクを書かずに続けていたのだけど、とりあえずコンテキストスイッチを抑えるために、仕事と私生活のタスクを一括管理しようと考えた。とはいえお仕事日記は自身の振り返りのためにも使っていて、あまり私生活のノイジー？な内容を書いていくのもどうかなと。 そんな時ちょうど Chrome のサジェスト記事で <a href='https://marketplace.visualstudio.com/items?itemName=davraamides.todotxt-mode'>todotxt-mode - Visual Studio Marketplace</a> の存在を知ったので、<a href='https://github.com/todotxt/todo.txt'>todo.txt</a> で、単純にタスクの管理だけを一括管理することにした。</p><p><a href='https://github.com/todotxt/todo.txt'>todo.txt</a>はシンプルにフォーマットが決まっているのがありがたい。また詳細を note に切り出せるのでタスク自体をシンプルに保てるのが気に入っている。</p><p>複数の端末でこの「TODO を記したプレーンテキスト」を同期する必要があるが、これについては現状 <a href='https://marketplace.visualstudio.com/items?itemName=GustavoASC.google-drive-vscode'>Google Drive™ for VSCode - Visual Studio Marketplace</a> を使っている。 Upload したファイルが上書きじゃなく、都度新しいファイルになるのがかなり気に食わないけど、生のテキストファイルが使えることを優先してのチョイスだ。</p><p>今の所はゆるく todo.txt のフォーマットの一部(priority, context, due ぐらいしか使えてない)だけ運用している。 数年来のタスク管理を変える機会なので慣れないことも多いが、折角の変化の機会なので楽しんで模索してみたい。</p>
+    <p>9 月&10 月と文字起こしするのをサボった 😪</p><p>肉親の不幸やトラブルがあったりで気乗りしなかったのもあるが、お仕事の方で WFH になって以降最高潮に忙しさのピークを迎えていたというのもある。この辺はチームビルディングぽい要素大いにあったのでまたなんかまとめたい所存 🤔</p><p>この間、OSS 活動も特に何のアクションもなく過ごしたが、ただ無為に過ごしたわけではない(と言い聞かせたい)のでなんか貢献したぽいことをネタに記事に残そうと思う。<h2></h2></p><p>先日<a href='https://devblogs.microsoft.com/commandline/windows-terminal-tips-and-tricks/'>Windows Terminal Tips and Tricks | Windows Command Line</a>を見てたら、愛すべき oh my posh の紹介の後に <a href='https://github.com/devblackops/Terminal-Icons'>Terminal-Icons: A PowerShell module to show file and folder icons in the terminal</a> が紹介されていた。 なんじゃこりゃー即導入せねばなるまいな、という感じで導入してみたのだが、初回は<code>Get-ChildItem</code>の結果に可愛らしいアイコンフォントが付与されるのに、2 回目以降は普通の見た目に戻ってしまい、なんでや...とトラシューしてみた。</p><p>わかったのは、一緒に使っていた <a href='https://github.com/joonro/Get-ChildItemColor'>Get-ChildItemColor: Add coloring to the output of Get-ChildItem Cmdlet of PowerShell.</a> の実行後に、Terminal Icons のアイコンフォントが反映されなくなること。 試しに <code>Remove-Module Get-ChildItemColor</code> すればあ～ら不思議、アイコンが復活するのである。</p><p>Terminal Icons では<code>format.ps1xml</code> で表示内容の改変を行っているのだけど、<code>Get-ChildItemColor</code>も色の改変をしてるし、競合してるのだろう。詳しくは追っていくのがめんどくて競合できないという結論だけだした。↓ の Issue で同じく困ってる人がいたので共有してあげた。</p><p><a href='https://github.com/devblackops/Terminal-Icons/issues/12'>No icons after installation. · Issue #12 · devblackops/Terminal-Icons · GitHub</a></p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/vscode">vscode</a>
-    
-    <a href="/tags/todo">todo</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -188,7 +186,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2020-07-31-partial-decode-uniqid">2020-07-31 PHP の uniqid をデコードする &raquo;</a>
+        <a class="right" href="/posts/2020-08-31-how-do-i-manage-todos">2020-08-31 TODO の管理どないしてまっか？ &raquo;</a>
         
     </div>
 </div>

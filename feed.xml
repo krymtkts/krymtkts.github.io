@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Tue, 01 Sep 2020 00:00:41 +0900
+Sun, 01 Nov 2020 15:24:39 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2020-11-01-terminal-icons-not-work-case
+</guid>
+<link>
+http://krymtkts.github.io/posts/2020-11-01-terminal-icons-not-work-case
+</link>
+<title>
+Terminal Icons が動かなくなるケース
+</title>
+<description>
+&lt;p&gt;9 月&amp;10 月と文字起こしするのをサボった 😪&lt;/p&gt;&lt;p&gt;肉親の不幸やトラブルがあったりで気乗りしなかったのもあるが、お仕事の方で WFH になって以降最高潮に忙しさのピークを迎えていたというのもある。この辺はチームビルディングぽい要素大いにあったのでまたなんかまとめたい所存 🤔&lt;/p&gt;&lt;p&gt;この間、OSS 活動も特に何のアクションもなく過ごしたが、ただ無為に過ごしたわけではない(と言い聞かせたい)のでなんか貢献したぽいことをネタに記事に残そうと思う。&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;先日&lt;a href='https://devblogs.microsoft.com/commandline/windows-terminal-tips-and-tricks/'&gt;Windows Terminal Tips and Tricks | Windows Command Line&lt;/a&gt;を見てたら、愛すべき oh my posh の紹介の後に &lt;a href='https://github.com/devblackops/Terminal-Icons'&gt;Terminal-Icons: A PowerShell module to show file and folder icons in the terminal&lt;/a&gt; が紹介されていた。 なんじゃこりゃー即導入せねばなるまいな、という感じで導入してみたのだが、初回は&lt;code&gt;Get-ChildItem&lt;/code&gt;の結果に可愛らしいアイコンフォントが付与されるのに、2 回目以降は普通の見た目に戻ってしまい、なんでや...とトラシューしてみた。&lt;/p&gt;&lt;p&gt;わかったのは、一緒に使っていた &lt;a href='https://github.com/joonro/Get-ChildItemColor'&gt;Get-ChildItemColor: Add coloring to the output of Get-ChildItem Cmdlet of PowerShell.&lt;/a&gt; の実行後に、Terminal Icons のアイコンフォントが反映されなくなること。 試しに &lt;code&gt;Remove-Module Get-ChildItemColor&lt;/code&gt; すればあ～ら不思議、アイコンが復活するのである。&lt;/p&gt;&lt;p&gt;Terminal Icons では&lt;code&gt;format.ps1xml&lt;/code&gt; で表示内容の改変を行っているのだけど、&lt;code&gt;Get-ChildItemColor&lt;/code&gt;も色の改変をしてるし、競合してるのだろう。詳しくは追っていくのがめんどくて競合できないという結論だけだした。↓ の Issue で同じく困ってる人がいたので共有してあげた。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/devblackops/Terminal-Icons/issues/12'&gt;No icons after installation. · Issue #12 · devblackops/Terminal-Icons · GitHub&lt;/a&gt;&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 01 Nov 2020 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2020-08-31-how-do-i-manage-todos
