@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: PowerShell で Docker Toolbox を使う</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell">
+    <title>krymtkts: Rote53 ホストゾーンの NS レコード</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: PowerShell で Docker Toolbox を使う" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell" />
+    <meta property="og:title" content="krymtkts: Rote53 ホストゾーンの NS レコード" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -163,36 +163,33 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-10-13</div>
+        <div class="col-lg-6">2020-12-27</div>
         
     </div>
-    <h2>PowerShell で Docker Toolbox を使う</h2>
+    <h2>Rote53 ホストゾーンの NS レコード</h2>
 </div>
 <div>
     
-    <p>へーしゃはちょっといけてなくて、秘伝の古い VM をコンテナ化しない<del>できない</del>まま使っている。</p><p>加えて社内は Windows ユーザと Mac ユーザがごちゃまぜなので VM が VirtualBox のため、Windows ユーザであるわたしは Docker on Windows を使えず。</p><p>Docker Toolbox を日常使いしているのだが、<code>docker</code>に<code>docker-compose</code>に<code>docker-machine</code>まで現れたらコマンドやオプションが覚えきれないのが現状である 😭</p><p>これらを PowerShell で楽ちんに使おう。いますぐ以下のモジュールを PSGallery からゲットしよう。これらを発見したときは狂喜乱舞した。</p><ul><li><a href='https://www.powershellgallery.com/packages/DockerCompletion/1.1903.0.190723'>PowerShell Gallery | DockerCompletion 1.1903.0.190723</a></li><li><a href='https://www.powershellgallery.com/packages/DockerComposeCompletion/1.24.0.190329'>PowerShell Gallery | DockerComposeCompletion 1.24.0.190329</a></li><li><a href='https://www.powershellgallery.com/packages/DockerMachineCompletion/0.16.2.190903'>PowerShell Gallery | DockerMachineCompletion 0.16.2.190903</a></li></ul><p>以下、雑なインストール例。もちろん PowerShell Guys(勝手にそう呼んでいる)なら自前の Profile に追記しよう。</p><pre><code class="powershell">Install-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
-Import-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
-</code></pre><p>これで<code>docker-machine start</code>に始まり<code>docker</code>やら<code>docker-compose</code>でのイメージ・コンテナの名前補完とか諸々できるようになる。世の中、すごいモジュールを作る方がいるもんやねえ 🤔</p>
+    <p>これで 12 月だいぶ躓いたので書いとくわ。思い出じゃ。</p><p>NS レコードは Simple Routing しかサポートしてへん。まずそれは AWS Management Console でわかる。 これを AWSPowerShell のパラメータでどうやんのかがわからんかった。ワタシが阿呆やからに違いない。</p><p><script src="https://gist.github.com/krymtkts/7774bb65f2f0351697a47383aefe9ec9.js"></script></p><p>はまったところ。</p><p><a href='https://docs.aws.amazon.com/cli/latest/reference/route53/change-resource-record-sets.html'>change-resource-record-sets — AWS CLI 1.18.203 Command Reference</a></p><blockquote><p> SetIdentifier -> (string) </p><p> > > Resource record sets that have a routing policy other than simple: An identifier that differentiates among multiple resource record sets that have the same combination of name and type, such as multiple weighted resource record sets named acme.example.com that have a type of A. In a group of resource record sets that have the same name and type, the value of SetIdentifier must be unique for each resource record set. </p><p> > For information about routing policies, see Choosing a Routing Policy in the Amazon Route 53 Developer Guide . </p></blockquote><p>Alias レコードのパラメータからコピペしてたので<code>SetIdentifier</code>を残したままにしてしまっていた。NS レコードは Simple Routing のみを許可するのでエラーになるのね。↓</p><pre><code class="powershell">  52 |  Edit-R53ResourceRecordSet -HostedZoneId $ParentHostedZone.Id -ChangeB …
+     |  &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
+     | Invalid request: Expected exactly one of &#91;Weight, Region, Failover, GeoLocation, or MultiValueAnswer&#93;, but found none in Change with &#91;Action=CREATE, Name=test.testtest.com, Type=NS, SetIdentifier=nandeyanen&#93;
+</code></pre><p>わかりにくぅ！</p><p>おわり 😭</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
+    <a href="/tags/aws">aws</a>
+    
     <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/docker">docker</a>
-    
-    <a href="/tags/docker-toolbox">docker-toolbox</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-10-14-how-to-handle-waiter-of-boto3">&laquo; 2019-10-14 boto3 の Waiter さんとの戯れ</a>
         
-        
-        <a class="right" href="/posts/2019-09-22-limitaion-of-remove-certificates">2019-09-22 ALBのListenerから証明書を削除するときの制限 &raquo;</a>
+        <a class="right" href="/posts/2020-12-26-retrospective2020">2020-12-26 振り返り 2020 年 &raquo;</a>
         
     </div>
 

@@ -12,11 +12,31 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sat, 26 Dec 2020 16:41:51 +0900
+Mon, 28 Dec 2020 00:28:42 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone
+</guid>
+<link>
+http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone
+</link>
+<title>
+Rote53 ホストゾーンの NS レコード
+</title>
+<description>
+&lt;p&gt;これで 12 月だいぶ躓いたので書いとくわ。思い出じゃ。&lt;/p&gt;&lt;p&gt;NS レコードは Simple Routing しかサポートしてへん。まずそれは AWS Management Console でわかる。 これを AWSPowerShell のパラメータでどうやんのかがわからんかった。ワタシが阿呆やからに違いない。&lt;/p&gt;&lt;p&gt;&lt;script src=&quot;https://gist.github.com/krymtkts/7774bb65f2f0351697a47383aefe9ec9.js&quot;&gt;&lt;/script&gt;&lt;/p&gt;&lt;p&gt;はまったところ。&lt;/p&gt;&lt;p&gt;&lt;a href='https://docs.aws.amazon.com/cli/latest/reference/route53/change-resource-record-sets.html'&gt;change-resource-record-sets — AWS CLI 1.18.203 Command Reference&lt;/a&gt;&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt; SetIdentifier -&gt; (string) &lt;/p&gt;&lt;p&gt; &gt; &gt; Resource record sets that have a routing policy other than simple: An identifier that differentiates among multiple resource record sets that have the same combination of name and type, such as multiple weighted resource record sets named acme.example.com that have a type of A. In a group of resource record sets that have the same name and type, the value of SetIdentifier must be unique for each resource record set. &lt;/p&gt;&lt;p&gt; &gt; For information about routing policies, see Choosing a Routing Policy in the Amazon Route 53 Developer Guide . &lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;Alias レコードのパラメータからコピペしてたので&lt;code&gt;SetIdentifier&lt;/code&gt;を残したままにしてしまっていた。NS レコードは Simple Routing のみを許可するのでエラーになるのね。↓&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;  52 |  Edit-R53ResourceRecordSet -HostedZoneId $ParentHostedZone.Id -ChangeB …
+     |  &amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;
+     | Invalid request: Expected exactly one of &amp;#91;Weight, Region, Failover, GeoLocation, or MultiValueAnswer&amp;#93;, but found none in Change with &amp;#91;Action=CREATE, Name=test.testtest.com, Type=NS, SetIdentifier=nandeyanen&amp;#93;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;わかりにくぅ！&lt;/p&gt;&lt;p&gt;おわり 😭&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 27 Dec 2020 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2020-12-26-retrospective2020
