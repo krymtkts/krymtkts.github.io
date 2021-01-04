@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Step Functions のステートをまたいでパラメータを伝播する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-04-30-context-like-sfn">
+    <title>krymtkts: 2021</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-01-04-planning">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Step Functions のステートをまたいでパラメータを伝播する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-04-30-context-like-sfn" />
+    <meta property="og:title" content="krymtkts: 2021" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-01-04-planning" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -163,52 +163,28 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2020-04-30</div>
+        <div class="col-lg-6">2021-01-04</div>
         
     </div>
-    <h2>Step Functions のステートをまたいでパラメータを伝播する</h2>
+    <h2>2021</h2>
 </div>
 <div>
     
-    <p>仕事でシンプルなバッチを組む必要があり、ちょうどワークフローみたいな感じだったので Step Functions で Lambda をつないで作っている。</p><p>3 つ Lambda が登場するのだけど、1 つ目の Lambda の Output を 2 つ目 3 つ目で使いたい。 でも、こいつらが Map ステートなのもあり Output でつなぐのはちょっと違う。 代わりに <code>ResultPath</code>, <code>OutputPath</code>, <code>ItemPath</code>, <code>Parameters</code> の組み合わせれば、Lambda の Output にない後続のステートにつなげるのがわかったのでメモしておく。</p><h3 id="参考資料">参考資料</h3><ul><li><a href='https://docs.aws.amazon.com/ja_jp/step-functions/latest/dg/input-output-example.html'>InputPath、ResultPath、および OutputPath 例 - AWS Step Functions</a><ul><li>これは読んでもナンノコッチャよくわからんかった</li></ul></li><li><a href='https://dev.classmethod.jp/articles/step-functions-parameters/'>Step Functions の入出力処理の制御パラメータ（InputPath、 Parameters、ResultPath および OutputPath）を理解するために参照したドキュメント | Developers.IO</a><ul><li>流石のクラスメソッドさん、わかりやすかった</li></ul></li></ul><h3 id="構成">構成</h3><ol><li>Task</li><li>Map</li><li>Map</li></ol><p>のステートがあるとする。Task は文字列、配列 A、配列 B を Output する。これらのデータについては以下の通りとする。</p><ul><li>文字列は、StateMachine 全体に渡って使用したいデータ。</li><li>配列 A は、1 つ目の Map タスクで分散したいデータ。</li><li>配列 B は、2 つ目の Map タスクで分散したいデータ。</li></ul><h4 id="1.&#95;task1">1. Task1</h4><p>Lambda からの出力がこんなのだとする。</p><pre><code class="json">{
-  &quot;string&quot;: &quot;nanigashi&quot;,
-  &quot;arrayA&quot;: &#91;
-      0, 1, 2, 3, 4, 5, 6
-  &#93;,
-  &quot;arrayB&quot;: {
-      &quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;
-  }
-}
-</code></pre><p><code>ResultPath</code>を<code>$.key</code>にしておくと Task1 ステートの出力は ↓ になる。</p><pre><code class="json">{
-  &quot;key&quot;: {
-    &quot;string&quot;: &quot;nanigashi&quot;,
-    &quot;arrayA&quot;: &#91;
-        0, 1, 2, 3, 4, 5, 6
-    &#93;,
-    &quot;arrayB&quot;: {
-        &quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;
-    }
-  }
-}
-</code></pre><h4 id="2.&#95;map1">2. Map1</h4><ul><li><code>ItemPath</code> に <code>$.key.arrayA</code> を指定し、配列 A でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.key.string</code></li></ul></li><li><code>OutputPath</code> に前のタスクの出力 <code>$.key</code> を指定する</li><li>マッピング処理の出力は無視したいので、<code>ResultPath</code>に<code>$.null</code>など<code>OutputPath</code>に含まれないパスを指定する</li></ul><h4 id="3.&#95;map2">3. Map2</h4><ul><li><code>ItemPath</code> に <code>$.arrayB</code> を指定し、配列 B でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.key.string</code></li></ul></li><li>出力を制御したい場合は、Map1 同様に<code>OutputPath</code>、<code>ResultPath</code>を指定仕分ける</li></ul><p>これで Task1 の出力を Map1 をまたいで Map2 で利用できる。</p><h3 id="まとめ">まとめ</h3><p>これで最初の Lambda の Output を加工せずそのまま後ろ 2 つの Lambda まで伝播できた。やったね 😂 文章だけじゃわからなさすぎる気がしてきた...今度サンプルコードを起こすことにする。</p><p>ただし懸念点として以下の気になる 2 点も備えており、どうしたもんかなと言う感じでもある 🤔</p><ol><li>伝播したい回数だけ階層化しないといけないのではないか<ul><li>出力を無視するためにはセクションを切り分けないといけなくなってるから</li></ul></li><li>可変長のパラメータを伝播する場合、ペイロードの上限値に注意しないといけない<ul><li>ダブルクォートは`&#8216;エスケープされるようだし計算が大変</li><li>だからセクションを切り分けるしかなくなってる</li></ul></li></ol><p>出力無視することさえできたら階層化いらんなー 🤔</p>
+    <p>年始めに抱負を明文化しておくのと年末振り返りしやすいから例年通りやっとく。 なんか定量的なやつと定性的なやつがごっちゃになっとるけど、ええんや。</p><h4 id="テーマ:&#95;自分を大事に">テーマ: 自分を大事に</h4><p>これは仕事と自己学習の両方でだ。</p><p>仕事の方は、年末年始ずっと働き詰めだった。土日以外で完全な休みは今日 2020-01-04 となってしまった。もちろん家族への負担も大きかったし、年末年始でやろうと思っていた勉強だったり久しぶりにゲームやっちゃうかな？といった Fun な部分も全て蔑ろにしてしまった。 何でもかんでも「ワイがやらなあかんねや」と意気込むのは良いのだが、そこで得られるものとは如何に？刮目せなあかん。 数年前にエッセンシャル思考を読んだあと、立ち振舞を改めたときの状況に似ている。同じ轍を踏んでもーたわけでみっともない話や。</p><p>わたしが働くのは、楽しくプログラムを書いて自分を高め、かつ日銭を稼ぐことのできる都合が良い仕事だからだ。自身の人生を蔑ろにしたいわけではない。ここを改めて強調していきたい。</p><p>自己学習においても同様、WFH 歴もあと数ヶ月で 1 年となるけど、家のことをやる時間だけが増殖して、本を読む機会を失ってしまった。このように自分の考えを文章にまとめる機会すら少なくなっていた。これはよろしくない。 新しい技術などは極力仕事で取り組めるように取りなしているが、そこから溢れるものは私生活で掬うしかない。 学習習慣を日常生活に浸透させることでこの状況を打破したい。</p><h3 id="2021&#95;年の目標">2021 年の目標</h3><p>継続するテーマと新しい奴ら。</p><ul><li><strong>NEW!</strong> 住みたい場所を決める<ul><li>長年田舎に住みたいと思っているのだけど、昨年色々あって目当てだったところは住むのが難しそうになった。とりあえず今年はふんわりとでも候補地を固めるのが目標。</li><li>現職は WFH やからいいけどもし転職したら...とか考えると成約ばかりにで嫌気がさすが、そこは縛りゲーばりに割り切ってフルリモートの仕事しか選ばん所存。</li></ul></li><li><strong>NEW!</strong> 仕事上の掃除<ul><li><code>組織とビジネスは潰す、ひとつずつ、一ドルずつ、一人ずつ - ロバート・マッコール</code></li><li>壊れたままの〇〇<ul><li>CI パイプライン直す</li><li>テスト直す</li><li>チーム直す</li></ul></li><li>これはまず家を建てる前に土台を固めるのと同じことなので、この障害を取り除かんとアプリをもりもり書くのも難しい</li></ul></li><li>昇給<ul><li>やってることが間違っていなけれ場評価は勝手についてくるのだが、金額はついてこないので、ここは要相談やな</li></ul></li><li>積ん読の消化<ul><li>月に 1 冊を消化する</li><li>いま SNS 殆どやってないけど、Chrome のサジェストや RSS のフィードを読む時間増えてるので、そこを読書に置き換える</li><li>手の届くとこに読んでる本数冊を置くとか？</li><li>いま昼飯時間も仕事してるからそれを単純に読書に置き換えるのも良い</li></ul></li><li>OSS へのコントリビューション<ul><li>気が向いたら。とりあえず今は身の回りのこと優先なので低く。</li></ul></li><li>自作ツールの更新<ul><li><a href='https://github.com/krymtkts/Get-GzipContent'>krymtkts/Get-GzipContent: Get-Content for gzip files.</a><ul><li><code>&#42;</code> ファイルに対応させる(最近できてへんのに気づいた)</li></ul></li><li><a href='https://github.com/krymtkts/mccall-bot'>mccall-bot</a><ul><li>Typo 修正、マルチチャンネル対応したい...</li></ul></li></ul></li><li>ギター練習を 30 分/週 3 回<ul><li><a href='https://aristidesinstruments.com/guitar/h-08'>真に求めていたスペックのギター</a>が現れたのだけど、スキルのほうが劣化しすぎて...一から出直すため</li><li>バンド練習は COVID19 のこともあるし当面無理かな</li></ul></li><li><a href='https://krymtkts.github.io/'>このブログ</a>を毎月更新する<ul><li>いつも未達なので</li></ul></li><li><strong>NEW!</strong> 日頃使ってるスニペット的なのを Gist に登録していく<ul><li>Evernote に書いたりローカルに残してるよりも、こっちのほうが良さそうやから</li></ul></li></ul>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
-    <a href="/tags/serverless">serverless</a>
+    <a href="/tags/goal">goal</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2020-05-09-try-to-elm-handson">&laquo; 2020-05-09 Elm のハンズオンを試した</a>
         
-        
-        <a class="right" href="/posts/2020-03-31_oh-my-posh-theme">2020-03-31 My own oh-my-posh theme &raquo;</a>
+        <a class="right" href="/posts/2020-12-27-ns-record-of-route53-hosted-zone">2020-12-27 Rote53 ホストゾーンの NS レコード &raquo;</a>
         
     </div>
 

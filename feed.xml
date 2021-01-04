@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Mon, 28 Dec 2020 00:28:42 +0900
+Mon, 04 Jan 2021 15:50:33 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-01-04-planning
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-01-04-planning
+</link>
+<title>
+2021
+</title>
+<description>
+&lt;p&gt;年始めに抱負を明文化しておくのと年末振り返りしやすいから例年通りやっとく。 なんか定量的なやつと定性的なやつがごっちゃになっとるけど、ええんや。&lt;/p&gt;&lt;h4 id=&quot;テーマ:&amp;#95;自分を大事に&quot;&gt;テーマ: 自分を大事に&lt;/h4&gt;&lt;p&gt;これは仕事と自己学習の両方でだ。&lt;/p&gt;&lt;p&gt;仕事の方は、年末年始ずっと働き詰めだった。土日以外で完全な休みは今日 2020-01-04 となってしまった。もちろん家族への負担も大きかったし、年末年始でやろうと思っていた勉強だったり久しぶりにゲームやっちゃうかな？といった Fun な部分も全て蔑ろにしてしまった。 何でもかんでも「ワイがやらなあかんねや」と意気込むのは良いのだが、そこで得られるものとは如何に？刮目せなあかん。 数年前にエッセンシャル思考を読んだあと、立ち振舞を改めたときの状況に似ている。同じ轍を踏んでもーたわけでみっともない話や。&lt;/p&gt;&lt;p&gt;わたしが働くのは、楽しくプログラムを書いて自分を高め、かつ日銭を稼ぐことのできる都合が良い仕事だからだ。自身の人生を蔑ろにしたいわけではない。ここを改めて強調していきたい。&lt;/p&gt;&lt;p&gt;自己学習においても同様、WFH 歴もあと数ヶ月で 1 年となるけど、家のことをやる時間だけが増殖して、本を読む機会を失ってしまった。このように自分の考えを文章にまとめる機会すら少なくなっていた。これはよろしくない。 新しい技術などは極力仕事で取り組めるように取りなしているが、そこから溢れるものは私生活で掬うしかない。 学習習慣を日常生活に浸透させることでこの状況を打破したい。&lt;/p&gt;&lt;h3 id=&quot;2021&amp;#95;年の目標&quot;&gt;2021 年の目標&lt;/h3&gt;&lt;p&gt;継続するテーマと新しい奴ら。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;NEW!&lt;/strong&gt; 住みたい場所を決める&lt;ul&gt;&lt;li&gt;長年田舎に住みたいと思っているのだけど、昨年色々あって目当てだったところは住むのが難しそうになった。とりあえず今年はふんわりとでも候補地を固めるのが目標。&lt;/li&gt;&lt;li&gt;現職は WFH やからいいけどもし転職したら...とか考えると成約ばかりにで嫌気がさすが、そこは縛りゲーばりに割り切ってフルリモートの仕事しか選ばん所存。&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;NEW!&lt;/strong&gt; 仕事上の掃除&lt;ul&gt;&lt;li&gt;&lt;code&gt;組織とビジネスは潰す、ひとつずつ、一ドルずつ、一人ずつ - ロバート・マッコール&lt;/code&gt;&lt;/li&gt;&lt;li&gt;壊れたままの〇〇&lt;ul&gt;&lt;li&gt;CI パイプライン直す&lt;/li&gt;&lt;li&gt;テスト直す&lt;/li&gt;&lt;li&gt;チーム直す&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;これはまず家を建てる前に土台を固めるのと同じことなので、この障害を取り除かんとアプリをもりもり書くのも難しい&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;昇給&lt;ul&gt;&lt;li&gt;やってることが間違っていなけれ場評価は勝手についてくるのだが、金額はついてこないので、ここは要相談やな&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;積ん読の消化&lt;ul&gt;&lt;li&gt;月に 1 冊を消化する&lt;/li&gt;&lt;li&gt;いま SNS 殆どやってないけど、Chrome のサジェストや RSS のフィードを読む時間増えてるので、そこを読書に置き換える&lt;/li&gt;&lt;li&gt;手の届くとこに読んでる本数冊を置くとか？&lt;/li&gt;&lt;li&gt;いま昼飯時間も仕事してるからそれを単純に読書に置き換えるのも良い&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;OSS へのコントリビューション&lt;ul&gt;&lt;li&gt;気が向いたら。とりあえず今は身の回りのこと優先なので低く。&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;自作ツールの更新&lt;ul&gt;&lt;li&gt;&lt;a href='https://github.com/krymtkts/Get-GzipContent'&gt;krymtkts/Get-GzipContent: Get-Content for gzip files.&lt;/a&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;&amp;#42;&lt;/code&gt; ファイルに対応させる(最近できてへんのに気づいた)&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://github.com/krymtkts/mccall-bot'&gt;mccall-bot&lt;/a&gt;&lt;ul&gt;&lt;li&gt;Typo 修正、マルチチャンネル対応したい...&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;ギター練習を 30 分/週 3 回&lt;ul&gt;&lt;li&gt;&lt;a href='https://aristidesinstruments.com/guitar/h-08'&gt;真に求めていたスペックのギター&lt;/a&gt;が現れたのだけど、スキルのほうが劣化しすぎて...一から出直すため&lt;/li&gt;&lt;li&gt;バンド練習は COVID19 のこともあるし当面無理かな&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://krymtkts.github.io/'&gt;このブログ&lt;/a&gt;を毎月更新する&lt;ul&gt;&lt;li&gt;いつも未達なので&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;NEW!&lt;/strong&gt; 日頃使ってるスニペット的なのを Gist に登録していく&lt;ul&gt;&lt;li&gt;Evernote に書いたりローカルに残してるよりも、こっちのほうが良さそうやから&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;
+</description>
+<pubDate>
+Mon, 04 Jan 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone
