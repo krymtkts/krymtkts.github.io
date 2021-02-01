@@ -12,11 +12,117 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sat, 30 Jan 2021 22:24:51 +0900
+Mon, 01 Feb 2021 14:44:11 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-02-01-go-map-key-tips
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-02-01-go-map-key-tips
+</link>
+<title>
+go の map のキーの Tips
+</title>
+<description>
+&lt;ul&gt;&lt;li&gt;知ってた&lt;ul&gt;&lt;li&gt;&lt;code&gt;map&lt;/code&gt;のキーには&lt;code&gt;struct&lt;/code&gt;が使える&lt;/li&gt;&lt;li&gt;キーがポインタやポインタを含む&lt;code&gt;struct&lt;/code&gt;の場合、ポインタの指す値が同じでもポインタ値自体が比較されるため異なるキーとなる&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;知らなかった&lt;ul&gt;&lt;li&gt;&lt;code&gt;interface&lt;/code&gt;もキーにできる&lt;ul&gt;&lt;li&gt;キーを追加するときにポインタを使ってないこと&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;time.Time&lt;/code&gt;はキーにつこたらあかん&lt;ul&gt;&lt;li&gt;&lt;a href='https://go.googlesource.com/go/+/go1.15.6/src/time/time.go#147'&gt;src/time/time.go - go - Git at Google&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://pkg.go.dev/time#Time'&gt;time · pkg.go.dev&lt;/a&gt;&lt;ul&gt;&lt;li&gt;&gt; Note that the Go == operator compares not just the time instant but also the Location and the monotonic clock reading. Therefore, Time values should not be used as map or database keys without first guaranteeing that the identical Location has been set for all values, which can be achieved through use of the UTC or Local method, and that the monotonic clock reading has been stripped by setting t = t.Round(0). In general, prefer t.Equal(u) to t == u, since t.Equal uses the most accurate comparison available and correctly handles the case when only one of its arguments has a monotonic clock reading.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;UT では一致しちゃいバグを見つけられなかった...😥&lt;/li&gt;&lt;li&gt;まだわかってないのが、&lt;code&gt;Location&lt;/code&gt;が必ず同じになるようにしてた＆年月日だけの情報しか持ってなかったのにずれとんのかい！？というところ&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;a href='https://play.golang.org/p/Rd5OJ2S37AT'&gt;コード&lt;/a&gt;。このコードでは&lt;code&gt;time.Time&lt;/code&gt;のキーのズレは再現しないけど。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;go&quot;&gt;package main
+
+import &amp;#40;
+	&amp;quot;fmt&amp;quot;
+	&amp;quot;time&amp;quot;
+&amp;#41;
+
+type Key interface {
+}
+
+type KeyA struct {
+	s string
+}
+
+type KeyB struct {
+	s string
+	i int
+}
+
+type KeyC struct {
+	t time.Time
+}
+
+type KeyD struct {
+	a &amp;#42;KeyA
+}
+
+func checkInterfaceKey&amp;#40;&amp;#41; {
+	m := map&amp;#91;Key&amp;#93;int{}
+	m&amp;#91;KeyA{
+		s: &amp;quot;A1&amp;quot;,
+	}&amp;#93; = 1
+	m&amp;#91;KeyA{
+		s: &amp;quot;A1&amp;quot;,
+	}&amp;#93; = 2
+	m&amp;#91;KeyA{
+		s: &amp;quot;A2&amp;quot;,
+	}&amp;#93; = 3
+	m&amp;#91;KeyB{
+		s: &amp;quot;B1&amp;quot;,
+		i: 1,
+	}&amp;#93; = 4
+	m&amp;#91;KeyB{
+		s: &amp;quot;B1&amp;quot;,
+		i: 1,
+	}&amp;#93; = 5
+	m&amp;#91;KeyB{
+		s: &amp;quot;B1&amp;quot;,
+		i: 2,
+	}&amp;#93; = 6
+	fmt.Printf&amp;#40;&amp;quot;%v\n&amp;quot;, m&amp;#41;
+}
+
+func init&amp;#40;&amp;#41; {
+	location := &amp;quot;Asia/Tokyo&amp;quot;
+	loc, err := time.LoadLocation&amp;#40;location&amp;#41;
+	if err != nil {
+		loc = time.FixedZone&amp;#40;location, 9&amp;#42;60&amp;#42;60&amp;#41;
+	}
+	time.Local = loc
+	fmt.Printf&amp;#40;&amp;quot;%v\n&amp;quot;, loc&amp;#41;
+}
+
+func checkPointerIncludedKey&amp;#40;&amp;#41; {
+	m := map&amp;#91;Key&amp;#93;int{}
+	m&amp;#91;KeyC{
+		t: time.Date&amp;#40;2021, 2, 1, 0, 0, 0, 0, time.Local&amp;#41;,
+	}&amp;#93; = 1
+	m&amp;#91;KeyC{
+		t: time.Date&amp;#40;2021, 2, 1, 0, 0, 0, 0, time.Local&amp;#41;,
+	}&amp;#93; = 2
+	m&amp;#91;KeyD{
+		a: &amp;amp;KeyA{
+			s: &amp;quot;D1&amp;quot;,
+		},
+	}&amp;#93; = 3
+	m&amp;#91;KeyD{
+		a: &amp;amp;KeyA{
+			s: &amp;quot;D1&amp;quot;,
+		},
+	}&amp;#93; = 4
+	fmt.Printf&amp;#40;&amp;quot;%v\n&amp;quot;, m&amp;#41;
+}
+
+func main&amp;#40;&amp;#41; {
+	checkInterfaceKey&amp;#40;&amp;#41;
+	checkPointerIncludedKey&amp;#40;&amp;#41;
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+<pubDate>
+Mon, 01 Feb 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-01-30-beware-to-update-aws-tools
