@@ -12,11 +12,45 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Mon, 01 Feb 2021 14:44:11 +0900
+Fri, 12 Feb 2021 14:33:44 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-02-12-various-stories-about-starting-to-use-nodist
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-02-12-various-stories-about-starting-to-use-nodist
+</link>
+<title>
+色々あって Nodist を使い始めた話
+</title>
+<description>
+&lt;p&gt;重い腰を上げて、&lt;a href='https://github.com/krymtkts/mccall-bot'&gt;Slackbot のマッコールさん&lt;/a&gt;の Typo を直す気になった。 タイポの修正と追加のセンテンスを登録して、いざ deploy しようとしたら、Serverless Framework がエラーを吐くようになっていた。↓ らしい。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/serverless/serverless/issues/8794'&gt;Unable to deploy to Serverless due to 'empty zip' · Issue #8794 · serverless/serverless&lt;/a&gt;&lt;/p&gt;&lt;p&gt;aws-cdk の方も同様のバグがあるらしいけど、あっちは直してくれてるみたい。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/aws/aws-cdk/issues/12536'&gt;lambda: corrupt zip archive asset produced when using node v15.6 · Issue #12536 · aws/aws-cdk&lt;/a&gt;&lt;/p&gt;&lt;p&gt;残念ながら Serverless Framework の方は直してないっぽなので、Node.js のバージョンを 15 から 14 に落とす必要が出てきた。この時リアルタイムで友人に &lt;a href='https://github.com/nullivex/nodist'&gt;nodist&lt;/a&gt; を教えてもらったので、これを使って複数の系を利用できるようにした。&lt;/p&gt;&lt;p&gt;&lt;del&gt;(というか Chocolatey で Node.js の v15 を uninstall して v14 入れようとしてもなんかエラーになって、ログ見たら「新しい版いるから失敗するね！」てあって「はぁ!?」と調べたら&lt;code&gt;choco uninstall nodejs&lt;/code&gt;は仕事してくれへんらしい。古き良き Chocolatey 流儀はやめろ。で日頃使ってた node modules も全部吹っ飛んで災難やで...)&lt;/del&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;choco install nodist -y
+# RapidEE で PATH に `C:\Program Files &amp;#40;x86&amp;#41;\Nodist\bin` を追加した
+
+# nodist と一緒に install される系は古い
+nodist list
+  &amp;#40;x64&amp;#41;
+&amp;gt; 11.13.0
+# 15 系と 14 系の最新を入れる
+nodist add 15.8.0
+nodist add 14.15.5
+# 14 系を選択
+nodist 14.15.5
+# npm も古い
+nodist npm list
+&amp;gt; 6.9.0
+# 選択中の node と合わせる
+nodist npm match
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href='https://nodejs.org/ja/download/releases/'&gt;Node.js のリリース一覧&lt;/a&gt;から node と npm の対応を見て選んでってやってもいいけど、そんなんめんどすぎるので &lt;code&gt;nodist npm match&lt;/code&gt; の一度ではないかと考える。 もし、厳密に指定のバージョン使いたいとかあったら加初環境をコンテナに構築したりすればいいし、そもそも nodist を使ってローカル PC のグローバル node をこねくったりしてないはず。&lt;/p&gt;&lt;p&gt;ちょっとおもしろいのが、node/npm の version を変えても install した node_modules は同じものを使えるところ。 v14.15.5 で入れたモジュールが v15.8.0 でも見れた。何度も同じモジュールをインストールしなくていいのは楽やけど、バージョン互換性の厳しいモジュールは使うのが難しいのでは。&lt;/p&gt;&lt;p&gt;node、npm、モジュールの実態はそれぞれ、&lt;code&gt;$env:NODIST&amp;#95;PREFIX/v-x64&lt;/code&gt;(32bit が&lt;code&gt;$env:NODIST&amp;#95;PREFIX/v&lt;/code&gt;?) &lt;code&gt;$env:NODIST&amp;#95;PREFIX/npmv&lt;/code&gt; &lt;code&gt;$env:NODIST&amp;#95;PREFIX/bin/node&amp;#95;modules&lt;/code&gt; 配下にインストールされる様子。&lt;/p&gt;&lt;p&gt;nodist、どうも 2019 年を最後にメンテが止まっている様子(単にマジで変更がないのかも知れん)。現時点でこいつが最後 &lt;a href='https://github.com/nullivex/nodist/commit/bb099ba3723027469bf46e3159f51171b5dd4b59'&gt;Fix deprecated use of Tar.Extract in npm.js, release 0.9.1 · nullivex/nodist@bb099ba&lt;/a&gt;&lt;/p&gt;&lt;p&gt;とはいえ便利なので不都合ない限り利用してみるつもり。&lt;/p&gt;&lt;p&gt;と色々やったことでようやくマッコールさん Bot の最新版を deploy できるようになったとさ。めでたし x2。&lt;/p&gt;
+</description>
+<pubDate>
+Fri, 12 Feb 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-02-01-go-map-key-tips
