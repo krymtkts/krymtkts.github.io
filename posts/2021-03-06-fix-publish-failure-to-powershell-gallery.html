@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: AWS LambdaをPowershellでテスト実行する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh">
+    <title>krymtkts: PSGallery への公開つまづき 2021</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-03-06-fix-publish-failure-to-powershell-gallery">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: AWS LambdaをPowershellでテスト実行する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh" />
+    <meta property="og:title" content="krymtkts: PSGallery への公開つまづき 2021" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-03-06-fix-publish-failure-to-powershell-gallery" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -165,35 +165,29 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-08-11</div>
+        <div class="col-lg-6">2021-03-06</div>
         
     </div>
-    <h2>AWS LambdaをPowershellでテスト実行する</h2>
+    <h2>PSGallery への公開つまづき 2021</h2>
 </div>
 <div>
     
-    <p>へーしゃの支援によりGoogle Cloud Next Tokyo 2019へ参加できた。</p><p>とても有意義な時間を過ごせたのでブログをしたためたかったのだけど、日が経つにつれ仕事もメモもとっ散らかってしまい清書もできず、現時点でのブログへのまとめは断念中😫</p><p>代わりに小ネタを投稿する。</p><h3 id="curlの代わりのpowershell">curlの代わりのPowershell</h3><p>最近仕事でAWS Lambdaを使う機会を得た。へーしゃはAWSもGCPもどっちでもアリだが、現状はAWS優勢。わたしはGCPがいいけど。 元々最初にCloud WatchとAWS Lambdaで作った方が良いのでは？という提案をしていたのだが、大した理由もなく却下。その後追加された機能がLambdaじゃないと実行環境を準備するのが難しいというのが判明して、棚からぼた餅なチャンス到来。</p><p>本題に入ろう。今回作ったLambdaはAPI Gatewayと組み合わせてWeb APIとして利用する。</p><p>そのためAPI Key(<code>x-api-key</code>)をRequest Headerに付与してリクエストされる想定でいる(現時点で)。</p><p>なのでブラウザなんかでテスト実行出来ないので、大抵のやつはcurlなんかでURLを叩く。しかしここはPowershellでやってみよう。</p><p>Web-APIを叩くのなら<code>Invoke-WebRequest</code>がよかろう。追加のヘッダーは<code>-Headers</code>にhashtableとして渡せるのだ。</p><pre><code class="powershell">Invoke-WebRequest -Uri https://omae-no-api-endpoint/helloworld -Headers @{'x-api-key' = 'omae-no-api-key!!!'}
-</code></pre><p>こうなる。そんだけ😉</p>
+    <p>今年のはじめに<a href='https://github.com/krymtkts/Get-GzipContent'>krymtkts/Get-GzipContent: Get-Content for gzip files.</a>の更新を行った際に、PoweShell Gallery への公開で手間取った。その 2 ヶ月遅れの記録である。</p><p><a href='https://github.com/PowerShell/PowerShellGetv2/issues/303#issuecomment-433139506'>Publish-Module throws error "Failed to generate the compressed file for module 'Microsoft (R) Build Engine version 15.7.179.6572 for .NET Core'" · Issue #303 · PowerShell/PowerShellGetv2</a></p><pre><code class="powershell">Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile &quot;$env:LOCALAPPDATA\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe&quot;
+</code></pre><p>いやまあこれで直ったんやけど、わからなさすぎてこの記事も見た。</p><p><a href='https://sqldbawithabeard.com/2019/11/26/fixing-the-failed-to-generate-the-compressed-file-for-module-cprogram-filesdotnetdotnet-exe-error-when-deploying-to-the-powershell-gallery-using-azure-devops/'>Fixing the ‘Failed to generate the compressed file for module ‘C:\Program Files\dotnet\dotnet.exe’ error when deploying to the PowerShell Gallery using Azure DevOps | SQL DBA with A Beard</a></p><p>これは一時しのぎなので最終的に目指すのは配置している<code>nuget.exe</code>を消し去っても動くようになることだ。とはいえまた次公開するときまで使うときがないので試すのめんどくせええ＆次試そうと思っても忘れる...ということで一旦 Chocolatey で NuGet を入れておいて保険とした。でもこれ自体も本来バイナリ不要で動いてたことからしたら蛇足のはずやねんけどな、Issue に進捗なく Close されてるからわからん。まあ日記にも書いたからエラーしたときにきっと振り返れる、未来のワイ。</p><p>あと年に数回しか PowerShell Gallery に公開しないとやり方とか色々忘れるのだけど、一番忘れるのが API キーの寿命が短く設定してあって切れてるということ。今回期限切れの API キーを再有効化できるってのを知ったので、それはそれで良。</p><p><a href='https://docs.microsoft.com/ja-jp/powershell/scripting/gallery/how-to/managing-profile/creating-apikeys?view=powershell-7.1#editing-and-deleting-existing-api-keys'>API キーの管理 - PowerShell | Microsoft Docs</a></p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
     <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/lambda">lambda</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">&laquo; 2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront</a>
         
-        
-        <a class="right" href="/posts/2019-07-28-have-a-good-day-with-poco">2019-07-28 pocoで捗る日常生活 &raquo;</a>
+        <a class="right" href="/posts/2021-02-12-various-stories-about-starting-to-use-nodist">2021-02-12 色々あって Nodist を使い始めた話 &raquo;</a>
         
     </div>
 

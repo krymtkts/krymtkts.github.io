@@ -12,11 +12,29 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Fri, 12 Feb 2021 14:33:44 +0900
+Sat, 06 Mar 2021 23:20:12 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-03-06-fix-publish-failure-to-powershell-gallery
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-03-06-fix-publish-failure-to-powershell-gallery
+</link>
+<title>
+PSGallery への公開つまづき 2021
+</title>
+<description>
+&lt;p&gt;今年のはじめに&lt;a href='https://github.com/krymtkts/Get-GzipContent'&gt;krymtkts/Get-GzipContent: Get-Content for gzip files.&lt;/a&gt;の更新を行った際に、PoweShell Gallery への公開で手間取った。その 2 ヶ月遅れの記録である。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/PowerShell/PowerShellGetv2/issues/303#issuecomment-433139506'&gt;Publish-Module throws error &quot;Failed to generate the compressed file for module 'Microsoft (R) Build Engine version 15.7.179.6572 for .NET Core'&quot; · Issue #303 · PowerShell/PowerShellGetv2&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile &amp;quot;$env:LOCALAPPDATA\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;いやまあこれで直ったんやけど、わからなさすぎてこの記事も見た。&lt;/p&gt;&lt;p&gt;&lt;a href='https://sqldbawithabeard.com/2019/11/26/fixing-the-failed-to-generate-the-compressed-file-for-module-cprogram-filesdotnetdotnet-exe-error-when-deploying-to-the-powershell-gallery-using-azure-devops/'&gt;Fixing the ‘Failed to generate the compressed file for module ‘C:\Program Files\dotnet\dotnet.exe’ error when deploying to the PowerShell Gallery using Azure DevOps | SQL DBA with A Beard&lt;/a&gt;&lt;/p&gt;&lt;p&gt;これは一時しのぎなので最終的に目指すのは配置している&lt;code&gt;nuget.exe&lt;/code&gt;を消し去っても動くようになることだ。とはいえまた次公開するときまで使うときがないので試すのめんどくせええ＆次試そうと思っても忘れる...ということで一旦 Chocolatey で NuGet を入れておいて保険とした。でもこれ自体も本来バイナリ不要で動いてたことからしたら蛇足のはずやねんけどな、Issue に進捗なく Close されてるからわからん。まあ日記にも書いたからエラーしたときにきっと振り返れる、未来のワイ。&lt;/p&gt;&lt;p&gt;あと年に数回しか PowerShell Gallery に公開しないとやり方とか色々忘れるのだけど、一番忘れるのが API キーの寿命が短く設定してあって切れてるということ。今回期限切れの API キーを再有効化できるってのを知ったので、それはそれで良。&lt;/p&gt;&lt;p&gt;&lt;a href='https://docs.microsoft.com/ja-jp/powershell/scripting/gallery/how-to/managing-profile/creating-apikeys?view=powershell-7.1#editing-and-deleting-existing-api-keys'&gt;API キーの管理 - PowerShell | Microsoft Docs&lt;/a&gt;&lt;/p&gt;
+</description>
+<pubDate>
+Sat, 06 Mar 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-02-12-various-stories-about-starting-to-use-nodist
