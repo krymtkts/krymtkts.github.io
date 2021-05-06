@@ -12,11 +12,30 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 11 Apr 2021 23:10:32 +0900
+Thu, 06 May 2021 09:24:35 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-05-06-simple-way-to-update-pwsh-special-module
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-05-06-simple-way-to-update-pwsh-special-module
+</link>
+<title>
+PowerShell の特殊なモジュールを更新する方法
+</title>
+<description>
+&lt;p&gt;&lt;code&gt;PSReadLine&lt;/code&gt; のような特殊な PowerShell モジュールを更新する術として、以下の方法を使うようにしている。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;管理者権限で起動したコマンドプロンプトから&lt;/li&gt;&lt;li&gt;非対話モードで&lt;/li&gt;&lt;li&gt;PSReadline を読み込んでるプロファイルを読み込まずに&lt;/li&gt;&lt;li&gt;プレリリース許可＆全ユーザ＆サイドバイサイド でインストール&lt;/li&gt;&lt;/ul&gt;&lt;pre&gt;&lt;code class=&quot;bat&quot;&gt;REM 、かつ、-NonInteractive でPowerShell Coreを実行
+pwsh -NonInteractive -NoProfile -Command &amp;quot;Install-Module PSReadLine -AllowPrerelease -Scope AllUsers -Force&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;Remove-Module&lt;/code&gt; さえちゃんとできてたら更新できると思うんやけど、プロファイルとの組み合わせで意図せず&lt;code&gt;Import-Module&lt;/code&gt;してしまい、しょっちゅうエラーしてしまうので上記手順が楽。 ほんとは pwsh 内からいい感じに処理できればよいのだけどトラシューの時間をこんなとこに割きたくない関係で、更新の都度初手一発でうまくいく手順をやりがち。&lt;/p&gt;&lt;p&gt;エラーになりがちな奴ら。ワイの profile が依存してる関係でエラーになりがち。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;PSReadLine&lt;/li&gt;&lt;li&gt;PowerShellGet&lt;/li&gt;&lt;li&gt;posh-git&lt;/li&gt;&lt;li&gt;Pester&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;a href='https://docs.microsoft.com/ja-jp/powershell/module/microsoft.powershell.core/about/about_pwsh?view=powershell-7.1'&gt;about_Pwsh - PowerShell | Microsoft Docs&lt;/a&gt;&lt;/p&gt;
+</description>
+<pubDate>
+Thu, 06 May 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu
