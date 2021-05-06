@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-05-07-i-want-to-resize-migu-icon">Migu Nerd Font のアイコンフォントを narrow にしたい</a></li>
+                        
                         <li><a href="/posts/2021-05-06-simple-way-to-update-pwsh-special-module">PowerShell の特殊なモジュールを更新する方法</a></li>
                         
                         <li><a href="/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu">Cascadia Code PL と Migu Nerd Font の違い</a></li>
-                        
-                        <li><a href="/posts/2021-03-06-fix-publish-failure-to-powershell-gallery">PSGallery への公開つまづき 2021</a></li>
                         
                         
 
@@ -167,22 +167,40 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-05-06</div>
+        <div class="col-lg-6">2021-05-07</div>
         
     </div>
-    <h2>PowerShell の特殊なモジュールを更新する方法</h2>
+    <h2>Migu Nerd Font のアイコンフォントを narrow にしたい</h2>
 </div>
 <div>
     
-    <p><code>PSReadLine</code> のような特殊な PowerShell モジュールを更新する術として、以下の方法を使うようにしている。</p><ul><li>管理者権限で起動したコマンドプロンプトから</li><li>非対話モードで</li><li>PSReadline を読み込んでるプロファイルを読み込まずに</li><li>プレリリース許可＆全ユーザ＆サイドバイサイド でインストール</li></ul><pre><code class="bat">REM 、かつ、-NonInteractive でPowerShell Coreを実行
-pwsh -NonInteractive -NoProfile -Command &quot;Install-Module PSReadLine -AllowPrerelease -Scope AllUsers -Force&quot;
-</code></pre><p><code>Remove-Module</code> さえちゃんとできてたら更新できると思うんやけど、プロファイルとの組み合わせで意図せず<code>Import-Module</code>してしまい、しょっちゅうエラーしてしまうので上記手順が楽。 ほんとは pwsh 内からいい感じに処理できればよいのだけどトラシューの時間をこんなとこに割きたくない関係で、更新の都度初手一発でうまくいく手順をやりがち。</p><p>エラーになりがちな奴ら。ワイの profile が依存してる関係でエラーになりがち。</p><ul><li>PSReadLine</li><li>PowerShellGet</li><li>posh-git</li><li>Pester</li></ul><p><a href='https://docs.microsoft.com/ja-jp/powershell/module/microsoft.powershell.core/about/about_pwsh?view=powershell-7.1'>about_Pwsh - PowerShell | Microsoft Docs</a></p>
+    <p><a href='/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu'>以前</a>、Nerd Fonts の<code>font-patcher</code>で Migu に Narrow サイズの Symbol グリフぶちこみゃええやんけ、まで来てた。 その後を記す。</p><h3 id="nerd&#95;fonts">Nerd Fonts</h3><p>Nerd Font の font-patcher を試す。事前にパッチ済みの M+を見ると完璧なので期待に胸が高ぶる。実行してみると Python モジュールに Windows のライブラリが含まれていたので WSL2 内の Ubuntu では実行できなかった。Windows で実行する。</p><pre><code class="powershell">fontforge -script font-patcher migu-1m-regular.ttf -s -l -w -c --careful --progressbars -out patched
+</code></pre><p>結果、全然アカン... <code>-s, &ndash;mono, &ndash;use-single-width-glyphs</code>オプションを有効にすると全グリフが single-width になってしまい日本語フォントとして使いものにならなくなる。</p><p>逆にこの完璧な M+が惚れ惚れする出来なので、こちらに半濁音を移植するだけでいい気がしてきた。</p><h2 id="font-merger&#95;再び">font-merger 再び</h2><p>コードポイントがわからないので、取得するための関数を PowerShell で作る。</p><pre><code class="powershell">function UC {
+    &#91;CmdletBinding&#40;&#41;&#93;
+    param &#40;
+        &#91;Parameter&#40;Mandatory = $true,
+            Position = 0,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true&#41;&#93;
+        &#91;ValidateNotNullOrEmpty&#40;&#41;&#93;
+        &#91;String&#91;&#93;&#93;$s
+    &#41;
+    process {
+        foreach &#40;$c in $s&#41; {
+            &#91;Convert&#93;::ToInt32&#40;$c -as &#91;char&#93;&#41;.ToString&#40;&quot;x&quot;&#41;
+        }
+    }
+}
+
+&#40;'がぎぐげござじずぜぞだぢづでどばぱびぴぶぷべぺぼぽゔ'+''+''+'ゞガギグゲゴザジズゼゾダヂヅデドバパビピブプベペボポヴヷヸヹヺ'&#41;.ToCharArray&#40;&#41; | UC
+</code></pre><p>これで置き換えたい文字(Migu のチャーミングな濁音半濁音たち)のコードポイントを取れるよにした。 特定のコードポイントの移植といえば font-merger 使えるやん！というところではあるが、ほしいコードポイントは連続せず細切れになっているので、これを 1 個ずつ設定に書くのはめんどい... ということで font-merger の改造をした。</p><p><a href='https://github.com/krymtkts/fontmerger/commit/33c775ef4f1fd47f90b6359f5ae74529552a87a6'>Add codepoint option to copy glyph from specific code points. · krymtkts/fontmerger@33c775e</a></p><pre><code class="sh">/usr/bin/fontforge -script fontmerger/&#95;&#95;init&#95;&#95;.py -x migu-1m-regular -o patched --suffix=migu -- ./source/M+1mNerdFontCompleteWindowsCompatible.ttf
+</code></pre><p>コードポイントを個別に指定できるようにしまして実行したところ、なんかそれっぽく半濁点が反映されてる。 いや待てよ...微妙に縦長になってしまった...これは M+と Migu でフォントの縦横比が異なるせいやろな。</p><p>もう FontForge のスクリプティング真面目にやってくしか残された将来はない気がしてきた。😰</p><h2 id="font-merger&#95;再び&#95;再び">font-merger 再び 再び</h2><p>Nerd Fonts の font-patcher を読んでいるときに気づいたのが、<code>&ndash;mono</code> オプションを有効にしている場合すべての glyph に narrow 幅を設定するようになっていたこと。</p><p><a href='https://github.com/ryanoasis/nerd-fonts/blob/master/font-patcher#L71-L74'>nerd-fonts/font-patcher at master · ryanoasis/nerd-fonts · GitHub</a></p><p>日本語フォントの場合 wide 幅を書き換えてしまうから先述の通り Nerf Fonts はえらいことになってしまっていたので、これをパッチするグリフにのみ適用すれば良いという力技に気づく。 ということで更に font-merger を改造した。</p><p><a href='https://github.com/krymtkts/fontmerger/commit/25ed2b1dfd547d6599417793fb679ea9fdbe4548'>Adds mono command line option that forces glyph to be single width. · krymtkts/fontmerger@25ed2b1</a></p><h2 id="現状">現状</h2><p>これにより全ての追加したアイコングリフが narrow 幅になることで、漸く Windows Terminal でもﾐﾆﾐﾆアイコンフォントにならずに表示できるようになった。</p><p><img src="/img/2021-05-07-terminal/mypowerline.png" alt="現在のpowerline。左向き三角が残念" /></p><p>しかしご覧の通り、右に寄るべきフォントの見た目が非常に残念なので、今後もちょいちょいいじらねばならない。完成はいつになるのか...😪 (幅 500 以上になってるためずれる)</p><p>なんとなく、次は Powerline グリフの narrow 幅を大きく超過するものを左右の align をつけて変形しないといけない気がしている。 この辺の頂点の xmax, ymax からどないか計算できんかな → <a href='https://fontforge.org/docs/scripting/python/fontforge.html#fontforge.contour.boundingBox'>fontforge — FontForge 20201107 documentation</a></p><ul><li>[x] お亡くなりになられた fontmerger を Python3 化して動かす</li><li>[x] 最新の Migu に対して fontmerger で Nerd font patch する</li><li>[x] <code>0xE0B0</code> を始めとした Cascadia でだけうまく表示されるグリフを Migu に移植する<ul><li>そして効果なし！</li></ul></li><li>[x] Nerd Fonts の font-patcher で Migu にパッチしてみる<ul><li>フォントが使い物にならなくなった</li></ul></li><li>[x] Migu のチャーミングな部分を M+に移植<ul><li>縦横比の違いから縦長に...</li></ul></li><li>[x] font-merger がパッチするグリフのみ narrow 幅にしてみる<ul><li>おしい！右よりフォントが残念</li></ul></li><li>[ ] 完璧な Migu の完成！<ul><li>To Be Continued...</li></ul></li></ul>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/font">font</a>
     
 </div>
 
@@ -192,7 +210,7 @@ pwsh -NonInteractive -NoProfile -Command &quot;Install-Module PSReadLine -AllowP
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu">2021-04-11 Cascadia Code PL と Migu Nerd Font の違い &raquo;</a>
+        <a class="right" href="/posts/2021-05-06-simple-way-to-update-pwsh-special-module">2021-05-06 PowerShell の特殊なモジュールを更新する方法 &raquo;</a>
         
     </div>
 </div>
