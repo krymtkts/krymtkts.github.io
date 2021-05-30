@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Fri, 07 May 2021 00:09:19 +0900
+Sun, 30 May 2021 16:58:23 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-05-30-maybe-completed-refining-migu-nerd-font
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-05-30-maybe-completed-refining-migu-nerd-font
+</link>
+<title>
+Migu Nerd Font の改善が完了したっぽい
+</title>
+<description>
+&lt;p&gt;(2021-05-16 に書いたまま投稿するのを忘れていた)&lt;/p&gt;&lt;p&gt;&lt;a href='/posts/2021-05-07-i-want-to-resize-migu-icon'&gt;以前&lt;/a&gt;の続き。まだやってる。&lt;/p&gt;&lt;p&gt;横も縦も微妙にサイズが合わないのであれば、強制的に矯正するしかない！ということでまた fontmerger に機能追加した。&lt;a href='https://fontforge.org/docs/scripting/python/fontforge.html#fontforge.contour.boundingBox'&gt;contour.boundingBox&lt;/a&gt;は結局やめた。今のコードでもフォント設定を分ければ実現が容易だったからだ。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;フォントごとの &lt;code&gt;scale&lt;/code&gt; オプションを x,y 軸で 2 つのオプション(&lt;code&gt;scale&amp;#95;x&lt;/code&gt;, &lt;code&gt;scale&amp;#95;y&lt;/code&gt;)に分割&lt;/li&gt;&lt;li&gt;narrow 幅に矯正する &lt;code&gt;force&amp;#95;narrow&lt;/code&gt; オプションを追加&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;a href='https://github.com/krymtkts/fontmerger/commit/690830d0842a21445d7ca4e3aa367e1bbf859c31'&gt;Split scale option to x and y scale. Add force_narrow option that for… · krymtkts/fontmerger@690830d&lt;/a&gt;&lt;/p&gt;&lt;p&gt;コードは愚直に書いただけで Cognitive Complexy が 16 を突破してしまったが、期待の通りのフォント変換ができた模様。 これにより残念だった Powerline の隙間・見切れ問題が解決したものと思う。これで現時点では完璧や...という Migu になったので当分は使用を確かめてみようと思う。&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;/img/2021-05-16-terminal/mypowerline.png&quot; alt=&quot;現在のpowerline&quot; /&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;[x] お亡くなりになられた fontmerger を Python3 化して動かす&lt;/li&gt;&lt;li&gt;[x] 最新の Migu に対して fontmerger で Nerd font patch する&lt;/li&gt;&lt;li&gt;[x] &lt;code&gt;0xE0B0&lt;/code&gt; を始めとした Cascadia でだけうまく表示されるグリフを Migu に移植する&lt;ul&gt;&lt;li&gt;そして効果なし！&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;[x] Nerd Fonts の font-patcher で Migu にパッチしてみる&lt;ul&gt;&lt;li&gt;フォントが使い物にならなくなった&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;[x] Migu のチャーミングな部分を M+に移植&lt;ul&gt;&lt;li&gt;縦横比の違いから縦長に...&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;[x] font-merger がパッチするグリフのみ narrow 幅にしてみる&lt;ul&gt;&lt;li&gt;おしい！右よりフォントが残念&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;[x] font-merger の scale オプションを x,y で分割、強制 narrow 幅オプション追加&lt;/li&gt;&lt;li&gt;[x] 完璧な Migu の完成！&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;完&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 30 May 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-05-07-i-want-to-resize-migu-icon
