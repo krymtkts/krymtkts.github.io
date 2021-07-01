@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;openssh&quot;</title>
-    <link rel="canonical" href="http://krymtkts.github.io/tags/openssh">
+    <title>krymtkts: Terminal-Icons のアイコングリフのコードポイントを変えたい</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-07-01-i-want-to-change-codepoint">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;openssh&quot;" />
-    <meta property="og:url" content="http://krymtkts.github.io/tags/openssh" />
+    <meta property="og:title" content="krymtkts: Terminal-Icons のアイコングリフのコードポイントを変えたい" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-07-01-i-want-to-change-codepoint" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -164,21 +164,39 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;openssh&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2021-07-01</div>
+        
     </div>
-    <ul>
+    <h2>Terminal-Icons のアイコングリフのコードポイントを変えたい</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2019-06-29-season-of-openssh-error">2019-06-29 またOpenSSHが動かなくなる季節がやってきた</a>
-        </li>
+    <p>2021 年 5 月から、法律による上限スレスレの時間外＆休日労働だったため、すっかりブログを認めるのを忘れていた。 なのでこの記事は 6 月分のつもりで書いている(言い訳)。<h2></h2></p><p>さて、先月に現時点自分史上最高の Migu フォントを生み出したわけだが、実用において完全に気になるポイントがないわけではない。 その実、前から抱えていた幾つかの課題がそれなのだけど。</p><p>fontmerger を使って日本語フォントにパッチする場合、漢字が割り当てられているコードポイントにアイコングリフが割り当てられないように、コードポイントをずらす機能がついている。 当然の如く、わたしの Migu を作るためのパッチでもコードポイントをずらしている。</p><p>するとですね、<a href='https://github.com/devblackops/Terminal-Icons/'>devblackops/Terminal-Icons</a>は <a href='https://github.com/devblackops/Terminal-Icons/blob/eeb5ce85d4a1882b5155bd6f06859a4b6f4b44d8/psakeFile.ps1#L28'>https://www.nerdfonts.com/cheat-sheet から自動生成した標準のコードポイント</a> で以てフィアルやディレクトリのアイコンを表示するので...わたしの Migu だと豆腐になるアイコンがちらほらいるわけですね。</p><p><img src="/img/2021-07-01-terminal/icon-tofu.png" alt="豆腐アイコン" /></p><p>偶然にも、「栗」がアイコンに割り当てられてしまっているところもあったり。この動機づけはシンクロニシティやろ！</p><p><img src="/img/2021-07-01-terminal/stop-is-chestnut.png" alt="停止は栗" /></p><p>前まではアイコンがぶっ壊れ気味の Migu を使っていたので、割れ窓理論的に気にならなかった豆腐が、最近妙に気になってきたわけだ。</p><p>Terminal-Icons のドキュメントやコードを見ても、先述の自動生成したコードポイント表(<a href='https://github.com/devblackops/Terminal-Icons/blob/main/Terminal-Icons/Data/glyphs.ps1'>Terminal-Icons/glyphs.ps1</a>)を差し替えたりできるような仕組みはないようなので、一旦はこのスクリプト自体にパッチを当てる方向で考えよかなと考え中。</p><p>4000 行近くあるとはいえ、その中から普段使うアイコンに絞れば数は少ないと思うから、とりま手でﾎﾟﾘﾎﾟﾘコードポイントを変えようかなと(さっきのキャプチャだけでも 3 つ豆腐並んでてヒット率高すぎ感はあるが)。</p><p>とはいえ英語圏じゃない人のフォントはわたしと同じ問題を抱えてるかもしれないので、なんかグリフのコードポイント変えさせてくれや～、という機能をプルリしてもいいかもしれない。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2019-03-31-win-openssh-is-gone">2019-03-31 Windows10の更新でOpenSSHが逝った</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-    </ul>
+    <a href="/tags/font">font</a>
+    
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font">2021-05-30 Migu Nerd Font の改善が完了したっぽい &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>
