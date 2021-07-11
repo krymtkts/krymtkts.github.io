@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Thu, 01 Jul 2021 14:13:15 +0900
+Sun, 11 Jul 2021 15:17:54 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-07-11-my-terminal-icons
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-07-11-my-terminal-icons
+</link>
+<title>
+Terminal-Icons のアイコングリフのコードポイントを変えたい
+</title>
+<description>
+&lt;p&gt;先日、&lt;a href='/posts/2021-07-01-i-want-to-change-codepoint'&gt;わたしの改造 Migu で Terminal-Icons の見栄えが悪い話&lt;/a&gt;を書いた。 あの後、チマチマ作業を行い、ある程度納得の行くものが出来上がったのでまとめておく。&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;まず、先日の記事に書いていた豆腐は、ありゃー Material Design Icons を改造 Migu に組み込んでいないからであった。無知蒙昧。 あと Weather Icons もいらねーだろと思ってたしてなかったが、この際なので打ち込んじまえ！と意気込み処置を行うた。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://github.com/krymtkts/fontmerger/commit/81681e6de10149ed34dda60e9b6b806374efa472'&gt;Add fonts. · krymtkts/fontmerger@81681e6&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://github.com/krymtkts/fontmerger/commit/44c72fc3cc6cbabb44d25c3268d4191f81c78fed'&gt;Update font settings. · krymtkts/fontmerger@44c72fc&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Weather Icons は、なんか知らんがサイズを調整してパッチすると結構縦長になってしまってた。 が、ちょっと前に足しといた縦比/横比だけ調整するパラメータがいい感じに使え、我ながら先見の明を感じた(何&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://github.com/krymtkts/fontmerger/commit/7653e06d1f106b8dbcc01f30dc9ea25c175a3916'&gt;Split scale option to x and y scale. Add force_narrow option that for… · krymtkts/fontmerger@7653e06&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;こうしてまたさらにイイカンジの Migu になったところで、Terminal-Icons の&lt;code&gt;glyphs.ps1&lt;/code&gt;を上書きするモンをこしらえて完成とした。 ブツは Gist に上げた → &lt;a href='https://gist.github.com/krymtkts/4457a23124b2db860a6b32eba6490b03'&gt;my Terminal-Icons glyphs.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Material Design Icons はコードポイントがわかりやすくずれるだけなので機械的にずらすだけで OK だった。 Weather Icons と Octicons あたりは Nerd Fonts ではよくわからん順番に組み替えてるようだった。 コード読むのめんどかったので、モウ泥臭くヒューマンマニピュレーションにて処置...気が遠くなるかと思いきや割とすぐできた感じではある。 あと&lt;code&gt;glyphs.ps1&lt;/code&gt;を直接上書きするパワースタイルなので、なんか後から差し込めるようにしたい気はする。&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;/img/2021-07-11-terminal/icons.png&quot; alt=&quot;きれいなアイコンたち&quot; /&gt;&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;全く関係ないが最近マイ Iris がやたらとチャタリングするようになてムカつくぜぇぇぇ... ホコリが接点に侵入してるんやと思うんやけど、掃除しても掃除しても数日で再発する。 でもファミコンのカートリッジスタイルでフーッ！！すると割と改善する...そんな日々。&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 11 Jul 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-07-01-i-want-to-change-codepoint

@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-07-11-my-terminal-icons">Terminal-Icons のアイコングリフのコードポイントを変えたい</a></li>
+                        
                         <li><a href="/posts/2021-07-01-i-want-to-change-codepoint">Terminal-Icons のアイコングリフのコードポイントを変えたい</a></li>
                         
                         <li><a href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font">Migu Nerd Font の改善が完了したっぽい</a></li>
-                        
-                        <li><a href="/posts/2021-05-07-i-want-to-resize-migu-icon">Migu Nerd Font のアイコンフォントを narrow にしたい</a></li>
                         
                         
 
@@ -167,14 +167,14 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-07-01</div>
+        <div class="col-lg-6">2021-07-11</div>
         
     </div>
     <h2>Terminal-Icons のアイコングリフのコードポイントを変えたい</h2>
 </div>
 <div>
     
-    <p>2021 年 5 月から、法律による上限スレスレの時間外＆休日労働だったため、すっかりブログを認めるのを忘れていた。 なのでこの記事は 6 月分のつもりで書いている(言い訳)。<h2></h2></p><p>さて、先月に現時点自分史上最高の Migu フォントを生み出したわけだが、実用において完全に気になるポイントがないわけではない。 その実、前から抱えていた幾つかの課題がそれなのだけど。</p><p>fontmerger を使って日本語フォントにパッチする場合、漢字が割り当てられているコードポイントにアイコングリフが割り当てられないように、コードポイントをずらす機能がついている。 当然の如く、わたしの Migu を作るためのパッチでもコードポイントをずらしている。</p><p>するとですね、<a href='https://github.com/devblackops/Terminal-Icons/'>devblackops/Terminal-Icons</a>は <a href='https://github.com/devblackops/Terminal-Icons/blob/eeb5ce85d4a1882b5155bd6f06859a4b6f4b44d8/psakeFile.ps1#L28'>https://www.nerdfonts.com/cheat-sheet から自動生成した標準のコードポイント</a> で以てフィアルやディレクトリのアイコンを表示するので...わたしの Migu だと豆腐になるアイコンがちらほらいるわけですね。</p><p><img src="/img/2021-07-01-terminal/icon-tofu.png" alt="豆腐アイコン" /></p><p>偶然にも、「栗」がアイコンに割り当てられてしまっているところもあったり。この動機づけはシンクロニシティやろ！</p><p><img src="/img/2021-07-01-terminal/stop-is-chestnut.png" alt="停止は栗" /></p><p>前まではアイコンがぶっ壊れ気味の Migu を使っていたので、割れ窓理論的に気にならなかった豆腐が、最近妙に気になってきたわけだ。</p><p>Terminal-Icons のドキュメントやコードを見ても、先述の自動生成したコードポイント表(<a href='https://github.com/devblackops/Terminal-Icons/blob/main/Terminal-Icons/Data/glyphs.ps1'>Terminal-Icons/glyphs.ps1</a>)を差し替えたりできるような仕組みはないようなので、一旦はこのスクリプト自体にパッチを当てる方向で考えよかなと考え中。</p><p>4000 行近くあるとはいえ、その中から普段使うアイコンに絞れば数は少ないと思うから、とりま手でﾎﾟﾘﾎﾟﾘコードポイントを変えようかなと(さっきのキャプチャだけでも 3 つ豆腐並んでてヒット率高すぎ感はあるが)。</p><p>とはいえ英語圏じゃない人のフォントはわたしと同じ問題を抱えてるかもしれないので、なんかグリフのコードポイント変えさせてくれや～、という機能をプルリしてもいいかもしれない。</p>
+    <p>先日、<a href='/posts/2021-07-01-i-want-to-change-codepoint'>わたしの改造 Migu で Terminal-Icons の見栄えが悪い話</a>を書いた。 あの後、チマチマ作業を行い、ある程度納得の行くものが出来上がったのでまとめておく。<h2></h2></p><p>まず、先日の記事に書いていた豆腐は、ありゃー Material Design Icons を改造 Migu に組み込んでいないからであった。無知蒙昧。 あと Weather Icons もいらねーだろと思ってたしてなかったが、この際なので打ち込んじまえ！と意気込み処置を行うた。</p><ul><li><a href='https://github.com/krymtkts/fontmerger/commit/81681e6de10149ed34dda60e9b6b806374efa472'>Add fonts. · krymtkts/fontmerger@81681e6</a></li><li><a href='https://github.com/krymtkts/fontmerger/commit/44c72fc3cc6cbabb44d25c3268d4191f81c78fed'>Update font settings. · krymtkts/fontmerger@44c72fc</a></li></ul><p>Weather Icons は、なんか知らんがサイズを調整してパッチすると結構縦長になってしまってた。 が、ちょっと前に足しといた縦比/横比だけ調整するパラメータがいい感じに使え、我ながら先見の明を感じた(何</p><ul><li><a href='https://github.com/krymtkts/fontmerger/commit/7653e06d1f106b8dbcc01f30dc9ea25c175a3916'>Split scale option to x and y scale. Add force_narrow option that for… · krymtkts/fontmerger@7653e06</a></li></ul><p>こうしてまたさらにイイカンジの Migu になったところで、Terminal-Icons の<code>glyphs.ps1</code>を上書きするモンをこしらえて完成とした。 ブツは Gist に上げた → <a href='https://gist.github.com/krymtkts/4457a23124b2db860a6b32eba6490b03'>my Terminal-Icons glyphs.</a></p><p>Material Design Icons はコードポイントがわかりやすくずれるだけなので機械的にずらすだけで OK だった。 Weather Icons と Octicons あたりは Nerd Fonts ではよくわからん順番に組み替えてるようだった。 コード読むのめんどかったので、モウ泥臭くヒューマンマニピュレーションにて処置...気が遠くなるかと思いきや割とすぐできた感じではある。 あと<code>glyphs.ps1</code>を直接上書きするパワースタイルなので、なんか後から差し込めるようにしたい気はする。</p><p><img src="/img/2021-07-11-terminal/icons.png" alt="きれいなアイコンたち" /><h2></h2></p><p>全く関係ないが最近マイ Iris がやたらとチャタリングするようになてムカつくぜぇぇぇ... ホコリが接点に侵入してるんやと思うんやけど、掃除しても掃除しても数日で再発する。 でもファミコンのカートリッジスタイルでフーッ！！すると割と改善する...そんな日々。</p>
 </div>
 
 <div id="post-tags">
@@ -192,7 +192,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font">2021-05-30 Migu Nerd Font の改善が完了したっぽい &raquo;</a>
+        <a class="right" href="/posts/2021-07-01-i-want-to-change-codepoint">2021-07-01 Terminal-Icons のアイコングリフのコードポイントを変えたい &raquo;</a>
         
     </div>
 </div>
