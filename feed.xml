@@ -12,7 +12,7 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 18 Jul 2021 19:44:54 +0900
+Sun, 18 Jul 2021 20:06:22 +0900
 </lastBuildDate>
 <generator>
 clj-rss
@@ -48,7 +48,25 @@ psake の Task 名を自動補完する
 # DEFAULT
 # Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
 # YEAH
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;追記。&lt;/p&gt;&lt;p&gt;デバッグ中に気づいたのだが、プロファイル内で &lt;code&gt;$psake&lt;/code&gt; という変数を作ると &lt;code&gt;Invoke-psake&lt;/code&gt; が壊れるという事に気づいた。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;🤖 takatoshi  invoke-psake -nologo
+Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:9
+Line |
+   9 |      if &amp;#40;test-path $psake.config&amp;#95;default.buildFileName -pathType Leaf&amp;#41; …
+     |          &amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;
+     | Value cannot be null. &amp;#40;Parameter 'The provided Path argument was null or an empty collection.'&amp;#41;
+
+Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:11
+Line |
+  11 |  …   } elseif &amp;#40;test-path $psake.config&amp;#95;default.legacyBuildFileName -path …
+     |                &amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;
+     | Value cannot be null. &amp;#40;Parameter 'The provided Path argument was null or an empty collection.'&amp;#41;
+
+InvalidOperation: C:\Program Files\PowerShell\Modules\psake\4.9.0\public\Invoke-psake.ps1:327
+Line |
+ 327 |          $psake.build&amp;#95;success = $false
+     |          &amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;&amp;#126;
+     | The property 'build&amp;#95;success' cannot be found on this object. Verify that the property exists and can be set.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;罠すぎる...&lt;/p&gt;
 </description>
 <pubDate>
 Sun, 18 Jul 2021 00:00:00 +0900

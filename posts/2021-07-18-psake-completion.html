@@ -196,7 +196,25 @@
 # DEFAULT
 # Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
 # YEAH
-</code></pre><p>どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。</p>
+</code></pre><p>どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。<h2></h2></p><p>追記。</p><p>デバッグ中に気づいたのだが、プロファイル内で <code>$psake</code> という変数を作ると <code>Invoke-psake</code> が壊れるという事に気づいた。</p><pre><code class="powershell">🤖 takatoshi  invoke-psake -nologo
+Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:9
+Line |
+   9 |      if &#40;test-path $psake.config&#95;default.buildFileName -pathType Leaf&#41; …
+     |          &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
+     | Value cannot be null. &#40;Parameter 'The provided Path argument was null or an empty collection.'&#41;
+
+Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:11
+Line |
+  11 |  …   } elseif &#40;test-path $psake.config&#95;default.legacyBuildFileName -path …
+     |                &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
+     | Value cannot be null. &#40;Parameter 'The provided Path argument was null or an empty collection.'&#41;
+
+InvalidOperation: C:\Program Files\PowerShell\Modules\psake\4.9.0\public\Invoke-psake.ps1:327
+Line |
+ 327 |          $psake.build&#95;success = $false
+     |          &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
+     | The property 'build&#95;success' cannot be found on this object. Verify that the property exists and can be set.
+</code></pre><p>罠すぎる...</p>
 </div>
 
 <div id="post-tags">
