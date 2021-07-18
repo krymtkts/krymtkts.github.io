@@ -49,3 +49,32 @@ Get-Content .\test.log -Wait -Tail 10
 ```
 
 どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。
+
+---
+
+追記。
+
+デバッグ中に気づいたのだが、プロファイル内で `$psake` という変数を作ると `Invoke-psake` が壊れるという事に気づいた。
+
+```powershell
+🤖 takatoshi  invoke-psake -nologo
+Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:9
+Line |
+   9 |      if (test-path $psake.config_default.buildFileName -pathType Leaf) …
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Value cannot be null. (Parameter 'The provided Path argument was null or an empty collection.')
+
+Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:11
+Line |
+  11 |  …   } elseif (test-path $psake.config_default.legacyBuildFileName -path …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Value cannot be null. (Parameter 'The provided Path argument was null or an empty collection.')
+
+InvalidOperation: C:\Program Files\PowerShell\Modules\psake\4.9.0\public\Invoke-psake.ps1:327
+Line |
+ 327 |          $psake.build_success = $false
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | The property 'build_success' cannot be found on this object. Verify that the property exists and can be set.
+```
+
+罠すぎる...
