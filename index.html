@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-07-18-psake-completion">psake の Task 名を自動補完する</a></li>
+                        
                         <li><a href="/posts/2021-07-11-my-terminal-icons">Terminal-Icons のアイコングリフのコードポイントを変えたい</a></li>
                         
                         <li><a href="/posts/2021-07-01-i-want-to-change-codepoint">Terminal-Icons のアイコングリフのコードポイントを変えたい</a></li>
-                        
-                        <li><a href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font">Migu Nerd Font の改善が完了したっぽい</a></li>
                         
                         
 
@@ -128,6 +128,8 @@
                         
                         <li><a href="/tags/cement">cement</a></li>
                         
+                        <li><a href="/tags/psake">psake</a></li>
+                        
                         <li><a href="/tags/textlin">textlin</a></li>
                         
                         <li><a href="/tags/python">python</a></li>
@@ -167,14 +169,34 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-07-11</div>
+        <div class="col-lg-6">2021-07-18</div>
         
     </div>
-    <h2>Terminal-Icons のアイコングリフのコードポイントを変えたい</h2>
+    <h2>psake の Task 名を自動補完する</h2>
 </div>
 <div>
     
-    <p>先日、<a href='/posts/2021-07-01-i-want-to-change-codepoint'>わたしの改造 Migu で Terminal-Icons の見栄えが悪い話</a>を書いた。 あの後、チマチマ作業を行い、ある程度納得の行くものが出来上がったのでまとめておく。<h2></h2></p><p>まず、先日の記事に書いていた豆腐は、ありゃー Material Design Icons を改造 Migu に組み込んでいないからであった。無知蒙昧。 あと Weather Icons もいらねーだろと思ってたしてなかったが、この際なので打ち込んじまえ！と意気込み処置を行うた。</p><ul><li><a href='https://github.com/krymtkts/fontmerger/commit/81681e6de10149ed34dda60e9b6b806374efa472'>Add fonts. · krymtkts/fontmerger@81681e6</a></li><li><a href='https://github.com/krymtkts/fontmerger/commit/44c72fc3cc6cbabb44d25c3268d4191f81c78fed'>Update font settings. · krymtkts/fontmerger@44c72fc</a></li></ul><p>Weather Icons は、なんか知らんがサイズを調整してパッチすると結構縦長になってしまってた。 が、ちょっと前に足しといた縦比/横比だけ調整するパラメータがいい感じに使え、我ながら先見の明を感じた(何</p><ul><li><a href='https://github.com/krymtkts/fontmerger/commit/7653e06d1f106b8dbcc01f30dc9ea25c175a3916'>Split scale option to x and y scale. Add force_narrow option that for… · krymtkts/fontmerger@7653e06</a></li></ul><p>こうしてまたさらにイイカンジの Migu になったところで、Terminal-Icons の<code>glyphs.ps1</code>を上書きするモンをこしらえて完成とした。 ブツは Gist に上げた → <a href='https://gist.github.com/krymtkts/4457a23124b2db860a6b32eba6490b03'>my Terminal-Icons glyphs.</a></p><p>Material Design Icons はコードポイントがわかりやすくずれるだけなので機械的にずらすだけで OK だった。 Weather Icons と Octicons あたりは Nerd Fonts ではよくわからん順番に組み替えてるようだった。 コード読むのめんどかったので、モウ泥臭くヒューマンマニピュレーションにて処置...気が遠くなるかと思いきや割とすぐできた感じではある。 あと<code>glyphs.ps1</code>を直接上書きするパワースタイルなので、なんか後から差し込めるようにしたい気はする。</p><p><img src="/img/2021-07-11-terminal/icons.png" alt="きれいなアイコンたち" /><h2></h2></p><p>全く関係ないが最近マイ Iris がやたらとチャタリングするようになてムカつくぜぇぇぇ... ホコリが接点に侵入してるんやと思うんやけど、掃除しても掃除しても数日で再発する。 でもファミコンのカートリッジスタイルでフーッ！！すると割と改善する...そんな日々。</p>
+    <p>ほぼ趣味レベルなのだが、所謂タスクランナーとして<a href='https://github.com/psake/psake'>psake</a>を使っている。趣味レベルなのは、Go とか Python とかでは <code>make</code> を使うので <code>psake</code> を製品コードでは使ったことなくて、自分の細々とした面倒な処理をスクリプト化してまとめるのに <code>psake</code> を使ってるからだ。</p><p>そんな訳で利用頻度も高くなかったのだが、なんか最近は AWS のリソースを操作するニッチなスクリプト(例えば開発環境とかステージング環境だけに使うようなやつ)が大量にあって、それをまとめるのに使い出した。 その御蔭で利用頻度が高まり、いやーよくできたツールやな～などと改めて思っていたが、今まで不満に感じなかった自動補完がないことがストレスになってきた。タスクが増え過ぎて名前が覚えられないのだ。</p><p>ｷﾞｯﾊﾌﾞの repo を確認すると、古の<code>TabExpansion</code>版はあれど、今どきの<code>Register-ArgumentCompleter</code>版がない。 <a href='https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1'>psake/PsakeTabExpansion.ps1 at master · psake/psake</a></p><p>今更<code>TabExpansion</code>使いたくないので、<code>Register-ArgumentCompleter</code>用に合わせてこしらえた。</p><p><a href='https://gist.github.com/krymtkts/b2e6742691fdca6ca09567ca146063df'>This is Register-ArgumentCompleter version of https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1.</a></p><p>使ってみていまんとこ良さそうな感じ。問題なさそうなら本家に PRO ぶん投げてみてもいいかもね。<h2></h2></p><p>以下は<code>Register-ArgumentCompleter</code>のスクリプトブロックをデバッグするときの個人的メモ。</p><p>その時の入力でトリガーされたスクリプトブロックの引数を確認するのに <code>Write-Host</code> とか使うと厄介だと思うので、ログファイル的なものをこしらえておき、別窓で<code>tail</code>してあげると見易くなる(と思っている)。</p><pre><code class="powershell">Register-ArgumentCompleter -CommandName Invoke-Psake -ParameterName taskList -ScriptBlock {
+    param&#40;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&#41;
+    &quot;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&quot; &gt;&gt; test.log
+    if &#40;$commandAst -match '&#40;?&lt;domain&gt;&#91;&#94;\.&#93;&#42;\.ps1&#41;'&#41; {
+        $file = $Matches.file
+        &quot;YEAH&quot; &gt;&gt; test.log
+    }
+    else {
+        $file = 'psakefile.ps1'
+        &quot;DEFAULT&quot; &gt;&gt; test.log
+    }
+    &amp; $commandName -buildFile $file -docs -nologo | Out-String -Stream | ForEach-Object { if &#40;$&#95; -match &quot;&#94;&#91;&#94; &#93;&#42;&quot;&#41; { $matches&#91;0&#93; } } | `
+        Where-Object { $&#95; -notin &#40;'Name', '----', ''&#41; } | Where-Object { !$wordToComplete -or $&#95; -like &quot;$wordToComplete&#42;&quot; }
+}
+</code></pre><pre><code class="powershell">Get-Content .\test.log -Wait -Tail 10
+# Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
+# Invoke-psake, taskList, In, invoke-psake -taskList In, System.Collections.Hashtable
+# DEFAULT
+# Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
+# YEAH
+</code></pre><p>どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。</p>
 </div>
 
 <div id="post-tags">
@@ -182,7 +204,7 @@
     
     <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/font">font</a>
+    <a href="/tags/psake">psake</a>
     
 </div>
 
@@ -192,7 +214,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2021-07-01-i-want-to-change-codepoint">2021-07-01 Terminal-Icons のアイコングリフのコードポイントを変えたい &raquo;</a>
+        <a class="right" href="/posts/2021-07-11-my-terminal-icons">2021-07-11 Terminal-Icons のアイコングリフのコードポイントを変えたい &raquo;</a>
         
     </div>
 </div>

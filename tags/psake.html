@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: AWS LambdaをPowershellでテスト実行する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh">
+    <title>krymtkts: Posts Tagged &quot;psake&quot;</title>
+    <link rel="canonical" href="http://krymtkts.github.io/tags/psake">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: AWS LambdaをPowershellでテスト実行する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh" />
+    <meta property="og:title" content="krymtkts: Posts Tagged &quot;psake&quot;" />
+    <meta property="og:url" content="http://krymtkts.github.io/tags/psake" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -166,44 +166,17 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="post">
-    <div class="post-header">
-    <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-08-11</div>
-        
+<div id="posts-by-tag">
+    <div id="page-header">
+        <h2>Posts Tagged &quot;psake&quot;</h2>
     </div>
-    <h2>AWS LambdaをPowershellでテスト実行する</h2>
-</div>
-<div>
+    <ul>
     
-    <p>へーしゃの支援によりGoogle Cloud Next Tokyo 2019へ参加できた。</p><p>とても有意義な時間を過ごせたのでブログをしたためたかったのだけど、日が経つにつれ仕事もメモもとっ散らかってしまい清書もできず、現時点でのブログへのまとめは断念中😫</p><p>代わりに小ネタを投稿する。</p><h3 id="curlの代わりのpowershell">curlの代わりのPowershell</h3><p>最近仕事でAWS Lambdaを使う機会を得た。へーしゃはAWSもGCPもどっちでもアリだが、現状はAWS優勢。わたしはGCPがいいけど。 元々最初にCloud WatchとAWS Lambdaで作った方が良いのでは？という提案をしていたのだが、大した理由もなく却下。その後追加された機能がLambdaじゃないと実行環境を準備するのが難しいというのが判明して、棚からぼた餅なチャンス到来。</p><p>本題に入ろう。今回作ったLambdaはAPI Gatewayと組み合わせてWeb APIとして利用する。</p><p>そのためAPI Key(<code>x-api-key</code>)をRequest Headerに付与してリクエストされる想定でいる(現時点で)。</p><p>なのでブラウザなんかでテスト実行出来ないので、大抵のやつはcurlなんかでURLを叩く。しかしここはPowershellでやってみよう。</p><p>Web-APIを叩くのなら<code>Invoke-WebRequest</code>がよかろう。追加のヘッダーは<code>-Headers</code>にhashtableとして渡せるのだ。</p><pre><code class="powershell">Invoke-WebRequest -Uri https://omae-no-api-endpoint/helloworld -Headers @{'x-api-key' = 'omae-no-api-key!!!'}
-</code></pre><p>こうなる。そんだけ😉</p>
-</div>
-
-<div id="post-tags">
-    <b>Tags: </b>
+        <li>
+            <a href="/posts/2021-07-18-psake-completion">2021-07-18 psake の Task 名を自動補完する</a>
+        </li>
     
-    <a href="/tags/aws">aws</a>
-    
-    <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/lambda">lambda</a>
-    
-</div>
-
-
-    <div id="prev-next">
-        
-        <a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">&laquo; 2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront</a>
-        
-        
-        <a class="right" href="/posts/2019-07-28-have-a-good-day-with-poco">2019-07-28 pocoで捗る日常生活 &raquo;</a>
-        
-    </div>
-
-    
-
-
+    </ul>
 </div>
 
             </div>

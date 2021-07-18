@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: AWS LambdaをPowershellでテスト実行する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh">
+    <title>krymtkts: psake の Task 名を自動補完する</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-07-18-psake-completion">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: AWS LambdaをPowershellでテスト実行する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-08-11-test-lambda-with-pwsh" />
+    <meta property="og:title" content="krymtkts: psake の Task 名を自動補完する" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-07-18-psake-completion" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -169,35 +169,50 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-08-11</div>
+        <div class="col-lg-6">2021-07-18</div>
         
     </div>
-    <h2>AWS LambdaをPowershellでテスト実行する</h2>
+    <h2>psake の Task 名を自動補完する</h2>
 </div>
 <div>
     
-    <p>へーしゃの支援によりGoogle Cloud Next Tokyo 2019へ参加できた。</p><p>とても有意義な時間を過ごせたのでブログをしたためたかったのだけど、日が経つにつれ仕事もメモもとっ散らかってしまい清書もできず、現時点でのブログへのまとめは断念中😫</p><p>代わりに小ネタを投稿する。</p><h3 id="curlの代わりのpowershell">curlの代わりのPowershell</h3><p>最近仕事でAWS Lambdaを使う機会を得た。へーしゃはAWSもGCPもどっちでもアリだが、現状はAWS優勢。わたしはGCPがいいけど。 元々最初にCloud WatchとAWS Lambdaで作った方が良いのでは？という提案をしていたのだが、大した理由もなく却下。その後追加された機能がLambdaじゃないと実行環境を準備するのが難しいというのが判明して、棚からぼた餅なチャンス到来。</p><p>本題に入ろう。今回作ったLambdaはAPI Gatewayと組み合わせてWeb APIとして利用する。</p><p>そのためAPI Key(<code>x-api-key</code>)をRequest Headerに付与してリクエストされる想定でいる(現時点で)。</p><p>なのでブラウザなんかでテスト実行出来ないので、大抵のやつはcurlなんかでURLを叩く。しかしここはPowershellでやってみよう。</p><p>Web-APIを叩くのなら<code>Invoke-WebRequest</code>がよかろう。追加のヘッダーは<code>-Headers</code>にhashtableとして渡せるのだ。</p><pre><code class="powershell">Invoke-WebRequest -Uri https://omae-no-api-endpoint/helloworld -Headers @{'x-api-key' = 'omae-no-api-key!!!'}
-</code></pre><p>こうなる。そんだけ😉</p>
+    <p>ほぼ趣味レベルなのだが、所謂タスクランナーとして<a href='https://github.com/psake/psake'>psake</a>を使っている。趣味レベルなのは、Go とか Python とかでは <code>make</code> を使うので <code>psake</code> を製品コードでは使ったことなくて、自分の細々とした面倒な処理をスクリプト化してまとめるのに <code>psake</code> を使ってるからだ。</p><p>そんな訳で利用頻度も高くなかったのだが、なんか最近は AWS のリソースを操作するニッチなスクリプト(例えば開発環境とかステージング環境だけに使うようなやつ)が大量にあって、それをまとめるのに使い出した。 その御蔭で利用頻度が高まり、いやーよくできたツールやな～などと改めて思っていたが、今まで不満に感じなかった自動補完がないことがストレスになってきた。タスクが増え過ぎて名前が覚えられないのだ。</p><p>ｷﾞｯﾊﾌﾞの repo を確認すると、古の<code>TabExpansion</code>版はあれど、今どきの<code>Register-ArgumentCompleter</code>版がない。 <a href='https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1'>psake/PsakeTabExpansion.ps1 at master · psake/psake</a></p><p>今更<code>TabExpansion</code>使いたくないので、<code>Register-ArgumentCompleter</code>用に合わせてこしらえた。</p><p><a href='https://gist.github.com/krymtkts/b2e6742691fdca6ca09567ca146063df'>This is Register-ArgumentCompleter version of https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1.</a></p><p>使ってみていまんとこ良さそうな感じ。問題なさそうなら本家に PRO ぶん投げてみてもいいかもね。<h2></h2></p><p>以下は<code>Register-ArgumentCompleter</code>のスクリプトブロックをデバッグするときの個人的メモ。</p><p>その時の入力でトリガーされたスクリプトブロックの引数を確認するのに <code>Write-Host</code> とか使うと厄介だと思うので、ログファイル的なものをこしらえておき、別窓で<code>tail</code>してあげると見易くなる(と思っている)。</p><pre><code class="powershell">Register-ArgumentCompleter -CommandName Invoke-Psake -ParameterName taskList -ScriptBlock {
+    param&#40;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&#41;
+    &quot;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&quot; &gt;&gt; test.log
+    if &#40;$commandAst -match '&#40;?&lt;domain&gt;&#91;&#94;\.&#93;&#42;\.ps1&#41;'&#41; {
+        $file = $Matches.file
+        &quot;YEAH&quot; &gt;&gt; test.log
+    }
+    else {
+        $file = 'psakefile.ps1'
+        &quot;DEFAULT&quot; &gt;&gt; test.log
+    }
+    &amp; $commandName -buildFile $file -docs -nologo | Out-String -Stream | ForEach-Object { if &#40;$&#95; -match &quot;&#94;&#91;&#94; &#93;&#42;&quot;&#41; { $matches&#91;0&#93; } } | `
+        Where-Object { $&#95; -notin &#40;'Name', '----', ''&#41; } | Where-Object { !$wordToComplete -or $&#95; -like &quot;$wordToComplete&#42;&quot; }
+}
+</code></pre><pre><code class="powershell">Get-Content .\test.log -Wait -Tail 10
+# Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
+# Invoke-psake, taskList, In, invoke-psake -taskList In, System.Collections.Hashtable
+# DEFAULT
+# Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
+# YEAH
+</code></pre><p>どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
     <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/lambda">lambda</a>
+    <a href="/tags/psake">psake</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">&laquo; 2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront</a>
         
-        
-        <a class="right" href="/posts/2019-07-28-have-a-good-day-with-poco">2019-07-28 pocoで捗る日常生活 &raquo;</a>
+        <a class="right" href="/posts/2021-07-11-my-terminal-icons">2021-07-11 Terminal-Icons のアイコングリフのコードポイントを変えたい &raquo;</a>
         
     </div>
 
