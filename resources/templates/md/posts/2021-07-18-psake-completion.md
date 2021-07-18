@@ -26,7 +26,7 @@
 Register-ArgumentCompleter -CommandName Invoke-Psake -ParameterName taskList -ScriptBlock {
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
     "$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters" >> test.log
-    if ($commandAst -match '(?<domain>[^\.]*\.ps1)') {
+    if ($commandAst -match '(?<file>[^\.]*\.ps1)') {
         $file = $Matches.file
         "YEAH" >> test.log
     }
