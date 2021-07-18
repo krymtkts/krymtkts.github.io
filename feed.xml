@@ -12,7 +12,7 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 18 Jul 2021 15:56:09 +0900
+Sun, 18 Jul 2021 19:44:54 +0900
 </lastBuildDate>
 <generator>
 clj-rss
@@ -31,7 +31,7 @@ psake の Task 名を自動補完する
 &lt;p&gt;ほぼ趣味レベルなのだが、所謂タスクランナーとして&lt;a href='https://github.com/psake/psake'&gt;psake&lt;/a&gt;を使っている。趣味レベルなのは、Go とか Python とかでは &lt;code&gt;make&lt;/code&gt; を使うので &lt;code&gt;psake&lt;/code&gt; を製品コードでは使ったことなくて、自分の細々とした面倒な処理をスクリプト化してまとめるのに &lt;code&gt;psake&lt;/code&gt; を使ってるからだ。&lt;/p&gt;&lt;p&gt;そんな訳で利用頻度も高くなかったのだが、なんか最近は AWS のリソースを操作するニッチなスクリプト(例えば開発環境とかステージング環境だけに使うようなやつ)が大量にあって、それをまとめるのに使い出した。 その御蔭で利用頻度が高まり、いやーよくできたツールやな～などと改めて思っていたが、今まで不満に感じなかった自動補完がないことがストレスになってきた。タスクが増え過ぎて名前が覚えられないのだ。&lt;/p&gt;&lt;p&gt;ｷﾞｯﾊﾌﾞの repo を確認すると、古の&lt;code&gt;TabExpansion&lt;/code&gt;版はあれど、今どきの&lt;code&gt;Register-ArgumentCompleter&lt;/code&gt;版がない。 &lt;a href='https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1'&gt;psake/PsakeTabExpansion.ps1 at master · psake/psake&lt;/a&gt;&lt;/p&gt;&lt;p&gt;今更&lt;code&gt;TabExpansion&lt;/code&gt;使いたくないので、&lt;code&gt;Register-ArgumentCompleter&lt;/code&gt;用に合わせてこしらえた。&lt;/p&gt;&lt;p&gt;&lt;a href='https://gist.github.com/krymtkts/b2e6742691fdca6ca09567ca146063df'&gt;This is Register-ArgumentCompleter version of https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;使ってみていまんとこ良さそうな感じ。問題なさそうなら本家に PRO ぶん投げてみてもいいかもね。&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;以下は&lt;code&gt;Register-ArgumentCompleter&lt;/code&gt;のスクリプトブロックをデバッグするときの個人的メモ。&lt;/p&gt;&lt;p&gt;その時の入力でトリガーされたスクリプトブロックの引数を確認するのに &lt;code&gt;Write-Host&lt;/code&gt; とか使うと厄介だと思うので、ログファイル的なものをこしらえておき、別窓で&lt;code&gt;tail&lt;/code&gt;してあげると見易くなる(と思っている)。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;Register-ArgumentCompleter -CommandName Invoke-Psake -ParameterName taskList -ScriptBlock {
     param&amp;#40;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&amp;#41;
     &amp;quot;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&amp;quot; &amp;gt;&amp;gt; test.log
-    if &amp;#40;$commandAst -match '&amp;#40;?&amp;lt;domain&amp;gt;&amp;#91;&amp;#94;\.&amp;#93;&amp;#42;\.ps1&amp;#41;'&amp;#41; {
+    if &amp;#40;$commandAst -match '&amp;#40;?&amp;lt;file&amp;gt;&amp;#91;&amp;#94;\.&amp;#93;&amp;#42;\.ps1&amp;#41;'&amp;#41; {
         $file = $Matches.file
         &amp;quot;YEAH&amp;quot; &amp;gt;&amp;gt; test.log
     }
