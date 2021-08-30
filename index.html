@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-08-30-patch-to-vscode-extension">VS Code の拡張機能に ローカル patch する</a></li>
+                        
                         <li><a href="/posts/2021-07-18-psake-completion">psake の Task 名を自動補完する</a></li>
                         
                         <li><a href="/posts/2021-07-11-my-terminal-icons">Terminal-Icons のアイコングリフのコードポイントを変えたい</a></li>
-                        
-                        <li><a href="/posts/2021-07-01-i-want-to-change-codepoint">Terminal-Icons のアイコングリフのコードポイントを変えたい</a></li>
                         
                         
 
@@ -69,6 +69,8 @@
                         <li><a href="/tags/poco">poco</a></li>
                         
                         <li><a href="/tags/tips">tips</a></li>
+                        
+                        <li><a href="/tags/evernote">evernote</a></li>
                         
                         <li><a href="/tags/qunit">qunit</a></li>
                         
@@ -169,60 +171,23 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-07-18</div>
+        <div class="col-lg-6">2021-08-30</div>
         
     </div>
-    <h2>psake の Task 名を自動補完する</h2>
+    <h2>VS Code の拡張機能に ローカル patch する</h2>
 </div>
 <div>
     
-    <p>ほぼ趣味レベルなのだが、所謂タスクランナーとして<a href='https://github.com/psake/psake'>psake</a>を使っている。趣味レベルなのは、Go とか Python とかでは <code>make</code> を使うので <code>psake</code> を製品コードでは使ったことなくて、自分の細々とした面倒な処理をスクリプト化してまとめるのに <code>psake</code> を使ってるからだ。</p><p>そんな訳で利用頻度も高くなかったのだが、なんか最近は AWS のリソースを操作するニッチなスクリプト(例えば開発環境とかステージング環境だけに使うようなやつ)が大量にあって、それをまとめるのに使い出した。 その御蔭で利用頻度が高まり、いやーよくできたツールやな～などと改めて思っていたが、今まで不満に感じなかった自動補完がないことがストレスになってきた。タスクが増え過ぎて名前が覚えられないのだ。</p><p>ｷﾞｯﾊﾌﾞの repo を確認すると、古の<code>TabExpansion</code>版はあれど、今どきの<code>Register-ArgumentCompleter</code>版がない。 <a href='https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1'>psake/PsakeTabExpansion.ps1 at master · psake/psake</a></p><p>今更<code>TabExpansion</code>使いたくないので、<code>Register-ArgumentCompleter</code>用に合わせてこしらえた。</p><p><a href='https://gist.github.com/krymtkts/b2e6742691fdca6ca09567ca146063df'>This is Register-ArgumentCompleter version of https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1.</a></p><p>使ってみていまんとこ良さそうな感じ。問題なさそうなら本家に PRO ぶん投げてみてもいいかもね。<h2></h2></p><p>以下は<code>Register-ArgumentCompleter</code>のスクリプトブロックをデバッグするときの個人的メモ。</p><p>その時の入力でトリガーされたスクリプトブロックの引数を確認するのに <code>Write-Host</code> とか使うと厄介だと思うので、ログファイル的なものをこしらえておき、別窓で<code>tail</code>してあげると見易くなる(と思っている)。</p><pre><code class="powershell">Register-ArgumentCompleter -CommandName Invoke-Psake -ParameterName taskList -ScriptBlock {
-    param&#40;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&#41;
-    &quot;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&quot; &gt;&gt; test.log
-    if &#40;$commandAst -match '&#40;?&lt;file&gt;&#91;&#94;\.&#93;&#42;\.ps1&#41;'&#41; {
-        $file = $Matches.file
-        &quot;YEAH&quot; &gt;&gt; test.log
-    }
-    else {
-        $file = 'psakefile.ps1'
-        &quot;DEFAULT&quot; &gt;&gt; test.log
-    }
-    &amp; $commandName -buildFile $file -docs -nologo | Out-String -Stream | ForEach-Object { if &#40;$&#95; -match &quot;&#94;&#91;&#94; &#93;&#42;&quot;&#41; { $matches&#91;0&#93; } } | `
-        Where-Object { $&#95; -notin &#40;'Name', '----', ''&#41; } | Where-Object { !$wordToComplete -or $&#95; -like &quot;$wordToComplete&#42;&quot; }
-}
-</code></pre><pre><code class="powershell">Get-Content .\test.log -Wait -Tail 10
-# Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
-# Invoke-psake, taskList, In, invoke-psake -taskList In, System.Collections.Hashtable
-# DEFAULT
-# Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
-# YEAH
-</code></pre><p>どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。<h2></h2></p><p>追記。</p><p>デバッグ中に気づいたのだが、プロファイル内で <code>$psake</code> という変数を作ると <code>Invoke-psake</code> が壊れるという事に気づいた。</p><pre><code class="powershell">🤖 takatoshi  invoke-psake -nologo
-Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:9
-Line |
-   9 |      if &#40;test-path $psake.config&#95;default.buildFileName -pathType Leaf&#41; …
-     |          &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-     | Value cannot be null. &#40;Parameter 'The provided Path argument was null or an empty collection.'&#41;
-
-Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:11
-Line |
-  11 |  …   } elseif &#40;test-path $psake.config&#95;default.legacyBuildFileName -path …
-     |                &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-     | Value cannot be null. &#40;Parameter 'The provided Path argument was null or an empty collection.'&#41;
-
-InvalidOperation: C:\Program Files\PowerShell\Modules\psake\4.9.0\public\Invoke-psake.ps1:327
-Line |
- 327 |          $psake.build&#95;success = $false
-     |          &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-     | The property 'build&#95;success' cannot be found on this object. Verify that the property exists and can be set.
-</code></pre><p>罠すぎる...</p>
+    <p>VS Code の拡張機能にバグがある場合、メンテナが Marketplace に修正版を公開するのを待つ以外にも、自力で修正する方法がある。 ちょうどよく使っている<a href='https://github.com/michalyao/evermonkey'>michalyao/evermonkey</a>が、壊れてしまってから 3 週間程経っても一向に対応されないので、その方法で一時的に回避した。</p><p>Issue は以下の通り。</p><ul><li><a href='https://github.com/michalyao/evermonkey/issues/161'>Evernote Error: 11 - Illegal to contain comments in ENML · Issue #161 · michalyao/evermonkey</a>。</li></ul><p>エラーの原因は<a href='https://dev.evernote.com/doc/articles/enml.php'>ENML</a>が HTML コメントを許容しなくなったことで、 これにより upload できなくなってしまった。コメントを許容しないって記述は一見なさそうだが、Upload 時のエラーになってる。</p><p>この<a href='https://dev.evernote.com/doc/articles/enml.php'>ENML</a>の変更に対する Pull Request は<a href='https://github.com/michalyao/evermonkey/pull/162'>ある</a>のだが、どうでもいいところでコンフリクトしていたり、メンテナが忙しいのかチェックされていない状態にある。 すぐに修正を適用するには、この PR の patch を自分の VS Code に適用すればいい。</p><p>VS Code の拡張機能は <code>&#126;/.vscode/extensions</code> にある<a href='#fn-1' id='fnref1'><sup>1</sup></a>。今回の対象となるファイルは<code>converterplus.js</code>。 PowerShell には<code>patch</code>コマンドが無いので今回は手で patch した。 元は TypeScript で記述されているが、<a href='https://github.com/cancastilho/evermonkey/commit/70991c155f08101d14a4ab4c64ad36d66f9850a3?branch=70991c155f08101d14a4ab4c64ad36d66f9850a3&diff=split'>変更内容</a>は素の JavaScript と同じなのでそのままコピペできる。</p><pre><code class="powershell">code $&#40;Get-ChildItem &#126;\.vscode\extensions\michalyao.evermonkey-2.4.5\out\src\converterplus.js&#41;.FullName
+</code></pre><p>↑ クソどうでもいいコードスニペット。 でも知らなかった点として、<code>&#126;</code>は PowerShell がユーザーディレクトリに評価するのでそのままだと VS Code に渡せなかった、というのがわかった記念に。</p><p>変更が終わったら、 VS Code で<code>Developer: Reload Windows</code>すれば拡張機能に施した変更が VS Code に取り込まれる。 因みにここでは<code>Developer: Restart Extension Host</code>で良いはずだが、割と Extension Host を起動できない Notification が表示される。 それが面倒なので<code>Developer: Reload Windows</code>で丸ごと再起動している。<h2></h2></p><p>これで無事に Evernote を利用できる状況まで戻った。でもこのままメンテナが音信不通だとこの拡張機能を VS Code で使い続けることも難しくなりそう。こりゃ参ったね。</p><ol class='footnotes'><li id='fn-1'><a href='https://vscode-docs.readthedocs.io/en/stable/extensions/install-extension/'>Install extension - vscode-docs</a><a href='#fnref1'>&#8617;</a></li></ol>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/evernote">evernote</a>
     
-    <a href="/tags/psake">psake</a>
+    <a href="/tags/vscode">vscode</a>
     
 </div>
 
@@ -232,7 +197,7 @@ Line |
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2021-07-11-my-terminal-icons">2021-07-11 Terminal-Icons のアイコングリフのコードポイントを変えたい &raquo;</a>
+        <a class="right" href="/posts/2021-07-18-psake-completion">2021-07-18 psake の Task 名を自動補完する &raquo;</a>
         
     </div>
 </div>

@@ -12,11 +12,29 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 18 Jul 2021 20:06:22 +0900
+Mon, 30 Aug 2021 17:52:40 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-08-30-patch-to-vscode-extension
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-08-30-patch-to-vscode-extension
+</link>
+<title>
+VS Code の拡張機能に ローカル patch する
+</title>
+<description>
+&lt;p&gt;VS Code の拡張機能にバグがある場合、メンテナが Marketplace に修正版を公開するのを待つ以外にも、自力で修正する方法がある。 ちょうどよく使っている&lt;a href='https://github.com/michalyao/evermonkey'&gt;michalyao/evermonkey&lt;/a&gt;が、壊れてしまってから 3 週間程経っても一向に対応されないので、その方法で一時的に回避した。&lt;/p&gt;&lt;p&gt;Issue は以下の通り。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href='https://github.com/michalyao/evermonkey/issues/161'&gt;Evernote Error: 11 - Illegal to contain comments in ENML · Issue #161 · michalyao/evermonkey&lt;/a&gt;。&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;エラーの原因は&lt;a href='https://dev.evernote.com/doc/articles/enml.php'&gt;ENML&lt;/a&gt;が HTML コメントを許容しなくなったことで、 これにより upload できなくなってしまった。コメントを許容しないって記述は一見なさそうだが、Upload 時のエラーになってる。&lt;/p&gt;&lt;p&gt;この&lt;a href='https://dev.evernote.com/doc/articles/enml.php'&gt;ENML&lt;/a&gt;の変更に対する Pull Request は&lt;a href='https://github.com/michalyao/evermonkey/pull/162'&gt;ある&lt;/a&gt;のだが、どうでもいいところでコンフリクトしていたり、メンテナが忙しいのかチェックされていない状態にある。 すぐに修正を適用するには、この PR の patch を自分の VS Code に適用すればいい。&lt;/p&gt;&lt;p&gt;VS Code の拡張機能は &lt;code&gt;&amp;#126;/.vscode/extensions&lt;/code&gt; にある&lt;a href='#fn-1' id='fnref1'&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;。今回の対象となるファイルは&lt;code&gt;converterplus.js&lt;/code&gt;。 PowerShell には&lt;code&gt;patch&lt;/code&gt;コマンドが無いので今回は手で patch した。 元は TypeScript で記述されているが、&lt;a href='https://github.com/cancastilho/evermonkey/commit/70991c155f08101d14a4ab4c64ad36d66f9850a3?branch=70991c155f08101d14a4ab4c64ad36d66f9850a3&amp;diff=split'&gt;変更内容&lt;/a&gt;は素の JavaScript と同じなのでそのままコピペできる。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;code $&amp;#40;Get-ChildItem &amp;#126;\.vscode\extensions\michalyao.evermonkey-2.4.5\out\src\converterplus.js&amp;#41;.FullName
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;↑ クソどうでもいいコードスニペット。 でも知らなかった点として、&lt;code&gt;&amp;#126;&lt;/code&gt;は PowerShell がユーザーディレクトリに評価するのでそのままだと VS Code に渡せなかった、というのがわかった記念に。&lt;/p&gt;&lt;p&gt;変更が終わったら、 VS Code で&lt;code&gt;Developer: Reload Windows&lt;/code&gt;すれば拡張機能に施した変更が VS Code に取り込まれる。 因みにここでは&lt;code&gt;Developer: Restart Extension Host&lt;/code&gt;で良いはずだが、割と Extension Host を起動できない Notification が表示される。 それが面倒なので&lt;code&gt;Developer: Reload Windows&lt;/code&gt;で丸ごと再起動している。&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;これで無事に Evernote を利用できる状況まで戻った。でもこのままメンテナが音信不通だとこの拡張機能を VS Code で使い続けることも難しくなりそう。こりゃ参ったね。&lt;/p&gt;&lt;ol class='footnotes'&gt;&lt;li id='fn-1'&gt;&lt;a href='https://vscode-docs.readthedocs.io/en/stable/extensions/install-extension/'&gt;Install extension - vscode-docs&lt;/a&gt;&lt;a href='#fnref1'&gt;&amp;#8617;&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;
+</description>
+<pubDate>
+Mon, 30 Aug 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-07-18-psake-completion
