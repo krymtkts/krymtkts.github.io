@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Mon, 30 Aug 2021 17:52:40 +0900
+Tue, 28 Sep 2021 13:32:36 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-09-28-jobchange-2021
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-09-28-jobchange-2021
+</link>
+<title>
+転職する
+</title>
+<description>
+&lt;p&gt;転職する。2021-10-01 から新しい会社だ。&lt;/p&gt;&lt;p&gt;前職(まだ退職日を迎えていないが便宜上こう呼ぶ)に決定的な不満があったわけではなく、諸々の条件で現状を上回るオファーをもらったのが大きい。 以下に判断時の Good/Bad を一覧す。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Good&lt;ul&gt;&lt;li&gt;いま GCP、そのうち Azure を加えてマルチクラウド&lt;/li&gt;&lt;li&gt;GitHub&lt;/li&gt;&lt;li&gt;少人数チームでの開発&lt;/li&gt;&lt;li&gt;額面年収 3 桁万 UP&lt;/li&gt;&lt;li&gt;みなし残業の上限が下がる&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;Bad&lt;ul&gt;&lt;li&gt;確定拠出年金がない&lt;/li&gt;&lt;li&gt;超成果主義&lt;/li&gt;&lt;li&gt;レッドオーシャン？&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;お話を伺った限り、自分が貢献できそうなテーマも色々ある感じだったし、「やってみたいこと」のような挑戦に対する Welcome な姿勢がとても印象的だった。 正直なところ選考らしい選考された覚えなく、「一緒に働いてみないとわからない」という CTO の観点のもと採用判断されている。そのため入ってからパフォ出せなかったら多分盛大に爆死するんだろうなと。そこだけは不安なのだが、それこそ「働いてみないとわからない」。 とはいえ、自分も地べた這いずる中の下のエンジニアとはいえ 15 年以上の経験があるので、貢献できることがあるだろうという前向きな姿勢ではある。 (全く手も足も出せずに爆殺されるかも知れんけど。)&lt;/p&gt;&lt;p&gt;やるのは久しぶりの通信系アプリ。dotnet も仕事で使うのは 10 年ぶりか。 なんでもやりたいマンなので、入社後じわじわ守備範囲を広めていくイメージをしている。&lt;/p&gt;&lt;p&gt;今回で 4 回目の転職だが、えんじにゃー転職はリモートワークの普及で大きく景色を変えたような印象があった。どこも DX()で人手がほしいことも重なってか。事実今回の転職は大阪の人材を買い叩く流れで採用いただいたわけである。&lt;/p&gt;&lt;p&gt;心残りがなかったわけではない。前職の辞め方、個人的には引き継ぎは最低限やったけど、あまりいい辞め方ではなかったなと思っている。自分がやり始めてとっちらかっていることが多い状態で、今やめるのもなーと考えていた。 とはいえ自分の人生をより良くできるのは自分自身だ。そのためには今いる環境に変化をもたらすか、あるいは環境を別の環境に変えてしまうかしかない。 2 年ちょっとの在籍期間は前者の行動をしてたが、今回は後者を選択したと。&lt;/p&gt;&lt;p&gt;この日記は、入社半年とか 1 年後、または爆死時とかの区切りで読み返そうと思う。 わたし自身も、このうねり狂う変化の波を乗りこなせるかのチャレンジ一年生なのである。&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;休みの間に、積んでた HADES をやり始めた。死にゲーで最高。時間が溶ける...&lt;/p&gt;
+</description>
+<pubDate>
+Tue, 28 Sep 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-08-30-patch-to-vscode-extension

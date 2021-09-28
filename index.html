@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-09-28-jobchange-2021">転職する</a></li>
+                        
                         <li><a href="/posts/2021-08-30-patch-to-vscode-extension">VS Code の拡張機能に ローカル patch する</a></li>
                         
                         <li><a href="/posts/2021-07-18-psake-completion">psake の Task 名を自動補完する</a></li>
-                        
-                        <li><a href="/posts/2021-07-11-my-terminal-icons">Terminal-Icons のアイコングリフのコードポイントを変えたい</a></li>
                         
                         
 
@@ -95,6 +95,8 @@
                         <li><a href="/tags/retrospective">retrospective</a></li>
                         
                         <li><a href="/tags/boto3">boto3</a></li>
+                        
+                        <li><a href="/tags/job">job</a></li>
                         
                         <li><a href="/tags/oh-my-posh">oh-my-posh</a></li>
                         
@@ -171,23 +173,20 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-08-30</div>
+        <div class="col-lg-6">2021-09-28</div>
         
     </div>
-    <h2>VS Code の拡張機能に ローカル patch する</h2>
+    <h2>転職する</h2>
 </div>
 <div>
     
-    <p>VS Code の拡張機能にバグがある場合、メンテナが Marketplace に修正版を公開するのを待つ以外にも、自力で修正する方法がある。 ちょうどよく使っている<a href='https://github.com/michalyao/evermonkey'>michalyao/evermonkey</a>が、壊れてしまってから 3 週間程経っても一向に対応されないので、その方法で一時的に回避した。</p><p>Issue は以下の通り。</p><ul><li><a href='https://github.com/michalyao/evermonkey/issues/161'>Evernote Error: 11 - Illegal to contain comments in ENML · Issue #161 · michalyao/evermonkey</a>。</li></ul><p>エラーの原因は<a href='https://dev.evernote.com/doc/articles/enml.php'>ENML</a>が HTML コメントを許容しなくなったことで、 これにより upload できなくなってしまった。コメントを許容しないって記述は一見なさそうだが、Upload 時のエラーになってる。</p><p>この<a href='https://dev.evernote.com/doc/articles/enml.php'>ENML</a>の変更に対する Pull Request は<a href='https://github.com/michalyao/evermonkey/pull/162'>ある</a>のだが、どうでもいいところでコンフリクトしていたり、メンテナが忙しいのかチェックされていない状態にある。 すぐに修正を適用するには、この PR の patch を自分の VS Code に適用すればいい。</p><p>VS Code の拡張機能は <code>&#126;/.vscode/extensions</code> にある<a href='#fn-1' id='fnref1'><sup>1</sup></a>。今回の対象となるファイルは<code>converterplus.js</code>。 PowerShell には<code>patch</code>コマンドが無いので今回は手で patch した。 元は TypeScript で記述されているが、<a href='https://github.com/cancastilho/evermonkey/commit/70991c155f08101d14a4ab4c64ad36d66f9850a3?branch=70991c155f08101d14a4ab4c64ad36d66f9850a3&diff=split'>変更内容</a>は素の JavaScript と同じなのでそのままコピペできる。</p><pre><code class="powershell">code $&#40;Get-ChildItem &#126;\.vscode\extensions\michalyao.evermonkey-2.4.5\out\src\converterplus.js&#41;.FullName
-</code></pre><p>↑ クソどうでもいいコードスニペット。 でも知らなかった点として、<code>&#126;</code>は PowerShell がユーザーディレクトリに評価するのでそのままだと VS Code に渡せなかった、というのがわかった記念に。</p><p>変更が終わったら、 VS Code で<code>Developer: Reload Windows</code>すれば拡張機能に施した変更が VS Code に取り込まれる。 因みにここでは<code>Developer: Restart Extension Host</code>で良いはずだが、割と Extension Host を起動できない Notification が表示される。 それが面倒なので<code>Developer: Reload Windows</code>で丸ごと再起動している。<h2></h2></p><p>これで無事に Evernote を利用できる状況まで戻った。でもこのままメンテナが音信不通だとこの拡張機能を VS Code で使い続けることも難しくなりそう。こりゃ参ったね。</p><ol class='footnotes'><li id='fn-1'><a href='https://vscode-docs.readthedocs.io/en/stable/extensions/install-extension/'>Install extension - vscode-docs</a><a href='#fnref1'>&#8617;</a></li></ol>
+    <p>転職する。2021-10-01 から新しい会社だ。</p><p>前職(まだ退職日を迎えていないが便宜上こう呼ぶ)に決定的な不満があったわけではなく、諸々の条件で現状を上回るオファーをもらったのが大きい。 以下に判断時の Good/Bad を一覧す。</p><ul><li>Good<ul><li>いま GCP、そのうち Azure を加えてマルチクラウド</li><li>GitHub</li><li>少人数チームでの開発</li><li>額面年収 3 桁万 UP</li><li>みなし残業の上限が下がる</li></ul></li><li>Bad<ul><li>確定拠出年金がない</li><li>超成果主義</li><li>レッドオーシャン？</li></ul></li></ul><p>お話を伺った限り、自分が貢献できそうなテーマも色々ある感じだったし、「やってみたいこと」のような挑戦に対する Welcome な姿勢がとても印象的だった。 正直なところ選考らしい選考された覚えなく、「一緒に働いてみないとわからない」という CTO の観点のもと採用判断されている。そのため入ってからパフォ出せなかったら多分盛大に爆死するんだろうなと。そこだけは不安なのだが、それこそ「働いてみないとわからない」。 とはいえ、自分も地べた這いずる中の下のエンジニアとはいえ 15 年以上の経験があるので、貢献できることがあるだろうという前向きな姿勢ではある。 (全く手も足も出せずに爆殺されるかも知れんけど。)</p><p>やるのは久しぶりの通信系アプリ。dotnet も仕事で使うのは 10 年ぶりか。 なんでもやりたいマンなので、入社後じわじわ守備範囲を広めていくイメージをしている。</p><p>今回で 4 回目の転職だが、えんじにゃー転職はリモートワークの普及で大きく景色を変えたような印象があった。どこも DX()で人手がほしいことも重なってか。事実今回の転職は大阪の人材を買い叩く流れで採用いただいたわけである。</p><p>心残りがなかったわけではない。前職の辞め方、個人的には引き継ぎは最低限やったけど、あまりいい辞め方ではなかったなと思っている。自分がやり始めてとっちらかっていることが多い状態で、今やめるのもなーと考えていた。 とはいえ自分の人生をより良くできるのは自分自身だ。そのためには今いる環境に変化をもたらすか、あるいは環境を別の環境に変えてしまうかしかない。 2 年ちょっとの在籍期間は前者の行動をしてたが、今回は後者を選択したと。</p><p>この日記は、入社半年とか 1 年後、または爆死時とかの区切りで読み返そうと思う。 わたし自身も、このうねり狂う変化の波を乗りこなせるかのチャレンジ一年生なのである。<h2></h2></p><p>休みの間に、積んでた HADES をやり始めた。死にゲーで最高。時間が溶ける...</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/evernote">evernote</a>
-    
-    <a href="/tags/vscode">vscode</a>
+    <a href="/tags/job">job</a>
     
 </div>
 
@@ -197,7 +196,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2021-07-18-psake-completion">2021-07-18 psake の Task 名を自動補完する &raquo;</a>
+        <a class="right" href="/posts/2021-08-30-patch-to-vscode-extension">2021-08-30 VS Code の拡張機能に ローカル patch する &raquo;</a>
         
     </div>
 </div>
@@ -205,7 +204,7 @@
             </div>
         </div>
     </div>
-    <footer>Copyright &copy; 2021 krymtkts
+    <footer>Copyright &copy; 2019-2021 krymtkts
         <p style="text-align: center;">Powered by <a href="http://cryogenweb.org">Cryogen</a></p></footer>
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
