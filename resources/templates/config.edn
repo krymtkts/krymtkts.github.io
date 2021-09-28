@@ -29,4 +29,5 @@
  :clean-urls?          true
  :hide-future-posts?   true
  :klipse               {}
+ :first-publishing     2019
  :debug?               false}
