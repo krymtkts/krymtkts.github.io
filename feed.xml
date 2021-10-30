@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Tue, 28 Sep 2021 13:32:36 +0900
+Sat, 30 Oct 2021 23:57:11 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-10-30-toolchain-of-powershell
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-10-30-toolchain-of-powershell
+</link>
+<title>
+PowerShell のツールチェーン
+</title>
+<description>
+&lt;p&gt;今更読んだ ↓&lt;/p&gt;&lt;p&gt;&lt;a href='https://devblogs.microsoft.com/powershell/powershellget-3-0-preview-11-release/#features-to-expect-in-coming-preview-releases'&gt;PowerShellGet 3.0 Preview 11 Release - PowerShell Team&lt;/a&gt;&lt;/p&gt;&lt;p&gt;モジュールの依存性管理がくるっぽ。&lt;/p&gt;&lt;p&gt;これを機に NuGet のバージョンレンジ記法を学ばないといけないかな。PowerShell 使うけど NuGet と直接的な縁ないので触れずに来た。 &lt;a href='https://docs.microsoft.com/en-us/nuget/concepts/package-versioning#version-ranges-and-wildcards'&gt;NuGet Package Version Reference | Microsoft Docs&lt;/a&gt;&lt;/p&gt;&lt;p&gt;それはさておき、先述の PowerShellGet のネタはまだ正式なものでもなく、プレビュー機能が来てるわけでもない。だから今はまだ従来の術を使うのが良いだろうと考えている。 真面目に PowerShell 開発したことがないので、その辺の知ってるモジュールを棚卸しし、調べ直した。&lt;/p&gt;&lt;p&gt;ここに書いたあるような内容は、PowerShell で書かれているアプリの GitHub repo を見たらだいたい出てくるのじゃないだろうか。 わたしの場合は、&lt;a href='https://github.com/jasonmarcher/poco'&gt;jasonmarcher/poco&lt;/a&gt;で初めて&lt;code&gt;psakefile.ps1&lt;/code&gt;を見つけてそこから世界へ踏み入れた感じ。&lt;/p&gt;&lt;p&gt;そして、この記事をまとめているときに「ああそういえば Awesome 〇〇ってあったなー」と思いググると、PowerShell 版も見つかったので置いておく。この記事に書いたツールチェーンは全部 Awesome の方に載ってた...&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/janikvonrotz/awesome-powershell'&gt;janikvonrotz/awesome-powershell: A curated list of delightful PowerShell modules and resources&lt;/a&gt;&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;h3 id=&quot;ビルド&quot;&gt;ビルド&lt;/h3&gt;&lt;p&gt;PowerShell はスクリプトなのでコンパイルはないが、静的解析・テスト・パッケージング等のことをひっくるめて、ここではビルドと呼ぶことにする。&lt;/p&gt;&lt;p&gt;やはり&lt;a href='https://github.com/psake'&gt;psake&lt;/a&gt; が有名でしょう。&lt;a href='#fn-1' id='fnref1'&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/psake/psake'&gt;psake/psake&lt;/a&gt; は基盤のようなもので、汎用的なビルドタスクなんかは&lt;a href='https://github.com/psake/PowerShellBuild'&gt;psake/PowerShellBuild&lt;/a&gt;に定義されている。 肝心の&lt;a href='https://github.com/psake/psake'&gt;psake/psake&lt;/a&gt;のビルドには自身ではなく&lt;a href='https://github.com/RamblingCookieMonster/BuildHelpers'&gt;RamblingCookieMonster/BuildHelpers&lt;/a&gt;が使われているというのがこれまたややこしい。 &lt;a href='https://github.com/RamblingCookieMonster/BuildHelpers'&gt;RamblingCookieMonster/BuildHelpers&lt;/a&gt;それ自身は、CI/CD シナリオで使えるヘルパーだぜ？と自称しているだけあり、その用途(GitHub Actions)で使われている&lt;/p&gt;&lt;p&gt;因みに&lt;a href='https://github.com/nightroman/Invoke-Build'&gt;Invoke-Build&lt;/a&gt;なんていうのもいて、これは使ったことない。GitHub のグラフはこちらの方が比較的アクティブかな。 README.md 見る限り&lt;a href='https://github.com/psake/psake'&gt;psake&lt;/a&gt;よりも使いやすいぜ！って書いてあるので、何か大変なことでもあったのかなと勘ぐってしまう。 わたしはまだ真面目に使い込めていないこともあり、&lt;a href='https://github.com/psake/psake'&gt;psake&lt;/a&gt;の闇を知らないだけかも知れない。&lt;/p&gt;&lt;h3 id=&quot;依存性管理&quot;&gt;依存性管理&lt;/h3&gt;&lt;p&gt;モジュールあるところに依存性管理あり。PowerShell も例に漏れずある。 &lt;a href='https://github.com/RamblingCookieMonster/PSDepend'&gt;RamblingCookieMonster/PSDepend&lt;/a&gt;&lt;/p&gt;&lt;p&gt;話は変わるが、&lt;a href='https://github.com/RamblingCookieMonster'&gt;RamblingCookieMonster (Warren Frame)&lt;/a&gt;さんは他にも PowerShell のツールを色々書かれている。 &lt;a href='https://github.com/RamblingCookieMonster/PSDeploy'&gt;RamblingCookieMonster/PSDeploy&lt;/a&gt;だったり、わたしも最近所用で使った&lt;a href='https://github.com/RamblingCookieMonster/PSSlack'&gt;RamblingCookieMonster/PSSlack&lt;/a&gt;だったり(最新の API に対応してないけど)。&lt;/p&gt;&lt;h3 id=&quot;テスト/静的解析&quot;&gt;テスト/静的解析&lt;/h3&gt;&lt;p&gt;&lt;a href='https://github.com/pester/Pester'&gt;pester/Pester&lt;/a&gt; しか知らん。BDD スタイルでクールよね。 &lt;a href='https://github.com/PowerShell/PSScriptAnalyzer'&gt;PowerShell/PSScriptAnalyzer&lt;/a&gt; しか知らん。 いずれも開発もアクティブだし唯一無二か？&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;Awesome ~ を見つけたことだし、他にも色々見てみるか。 &lt;ol class='footnotes'&gt;&lt;li id='fn-1'&gt;と書いたがどう考えても有名じゃない。わたしも知ったの 2,3 年くらい前。最近は repo のグラフもほとんど息してなく見える。「枯れてる」のかも知れんけど。&lt;a href='#fnref1'&gt;&amp;#8617;&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/p&gt;
+</description>
+<pubDate>
+Sat, 30 Oct 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-09-28-jobchange-2021

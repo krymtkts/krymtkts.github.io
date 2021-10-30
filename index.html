@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-10-30-toolchain-of-powershell">PowerShell のツールチェーン</a></li>
+                        
                         <li><a href="/posts/2021-09-28-jobchange-2021">転職する</a></li>
                         
                         <li><a href="/posts/2021-08-30-patch-to-vscode-extension">VS Code の拡張機能に ローカル patch する</a></li>
-                        
-                        <li><a href="/posts/2021-07-18-psake-completion">psake の Task 名を自動補完する</a></li>
                         
                         
 
@@ -173,20 +173,20 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-09-28</div>
+        <div class="col-lg-6">2021-10-30</div>
         
     </div>
-    <h2>転職する</h2>
+    <h2>PowerShell のツールチェーン</h2>
 </div>
 <div>
     
-    <p>転職する。2021-10-01 から新しい会社だ。</p><p>前職(まだ退職日を迎えていないが便宜上こう呼ぶ)に決定的な不満があったわけではなく、諸々の条件で現状を上回るオファーをもらったのが大きい。 以下に判断時の Good/Bad を一覧す。</p><ul><li>Good<ul><li>いま GCP、そのうち Azure を加えてマルチクラウド</li><li>GitHub</li><li>少人数チームでの開発</li><li>額面年収 3 桁万 UP</li><li>みなし残業の上限が下がる</li></ul></li><li>Bad<ul><li>確定拠出年金がない</li><li>超成果主義</li><li>レッドオーシャン？</li></ul></li></ul><p>お話を伺った限り、自分が貢献できそうなテーマも色々ある感じだったし、「やってみたいこと」のような挑戦に対する Welcome な姿勢がとても印象的だった。 正直なところ選考らしい選考された覚えなく、「一緒に働いてみないとわからない」という CTO の観点のもと採用判断されている。そのため入ってからパフォ出せなかったら多分盛大に爆死するんだろうなと。そこだけは不安なのだが、それこそ「働いてみないとわからない」。 とはいえ、自分も地べた這いずる中の下のエンジニアとはいえ 15 年以上の経験があるので、貢献できることがあるだろうという前向きな姿勢ではある。 (全く手も足も出せずに爆殺されるかも知れんけど。)</p><p>やるのは久しぶりの通信系アプリ。dotnet も仕事で使うのは 10 年ぶりか。 なんでもやりたいマンなので、入社後じわじわ守備範囲を広めていくイメージをしている。</p><p>今回で 4 回目の転職だが、えんじにゃー転職はリモートワークの普及で大きく景色を変えたような印象があった。どこも DX()で人手がほしいことも重なってか。事実今回の転職は大阪の人材を買い叩く流れで採用いただいたわけである。</p><p>心残りがなかったわけではない。前職の辞め方、個人的には引き継ぎは最低限やったけど、あまりいい辞め方ではなかったなと思っている。自分がやり始めてとっちらかっていることが多い状態で、今やめるのもなーと考えていた。 とはいえ自分の人生をより良くできるのは自分自身だ。そのためには今いる環境に変化をもたらすか、あるいは環境を別の環境に変えてしまうかしかない。 2 年ちょっとの在籍期間は前者の行動をしてたが、今回は後者を選択したと。</p><p>この日記は、入社半年とか 1 年後、または爆死時とかの区切りで読み返そうと思う。 わたし自身も、このうねり狂う変化の波を乗りこなせるかのチャレンジ一年生なのである。<h2></h2></p><p>休みの間に、積んでた HADES をやり始めた。死にゲーで最高。時間が溶ける...</p>
+    <p>今更読んだ ↓</p><p><a href='https://devblogs.microsoft.com/powershell/powershellget-3-0-preview-11-release/#features-to-expect-in-coming-preview-releases'>PowerShellGet 3.0 Preview 11 Release - PowerShell Team</a></p><p>モジュールの依存性管理がくるっぽ。</p><p>これを機に NuGet のバージョンレンジ記法を学ばないといけないかな。PowerShell 使うけど NuGet と直接的な縁ないので触れずに来た。 <a href='https://docs.microsoft.com/en-us/nuget/concepts/package-versioning#version-ranges-and-wildcards'>NuGet Package Version Reference | Microsoft Docs</a></p><p>それはさておき、先述の PowerShellGet のネタはまだ正式なものでもなく、プレビュー機能が来てるわけでもない。だから今はまだ従来の術を使うのが良いだろうと考えている。 真面目に PowerShell 開発したことがないので、その辺の知ってるモジュールを棚卸しし、調べ直した。</p><p>ここに書いたあるような内容は、PowerShell で書かれているアプリの GitHub repo を見たらだいたい出てくるのじゃないだろうか。 わたしの場合は、<a href='https://github.com/jasonmarcher/poco'>jasonmarcher/poco</a>で初めて<code>psakefile.ps1</code>を見つけてそこから世界へ踏み入れた感じ。</p><p>そして、この記事をまとめているときに「ああそういえば Awesome 〇〇ってあったなー」と思いググると、PowerShell 版も見つかったので置いておく。この記事に書いたツールチェーンは全部 Awesome の方に載ってた...</p><p><a href='https://github.com/janikvonrotz/awesome-powershell'>janikvonrotz/awesome-powershell: A curated list of delightful PowerShell modules and resources</a><h2></h2></p><h3 id="ビルド">ビルド</h3><p>PowerShell はスクリプトなのでコンパイルはないが、静的解析・テスト・パッケージング等のことをひっくるめて、ここではビルドと呼ぶことにする。</p><p>やはり<a href='https://github.com/psake'>psake</a> が有名でしょう。<a href='#fn-1' id='fnref1'><sup>1</sup></a></p><p><a href='https://github.com/psake/psake'>psake/psake</a> は基盤のようなもので、汎用的なビルドタスクなんかは<a href='https://github.com/psake/PowerShellBuild'>psake/PowerShellBuild</a>に定義されている。 肝心の<a href='https://github.com/psake/psake'>psake/psake</a>のビルドには自身ではなく<a href='https://github.com/RamblingCookieMonster/BuildHelpers'>RamblingCookieMonster/BuildHelpers</a>が使われているというのがこれまたややこしい。 <a href='https://github.com/RamblingCookieMonster/BuildHelpers'>RamblingCookieMonster/BuildHelpers</a>それ自身は、CI/CD シナリオで使えるヘルパーだぜ？と自称しているだけあり、その用途(GitHub Actions)で使われている</p><p>因みに<a href='https://github.com/nightroman/Invoke-Build'>Invoke-Build</a>なんていうのもいて、これは使ったことない。GitHub のグラフはこちらの方が比較的アクティブかな。 README.md 見る限り<a href='https://github.com/psake/psake'>psake</a>よりも使いやすいぜ！って書いてあるので、何か大変なことでもあったのかなと勘ぐってしまう。 わたしはまだ真面目に使い込めていないこともあり、<a href='https://github.com/psake/psake'>psake</a>の闇を知らないだけかも知れない。</p><h3 id="依存性管理">依存性管理</h3><p>モジュールあるところに依存性管理あり。PowerShell も例に漏れずある。 <a href='https://github.com/RamblingCookieMonster/PSDepend'>RamblingCookieMonster/PSDepend</a></p><p>話は変わるが、<a href='https://github.com/RamblingCookieMonster'>RamblingCookieMonster (Warren Frame)</a>さんは他にも PowerShell のツールを色々書かれている。 <a href='https://github.com/RamblingCookieMonster/PSDeploy'>RamblingCookieMonster/PSDeploy</a>だったり、わたしも最近所用で使った<a href='https://github.com/RamblingCookieMonster/PSSlack'>RamblingCookieMonster/PSSlack</a>だったり(最新の API に対応してないけど)。</p><h3 id="テスト/静的解析">テスト/静的解析</h3><p><a href='https://github.com/pester/Pester'>pester/Pester</a> しか知らん。BDD スタイルでクールよね。 <a href='https://github.com/PowerShell/PSScriptAnalyzer'>PowerShell/PSScriptAnalyzer</a> しか知らん。 いずれも開発もアクティブだし唯一無二か？<h2></h2></p><p>Awesome ~ を見つけたことだし、他にも色々見てみるか。 <ol class='footnotes'><li id='fn-1'>と書いたがどう考えても有名じゃない。わたしも知ったの 2,3 年くらい前。最近は repo のグラフもほとんど息してなく見える。「枯れてる」のかも知れんけど。<a href='#fnref1'>&#8617;</a></li></ol></p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/job">job</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -196,7 +196,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2021-08-30-patch-to-vscode-extension">2021-08-30 VS Code の拡張機能に ローカル patch する &raquo;</a>
+        <a class="right" href="/posts/2021-09-28-jobchange-2021">2021-09-28 転職する &raquo;</a>
         
     </div>
 </div>

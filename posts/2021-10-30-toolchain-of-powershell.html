@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;aws&quot;</title>
-    <link rel="canonical" href="http://krymtkts.github.io/tags/aws">
+    <title>krymtkts: PowerShell のツールチェーン</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-10-30-toolchain-of-powershell">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;aws&quot;" />
-    <meta property="og:url" content="http://krymtkts.github.io/tags/aws" />
+    <meta property="og:title" content="krymtkts: PowerShell のツールチェーン" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-10-30-toolchain-of-powershell" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -170,45 +170,37 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;aws&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2021-10-30</div>
+        
     </div>
-    <ul>
+    <h2>PowerShell のツールチェーン</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2021-01-30-beware-to-update-aws-tools">2021-01-30 AWS.Tools.Installer で入れたモジュールの更新は気をつけろよ</a>
-        </li>
+    <p>今更読んだ ↓</p><p><a href='https://devblogs.microsoft.com/powershell/powershellget-3-0-preview-11-release/#features-to-expect-in-coming-preview-releases'>PowerShellGet 3.0 Preview 11 Release - PowerShell Team</a></p><p>モジュールの依存性管理がくるっぽ。</p><p>これを機に NuGet のバージョンレンジ記法を学ばないといけないかな。PowerShell 使うけど NuGet と直接的な縁ないので触れずに来た。 <a href='https://docs.microsoft.com/en-us/nuget/concepts/package-versioning#version-ranges-and-wildcards'>NuGet Package Version Reference | Microsoft Docs</a></p><p>それはさておき、先述の PowerShellGet のネタはまだ正式なものでもなく、プレビュー機能が来てるわけでもない。だから今はまだ従来の術を使うのが良いだろうと考えている。 真面目に PowerShell 開発したことがないので、その辺の知ってるモジュールを棚卸しし、調べ直した。</p><p>ここに書いたあるような内容は、PowerShell で書かれているアプリの GitHub repo を見たらだいたい出てくるのじゃないだろうか。 わたしの場合は、<a href='https://github.com/jasonmarcher/poco'>jasonmarcher/poco</a>で初めて<code>psakefile.ps1</code>を見つけてそこから世界へ踏み入れた感じ。</p><p>そして、この記事をまとめているときに「ああそういえば Awesome 〇〇ってあったなー」と思いググると、PowerShell 版も見つかったので置いておく。この記事に書いたツールチェーンは全部 Awesome の方に載ってた...</p><p><a href='https://github.com/janikvonrotz/awesome-powershell'>janikvonrotz/awesome-powershell: A curated list of delightful PowerShell modules and resources</a><h2></h2></p><h3 id="ビルド">ビルド</h3><p>PowerShell はスクリプトなのでコンパイルはないが、静的解析・テスト・パッケージング等のことをひっくるめて、ここではビルドと呼ぶことにする。</p><p>やはり<a href='https://github.com/psake'>psake</a> が有名でしょう。<a href='#fn-1' id='fnref1'><sup>1</sup></a></p><p><a href='https://github.com/psake/psake'>psake/psake</a> は基盤のようなもので、汎用的なビルドタスクなんかは<a href='https://github.com/psake/PowerShellBuild'>psake/PowerShellBuild</a>に定義されている。 肝心の<a href='https://github.com/psake/psake'>psake/psake</a>のビルドには自身ではなく<a href='https://github.com/RamblingCookieMonster/BuildHelpers'>RamblingCookieMonster/BuildHelpers</a>が使われているというのがこれまたややこしい。 <a href='https://github.com/RamblingCookieMonster/BuildHelpers'>RamblingCookieMonster/BuildHelpers</a>それ自身は、CI/CD シナリオで使えるヘルパーだぜ？と自称しているだけあり、その用途(GitHub Actions)で使われている</p><p>因みに<a href='https://github.com/nightroman/Invoke-Build'>Invoke-Build</a>なんていうのもいて、これは使ったことない。GitHub のグラフはこちらの方が比較的アクティブかな。 README.md 見る限り<a href='https://github.com/psake/psake'>psake</a>よりも使いやすいぜ！って書いてあるので、何か大変なことでもあったのかなと勘ぐってしまう。 わたしはまだ真面目に使い込めていないこともあり、<a href='https://github.com/psake/psake'>psake</a>の闇を知らないだけかも知れない。</p><h3 id="依存性管理">依存性管理</h3><p>モジュールあるところに依存性管理あり。PowerShell も例に漏れずある。 <a href='https://github.com/RamblingCookieMonster/PSDepend'>RamblingCookieMonster/PSDepend</a></p><p>話は変わるが、<a href='https://github.com/RamblingCookieMonster'>RamblingCookieMonster (Warren Frame)</a>さんは他にも PowerShell のツールを色々書かれている。 <a href='https://github.com/RamblingCookieMonster/PSDeploy'>RamblingCookieMonster/PSDeploy</a>だったり、わたしも最近所用で使った<a href='https://github.com/RamblingCookieMonster/PSSlack'>RamblingCookieMonster/PSSlack</a>だったり(最新の API に対応してないけど)。</p><h3 id="テスト/静的解析">テスト/静的解析</h3><p><a href='https://github.com/pester/Pester'>pester/Pester</a> しか知らん。BDD スタイルでクールよね。 <a href='https://github.com/PowerShell/PSScriptAnalyzer'>PowerShell/PSScriptAnalyzer</a> しか知らん。 いずれも開発もアクティブだし唯一無二か？<h2></h2></p><p>Awesome ~ を見つけたことだし、他にも色々見てみるか。 <ol class='footnotes'><li id='fn-1'>と書いたがどう考えても有名じゃない。わたしも知ったの 2,3 年くらい前。最近は repo のグラフもほとんど息してなく見える。「枯れてる」のかも知れんけど。<a href='#fnref1'>&#8617;</a></li></ol></p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2020-12-27-ns-record-of-route53-hosted-zone">2020-12-27 Rote53 ホストゾーンの NS レコード</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-        <li>
-            <a href="/posts/2020-06-29-contextual-sfn-example">2020-06-29 Step Functions のステートをまたいでパラメータを伝播するパターン</a>
-        </li>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2021-09-28-jobchange-2021">2021-09-28 転職する &raquo;</a>
+        
+    </div>
+
     
-        <li>
-            <a href="/posts/2020-04-30-context-like-sfn">2020-04-30 Step Functions のステートをまたいでパラメータを伝播する</a>
-        </li>
-    
-        <li>
-            <a href="/posts/2019-10-14-how-to-handle-waiter-of-boto3">2019-10-14 boto3 の Waiter さんとの戯れ</a>
-        </li>
-    
-        <li>
-            <a href="/posts/2019-09-22-limitaion-of-remove-certificates">2019-09-22 ALBのListenerから証明書を削除するときの制限</a>
-        </li>
-    
-        <li>
-            <a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront</a>
-        </li>
-    
-        <li>
-            <a href="/posts/2019-08-11-test-lambda-with-pwsh">2019-08-11 AWS LambdaをPowershellでテスト実行する</a>
-        </li>
-    
-    </ul>
+
+
 </div>
 
             </div>
