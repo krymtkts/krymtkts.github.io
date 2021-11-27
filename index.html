@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-11-27-psmfattendance">PowerShell で Money Forward クラウド勤怠を操作する</a></li>
+                        
                         <li><a href="/posts/2021-10-30-toolchain-of-powershell">PowerShell のツールチェーン</a></li>
                         
                         <li><a href="/posts/2021-09-28-jobchange-2021">転職する</a></li>
-                        
-                        <li><a href="/posts/2021-08-30-patch-to-vscode-extension">VS Code の拡張機能に ローカル patch する</a></li>
                         
                         
 
@@ -173,14 +173,14 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-10-30</div>
+        <div class="col-lg-6">2021-11-27</div>
         
     </div>
-    <h2>PowerShell のツールチェーン</h2>
+    <h2>PowerShell で Money Forward クラウド勤怠を操作する</h2>
 </div>
 <div>
     
-    <p>今更読んだ ↓</p><p><a href='https://devblogs.microsoft.com/powershell/powershellget-3-0-preview-11-release/#features-to-expect-in-coming-preview-releases'>PowerShellGet 3.0 Preview 11 Release - PowerShell Team</a></p><p>モジュールの依存性管理がくるっぽ。</p><p>これを機に NuGet のバージョンレンジ記法を学ばないといけないかな。PowerShell 使うけど NuGet と直接的な縁ないので触れずに来た。 <a href='https://docs.microsoft.com/en-us/nuget/concepts/package-versioning#version-ranges-and-wildcards'>NuGet Package Version Reference | Microsoft Docs</a></p><p>それはさておき、先述の PowerShellGet のネタはまだ正式なものでもなく、プレビュー機能が来てるわけでもない。だから今はまだ従来の術を使うのが良いだろうと考えている。 真面目に PowerShell 開発したことがないので、その辺の知ってるモジュールを棚卸しし、調べ直した。</p><p>ここに書いたあるような内容は、PowerShell で書かれているアプリの GitHub repo を見たらだいたい出てくるのじゃないだろうか。 わたしの場合は、<a href='https://github.com/jasonmarcher/poco'>jasonmarcher/poco</a>で初めて<code>psakefile.ps1</code>を見つけてそこから世界へ踏み入れた感じ。</p><p>そして、この記事をまとめているときに「ああそういえば Awesome 〇〇ってあったなー」と思いググると、PowerShell 版も見つかったので置いておく。この記事に書いたツールチェーンは全部 Awesome の方に載ってた...</p><p><a href='https://github.com/janikvonrotz/awesome-powershell'>janikvonrotz/awesome-powershell: A curated list of delightful PowerShell modules and resources</a><h2></h2></p><h3 id="ビルド">ビルド</h3><p>PowerShell はスクリプトなのでコンパイルはないが、静的解析・テスト・パッケージング等のことをひっくるめて、ここではビルドと呼ぶことにする。</p><p>やはり<a href='https://github.com/psake'>psake</a> が有名でしょう。<a href='#fn-1' id='fnref1'><sup>1</sup></a></p><p><a href='https://github.com/psake/psake'>psake/psake</a> は基盤のようなもので、汎用的なビルドタスクなんかは<a href='https://github.com/psake/PowerShellBuild'>psake/PowerShellBuild</a>に定義されている。 肝心の<a href='https://github.com/psake/psake'>psake/psake</a>のビルドには自身ではなく<a href='https://github.com/RamblingCookieMonster/BuildHelpers'>RamblingCookieMonster/BuildHelpers</a>が使われているというのがこれまたややこしい。 <a href='https://github.com/RamblingCookieMonster/BuildHelpers'>RamblingCookieMonster/BuildHelpers</a>それ自身は、CI/CD シナリオで使えるヘルパーだぜ？と自称しているだけあり、その用途(GitHub Actions)で使われている</p><p>因みに<a href='https://github.com/nightroman/Invoke-Build'>Invoke-Build</a>なんていうのもいて、これは使ったことない。GitHub のグラフはこちらの方が比較的アクティブかな。 README.md 見る限り<a href='https://github.com/psake/psake'>psake</a>よりも使いやすいぜ！って書いてあるので、何か大変なことでもあったのかなと勘ぐってしまう。 わたしはまだ真面目に使い込めていないこともあり、<a href='https://github.com/psake/psake'>psake</a>の闇を知らないだけかも知れない。</p><h3 id="依存性管理">依存性管理</h3><p>モジュールあるところに依存性管理あり。PowerShell も例に漏れずある。 <a href='https://github.com/RamblingCookieMonster/PSDepend'>RamblingCookieMonster/PSDepend</a></p><p>話は変わるが、<a href='https://github.com/RamblingCookieMonster'>RamblingCookieMonster (Warren Frame)</a>さんは他にも PowerShell のツールを色々書かれている。 <a href='https://github.com/RamblingCookieMonster/PSDeploy'>RamblingCookieMonster/PSDeploy</a>だったり、わたしも最近所用で使った<a href='https://github.com/RamblingCookieMonster/PSSlack'>RamblingCookieMonster/PSSlack</a>だったり(最新の API に対応してないけど)。</p><h3 id="テスト/静的解析">テスト/静的解析</h3><p><a href='https://github.com/pester/Pester'>pester/Pester</a> しか知らん。BDD スタイルでクールよね。 <a href='https://github.com/PowerShell/PSScriptAnalyzer'>PowerShell/PSScriptAnalyzer</a> しか知らん。 いずれも開発もアクティブだし唯一無二か？<h2></h2></p><p>Awesome ~ を見つけたことだし、他にも色々見てみるか。 <ol class='footnotes'><li id='fn-1'>と書いたがどう考えても有名じゃない。わたしも知ったの 2,3 年くらい前。最近は repo のグラフもほとんど息してなく見える。「枯れてる」のかも知れんけど。<a href='#fnref1'>&#8617;</a></li></ol></p>
+    <p>現職について 2 ヶ月が経とうとしているが、まだ爆殺されてない。ので馴染んできているのかも知れない。コミュニケーションが少なくても(定例を除き、最少 DM1 通/週とか)何とかやっていけるものだなという気づきを得た。<h2></h2></p><p>現職では勤怠の管理に Money Forward クラウド勤怠を利用している(時間管理なのだ)。 始めに書いておくと、勤怠管理システムはなんでか知らんがそれぞれに特色があって、どのツールを使っても一癖あるモノだというのがわたしの見解。その中でも Money Forward クラウド勤怠は悪くない印象だ。</p><p>しかし、わたしという人間がどうにもこうにも打刻という行為が大の苦手で、非常に億劫だ(労務管理の上で必要なんはわかるけど仕事の前後で打刻しないといけないとかワシら機械か、人間のやることじゃないと。某筋肉番組のショットガンタッチならいざ知らず)。</p><p>プログラマというのは怠惰なので、ブラウザで一々アクセスして打刻ボタンを押すのも苦痛なのであって、即ち半自動化に至るのは自然なことだ。 自動化じゃなく半自動化なのがポイント。自動化したら勤務してないのに勤務してるみたいなやばいことになりかねへん。自動化できるケーパビリティを持ちつつも半自動で使うのが職業プログラマの倫理？</p><p>そこでまず自分で作りたくないので誰かが書いたツールを探すと、<a href='https://github.com/puhitaku/mfpy'>puhitaku/mfpy: MoneyForward クラウド勤怠といい感じに通信していい感じに打刻するやつ</a> が見つかった。良さそう。</p><p>でも PowerShell でどうしてもやりたかった。なので PowerShell で作った ↓</p><p><a href='https://github.com/krymtkts/PSMFAttendance'>krymtkts/PSMFAttendance</a></p><p>今は出退勤のリアルタイム打刻しかできない。今後、わたしがグータラできる水準まで高めるには次の機能が必要かなーと考えている。</p><ul><li>二重打刻防止<ul><li>なんと出勤や退勤が無限多重打刻できる仕様なので、これを防止したい<ul><li>そのためには勤怠実績の一覧を取得する機能が必要になる</li></ul></li></ul></li><li>打刻のリマインド機能<ul><li>これは <code>&#42;-ScheduledTask</code> でなんとかでけへんかなと考えているが...やったことない<ul><li>過去にタスクスケジューラでスケジュール実行をしてたけど PowerShell でやりたいし</li></ul></li></ul></li><li>勤務実績の入力<ul><li>打刻忘れの場合この作業が必要なので</li></ul></li></ul><p>あと、PowerShell Gallery の登録まだなのでしないと。アレのやり方毎回忘れるし簡単な方法ないんかというのも悩みどころ。あの工程を<code>psake</code> のタスクにまとめるのはなんかで見たことあるけど、初回は手でやるか。<h2></h2></p><p>因みに自動化について利用規約に触れないか気になったのだが、見た感じ問題なさそうだった。 <a href='https://biz.moneyforward.com/agreement/'>利用規約 | 会計ソフト マネーフォワード クラウド</a></p>
 </div>
 
 <div id="post-tags">
@@ -196,7 +196,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2021-09-28-jobchange-2021">2021-09-28 転職する &raquo;</a>
+        <a class="right" href="/posts/2021-10-30-toolchain-of-powershell">2021-10-30 PowerShell のツールチェーン &raquo;</a>
         
     </div>
 </div>
