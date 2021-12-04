@@ -12,11 +12,43 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sat, 27 Nov 2021 16:04:03 +0900
+Sat, 04 Dec 2021 17:13:25 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-12-04-pyenv-win
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-12-04-pyenv-win
+</link>
+<title>
+pyenv-win
+</title>
+<description>
+&lt;p&gt;Python の処理系をローカルに直で入れることに抵抗はなかったのだが、chocolatey で Python3 を入れていると pin でもしない限りバージョンが進んでいって処理系が乱雑に配置されるので、Python 自体のバージョン管理をすることにした。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/pyenv-win/pyenv-win'&gt;pyenv-win/pyenv-win: pyenv for Windows. pyenv is a simple python version management tool. It lets you easily switch between multiple versions of Python. It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools that do one thing well.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;事前に Windows が Microsoft Store アプリの Python を使わないようにしておく必要がある。これがクソめんどい。以下は &lt;code&gt;README.md&lt;/code&gt; からの引用。&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt; NOTE: If you are running Windows 10 1905 or newer, you might need to disable the built-in Python launcher via Start &gt; &quot;Manage App Execution Aliases&quot; and turning off the &quot;App Installer&quot; aliases for Python &lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;Win キーを押下して &quot;Manage App Execution Aliases&quot; をタイプするのが現状の最速と思うが、できたら &lt;code&gt;ms-settings&lt;/code&gt; スキームで一発で飛べたら良いのに(&lt;code&gt;ms-settings:appsfeatures&lt;/code&gt;で手前まで行くのが精一杯)。&lt;/p&gt;&lt;p&gt;わたしは chocolatey ユーザなので、 chocolatey でこの pyenv をインストールした。この場合環境変数の設定が chocolatey により行われるので幾分サボれる。&lt;/p&gt;&lt;p&gt;&lt;a href='https://community.chocolatey.org/packages/pyenv-win#psdsc'&gt;Chocolatey Software | pyenv-win 2.64.11&lt;/a&gt;&lt;/p&gt;&lt;p&gt;わたしの場合は chocolatey 操作とゴミを消すのだけ管理者権限が必要なようにしてるのでそうしたが、それ以外は普通で行った。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;&amp;#40;pip freeze | ConvertFrom-StringData&amp;#41;.Keys | Set-Content requirements.txt # モジュールを控える
+
+choco uninstall python3 -y
+rm C:/Python&amp;#42; -recurse -force # ゴミを消す
+choco install pyenv-win -y
+
+pyenv install 3.9.6 # まだ 3.10.0 がリリースキャンディデートしかなかったので
+pyenv global 3.9.6
+pyenv rehash # バージョン切り替え後に必要
+
+pip --version # 確認
+python -m pip install --upgrade pip # 更新してって出たので更新
+pip install -r requirements.txt # モジュール復元
+# done.
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;バージョン移行時の&amp;#95;&lt;code&gt;requirements.txt&lt;/code&gt;&quot;&gt;バージョン移行時の &lt;code&gt;requirements.txt&lt;/code&gt;&lt;/h3&gt;&lt;p&gt;バージョン乗り換え時の &lt;code&gt;requirements.txt&lt;/code&gt; の作成だが、単純に &lt;code&gt;pip freeze&lt;/code&gt; の出力を使うとバージョン不整合で取り込めないことがある。 なのでわたしの場合は雑にモジュール名だけにフィルタリングしたものを使う。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;&amp;#40;pip freeze | ConvertFrom-StringData&amp;#41;.Keys | Set-Content requirements.txt
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+<pubDate>
+Sat, 04 Dec 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-11-27-psmfattendance

@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-12-04-pyenv-win">pyenv-win</a></li>
+                        
                         <li><a href="/posts/2021-11-27-psmfattendance">PowerShell で Money Forward クラウド勤怠を操作する</a></li>
                         
                         <li><a href="/posts/2021-10-30-toolchain-of-powershell">PowerShell のツールチェーン</a></li>
-                        
-                        <li><a href="/posts/2021-09-28-jobchange-2021">転職する</a></li>
                         
                         
 
@@ -173,20 +173,35 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-11-27</div>
+        <div class="col-lg-6">2021-12-04</div>
         
     </div>
-    <h2>PowerShell で Money Forward クラウド勤怠を操作する</h2>
+    <h2>pyenv-win</h2>
 </div>
 <div>
     
-    <p>現職について 2 ヶ月が経とうとしているが、まだ爆殺されてない。ので馴染んできているのかも知れない。コミュニケーションが少なくても(定例を除き、最少 DM1 通/週とか)何とかやっていけるものだなという気づきを得た。<h2></h2></p><p>現職では勤怠の管理に Money Forward クラウド勤怠を利用している(時間管理なのだ)。 始めに書いておくと、勤怠管理システムはなんでか知らんがそれぞれに特色があって、どのツールを使っても一癖あるモノだというのがわたしの見解。その中でも Money Forward クラウド勤怠は悪くない印象だ。</p><p>しかし、わたしという人間がどうにもこうにも打刻という行為が大の苦手で、非常に億劫だ(労務管理の上で必要なんはわかるけど仕事の前後で打刻しないといけないとかワシら機械か、人間のやることじゃないと。某筋肉番組のショットガンタッチならいざ知らず)。</p><p>プログラマというのは怠惰なので、ブラウザで一々アクセスして打刻ボタンを押すのも苦痛なのであって、即ち半自動化に至るのは自然なことだ。 自動化じゃなく半自動化なのがポイント。自動化したら勤務してないのに勤務してるみたいなやばいことになりかねへん。自動化できるケーパビリティを持ちつつも半自動で使うのが職業プログラマの倫理？</p><p>そこでまず自分で作りたくないので誰かが書いたツールを探すと、<a href='https://github.com/puhitaku/mfpy'>puhitaku/mfpy: MoneyForward クラウド勤怠といい感じに通信していい感じに打刻するやつ</a> が見つかった。良さそう。</p><p>でも PowerShell でどうしてもやりたかった。なので PowerShell で作った ↓</p><p><a href='https://github.com/krymtkts/PSMFAttendance'>krymtkts/PSMFAttendance</a></p><p>今は出退勤のリアルタイム打刻しかできない。今後、わたしがグータラできる水準まで高めるには次の機能が必要かなーと考えている。</p><ul><li>二重打刻防止<ul><li>なんと出勤や退勤が無限多重打刻できる仕様なので、これを防止したい<ul><li>そのためには勤怠実績の一覧を取得する機能が必要になる</li></ul></li></ul></li><li>打刻のリマインド機能<ul><li>これは <code>&#42;-ScheduledTask</code> でなんとかでけへんかなと考えているが...やったことない<ul><li>過去にタスクスケジューラでスケジュール実行をしてたけど PowerShell でやりたいし</li></ul></li></ul></li><li>勤務実績の入力<ul><li>打刻忘れの場合この作業が必要なので</li></ul></li></ul><p>あと、PowerShell Gallery の登録まだなのでしないと。アレのやり方毎回忘れるし簡単な方法ないんかというのも悩みどころ。あの工程を<code>psake</code> のタスクにまとめるのはなんかで見たことあるけど、初回は手でやるか。<h2></h2></p><p>因みに自動化について利用規約に触れないか気になったのだが、見た感じ問題なさそうだった。 <a href='https://biz.moneyforward.com/agreement/'>利用規約 | 会計ソフト マネーフォワード クラウド</a></p>
+    <p>Python の処理系をローカルに直で入れることに抵抗はなかったのだが、chocolatey で Python3 を入れていると pin でもしない限りバージョンが進んでいって処理系が乱雑に配置されるので、Python 自体のバージョン管理をすることにした。</p><p><a href='https://github.com/pyenv-win/pyenv-win'>pyenv-win/pyenv-win: pyenv for Windows. pyenv is a simple python version management tool. It lets you easily switch between multiple versions of Python. It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools that do one thing well.</a></p><p>事前に Windows が Microsoft Store アプリの Python を使わないようにしておく必要がある。これがクソめんどい。以下は <code>README.md</code> からの引用。</p><blockquote><p> NOTE: If you are running Windows 10 1905 or newer, you might need to disable the built-in Python launcher via Start > "Manage App Execution Aliases" and turning off the "App Installer" aliases for Python </p></blockquote><p>Win キーを押下して "Manage App Execution Aliases" をタイプするのが現状の最速と思うが、できたら <code>ms-settings</code> スキームで一発で飛べたら良いのに(<code>ms-settings:appsfeatures</code>で手前まで行くのが精一杯)。</p><p>わたしは chocolatey ユーザなので、 chocolatey でこの pyenv をインストールした。この場合環境変数の設定が chocolatey により行われるので幾分サボれる。</p><p><a href='https://community.chocolatey.org/packages/pyenv-win#psdsc'>Chocolatey Software | pyenv-win 2.64.11</a></p><p>わたしの場合は chocolatey 操作とゴミを消すのだけ管理者権限が必要なようにしてるのでそうしたが、それ以外は普通で行った。</p><pre><code class="powershell">&#40;pip freeze | ConvertFrom-StringData&#41;.Keys | Set-Content requirements.txt # モジュールを控える
+
+choco uninstall python3 -y
+rm C:/Python&#42; -recurse -force # ゴミを消す
+choco install pyenv-win -y
+
+pyenv install 3.9.6 # まだ 3.10.0 がリリースキャンディデートしかなかったので
+pyenv global 3.9.6
+pyenv rehash # バージョン切り替え後に必要
+
+pip --version # 確認
+python -m pip install --upgrade pip # 更新してって出たので更新
+pip install -r requirements.txt # モジュール復元
+# done.
+</code></pre><h3 id="バージョン移行時の&#95;<code>requirements.txt</code>">バージョン移行時の <code>requirements.txt</code></h3><p>バージョン乗り換え時の <code>requirements.txt</code> の作成だが、単純に <code>pip freeze</code> の出力を使うとバージョン不整合で取り込めないことがある。 なのでわたしの場合は雑にモジュール名だけにフィルタリングしたものを使う。</p><pre><code class="powershell">&#40;pip freeze | ConvertFrom-StringData&#41;.Keys | Set-Content requirements.txt
+</code></pre>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/python">python</a>
     
 </div>
 
@@ -196,7 +211,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2021-10-30-toolchain-of-powershell">2021-10-30 PowerShell のツールチェーン &raquo;</a>
+        <a class="right" href="/posts/2021-11-27-psmfattendance">2021-11-27 PowerShell で Money Forward クラウド勤怠を操作する &raquo;</a>
         
     </div>
 </div>
