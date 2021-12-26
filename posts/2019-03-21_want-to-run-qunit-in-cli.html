@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: QUnitでCIしたい その1</title>
+    <title>krymtkts: QUnit で CI したい その 1</title>
     <link rel="canonical" href="http://krymtkts.github.io/posts/2019-03-21_want-to-run-qunit-in-cli">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: QUnitでCIしたい その1" />
+    <meta property="og:title" content="krymtkts: QUnit で CI したい その 1" />
     <meta property="og:url" content="http://krymtkts.github.io/posts/2019-03-21_want-to-run-qunit-in-cli" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-12-26-fnm-tips-with-ccleaner">fnm でインストールした処理系は Temp フォルダからシンボリックリンクされるので ccleaner で消える話(当然)</a></li>
+                        
                         <li><a href="/posts/2021-12-04-pyenv-win">pyenv-win</a></li>
                         
                         <li><a href="/posts/2021-11-27-psmfattendance">PowerShell で Money Forward クラウド勤怠を操作する</a></li>
-                        
-                        <li><a href="/posts/2021-10-30-toolchain-of-powershell">PowerShell のツールチェーン</a></li>
                         
                         
 
@@ -140,6 +140,8 @@
                         
                         <li><a href="/tags/golang">golang</a></li>
                         
+                        <li><a href="/tags/fnm">fnm</a></li>
+                        
                         <li><a href="/tags/lambda">lambda</a></li>
                         
                         <li><a href="/tags/docker-toolbox">docker-toolbox</a></li>
@@ -148,7 +150,7 @@
                         
                         <li><a href="/tags/qmkfirmware">qmkfirmware</a></li>
                         
-                        <li><a href="/tags/node">node</a></li>
+                        <li><a href="/tags/nodejs">nodejs</a></li>
                         
                         <li><a href="/tags/goal">goal</a></li>
                         
@@ -176,25 +178,25 @@
         <div class="col-lg-6">2019-03-21</div>
         
     </div>
-    <h2>QUnitでCIしたい その1</h2>
+    <h2>QUnit で CI したい その 1</h2>
 </div>
 <div>
     
-    <p>2月に転職した。</p><p>へーしゃでの初めての仕事はフロントエンド、と言ってもトラッキングに関わる部分である。</p><p>生のES5で書かれてて<a href='https://github.com/google/closure-compiler'>Google Closure Compiler</a>でminifyされてるようなのだけど、困ったことにユニットテストがない様子？ どこそこのチームで作ってたことがあったらしいという情報は得たので、それをCIに組み込めたらいいかなと思っていた。</p><p>蓋を開けてみると、2年間ほどメンテされていない死んだユニットテストで、最新のコードベースに対するテストでなかった(テストコードと同ディレクトリにテスト対象のコードがコピられてて)🤔</p><p>CIに組み込まれないテストは陳腐化すると云うが、まさかそれを身をもって実感することになろうとは思わなんだ。</p><p><del>仕方ないので</del>既存の資産を活かすためにも、テスティングフレームワークなど既存のものを利用して少なくともCIに組み込めるところまでは持っていこうと考えた。CIに組み込まれればビルド失敗の通知を恐れてみんなユニットテストを書くのをサボらなくなる。</p><p>というわけで、許可を取り付けた上で仕事の合間を縫ってユニットテストの整備を行うことにした。</p><h3 id="現状把握と展望">現状把握と展望</h3><p>ユニットテストは<a href='https://qunitjs.com/'>QUnit</a>で書かれていて、モッキングフレームワークには<a href='https://sinonjs.org/'>Sinon.JS</a>が使われていた。</p><p>linterは<a href='https://eslint.org/'>ESLint - Pluggable JavaScript linter</a>を用意してあるようなのだけどどうも長らく利用されてなかったようで、試しに実行すると41件のautofix可能なエラーが...😅</p><p>ブラウザで<code>index.html</code>を開くことでテストが実行されるタイプのやつで、CLIでの実行は用意されてなかった。 プロダクトコードが<code>window</code>オブジェクトに依存してることもあって、QUnitのテストをヘッドレスブラウザで実行するのが良さげかな。</p><p>ここにカバレッジ計測も追加して、最終的にはプルリクをトリガーにした自動テストがCIに組み込まれるのが良さげかなと思う。</p><h3 id="やったこと＆やらなかったこと">やったこと＆やらなかったこと</h3><p>とりあえずカバレッジは置いといて今あるQUnitのCLI実行を優先した。</p><p>nodeでのカバレッジ計測に関しては知らないことが多かったので軽く下調べだけした。 istabulというやつがnode界隈で強かったみたいだが、こいつは2年ほどメンテされてなくて、後続の<a href='https://www.npmjs.com/package/nyc'>nyc - npm</a>と言うやつがみつかる👀 puppeteerもそれ単体でカバレッジが測れるようす↓</p><ul><li><a href='https://www.philkrie.me/2018/07/04/extracting-coverage.html'>Using Puppeteer to Extract Code Coverage Data from Chrome Dev Tools</a></li><li><a href='https://github.com/istanbuljs/puppeteer-to-istanbul'>istanbuljs/puppeteer-to-istanbul: given coverage information output by puppeteer's API output a format consumable by Istanbul reports</a></li></ul><h4 id="やったこと">やったこと</h4><p>まず元々あるQUnitもそのまま使えないとブラウザで見つつの開発の利便性も下がっちゃうので、そこは担保したかった。 (<code>window</code>オブジェクトがないのでCommonJSは死ぬ)</p><p><a href='https://www.npmjs.com/package/qunit-puppeteer'>qunit-puppeteer - npm</a>は簡単にテスト実行できて楽だったのだけど、テストのurlを絶対パスで指定しないといけず＆自分でURLをこねくり回せなくて却下。</p><p>なのでそのへん柔軟な<a href='https://www.npmjs.com/package/node-qunit-puppeteer'>node-qunit-puppeteer - npm</a>しか選択肢が残らなかったわけだ。</p><p>とりま<code>eslint</code>だけあるからソイツはそのままに、QUnitをheadless browser実行するためのmoduleだけ足す。</p><pre><code class="powershell">npm install --save-dev node-qunit-puppeteer
+    <p>2 月に転職した。</p><p>へーしゃでの初めての仕事はフロントエンド、と言ってもトラッキングに関わる部分である。</p><p>生の ES5 で書かれてて<a href='https://github.com/google/closure-compiler'>Google Closure Compiler</a>で minify されてるようなのだけど、困ったことにユニットテストがない様子？ どこそこのチームで作ってたことがあったらしいという情報は得たので、それを CI に組み込めたらいいかなと思っていた。</p><p>蓋を開けてみると、2 年間ほどメンテされていない死んだユニットテストで、最新のコードベースに対するテストでなかった(テストコードと同ディレクトリにテスト対象のコードがコピられてて)🤔</p><p>CI に組み込まれないテストは陳腐化すると云うが、まさかそれを身をもって実感することになろうとは思わなんだ。</p><p><del>仕方ないので</del>既存の資産を活かすためにも、テスティングフレームワークなど既存のものを利用して少なくとも CI に組み込めるところまでは持っていこうと考えた。CI に組み込まれればビルド失敗の通知を恐れてみんなユニットテストを書くのをサボらなくなる。</p><p>というわけで、許可を取り付けた上で仕事の合間を縫ってユニットテストの整備を行うことにした。</p><h3 id="現状把握と展望">現状把握と展望</h3><p>ユニットテストは<a href='https://qunitjs.com/'>QUnit</a>で書かれていて、モッキングフレームワークには<a href='https://sinonjs.org/'>Sinon.JS</a>が使われていた。</p><p>linter は<a href='https://eslint.org/'>ESLint - Pluggable JavaScript linter</a>を用意してあるようなのだけどどうも長らく利用されてなかったようで、試しに実行すると 41 件の autofix 可能なエラーが...😅</p><p>ブラウザで<code>index.html</code>を開くことでテストが実行されるタイプのやつで、CLI での実行は用意されてなかった。 プロダクトコードが<code>window</code>オブジェクトに依存してることもあって、QUnit のテストをヘッドレスブラウザで実行するのが良さげかな。</p><p>ここにカバレッジ計測も追加して、最終的にはプルリクをトリガーにした自動テストが CI に組み込まれるのが良さげかなと思う。</p><h3 id="やったこと＆やらなかったこと">やったこと＆やらなかったこと</h3><p>とりあえずカバレッジは置いといて今ある QUnit の CLI 実行を優先した。</p><p>node でのカバレッジ計測に関しては知らないことが多かったので軽く下調べだけした。 istabul というやつが node 界隈で強かったみたいだが、こいつは 2 年ほどメンテされてなくて、後続の<a href='https://www.npmjs.com/package/nyc'>nyc - npm</a>と言うやつがみつかる 👀 puppeteer もそれ単体でカバレッジが測れるようす ↓</p><ul><li><a href='https://www.philkrie.me/2018/07/04/extracting-coverage.html'>Using Puppeteer to Extract Code Coverage Data from Chrome Dev Tools</a></li><li><a href='https://github.com/istanbuljs/puppeteer-to-istanbul'>istanbuljs/puppeteer-to-istanbul: given coverage information output by puppeteer's API output a format consumable by Istanbul reports</a></li></ul><h4 id="やったこと">やったこと</h4><p>まず元々ある QUnit もそのまま使えないとブラウザで見つつの開発の利便性も下がっちゃうので、そこは担保したかった。 (<code>window</code>オブジェクトがないので CommonJS は死ぬ)</p><p><a href='https://www.npmjs.com/package/qunit-puppeteer'>qunit-puppeteer - npm</a>は簡単にテスト実行できて楽だったのだけど、テストの url を絶対パスで指定しないといけず＆自分で URL をこねくり回せなくて却下。</p><p>なのでそのへん柔軟な<a href='https://www.npmjs.com/package/node-qunit-puppeteer'>node-qunit-puppeteer - npm</a>しか選択肢が残らなかったわけだ。</p><p>とりま<code>eslint</code>だけあるからソイツはそのままに、QUnit を headless browser 実行するための module だけ足す。</p><pre><code class="powershell">npm install --save-dev node-qunit-puppeteer
 </code></pre><p><code>package.json</code>は以下のような感じにした</p><pre><code class="json">  &quot;scripts&quot;: {
     &quot;lint&quot;: &quot;eslint --fix ./&quot;,
     &quot;test&quot;: &quot;node test/run.js&quot;
   },
-</code></pre><p><code>lint</code>はメンテされてなかった関係で40件くらいのerrorがあるけど、最終的には実行できるようになる(ハズな)ので用意しておく。</p><p><code>test/run.js</code>は以下の通りで、<a href='https://github.com/ameshkov/node-qunit-puppeteer'>ameshkov/node-qunit-puppeteer: A simple node module for running qunit tests with headless Chromium</a>のExampleとほぼ同じで行ける便利さ。しびれる。</p><pre><code class="js">#! /usr/bin/env node
+</code></pre><p><code>lint</code>はメンテされてなかった関係で 40 件くらいの error があるけど、最終的には実行できるようになる(ハズな)ので用意しておく。</p><p><code>test/run.js</code>は以下の通りで、<a href='https://github.com/ameshkov/node-qunit-puppeteer'>ameshkov/node-qunit-puppeteer: A simple node module for running qunit tests with headless Chromium</a>の Example とほぼ同じで行ける便利さ。しびれる。</p><pre><code class="js">#! /usr/bin/env node
 // almost the same as the sample code :-p
 // https://github.com/ameshkov/node-qunit-puppeteer
 
-const path = require&#40;'path'&#41;;
-const { runQunitPuppeteer, printOutput } = require&#40;'node-qunit-puppeteer'&#41;;
+const path = require&#40;&quot;path&quot;&#41;;
+const { runQunitPuppeteer, printOutput } = require&#40;&quot;node-qunit-puppeteer&quot;&#41;;
 
 const qunitArgs = {
-  targetUrl: `file://${path.join&#40;&#95;&#95;dirname, '/index.html'&#41;}`,
-  redirectConsole: true
+  targetUrl: `file://${path.join&#40;&#95;&#95;dirname, &quot;/index.html&quot;&#41;}`,
+  redirectConsole: true,
 };
 
 runQunitPuppeteer&#40;qunitArgs&#41;
@@ -226,7 +228,7 @@ Total tests: 1
   Passed assertions: 2
   Failed assertions: 0
   Elapsed: 8ms
-</code></pre><p>と、ここまで書いた内容を会社のコードに組み込んだのだけど、会社で作ったものは外に出せないので模倣したゴミプロジェクトを作った↓</p><p><a href='https://github.com/krymtkts/qunit-trial'>krymtkts/qunit-trial: sandbox to enhance legacy QUnit test.</a></p><p>今後いじくり回すときの砂場としても使おうかな。</p><h4 id="あとやりたいこと">あとやりたいこと</h4><p>ユニットテストだけあってカバレッジ計測がないのはちょっとアレなので早々に追加したい所存🤔</p><p>そもそもユニットテスト書くにしてもどの経路通ったとかわからないのでテスト品質を保証しづらく、コード網羅率 Level C1を100%にしたいマンなのもありカバレッジ必須。</p><p>でも事前に調べてたnycやpuppeteerでの方法だと、現状のnode-qunit-puppeteerを使ったテストのカバレッジ計測できなさそう...</p><p>もう少し調べる必要がありそう😳</p><p>続く</p>
+</code></pre><p>と、ここまで書いた内容を会社のコードに組み込んだのだけど、会社で作ったものは外に出せないので模倣したゴミプロジェクトを作った ↓</p><p><a href='https://github.com/krymtkts/qunit-trial'>krymtkts/qunit-trial: sandbox to enhance legacy QUnit test.</a></p><p>今後いじくり回すときの砂場としても使おうかな。</p><h4 id="あとやりたいこと">あとやりたいこと</h4><p>ユニットテストだけあってカバレッジ計測がないのはちょっとアレなので早々に追加したい所存 🤔</p><p>そもそもユニットテスト書くにしてもどの経路通ったとかわからないのでテスト品質を保証しづらく、コード網羅率 Level C1 を 100%にしたいマンなのもありカバレッジ必須。</p><p>でも事前に調べてた nyc や puppeteer での方法だと、現状の node-qunit-puppeteer を使ったテストのカバレッジ計測できなさそう...</p><p>もう少し調べる必要がありそう 😳</p><p>続く</p>
 </div>
 
 <div id="post-tags">
@@ -234,7 +236,7 @@ Total tests: 1
     
     <a href="/tags/qunit">qunit</a>
     
-    <a href="/tags/node">node</a>
+    <a href="/tags/nodejs">nodejs</a>
     
     <a href="/tags/puppeteer">puppeteer</a>
     
@@ -243,7 +245,7 @@ Total tests: 1
 
     <div id="prev-next">
         
-        <a href="/posts/2019-03-24_coverage-of-qunt-puppeteer">&laquo; 2019-03-24 QUnitでCIしたい その2</a>
+        <a href="/posts/2019-03-24_coverage-of-qunt-puppeteer">&laquo; 2019-03-24 QUnit で CI したい その 2</a>
         
         
         <a class="right" href="/posts/2019-02-24_lein-ring-server-error">2019-02-24 lein ringでエラーが発生した &raquo;</a>

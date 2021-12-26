@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: QUnitでCIしたい その2</title>
+    <title>krymtkts: QUnit で CI したい その 2</title>
     <link rel="canonical" href="http://krymtkts.github.io/posts/2019-03-24_coverage-of-qunt-puppeteer">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: QUnitでCIしたい その2" />
+    <meta property="og:title" content="krymtkts: QUnit で CI したい その 2" />
     <meta property="og:url" content="http://krymtkts.github.io/posts/2019-03-24_coverage-of-qunt-puppeteer" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-12-26-fnm-tips-with-ccleaner">fnm でインストールした処理系は Temp フォルダからシンボリックリンクされるので ccleaner で消える話(当然)</a></li>
+                        
                         <li><a href="/posts/2021-12-04-pyenv-win">pyenv-win</a></li>
                         
                         <li><a href="/posts/2021-11-27-psmfattendance">PowerShell で Money Forward クラウド勤怠を操作する</a></li>
-                        
-                        <li><a href="/posts/2021-10-30-toolchain-of-powershell">PowerShell のツールチェーン</a></li>
                         
                         
 
@@ -140,6 +140,8 @@
                         
                         <li><a href="/tags/golang">golang</a></li>
                         
+                        <li><a href="/tags/fnm">fnm</a></li>
+                        
                         <li><a href="/tags/lambda">lambda</a></li>
                         
                         <li><a href="/tags/docker-toolbox">docker-toolbox</a></li>
@@ -148,7 +150,7 @@
                         
                         <li><a href="/tags/qmkfirmware">qmkfirmware</a></li>
                         
-                        <li><a href="/tags/node">node</a></li>
+                        <li><a href="/tags/nodejs">nodejs</a></li>
                         
                         <li><a href="/tags/goal">goal</a></li>
                         
@@ -176,13 +178,13 @@
         <div class="col-lg-6">2019-03-24</div>
         
     </div>
-    <h2>QUnitでCIしたい その2</h2>
+    <h2>QUnit で CI したい その 2</h2>
 </div>
 <div>
     
-    <p><a href='./2019-03-21_want-to-run-qunit-in-cli.md'>前回</a>、QUnitのユニットテストをpuppeteerでCLI実行できるようにした</p><p>今回はcode coverageを計測できるようにする。</p><h3 id="前回のおさらい">前回のおさらい</h3><p>puppeteerでJavaScriptのカバレッジを計測することができる(<a href='https://developers.google.com/web/updates/2017/04/devtools-release-notes'>What's New In DevTools (Chrome 59)  |  Web  |  Google Developers</a>)のだが、現状利用している<a href='https://www.npmjs.com/package/node-qunit-puppeteer'>node-qunit-puppeteer</a>だと、puppeteerの部分をモジュール外部から触れないので利用できなくて困った、ということろまで書いた。</p><p>理想ではユニットテストの実施と同時にカバレッジを計測したいところなのだが、一旦は簡単のために別々に、つまりユニットテストの実行後さらにカバレッジ取得のためにユニットテスを再実行する、というかたちで楽しようと考えた。ユニットテストの実行が軽いうちは2度実行したところで大した負荷にならないというのもあり。</p><h3 id="やったこと">やったこと</h3><p>これ↓</p><p><a href='https://github.com/istanbuljs/puppeteer-to-istanbul'>istanbuljs/puppeteer-to-istanbul: given coverage information output by puppeteer's API output a format consumable by Istanbul reports</a></p><p>puppeteerで計測したカバレッジをistanbul(nyc)で利用できる形に書き出すモジュールを使う。</p><p><a href='https://github.com/krymtkts/qunit-trial/blob/master/test/run.js'>すでにあるnode-qunit-puppeteerのテストランナー</a>と一緒には使えないので、カバレッジ計測のためのスクリプトも新たに書く(無駄)。</p><pre><code class="js">const pti = require&#40;'puppeteer-to-istanbul'&#41;;
-const puppeteer = require&#40;'puppeteer'&#41;;
-const path = require&#40;'path'&#41;;
+    <p><a href='./2019-03-21_want-to-run-qunit-in-cli.md'>前回</a>、QUnit のユニットテストを puppeteer で CLI 実行できるようにした</p><p>今回は code coverage を計測できるようにする。</p><h3 id="前回のおさらい">前回のおさらい</h3><p>puppeteer で JavaScript のカバレッジを計測することができる(<a href='https://developers.google.com/web/updates/2017/04/devtools-release-notes'>What's New In DevTools (Chrome 59)  |  Web  |  Google Developers</a>)のだが、現状利用している<a href='https://www.npmjs.com/package/node-qunit-puppeteer'>node-qunit-puppeteer</a>だと、puppeteer の部分をモジュール外部から触れないので利用できなくて困った、ということろまで書いた。</p><p>理想ではユニットテストの実施と同時にカバレッジを計測したいところなのだが、一旦は簡単のために別々に、つまりユニットテストの実行後さらにカバレッジ取得のためにユニットテスを再実行する、というかたちで楽しようと考えた。ユニットテストの実行が軽いうちは 2 度実行したところで大した負荷にならないというのもあり。</p><h3 id="やったこと">やったこと</h3><p>これ ↓</p><p><a href='https://github.com/istanbuljs/puppeteer-to-istanbul'>istanbuljs/puppeteer-to-istanbul: given coverage information output by puppeteer's API output a format consumable by Istanbul reports</a></p><p>puppeteer で計測したカバレッジを istanbul(nyc)で利用できる形に書き出すモジュールを使う。</p><p><a href='https://github.com/krymtkts/qunit-trial/blob/master/test/run.js'>すでにある node-qunit-puppeteer のテストランナー</a>と一緒には使えないので、カバレッジ計測のためのスクリプトも新たに書く(無駄)。</p><pre><code class="js">const pti = require&#40;&quot;puppeteer-to-istanbul&quot;&#41;;
+const puppeteer = require&#40;&quot;puppeteer&quot;&#41;;
+const path = require&#40;&quot;path&quot;&#41;;
 
 &#40;async &#40;&#41; =&gt; {
   try {
@@ -190,7 +192,7 @@ const path = require&#40;'path'&#41;;
     const page = await browser.newPage&#40;&#41;;
 
     await page.coverage.startJSCoverage&#40;&#41;;
-    await page.goto&#40;`file://${path.join&#40;&#95;&#95;dirname, '/index.html'&#41;}`&#41;;
+    await page.goto&#40;`file://${path.join&#40;&#95;&#95;dirname, &quot;/index.html&quot;&#41;}`&#41;;
     const jsCoverage = await page.coverage.stopJSCoverage&#40;&#41;;
 
     pti.write&#40;jsCoverage&#41;;
@@ -199,8 +201,8 @@ const path = require&#40;'path'&#41;;
     console.error&#40;error&#41;;
   }
 }&#41;&#40;&#41;;
-</code></pre><p>これもほぼサンプルママで使えた。読み込ませるページのパスだけ工夫が必要ってだけ。</p><p>あとはカバレッジ計測に成功したらnycのレポート作成を実行するだけでおｋ。これをnpmのタスクにする。</p><pre><code class="sh">node test/coverage.js &amp;&amp; nyc report --reporter=html
-</code></pre><p>これでページを開いたときに読み込まれるJSのカバレッジを計測できた。ただしこのままだと、QUnitやユニットテスト自体のカバレッジも含まれてしまうので、仕事のCIで使う場合なんかには特定のファイルのカバレッジだけを見るか、あるいは除外設定があればいいのだけど。</p><h3 id="まとめ">まとめ</h3><p>また今回試した内容は以下のrepoに反映してある</p><p><a href='https://github.com/krymtkts/qunit-trial'>krymtkts/qunit-trial: sandbox to enhance legacy QUnit test.</a></p><p>2回ユニットテストを実行していて無駄感があるので、node-qunit-puppeteerに手を入れることも検討していいかも🤔</p><p>続く</p>
+</code></pre><p>これもほぼサンプルママで使えた。読み込ませるページのパスだけ工夫が必要ってだけ。</p><p>あとはカバレッジ計測に成功したら nyc のレポート作成を実行するだけでおｋ。これを npm のタスクにする。</p><pre><code class="sh">node test/coverage.js &amp;&amp; nyc report --reporter=html
+</code></pre><p>これでページを開いたときに読み込まれる JS のカバレッジを計測できた。ただしこのままだと、QUnit やユニットテスト自体のカバレッジも含まれてしまうので、仕事の CI で使う場合なんかには特定のファイルのカバレッジだけを見るか、あるいは除外設定があればいいのだけど。</p><h3 id="まとめ">まとめ</h3><p>また今回試した内容は以下の repo に反映してある</p><p><a href='https://github.com/krymtkts/qunit-trial'>krymtkts/qunit-trial: sandbox to enhance legacy QUnit test.</a></p><p>2 回ユニットテストを実行していて無駄感があるので、node-qunit-puppeteer に手を入れることも検討していいかも 🤔</p><p>続く</p>
 </div>
 
 <div id="post-tags">
@@ -210,7 +212,7 @@ const path = require&#40;'path'&#41;;
     
     <a href="/tags/nyc">nyc</a>
     
-    <a href="/tags/node">node</a>
+    <a href="/tags/nodejs">nodejs</a>
     
     <a href="/tags/puppeteer">puppeteer</a>
     
@@ -222,7 +224,7 @@ const path = require&#40;'path'&#41;;
         <a href="/posts/2019-03-31-win-openssh-is-gone">&laquo; 2019-03-31 Windows10の更新でOpenSSHが逝った</a>
         
         
-        <a class="right" href="/posts/2019-03-21_want-to-run-qunit-in-cli">2019-03-21 QUnitでCIしたい その1 &raquo;</a>
+        <a class="right" href="/posts/2019-03-21_want-to-run-qunit-in-cli">2019-03-21 QUnit で CI したい その 1 &raquo;</a>
         
     </div>
 

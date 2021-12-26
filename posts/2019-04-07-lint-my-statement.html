@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: 下手な文章をLintする</title>
+    <title>krymtkts: 下手な文章を Lint する</title>
     <link rel="canonical" href="http://krymtkts.github.io/posts/2019-04-07-lint-my-statement">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: 下手な文章をLintする" />
+    <meta property="og:title" content="krymtkts: 下手な文章を Lint する" />
     <meta property="og:url" content="http://krymtkts.github.io/posts/2019-04-07-lint-my-statement" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2021-12-26-fnm-tips-with-ccleaner">fnm でインストールした処理系は Temp フォルダからシンボリックリンクされるので ccleaner で消える話(当然)</a></li>
+                        
                         <li><a href="/posts/2021-12-04-pyenv-win">pyenv-win</a></li>
                         
                         <li><a href="/posts/2021-11-27-psmfattendance">PowerShell で Money Forward クラウド勤怠を操作する</a></li>
-                        
-                        <li><a href="/posts/2021-10-30-toolchain-of-powershell">PowerShell のツールチェーン</a></li>
                         
                         
 
@@ -140,6 +140,8 @@
                         
                         <li><a href="/tags/golang">golang</a></li>
                         
+                        <li><a href="/tags/fnm">fnm</a></li>
+                        
                         <li><a href="/tags/lambda">lambda</a></li>
                         
                         <li><a href="/tags/docker-toolbox">docker-toolbox</a></li>
@@ -148,7 +150,7 @@
                         
                         <li><a href="/tags/qmkfirmware">qmkfirmware</a></li>
                         
-                        <li><a href="/tags/node">node</a></li>
+                        <li><a href="/tags/nodejs">nodejs</a></li>
                         
                         <li><a href="/tags/goal">goal</a></li>
                         
@@ -176,11 +178,11 @@
         <div class="col-lg-6">2019-04-07</div>
         
     </div>
-    <h2>下手な文章をLintする</h2>
+    <h2>下手な文章を Lint する</h2>
 </div>
 <div>
     
-    <p>転職してから2ヶ月の間、海外労働者の同僚から、日本語のドキュメントも英語のドキュメントもレビューコメントをいただいていてつらい。</p><p>英語だけならまだしろ、わしゃ日本語もろくに扱えん日本人なんかと思うと涙ちょちょぎれる次第であります。</p><p>なので自分の文章にLintをかけようと思った。</p><h3 id="textlint">textlint</h3><p>いつだったか文章のLinterについてググってたら、以下のようなものを見つけた。</p><ul><li><a href='https://github.com/textlint/textlint'>GitHub - textlint/textlint</a></li><li><a href='https://qiita.com/azu/items/2c565a38df5ed4c9f4e1'>Qiita - VS Codeでtextlintを使って文章をチェックする</a></li><li><a href='https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing'>textlint-ja/textlint-rule-preset-ja-technical-writing: 技術文書向けのtextlintルールプリセット</a></li></ul><p>...すげえな！近い内に使えるようにしよう。と思ってから数ヶ月後、実務でまともな文章を書く能力が必要になるとわ...😭 というかvscode-textlintってホイル焼きで有名な方の作品なのですね。敬意を払うべきプロダクトだ。</p><p>以下にわたしのセットアップ手順を記す(実行はPowerShellだよ)。</p><ol><li>VSCodeでvscode-textlinを入れる</li><li><code>npm i -g textlint textlint-rule-preset-ja-technical-writing</code></li><li><code>cd &#126;</code>で<code>textlint &ndash;init</code>してルールを書き込み</li><li>VSCodeでは設定ファイルを絶対パスで利用するからどうしたものか...(複数端末でSyncしてる関係で)<ol><li><code>&#126;/,textlint</code>にしたらユーザ名とか考えなくていいから、なんかいい😁</li></ol></li><li>ついかパッケージ <code>npm i -g textlint-rule-date-weekday-mismatch textlint-rule-terminology textlint-rule-ginger</code></li></ol><p>これで簡単なtypoは減らせるんじゃないかな。</p><p>お気に入りのルールは<code>textlint-rule-date-weekday-mismatch</code>。これからのオレが曜日を間違うことはないぜええええ？(フラグ</p>
+    <p>転職してから 2 ヶ月の間、海外労働者の同僚から、日本語のドキュメントも英語のドキュメントもレビューコメントをいただいていてつらい。</p><p>英語だけならまだしろ、わしゃ日本語もろくに扱えん日本人なんかと思うと涙ちょちょぎれる次第であります。</p><p>なので自分の文章に Lint をかけようと思った。</p><h3 id="textlint">textlint</h3><p>いつだったか文章の Linter についてググってたら、以下のようなものを見つけた。</p><ul><li><a href='https://github.com/textlint/textlint'>GitHub - textlint/textlint</a></li><li><a href='https://qiita.com/azu/items/2c565a38df5ed4c9f4e1'>Qiita - VS Code で textlint を使って文章をチェックする</a></li><li><a href='https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing'>textlint-ja/textlint-rule-preset-ja-technical-writing: 技術文書向けの textlint ルールプリセット</a></li></ul><p>...すげえな！近い内に使えるようにしよう。と思ってから数ヶ月後、実務でまともな文章を書く能力が必要になるとわ...😭 というか vscode-textlint ってホイル焼きで有名な方の作品なのですね。敬意を払うべきプロダクトだ。</p><p>以下にわたしのセットアップ手順を記す(実行は PowerShell だよ)。</p><ol><li>VSCode で vscode-textlin を入れる</li><li><code>npm i -g textlint textlint-rule-preset-ja-technical-writing</code></li><li><code>cd &#126;</code>で<code>textlint &ndash;init</code>してルールを書き込み</li><li>VSCode では設定ファイルを絶対パスで利用するからどうしたものか...(複数端末で Sync してる関係で)<ol><li><code>&#126;/,textlint</code>にしたらユーザ名とか考えなくていいから、なんかいい 😁</li></ol></li><li>ついかパッケージ <code>npm i -g textlint-rule-date-weekday-mismatch textlint-rule-terminology textlint-rule-ginger</code></li></ol><p>これで簡単な typo は減らせるんじゃないかな。</p><p>お気に入りのルールは<code>textlint-rule-date-weekday-mismatch</code>。これからのオレが曜日を間違うことはないぜええええ？(フラグ</p>
 </div>
 
 <div id="post-tags">
@@ -190,7 +192,7 @@
     
     <a href="/tags/textlin">textlin</a>
     
-    <a href="/tags/node">node</a>
+    <a href="/tags/nodejs">nodejs</a>
     
 </div>
 

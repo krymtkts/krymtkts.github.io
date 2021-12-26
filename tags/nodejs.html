@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts</title>
-    <link rel="canonical" href="http://krymtkts.github.io/">
+    <title>krymtkts: Posts Tagged &quot;nodejs&quot;</title>
+    <link rel="canonical" href="http://krymtkts.github.io/tags/nodejs">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts" />
-    <meta property="og:url" content="http://krymtkts.github.io/" />
+    <meta property="og:title" content="krymtkts: Posts Tagged &quot;nodejs&quot;" />
+    <meta property="og:url" content="http://krymtkts.github.io/tags/nodejs" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -33,7 +33,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li  class="active" ><a href="/">Home</a></li>
+                <li ><a href="/">Home</a></li>
                 <li
                 ><a href="/archives">Archives</a></li>
                 
@@ -172,40 +172,33 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="post">
-    <div class="post-header">
-    <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-12-26</div>
-        
+<div id="posts-by-tag">
+    <div id="page-header">
+        <h2>Posts Tagged &quot;nodejs&quot;</h2>
     </div>
-    <h2>fnm でインストールした処理系は Temp フォルダからシンボリックリンクされるので ccleaner で消える話(当然)</h2>
-</div>
-<div>
+    <ul>
     
-    <p>最近、 Node.js 処理系のバージョン管理に fnm を使っている。</p><p><a href='https://github.com/Schniz/fnm'>Schniz/fnm: 🚀 Fast and simple Node.js version manager, built in Rust</a></p><p>お仕事 PC(Windows) では Yarn を使うのだが、 それまで使っていた Nodist だとどうにも Yarn が内部的に参照する npx が新しいバージョンに変わらなくてエラーが解消できなかった。</p><p>これが fnm なら何の問題もなくサクサク動く。<a href='https://community.chocolatey.org/packages/fnm'>chocolatey</a> でインストールできるし、<code>.node-version</code>, <code>.nvmrc </code> をうまく使える点でも良、重宝している。</p><p><code>fnm env</code> で使う処理系を指定した環境変数を生成＆利用したいツールに反映させる必要があるため、 VS Code なんかは terminal 経由で起動する必要があるのだけど(それしか方法を知らん)、これは元々わたしの作業スタイルだったので特に問題ない。</p><h3 id="事件は突然に">事件は突然に</h3><p>ある日、怪現象に悩まされた。</p><p>何気なく VS Code を立ち上げると、 <code>textlint</code> が見つからないというエラーが出力されていた。<code>textlint</code> だけでなく、 <code>npm</code> も <code>node</code> も消え去っていたのだ。その時はさっさと作業を始めたかったので、処理系やモジュールを再インストールすることで現状復帰した。これが最も手っ取り早い。</p><p>この原因は後でからわかったのだが非常に単純な話であって、Temp フォルダの中身を再帰的に消したことで fnm がインストールした処理系全ても無に帰したのだ。</p><p>わたしは Temp フォルダやその他のゴミ掃除目的に ccleaner を長らく使っている。ccleaner は Temp フォルダの中身を一覧して消す。</p><p><code>fnm</code> がインストールした処理系自体は <code>$env:FNM&#95;DIR</code> に配置される。 <code>fnm env</code> を実行すると、Temp フォルダ内に <code>$env:FNM&#95;DIR</code> 配下の特定バージョンへ向けたシンボリックリンクを作成する。そのシンボリックリンクのパスは <code>$env:FNM&#95;MULTICHELL&#95;PATH</code> に格納されている。</p><p>おわかりいただけただろうか。</p><p>ccleaner のように Temp フォルダを探索的に掃除するなら、以下のコマンドで事前に削除されるファイルが何処のものか知ると良い。こんなの事故るまで頭が回らんわ。</p><pre><code class="powershell">Get-ChildItem $env:FNM&#95;MULTISHELL&#95;PATH/../ | Select-Object -Property LinkTarget
-</code></pre><h3 id="対策">対策</h3><p>現状、ccleaner 等の Temp フォルダを掃除するアプリで、 <code>fnm</code> のフォルダを除外するしかないか。 しかしそうなると、使われなくなった <code>$env:FNM&#95;MULTISHELL&#95;PATH</code> の掃除を自力でする必要が出てくる。 <code>fnm env</code> の度に処理系へのシンボリックリンクが作成されるので、掃除はこまめに行う必要がある(だからこそ Temp フォルダに作成しているのだろうけど)。</p><p><code>fnm</code> 自体には手動でこのシンボリックリンクを消すコマンドもないみたいなので、とりあえずは PowerShell の Profile で古いやつを消す様にするのが妥当なラインかな。</p><pre><code class="powershell"># てきとーにこんなのを想像
-Get-ChildItem $env:FNM&#95;MULTISHELL&#95;PATH/../ | Where-Object -Property CreationTime -LE &#40;Get-Date&#41;.AddDays&#40;-1&#41; | Remove-Item
-</code></pre>
-</div>
-
-<div id="post-tags">
-    <b>Tags: </b>
+        <li>
+            <a href="/posts/2021-12-26-fnm-tips-with-ccleaner">2021-12-26 fnm でインストールした処理系は Temp フォルダからシンボリックリンクされるので ccleaner で消える話(当然)</a>
+        </li>
     
-    <a href="/tags/fnm">fnm</a>
+        <li>
+            <a href="/posts/2021-02-12-various-stories-about-starting-to-use-nodist">2021-02-12 色々あって Nodist を使い始めた話</a>
+        </li>
     
-    <a href="/tags/nodejs">nodejs</a>
+        <li>
+            <a href="/posts/2019-04-07-lint-my-statement">2019-04-07 下手な文章を Lint する</a>
+        </li>
     
-</div>
-
-
+        <li>
+            <a href="/posts/2019-03-24_coverage-of-qunt-puppeteer">2019-03-24 QUnit で CI したい その 2</a>
+        </li>
     
-
-    <div id="prev-next">
-        
-        
-        <a class="right" href="/posts/2021-12-04-pyenv-win">2021-12-04 pyenv-win &raquo;</a>
-        
-    </div>
+        <li>
+            <a href="/posts/2019-03-21_want-to-run-qunit-in-cli">2019-03-21 QUnit で CI したい その 1</a>
+        </li>
+    
+    </ul>
 </div>
 
             </div>
