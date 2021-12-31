@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 26 Dec 2021 17:03:15 +0900
+Fri, 31 Dec 2021 16:54:29 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2021-12-31-retrospective2021
+</guid>
+<link>
+http://krymtkts.github.io/posts/2021-12-31-retrospective2021
+</link>
+<title>
+振り返り 2021 年
+</title>
+<description>
+&lt;p&gt;2021 年を振り返る。&lt;/p&gt;&lt;p&gt;2021 年のテーマは「自分を大事に」だった。肉体・精神共に大事にできてへんのちゃうん？という上半期から、大事にするための判断に絡んだ下半期。&lt;/p&gt;&lt;p&gt;決して悪い方向には向かっていないが、2021 年は迷いの多い年だった。判断としては信念に沿ったモノだったはずなのだが、外的要因や体力不足による判断低下から自分自身の判断とその結果に相当の迷いがあった。&lt;/p&gt;&lt;p&gt;大きな出来事は 2 個だけか。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;働きすぎた&lt;/li&gt;&lt;li&gt;転職&lt;/li&gt;&lt;/ul&gt;&lt;h3 id=&quot;働きすぎた&quot;&gt;働きすぎた&lt;/h3&gt;&lt;p&gt;2020 年末から 2021 年始は殆ど休みもなく「2020 年秋の新機能開発」に奔走していた。冬やけどな。 これはチーム総力戦の鬼の休日出勤によってなんとか本番へリリースされたのだけど敗戦処理は 2021 年 2 月頃まであったような感じやったな～、もはや懐かしい景色。&lt;/p&gt;&lt;p&gt;その新機能開発によって圧迫されてしまった機能もちょいちょいバグはあれど重大な問題なく本番へリリースできた(奇跡的に)。またリリース後の残作業に 1 年目の若手とおよそ 2week のスクラムもどきで敗戦処理をできたのはよかった。前職の若手教育は OJT が主なのだが、リスキーな案件ばかりで開発やらせてあげられないので、こういった場を設けられるのはやはりリードエンジニアたる所以だったなと感じる(これは自画自賛)。 この辺はまだ限界突破してなかったが、休日出勤を繰り返したことで感覚がおかしくなって、3 月以降徐々に稼働時間がかさんでいった。&lt;/p&gt;&lt;p&gt;3 月頃から入ったプロジェクトは、開発も始めていないのに締切だけあり、割り振られたリソースではどうあがいても足りないくらいだった。外向けのコミットメントもされてたせいで誰も止められない暴走列車と化したプロジェクト。今思い出してもドキドキするな～。プログラマなら感覚的に WBS とか見て「あ、やばいな」という肌感触があると思うが、まさにあれだった。打開策ないかスケジュール見直し頼んでみたりとか人足し依頼してみたような記憶もあるけど抜本的な解決に至らず。&lt;/p&gt;&lt;p&gt;どうにもできなかったので、人身御供的にリードエンジニアが全てを背負うしかあるまいなとわたしも暴走し、 SES やってた時以来の過重労働で 36 協定の制限突破する勢い出してた。万が一法律に触れそうなら会社も動くやろ的な。いやーほんまに良くない判断ね。まさにアドレナリンジャンキーと化していた。 結局スケジュールに決定的に間に合わないと判断してもらえたことで、わたしからいくつかのしごとが引き剥がしてもらい、エンジニアがドカドカ投入されてメチャクチャ綱渡り的に開発・リリースしていった形だったような気がする。 正直なところ肉体・精神共に不調だったので、細かく覚えてない。これも日記見ながら書いたくらいや。ある種、燃え尽き症候群的な状態に陥ってたのだろう。&lt;/p&gt;&lt;h3 id=&quot;転職&quot;&gt;転職&lt;/h3&gt;&lt;p&gt;そしてこの過重労働の間に、ヘッドハンター()からオファーをもらって、転職することにした。&lt;/p&gt;&lt;p&gt;当時の判断は&lt;a href='/posts/2021-09-28-jobchange-2021'&gt;過去の日記&lt;/a&gt;に書いてあるが、この振り返りの文脈でいうとまた思うところがある。プロジェクトの悪いところ全部盛りみたいな状況から「こんなに苦しいならもうチーム開発などいらぬ！」みたいな聖帝的感覚に陥ってただろうなと改めて感じる(現職はほぼ一人ひとり働く感じ)。わたしの中では前職の元同僚達と働くのは楽しいことだったので転職するのに相当の迷いがあった。一緒に飲んだらかなりの確率でわたしが酔っ払って負傷するので危険な仲間。&lt;/p&gt;&lt;p&gt;この転職、入社前から諸々のトラブルはあったものの、辛うじてまだ生き残ってる。直前にヘッドハンター()に手のひら返されたり、ヘッド(略)が先に入れた社員が即辞めてたり、1 ヶ月パイセンが左遷(とわたしは表現している)されたりして、あんま精神衛生の環境は良くない。&lt;/p&gt;&lt;p&gt;ただ悪いことばかりではない。リモート慣れしていない会社にフルリモートで参画しても、関係者と意見交換しつつ一人で仕事を進められる自信ができた。また最近仕事で深く踏み込んでなかったフロントエンド開発(TypeScript + React.js で Atomic Components する)をやってフロントエンド戦国時代を肌で感じたりできたのは良。 入社前からやりたかったところは未だやれてない状況なので煮え切らないが、これまた期待値だけで報酬は上がったりしてるので、筋は悪くないのかなと。&lt;/p&gt;&lt;p&gt;やっぱどこでもそれなりに動けるな、という自信が確たるもんになった。&lt;/p&gt;&lt;h3 id=&quot;2021&amp;#95;年目標と成果&quot;&gt;2021 年目標と成果&lt;/h3&gt;&lt;p&gt;年初に以下の目標を設定した。50%超えたしぼちぼちということにする。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;❌ 住みたい場所を決める&lt;ul&gt;&lt;li&gt;意見のすり合わせが進んでいない&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;⭕️ 仕事上の掃除&lt;ul&gt;&lt;li&gt;掃除の仕方が転職って形になったが、引き継ぎも最低限やったので良しとしてくれ...&lt;/li&gt;&lt;li&gt;のちの調査によると、引き継いだ仕事の 33% だけがわたしのシナリオ通り進めて、他は放置されているらしい。ショッキングな結果やがそこは残された者共や前職が決めるとこやからな、何も言うまい&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;⭕️ 昇給&lt;ul&gt;&lt;li&gt;前職の昇給は満足じゃなかったが、転職して上がった&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;🔺 積ん読の消化&lt;ul&gt;&lt;li&gt;技術書以外含めて 1 冊/2 ヵ月&lt;/li&gt;&lt;li&gt;ライフハックや書評とかのライトな本から再開し、今は技術書も読めるようになってきた。転職後少しずつ習慣を取り戻せている&lt;/li&gt;&lt;li&gt;やはり読書のためには疲労感の改善が重要やな&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;❌ OSS へのコントリビューション&lt;ul&gt;&lt;li&gt;&lt;a href='https://github.com/aws/aws-tools-for-powershell/issues/225'&gt;&lt;code&gt;aws/aws-tools-for-powershell&lt;/code&gt; のバグレポート&lt;/a&gt;しただけ&lt;ul&gt;&lt;li&gt;なんか忙しそうで進展ないし、修正試みた方が良かったな&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;あとは自作のツールか。まだ PSGallery に登録してないけど。 &lt;a href='https://github.com/krymtkts/PSMFAttendance'&gt;krymtkts/PSMFAttendance&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;🔺 自作ツールの更新&lt;ul&gt;&lt;li&gt;&lt;a href='https://github.com/krymtkts/Get-GzipContent'&gt;krymtkts/Get-GzipContent: Get-Content for gzip files.&lt;/a&gt;&lt;ul&gt;&lt;li&gt;ちょっとだけやった&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://github.com/krymtkts/mccall-bot'&gt;mccall-bot&lt;/a&gt;&lt;ul&gt;&lt;li&gt;やってない&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;⭕️ ギター練習を 30 分/週 3 回&lt;ul&gt;&lt;li&gt;割と出来てる。耳コピ少し/songsterr で曲覚えたり&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;⭕️ &lt;a href='https://krymtkts.github.io/'&gt;このブログ&lt;/a&gt;を毎月更新する&lt;ul&gt;&lt;li&gt;6 月ズルしたけどコンスタントにかけるようになったかな&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;⭕️ 日頃使ってるスニペット的なのを Gist に登録していく&lt;ul&gt;&lt;li&gt;&lt;a href='https://gist.github.com/krymtkts'&gt;krymtkts’s gists&lt;/a&gt; みたら月 1 個くらいで数少ないけどぼちぼちやっとるな&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;やっぱ転職の判断した頃から制御を自分に戻せてるのか、自分向けの目標は簡単なところからできるようになったんじゃないかな。 ここから大きく変化を～とか欲張らず、ちまちま積み重ねれたらいいな。&lt;/p&gt;&lt;p&gt;おわり。&lt;/p&gt;
+</description>
+<pubDate>
+Fri, 31 Dec 2021 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-12-26-fnm-tips-with-ccleaner
