@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Pipenvのテンプレを作った</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-05-11-pipenv-skeleton">
+    <title>krymtkts: 2022</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-01-09-planning">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Pipenvのテンプレを作った" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-05-11-pipenv-skeleton" />
+    <meta property="og:title" content="krymtkts: 2022" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-01-09-planning" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -175,30 +175,28 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-05-11</div>
+        <div class="col-lg-6">2022-01-09</div>
         
     </div>
-    <h2>Pipenvのテンプレを作った</h2>
+    <h2>2022</h2>
 </div>
 <div>
     
-    <p><a href='/posts/2019-04-29-bias-amp-2issue'>前回</a>の最後に触れた、仕事で経験を得た2019年のイケてそうなPython開発環境構築について。</p><p>この度新し目と思われるPythonのプロジェクト構築について学んだので、次回Pythonを触ることがあったとしてもぱぱっと始められるようにテンプレートを作ろうと思った次第である。</p><p>過去のeasy_installとかpipまでで知識が止まってたが、新たにpipenvを知ってかなり便利に使えるいい感じの印象を得たのもあって、動機付けされた感じ。</p><p>なので、勉強がてらGW中のお楽しみにちょろっと作った。</p><h3 id="作ったもの">作ったもの</h3><p><a href='https://github.com/krymtkts/pipenv-skeleton'>krymtkts/pipenv-skeleton</a></p><p>いろいろとググって、pipとかvirtualenvの時代は過ぎ去っており、いまはpienvがイケていると直感を得た。 なのでpipenvについて以下の記事などを参考にこのテンプレを作った。</p><ul><li><a href='https://pipenv-ja.readthedocs.io/ja/translate-ja/'>Pipenv: 人間のためのPython開発ワークフロー — pipenv 2018.11.27.dev0 ドキュメント</a></li><li><a href='https://www.natsukium.com/blog/2019-02-18/python/'>Python環境構築ベストプラクティス2019 - ばいおいんふぉっぽいの！</a></li><li><a href='https://qiita.com/youkidkk/items/b6a6e39ee3a109001c75'>Windows + Python 3.6 + PipEnv + Visual Studio Code でPython開発環境 - Qiita</a></li><li><a href='https://qiita.com/tonluqclml/items/b09f4a5ed04ebcbd0af1'>既存プロジェクトに pipenv を導入した方法 - Qiita</a></li></ul><p>予めLinterやらFormatterやらをdevPackageとして用意している。LinterにはPylintを用意したが、エラーの自動修正がないようなのでautopep8も用意した。</p><p>あと静的型付けに守られた世界で仕事できるように、MyPyも用意している。Better Bashとして使うときは大げさかもしれないけど、その時は単にMyPyを使わなかったらいいだけ。</p><p>このプロジェクトをコピペして、moduleのところをこねこねして使うイメージ。</p><p>Pythonのモジュールシステムについてはまだ理解が浅い。以下を参考にドキュメントをあたって、<code>&#95;&#95;init.py&#95;&#95;</code>,<code>&#95;&#95;main.py&#95;&#95;</code>のらへんを定型化した感じ。</p><ul><li><a href='https://stackoverflow.com/questions/448271/what-is-init-py-for'>python - What is <b>init</b>.py for? - Stack Overflow</a></li><li><a href='https://stackoverflow.com/questions/4042905/what-is-main-py'>python - What is <b>main</b>.py? - Stack Overflow</a></li></ul><p>ただ、<code>&#95;&#95;init.py&#95;&#95;</code>は名前空間パッケージではなくていいようだし、よりモダンな方法に寄せたいので再検討するかな。単に今はわたしの知識がそこまで及んでない😭Pythonの言語仕様もちゃんと勉強したいのう。</p><p>いろいろ足りない点があるが、それらは今後改善できれば良いかな。</p><ul><li>moduleの名前をいろいろ変えないといけないのが面倒なので、なんか改善ができれば良。</li><li>テストがないので足したい。</li><li>なんかバッジ足したい。ビルドとか...</li><li>mypyで</li></ul><h3 id="まとめ">まとめ</h3><p>Python3たのしい。</p><p>せっかくテンプレを作ったので、なんかゴミスクリプトでも良いのでちまちま書いていきたい所存🤔</p><p>mypyについてもメモためていこ。</p>
+    <p>できたら or できなかったらどうなるというのがないが、例年通り目標をたてる。</p><h4 id="テーマ:&#95;自分の人生は自分で決める">テーマ: 自分の人生は自分で決める</h4><p>これは自分の中でずっと言い聞かせていることなのだけど、去年一昨年は外的要因によって見失いがちだった。改めて見つめ直したいテーマにした。</p><p>単になんでもかんでも自分で決めたいわけじゃなくて、意見を持ってこうなのだと考えているところに、決断の資源を割く様にする。</p><h3 id="2021&#95;年の目標">2021 年の目標</h3><p>継続する目標。前年未達だった目標は基本継続としたいが、OSS への貢献については保留とする。</p><p>なんでかというとわたし自身が積極的でなくて「バグ見っけたら起票しよう」くらいのアクションしか例年やってないから、個別に項を設けて書いても意味がない。 AWS Tools for PowerShell のくだりで実感したが、やるんだったら Pull Request をマージしてくらいまでドライブしないと、如何なる小規模プロジェクトでもメンテナの負荷になり得る。結局コードで殴りつけてあげないと誰のためにもならない。とはいえ貢献したいプロジェクトを探して～とかやるのはなんか違う。 自作ツールの更新周りで既存のツールを色々見ていくだろうから、その流れで貢献することがあればできたらいいかなくらいにする。なんか無責任な感じもするけど、わたしの資源はわたしが思った(というか期待した)ほど多くなくて、やりたいことができないってのが常なので。</p><ul><li>住みたい場所を決める<ul><li>わたしは田舎に住み(薪ストーブやり)たいが、妻は車でなくても生活圏内を移動できることを重視してるので、落とし所を探す。なんか良い選択肢ないかなー</li></ul></li><li>積ん読の消化 1 冊/月<ul><li>前年からペースを上げて、読書習慣を改善する</li></ul></li><li>自作ツールの更新<ul><li><a href='https://github.com/krymtkts/PSMFAttendance'>PSMFAttendance</a><ul><li>はよ Gallery に登録しろ</li></ul></li><li><a href='https://github.com/krymtkts/mccall-bot'>mccall-bot</a><ul><li>現職は Slack 文化がないため使い所が自分のチャンネルしかなく持て余している。放置したままだとマッコールさんにも申し訳ないので、なんか行く末を決めて差し上げたほうが良いのかもと考えている</li></ul></li></ul></li><li>ギター練習を 30 分/毎日<ul><li>たまにはバンド練習やりたいけど、世情を見つつ判断する</li></ul></li><li><a href='https://krymtkts.github.io/'>このブログ</a><ul><li>毎月の更新リズムを維持する</li><li><code>todo.txt</code> に放置テーマが結構溜まってきていることも鑑み、粛々と消化したい</li></ul></li></ul><p>追加する目標。</p><ul><li>深酒で怪我をしない<ul><li>寄る年波もあり怪我の治りが遅いので超重要課題</li></ul></li><li>知らない言語を学ぶ F#<ul><li>PowerShell で面倒なスクリプトを書くとき、代わりに F#で書こうという気になったので今勉強している</li><li>なんかツールを書いたらゴールとしよう</li></ul></li></ul>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/python">python</a>
+    <a href="/tags/goal">goal</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-06-02_install-shfmt-to-win-using-cli">&laquo; 2019-06-02 シェルスクリプトのフォーマッタをCLIでインストールする</a>
         
-        
-        <a class="right" href="/posts/2019-04-29-bias-amp-2issue">2019-04-29 BIAS Amp 2で保存したアンプが消える問題 &raquo;</a>
+        <a class="right" href="/posts/2021-12-31-retrospective2021">2021-12-31 振り返り 2021 年 &raquo;</a>
         
     </div>
 

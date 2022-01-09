@@ -12,11 +12,28 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Fri, 31 Dec 2021 16:54:29 +0900
+Sun, 09 Jan 2022 16:41:15 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2022-01-09-planning
+</guid>
+<link>
+http://krymtkts.github.io/posts/2022-01-09-planning
+</link>
+<title>
+2022
+</title>
+<description>
+&lt;p&gt;できたら or できなかったらどうなるというのがないが、例年通り目標をたてる。&lt;/p&gt;&lt;h4 id=&quot;テーマ:&amp;#95;自分の人生は自分で決める&quot;&gt;テーマ: 自分の人生は自分で決める&lt;/h4&gt;&lt;p&gt;これは自分の中でずっと言い聞かせていることなのだけど、去年一昨年は外的要因によって見失いがちだった。改めて見つめ直したいテーマにした。&lt;/p&gt;&lt;p&gt;単になんでもかんでも自分で決めたいわけじゃなくて、意見を持ってこうなのだと考えているところに、決断の資源を割く様にする。&lt;/p&gt;&lt;h3 id=&quot;2021&amp;#95;年の目標&quot;&gt;2021 年の目標&lt;/h3&gt;&lt;p&gt;継続する目標。前年未達だった目標は基本継続としたいが、OSS への貢献については保留とする。&lt;/p&gt;&lt;p&gt;なんでかというとわたし自身が積極的でなくて「バグ見っけたら起票しよう」くらいのアクションしか例年やってないから、個別に項を設けて書いても意味がない。 AWS Tools for PowerShell のくだりで実感したが、やるんだったら Pull Request をマージしてくらいまでドライブしないと、如何なる小規模プロジェクトでもメンテナの負荷になり得る。結局コードで殴りつけてあげないと誰のためにもならない。とはいえ貢献したいプロジェクトを探して～とかやるのはなんか違う。 自作ツールの更新周りで既存のツールを色々見ていくだろうから、その流れで貢献することがあればできたらいいかなくらいにする。なんか無責任な感じもするけど、わたしの資源はわたしが思った(というか期待した)ほど多くなくて、やりたいことができないってのが常なので。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;住みたい場所を決める&lt;ul&gt;&lt;li&gt;わたしは田舎に住み(薪ストーブやり)たいが、妻は車でなくても生活圏内を移動できることを重視してるので、落とし所を探す。なんか良い選択肢ないかなー&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;積ん読の消化 1 冊/月&lt;ul&gt;&lt;li&gt;前年からペースを上げて、読書習慣を改善する&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;自作ツールの更新&lt;ul&gt;&lt;li&gt;&lt;a href='https://github.com/krymtkts/PSMFAttendance'&gt;PSMFAttendance&lt;/a&gt;&lt;ul&gt;&lt;li&gt;はよ Gallery に登録しろ&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://github.com/krymtkts/mccall-bot'&gt;mccall-bot&lt;/a&gt;&lt;ul&gt;&lt;li&gt;現職は Slack 文化がないため使い所が自分のチャンネルしかなく持て余している。放置したままだとマッコールさんにも申し訳ないので、なんか行く末を決めて差し上げたほうが良いのかもと考えている&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;ギター練習を 30 分/毎日&lt;ul&gt;&lt;li&gt;たまにはバンド練習やりたいけど、世情を見つつ判断する&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;a href='https://krymtkts.github.io/'&gt;このブログ&lt;/a&gt;&lt;ul&gt;&lt;li&gt;毎月の更新リズムを維持する&lt;/li&gt;&lt;li&gt;&lt;code&gt;todo.txt&lt;/code&gt; に放置テーマが結構溜まってきていることも鑑み、粛々と消化したい&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;追加する目標。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;深酒で怪我をしない&lt;ul&gt;&lt;li&gt;寄る年波もあり怪我の治りが遅いので超重要課題&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;知らない言語を学ぶ F#&lt;ul&gt;&lt;li&gt;PowerShell で面倒なスクリプトを書くとき、代わりに F#で書こうという気になったので今勉強している&lt;/li&gt;&lt;li&gt;なんかツールを書いたらゴールとしよう&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;
+</description>
+<pubDate>
+Sun, 09 Jan 2022 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2021-12-31-retrospective2021
