@@ -12,11 +12,44 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 09 Jan 2022 16:41:15 +0900
+Sat, 15 Jan 2022 23:39:57 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh
+</guid>
+<link>
+http://krymtkts.github.io/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh
+</link>
+<title>
+Windows 11 のタスクバーを天に(PowerShell で)
+</title>
+<description>
+&lt;p&gt;Windows11 ではメニューからタスクバーを天に持ち上げれなくなったので、みんなレジストリを操作して実現している。手順はどこでも手に入るが、以下のページを参照した。&lt;/p&gt;&lt;p&gt;&lt;a href='https://www.tomshardware.com/how-to/windows-11-taskbar-move-to-top'&gt;How to Move the Taskbar to the Top in Windows 11 | Tom's Hardware&lt;/a&gt;&lt;/p&gt;&lt;ol&gt;&lt;li&gt;&lt;code&gt;regedit&lt;/code&gt; を開く&lt;/li&gt;&lt;li&gt;&lt;code&gt;HKEY&amp;#95;CURRENT&amp;#95;USER\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3&lt;/code&gt; を開く&lt;/li&gt;&lt;li&gt;&lt;code&gt;Settings&lt;/code&gt; を編集し保存する&lt;ul&gt;&lt;li&gt;2 行目を &lt;code&gt;7A F4 00 00 03 00 00 00&lt;/code&gt; -&gt; &lt;code&gt;7A F4 00 00 01 00 00 00&lt;/code&gt;にする&lt;ul&gt;&lt;li&gt;デフォルトの&lt;code&gt;03&lt;/code&gt;が下、&lt;code&gt;01&lt;/code&gt;が上というわけ&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;explorer&lt;/code&gt; を再起動する&lt;ul&gt;&lt;li&gt;コマンドプロンプトで&lt;ol&gt;&lt;li&gt;&lt;code&gt;taskkill /f /im explorer.exe&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;start explorer.exe&lt;/code&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;これが PC 変わる度にやるのクソめんどいので、PowerShell でスクリプト化した。 そんなに機会はないけど一々覚えてないので先程のページを見にったりと、とにかくめんどい。&lt;/p&gt;&lt;p&gt;PowerShell 7.2.1 でやった。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$ShowHex = {param &amp;#40;&amp;#91;array&amp;#93;$arr&amp;#41; &amp;#40;$arr | %{&amp;#91;System.Convert&amp;#93;::ToHexString&amp;#40;$&amp;#95;&amp;#41;}&amp;#41; -join ' '}
+$path = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3'
+$key = 'Settings'
+$org = Get-ItemProperty $path | Select-Object -ExpandProperty $key
+$ShowHex.Invoke&amp;#40;&amp;#40;,$org&amp;#41;&amp;#41;
+
+$new = @&amp;#40;&amp;#41; + $org
+$new&amp;#91;12&amp;#93; = 0x01
+$ShowHex.Invoke&amp;#40;&amp;#40;,$new&amp;#41;&amp;#41;
+Compare-Object $org $new
+
+Set-ItemProperty $path -name $key -Value $new
+
+Stop-Process -Name explorer -Force
+## if explorer doesn't restart, start explorer manually.
+# Start-Process -Name explorer
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;万が一失敗してたら &lt;code&gt;$org&lt;/code&gt; で &lt;code&gt;Set-ItemProperty&lt;/code&gt; して戻す必要があるので、成功(≒ 天にタスクバー)を確認するまで窓を閉じない方が良かろう。 ちゃんと期待の更新ができているか確認するために、レジストリの値を 16 進数に変換して標準出力までしちゃう。&lt;/p&gt;&lt;p&gt;&lt;a href='https://gist.github.com/krymtkts/ba83a0612bba84b5e8229d64e9d8681a'&gt;Gist はこちら&lt;/a&gt;。&lt;/p&gt;&lt;h3 id=&quot;おまけ&quot;&gt;おまけ&lt;/h3&gt;&lt;p&gt;&lt;code&gt;taskkill&lt;/code&gt; は PowerShell で言うところの何か調べたときのページ ↓&lt;/p&gt;&lt;p&gt;&lt;a href='https://www.pdq.com/blog/what-is-the-powershell-equivalent-of-taskkill/'&gt;What Is The PowerShell Equivalent Of Taskkill | PDQ.com&lt;/a&gt;&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt; Okay, I'll be the first to admit it; the name is a little lackluster. Especially when compared to &lt;strong&gt;TASKKILL!!!!!!&lt;/strong&gt; &lt;strong&gt;Stop-Process&lt;/strong&gt; just doesn't carry the same hostile undertones Thankfully, Microsoft at least gave us &lt;strong&gt;kill&lt;/strong&gt; as an alias, so we've got that going for us. Regardless, let's see if it still packs the same task-killing punch. &lt;/p&gt;&lt;/blockquote&gt;&lt;blockquote&gt;&lt;p&gt; さて、最初に断っておきますが、このネーミングは少し物足りないですね。特に&lt;strong&gt;TASKKILL!!!!!!&lt;/strong&gt;と比較するとね。 ありがたいことに、Microsoft は少なくとも&lt;strong&gt;kill&lt;/strong&gt;という別名をつけてくれました。 ともかく、同じようにタスクを殺すパンチをパックしているかどうか見てみましょう。 &lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;こんなん笑うわｗ&lt;/p&gt;
+</description>
+<pubDate>
+Sat, 15 Jan 2022 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2022-01-09-planning

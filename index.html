@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh">Windows 11 のタスクバーを天に(PowerShell で)</a></li>
+                        
                         <li><a href="/posts/2022-01-09-planning">2022</a></li>
                         
                         <li><a href="/posts/2021-12-31-retrospective2021">振り返り 2021 年</a></li>
-                        
-                        <li><a href="/posts/2021-12-26-fnm-tips-with-ccleaner">fnm でインストールした処理系は Temp フォルダからシンボリックリンクされるので ccleaner で消える話(当然)</a></li>
                         
                         
 
@@ -175,20 +175,38 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-01-09</div>
+        <div class="col-lg-6">2022-01-15</div>
         
     </div>
-    <h2>2022</h2>
+    <h2>Windows 11 のタスクバーを天に(PowerShell で)</h2>
 </div>
 <div>
     
-    <p>できたら or できなかったらどうなるというのがないが、例年通り目標をたてる。</p><h4 id="テーマ:&#95;自分の人生は自分で決める">テーマ: 自分の人生は自分で決める</h4><p>これは自分の中でずっと言い聞かせていることなのだけど、去年一昨年は外的要因によって見失いがちだった。改めて見つめ直したいテーマにした。</p><p>単になんでもかんでも自分で決めたいわけじゃなくて、意見を持ってこうなのだと考えているところに、決断の資源を割く様にする。</p><h3 id="2021&#95;年の目標">2021 年の目標</h3><p>継続する目標。前年未達だった目標は基本継続としたいが、OSS への貢献については保留とする。</p><p>なんでかというとわたし自身が積極的でなくて「バグ見っけたら起票しよう」くらいのアクションしか例年やってないから、個別に項を設けて書いても意味がない。 AWS Tools for PowerShell のくだりで実感したが、やるんだったら Pull Request をマージしてくらいまでドライブしないと、如何なる小規模プロジェクトでもメンテナの負荷になり得る。結局コードで殴りつけてあげないと誰のためにもならない。とはいえ貢献したいプロジェクトを探して～とかやるのはなんか違う。 自作ツールの更新周りで既存のツールを色々見ていくだろうから、その流れで貢献することがあればできたらいいかなくらいにする。なんか無責任な感じもするけど、わたしの資源はわたしが思った(というか期待した)ほど多くなくて、やりたいことができないってのが常なので。</p><ul><li>住みたい場所を決める<ul><li>わたしは田舎に住み(薪ストーブやり)たいが、妻は車でなくても生活圏内を移動できることを重視してるので、落とし所を探す。なんか良い選択肢ないかなー</li></ul></li><li>積ん読の消化 1 冊/月<ul><li>前年からペースを上げて、読書習慣を改善する</li></ul></li><li>自作ツールの更新<ul><li><a href='https://github.com/krymtkts/PSMFAttendance'>PSMFAttendance</a><ul><li>はよ Gallery に登録しろ</li></ul></li><li><a href='https://github.com/krymtkts/mccall-bot'>mccall-bot</a><ul><li>現職は Slack 文化がないため使い所が自分のチャンネルしかなく持て余している。放置したままだとマッコールさんにも申し訳ないので、なんか行く末を決めて差し上げたほうが良いのかもと考えている</li></ul></li></ul></li><li>ギター練習を 30 分/毎日<ul><li>たまにはバンド練習やりたいけど、世情を見つつ判断する</li></ul></li><li><a href='https://krymtkts.github.io/'>このブログ</a><ul><li>毎月の更新リズムを維持する</li><li><code>todo.txt</code> に放置テーマが結構溜まってきていることも鑑み、粛々と消化したい</li></ul></li></ul><p>追加する目標。</p><ul><li>深酒で怪我をしない<ul><li>寄る年波もあり怪我の治りが遅いので超重要課題</li></ul></li><li>知らない言語を学ぶ F#<ul><li>PowerShell で面倒なスクリプトを書くとき、代わりに F#で書こうという気になったので今勉強している</li><li>なんかツールを書いたらゴールとしよう</li></ul></li></ul>
+    <p>Windows11 ではメニューからタスクバーを天に持ち上げれなくなったので、みんなレジストリを操作して実現している。手順はどこでも手に入るが、以下のページを参照した。</p><p><a href='https://www.tomshardware.com/how-to/windows-11-taskbar-move-to-top'>How to Move the Taskbar to the Top in Windows 11 | Tom's Hardware</a></p><ol><li><code>regedit</code> を開く</li><li><code>HKEY&#95;CURRENT&#95;USER\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3</code> を開く</li><li><code>Settings</code> を編集し保存する<ul><li>2 行目を <code>7A F4 00 00 03 00 00 00</code> -> <code>7A F4 00 00 01 00 00 00</code>にする<ul><li>デフォルトの<code>03</code>が下、<code>01</code>が上というわけ</li></ul></li></ul></li><li><code>explorer</code> を再起動する<ul><li>コマンドプロンプトで<ol><li><code>taskkill /f /im explorer.exe</code></li><li><code>start explorer.exe</code></li></ol></li></ul></li></ol><p>これが PC 変わる度にやるのクソめんどいので、PowerShell でスクリプト化した。 そんなに機会はないけど一々覚えてないので先程のページを見にったりと、とにかくめんどい。</p><p>PowerShell 7.2.1 でやった。</p><pre><code class="powershell">$ShowHex = {param &#40;&#91;array&#93;$arr&#41; &#40;$arr | %{&#91;System.Convert&#93;::ToHexString&#40;$&#95;&#41;}&#41; -join ' '}
+$path = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3'
+$key = 'Settings'
+$org = Get-ItemProperty $path | Select-Object -ExpandProperty $key
+$ShowHex.Invoke&#40;&#40;,$org&#41;&#41;
+
+$new = @&#40;&#41; + $org
+$new&#91;12&#93; = 0x01
+$ShowHex.Invoke&#40;&#40;,$new&#41;&#41;
+Compare-Object $org $new
+
+Set-ItemProperty $path -name $key -Value $new
+
+Stop-Process -Name explorer -Force
+## if explorer doesn't restart, start explorer manually.
+# Start-Process -Name explorer
+</code></pre><p>万が一失敗してたら <code>$org</code> で <code>Set-ItemProperty</code> して戻す必要があるので、成功(≒ 天にタスクバー)を確認するまで窓を閉じない方が良かろう。 ちゃんと期待の更新ができているか確認するために、レジストリの値を 16 進数に変換して標準出力までしちゃう。</p><p><a href='https://gist.github.com/krymtkts/ba83a0612bba84b5e8229d64e9d8681a'>Gist はこちら</a>。</p><h3 id="おまけ">おまけ</h3><p><code>taskkill</code> は PowerShell で言うところの何か調べたときのページ ↓</p><p><a href='https://www.pdq.com/blog/what-is-the-powershell-equivalent-of-taskkill/'>What Is The PowerShell Equivalent Of Taskkill | PDQ.com</a></p><blockquote><p> Okay, I'll be the first to admit it; the name is a little lackluster. Especially when compared to <strong>TASKKILL!!!!!!</strong> <strong>Stop-Process</strong> just doesn't carry the same hostile undertones Thankfully, Microsoft at least gave us <strong>kill</strong> as an alias, so we've got that going for us. Regardless, let's see if it still packs the same task-killing punch. </p></blockquote><blockquote><p> さて、最初に断っておきますが、このネーミングは少し物足りないですね。特に<strong>TASKKILL!!!!!!</strong>と比較するとね。 ありがたいことに、Microsoft は少なくとも<strong>kill</strong>という別名をつけてくれました。 ともかく、同じようにタスクを殺すパンチをパックしているかどうか見てみましょう。 </p></blockquote><p>こんなん笑うわｗ</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/goal">goal</a>
+    <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/windows">windows</a>
     
 </div>
 
@@ -198,7 +216,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2021-12-31-retrospective2021">2021-12-31 振り返り 2021 年 &raquo;</a>
+        <a class="right" href="/posts/2022-01-09-planning">2022-01-09 2022 &raquo;</a>
         
     </div>
 </div>
