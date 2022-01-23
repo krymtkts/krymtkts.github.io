@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Rote53 ホストゾーンの NS レコード</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone">
+    <title>krymtkts: Windows のタスクを操作する(PowerShell で)</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-01-23-scheduled-task-in-powershell">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Rote53 ホストゾーンの NS レコード" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone" />
+    <meta property="og:title" content="krymtkts: Windows のタスクを操作する(PowerShell で)" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-01-23-scheduled-task-in-powershell" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -175,35 +175,63 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2020-12-27</div>
+        <div class="col-lg-6">2022-01-23</div>
         
     </div>
-    <h2>Rote53 ホストゾーンの NS レコード</h2>
+    <h2>Windows のタスクを操作する(PowerShell で)</h2>
 </div>
 <div>
     
-    <p>これで 12 月だいぶ躓いたので書いとくわ。思い出じゃ。</p><p>NS レコードは Simple Routing しかサポートしてへん。まずそれは AWS Management Console でわかる。 これを AWSPowerShell のパラメータでどうやんのかがわからんかった。ワタシが阿呆やからに違いない。</p><p><script src="https://gist.github.com/krymtkts/7774bb65f2f0351697a47383aefe9ec9.js"></script></p><p>はまったところ。</p><p><a href='https://docs.aws.amazon.com/cli/latest/reference/route53/change-resource-record-sets.html'>change-resource-record-sets — AWS CLI 1.18.203 Command Reference</a></p><blockquote><p> SetIdentifier -> (string) </p><p> > > Resource record sets that have a routing policy other than simple: An identifier that differentiates among multiple resource record sets that have the same combination of name and type, such as multiple weighted resource record sets named acme.example.com that have a type of A. In a group of resource record sets that have the same name and type, the value of SetIdentifier must be unique for each resource record set. </p><p> > For information about routing policies, see Choosing a Routing Policy in the Amazon Route 53 Developer Guide . </p></blockquote><p>Alias レコードのパラメータからコピペしてたので<code>SetIdentifier</code>を残したままにしてしまっていた。NS レコードは Simple Routing のみを許可するのでエラーになるのね。↓</p><pre><code class="powershell">  52 |  Edit-R53ResourceRecordSet -HostedZoneId $ParentHostedZone.Id -ChangeB …
-     |  &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-     | Invalid request: Expected exactly one of &#91;Weight, Region, Failover, GeoLocation, or MultiValueAnswer&#93;, but found none in Change with &#91;Action=CREATE, Name=test.testtest.com, Type=NS, SetIdentifier=nandeyanen&#93;
-</code></pre><p>わかりにくぅ！</p><p>おわり 😭</p>
+    <p>決まった時間までにやらなければいけないことがあるとする。それを人間力でカバーするのは、それなりに資源の浪費になるので自動化したいとする。 最近の Windows ならタスクスケジューラで直に書いてもいいけど、操作めんどすぎるので普通に考えたらスクリプトにするでしょう。 これを Windows 11 と PowerShell 7.2.1 でやる。</p><p>それでは <a href='https://docs.microsoft.com/en-us/powershell/module/scheduledtasks/?view=windowsserver2019-ps'>ScheduledTasks Module</a> を使う。 このモジュールは Window なら以下のシステムフォルダにひっそりと存在する。令和のこの時代になんつー古い(v1)話なんや、とは思う。</p><pre><code class="powershell">Get-Module -Name ScheduledTasks -ListAvailable
+
+    Directory: C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
+
+ModuleType Version    PreRelease Name                                PSEdition ExportedCommands
+---------- -------    ---------- ----                                --------- ----------------
+Manifest   1.0.0.0               ScheduledTasks                      Core,Desk {Get-ScheduledTask, Set-ScheduledTask, Register-Sche…
+</code></pre><p>WindowsPowerShell(v5.1)なら <a href='https://docs.microsoft.com/en-us/powershell/module/psscheduledjob/?view=powershell-5.1'>PSScheduledJob Module</a> が使えるが、 PowerShell 7 では使えない(<code>Import-Module</code> もできない)ので、 <code>ScheduledTask</code> 一択かと。</p><p>ではいくつかのレシピを以下に記す。</p><h3 id="日次で指定時間に実行(人間味のあるズレを添えて)">日次で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = &#40;get-command pwsh&#41;.Source
+$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command &quot;Invoke-MyCommand&quot;'
+$trigger = New-ScheduledTaskTrigger -Daily -At 7:46 -RandomDelay 00:10
+$task = New-ScheduledTask -Action $action -Trigger $trigger
+Register-ScheduledTask -InputObject $task -TaskName 'morning-action'
+</code></pre><h3 id="指定時間に起動して実行待ちするタスク&#95;≒&#95;実行許諾の通知的なもの">指定時間に起動して実行待ちするタスク ≒ 実行許諾の通知的なもの</h3><pre><code class="powershell">$pwsh = &#40;get-command pwsh&#41;.Source
+$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-Command &quot;{Read-Host `&quot;press key`&quot; | Out-Null; Invoke-MyCommand}.Invoke&#40;&#41;&quot;'
+$trigger = New-ScheduledTaskTrigger -Daily -At 17:00
+$task = New-ScheduledTask -Action $action -Trigger $trigger
+Register-ScheduledTask -InputObject $task -TaskName 'evening-action'
+</code></pre><h3 id="単発で指定時間に実行(人間味のあるズレを添えて)">単発で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = &#40;get-command pwsh&#41;.Source
+$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command &quot;Invoke-MyCommand&quot;'
+$jitter = &#40;Get-Random -Minimum 30 -Maximum &#40;60&#42;5&#41;&#41;
+$timing = &#40;Get-Date '2022-01-30 17:05'&#41;.AddSeconds&#40;$jitter&#41;
+$trigger = New-ScheduledTaskTrigger -At $timing -Once
+$setting = New-ScheduledTaskSettingsSet -DeleteExpiredTaskAfter 00:00:10
+$task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $setting | `
+    %{ $&#95;.Triggers&#91;0&#93;.EndBoundary = $timing.AddMinutes&#40;1&#41;.ToString&#40;'s'&#41;; $&#95;}
+Register-ScheduledTask -InputObject $task -TaskName 'single-action'
+</code></pre><p>このレシピではズレの算出は自前で行っている。<code>New-ScheduledTaskTrigger</code> に <code>-RandomDelay</code> を指定しておくのもアリだが、単発であるし具体的にいつ実行されるかがわかる方が好ましいかと考えた。</p><p>単発タスクなので、実行後にタスクを廃棄したいとする。その場合は例のように <code>-Settings</code> で自動削除の設定を有効にする必要がある。 同時に、タスクの期限切れの日時も指定する必要があるが、これはコマンドレットのオプションでは設定できない。直接オブジェクトに代入することで設定する(各 <code>Triggers</code> で <code>EndBoundary</code> を設定)。</p><p>参照: <a href='https://stackoverflow.com/questions/29337135/powershell-v4-create-remote-task-scheduler-task-set-to-expire-and-delete/35777432#35777432'>Powershell v4. Create remote task scheduler task set to expire and delete - Stack Overflow</a></p><h3 id="注意">注意</h3><p>いくつかの注意点がある。</p><h4 id="実行ファイルは絶対パス指定">実行ファイルは絶対パス指定</h4><p>実行ファイルは絶パス(絶対パスのわかりにくい略称)指定じゃないといけない。コマンドプロンプトでパスを通していたとしても、 <code>pwsh</code> とかだとタスクスケジューラちゃんは実行ファイルを見つけられない。</p><h4 id="<code>pwsh</code>&#95;の引数&#95;<code>command</code>&#95;はダブルクォートで書く"><code>pwsh</code> の引数 <code>Command</code> はダブルクォートで書く</h4><p><code>New-ScheduledTaskAction</code> の引数 <code>Argument</code> に、 <code>pwsh</code> に渡す引数を定義する。 この時、引数 <code>Command</code> に渡す文字列はダブルクォートで書くこと。 コマンドプロンプトで試せばわかるが、ダブルクォートはコマンドプロンプトで文字列として解釈され <code>pwsh</code> に渡るのに対し、シングルクォートは文字列と解釈されないそのままが渡されている様子。</p><pre><code class="cmd">C:\Windows\system32&gt;pwsh -NonInteractive -Command &quot;Write-Host 123&quot;
+123
+
+C:\Windows\system32&gt;pwsh -NonInteractive -Command 'Write-Host 123'
+Write-Host 123
+</code></pre><p>この挙動のソースはコレ ↓ くらいしか見つからんかった。オフィシャルな情報はないのかな。あったら是非引用したい。(コマンドプロンプト界の常識過ぎるテーマなのか？)</p><p><a href='https://stackoverflow.com/questions/24173825/what-does-single-quoting-do-in-windows-batch-files/24181667#24181667'>cmd - What does single-quoting do in Windows batch files? - Stack Overflow</a></p><h3 id="<code>read-host</code>&#95;するからにゃぁ&#95;interactive&#95;で&#95;<code>pwsh</code>&#95;を起動しろよな"><code>Read-Host</code> するからにゃぁ Interactive で <code>pwsh</code> を起動しろよな</h3><p><code>Read-Host</code> する例なのに、間違って <code>-NoInteractive</code> をつけてしまうと、このようにおもしろエラーを頂戴するのでご注意。</p><pre><code class="powershell">C:\Windows\system32&gt;pwsh -NonInteractive -Command &quot;{Read-Host `&quot;press key`&quot; | Out-Null; Invoke-MyCommand}.Invoke&#40;&#41;&quot;
+MethodInvocationException: Exception calling &quot;Invoke&quot; with &quot;0&quot; argument&#40;s&#41;: &quot;PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.&quot;
+</code></pre>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/windows">windows</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2021-01-04-planning">&laquo; 2021-01-04 2021</a>
         
-        
-        <a class="right" href="/posts/2020-12-26-retrospective2020">2020-12-26 振り返り 2020 年 &raquo;</a>
+        <a class="right" href="/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh">2022-01-15 Windows 11 のタスクバーを天に(PowerShell で) &raquo;</a>
         
     </div>
 

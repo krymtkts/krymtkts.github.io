@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-01-23-scheduled-task-in-powershell">Windows のタスクを操作する(PowerShell で)</a></li>
+                        
                         <li><a href="/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh">Windows 11 のタスクバーを天に(PowerShell で)</a></li>
                         
                         <li><a href="/posts/2022-01-09-planning">2022</a></li>
-                        
-                        <li><a href="/posts/2021-12-31-retrospective2021">振り返り 2021 年</a></li>
                         
                         
 
@@ -175,30 +175,47 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-01-15</div>
+        <div class="col-lg-6">2022-01-23</div>
         
     </div>
-    <h2>Windows 11 のタスクバーを天に(PowerShell で)</h2>
+    <h2>Windows のタスクを操作する(PowerShell で)</h2>
 </div>
 <div>
     
-    <p>Windows11 ではメニューからタスクバーを天に持ち上げれなくなったので、みんなレジストリを操作して実現している。手順はどこでも手に入るが、以下のページを参照した。</p><p><a href='https://www.tomshardware.com/how-to/windows-11-taskbar-move-to-top'>How to Move the Taskbar to the Top in Windows 11 | Tom's Hardware</a></p><ol><li><code>regedit</code> を開く</li><li><code>HKEY&#95;CURRENT&#95;USER\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3</code> を開く</li><li><code>Settings</code> を編集し保存する<ul><li>2 行目を <code>7A F4 00 00 03 00 00 00</code> -> <code>7A F4 00 00 01 00 00 00</code>にする<ul><li>デフォルトの<code>03</code>が下、<code>01</code>が上というわけ</li></ul></li></ul></li><li><code>explorer</code> を再起動する<ul><li>コマンドプロンプトで<ol><li><code>taskkill /f /im explorer.exe</code></li><li><code>start explorer.exe</code></li></ol></li></ul></li></ol><p>これが PC 変わる度にやるのクソめんどいので、PowerShell でスクリプト化した。 そんなに機会はないけど一々覚えてないので先程のページを見にったりと、とにかくめんどい。</p><p>PowerShell 7.2.1 でやった。</p><pre><code class="powershell">$ShowHex = {param &#40;&#91;array&#93;$arr&#41; &#40;$arr | %{&#91;System.Convert&#93;::ToHexString&#40;$&#95;&#41;}&#41; -join ' '}
-$path = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3'
-$key = 'Settings'
-$org = Get-ItemProperty $path | Select-Object -ExpandProperty $key
-$ShowHex.Invoke&#40;&#40;,$org&#41;&#41;
+    <p>決まった時間までにやらなければいけないことがあるとする。それを人間力でカバーするのは、それなりに資源の浪費になるので自動化したいとする。 最近の Windows ならタスクスケジューラで直に書いてもいいけど、操作めんどすぎるので普通に考えたらスクリプトにするでしょう。 これを Windows 11 と PowerShell 7.2.1 でやる。</p><p>それでは <a href='https://docs.microsoft.com/en-us/powershell/module/scheduledtasks/?view=windowsserver2019-ps'>ScheduledTasks Module</a> を使う。 このモジュールは Window なら以下のシステムフォルダにひっそりと存在する。令和のこの時代になんつー古い(v1)話なんや、とは思う。</p><pre><code class="powershell">Get-Module -Name ScheduledTasks -ListAvailable
 
-$new = @&#40;&#41; + $org
-$new&#91;12&#93; = 0x01
-$ShowHex.Invoke&#40;&#40;,$new&#41;&#41;
-Compare-Object $org $new
+    Directory: C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
 
-Set-ItemProperty $path -name $key -Value $new
+ModuleType Version    PreRelease Name                                PSEdition ExportedCommands
+---------- -------    ---------- ----                                --------- ----------------
+Manifest   1.0.0.0               ScheduledTasks                      Core,Desk {Get-ScheduledTask, Set-ScheduledTask, Register-Sche…
+</code></pre><p>WindowsPowerShell(v5.1)なら <a href='https://docs.microsoft.com/en-us/powershell/module/psscheduledjob/?view=powershell-5.1'>PSScheduledJob Module</a> が使えるが、 PowerShell 7 では使えない(<code>Import-Module</code> もできない)ので、 <code>ScheduledTask</code> 一択かと。</p><p>ではいくつかのレシピを以下に記す。</p><h3 id="日次で指定時間に実行(人間味のあるズレを添えて)">日次で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = &#40;get-command pwsh&#41;.Source
+$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command &quot;Invoke-MyCommand&quot;'
+$trigger = New-ScheduledTaskTrigger -Daily -At 7:46 -RandomDelay 00:10
+$task = New-ScheduledTask -Action $action -Trigger $trigger
+Register-ScheduledTask -InputObject $task -TaskName 'morning-action'
+</code></pre><h3 id="指定時間に起動して実行待ちするタスク&#95;≒&#95;実行許諾の通知的なもの">指定時間に起動して実行待ちするタスク ≒ 実行許諾の通知的なもの</h3><pre><code class="powershell">$pwsh = &#40;get-command pwsh&#41;.Source
+$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-Command &quot;{Read-Host `&quot;press key`&quot; | Out-Null; Invoke-MyCommand}.Invoke&#40;&#41;&quot;'
+$trigger = New-ScheduledTaskTrigger -Daily -At 17:00
+$task = New-ScheduledTask -Action $action -Trigger $trigger
+Register-ScheduledTask -InputObject $task -TaskName 'evening-action'
+</code></pre><h3 id="単発で指定時間に実行(人間味のあるズレを添えて)">単発で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = &#40;get-command pwsh&#41;.Source
+$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command &quot;Invoke-MyCommand&quot;'
+$jitter = &#40;Get-Random -Minimum 30 -Maximum &#40;60&#42;5&#41;&#41;
+$timing = &#40;Get-Date '2022-01-30 17:05'&#41;.AddSeconds&#40;$jitter&#41;
+$trigger = New-ScheduledTaskTrigger -At $timing -Once
+$setting = New-ScheduledTaskSettingsSet -DeleteExpiredTaskAfter 00:00:10
+$task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $setting | `
+    %{ $&#95;.Triggers&#91;0&#93;.EndBoundary = $timing.AddMinutes&#40;1&#41;.ToString&#40;'s'&#41;; $&#95;}
+Register-ScheduledTask -InputObject $task -TaskName 'single-action'
+</code></pre><p>このレシピではズレの算出は自前で行っている。<code>New-ScheduledTaskTrigger</code> に <code>-RandomDelay</code> を指定しておくのもアリだが、単発であるし具体的にいつ実行されるかがわかる方が好ましいかと考えた。</p><p>単発タスクなので、実行後にタスクを廃棄したいとする。その場合は例のように <code>-Settings</code> で自動削除の設定を有効にする必要がある。 同時に、タスクの期限切れの日時も指定する必要があるが、これはコマンドレットのオプションでは設定できない。直接オブジェクトに代入することで設定する(各 <code>Triggers</code> で <code>EndBoundary</code> を設定)。</p><p>参照: <a href='https://stackoverflow.com/questions/29337135/powershell-v4-create-remote-task-scheduler-task-set-to-expire-and-delete/35777432#35777432'>Powershell v4. Create remote task scheduler task set to expire and delete - Stack Overflow</a></p><h3 id="注意">注意</h3><p>いくつかの注意点がある。</p><h4 id="実行ファイルは絶対パス指定">実行ファイルは絶対パス指定</h4><p>実行ファイルは絶パス(絶対パスのわかりにくい略称)指定じゃないといけない。コマンドプロンプトでパスを通していたとしても、 <code>pwsh</code> とかだとタスクスケジューラちゃんは実行ファイルを見つけられない。</p><h4 id="<code>pwsh</code>&#95;の引数&#95;<code>command</code>&#95;はダブルクォートで書く"><code>pwsh</code> の引数 <code>Command</code> はダブルクォートで書く</h4><p><code>New-ScheduledTaskAction</code> の引数 <code>Argument</code> に、 <code>pwsh</code> に渡す引数を定義する。 この時、引数 <code>Command</code> に渡す文字列はダブルクォートで書くこと。 コマンドプロンプトで試せばわかるが、ダブルクォートはコマンドプロンプトで文字列として解釈され <code>pwsh</code> に渡るのに対し、シングルクォートは文字列と解釈されないそのままが渡されている様子。</p><pre><code class="cmd">C:\Windows\system32&gt;pwsh -NonInteractive -Command &quot;Write-Host 123&quot;
+123
 
-Stop-Process -Name explorer -Force
-## if explorer doesn't restart, start explorer manually.
-# Start-Process -Name explorer
-</code></pre><p>万が一失敗してたら <code>$org</code> で <code>Set-ItemProperty</code> して戻す必要があるので、成功(≒ 天にタスクバー)を確認するまで窓を閉じない方が良かろう。 ちゃんと期待の更新ができているか確認するために、レジストリの値を 16 進数に変換して標準出力までしちゃう。</p><p><a href='https://gist.github.com/krymtkts/ba83a0612bba84b5e8229d64e9d8681a'>Gist はこちら</a>。</p><h3 id="おまけ">おまけ</h3><p><code>taskkill</code> は PowerShell で言うところの何か調べたときのページ ↓</p><p><a href='https://www.pdq.com/blog/what-is-the-powershell-equivalent-of-taskkill/'>What Is The PowerShell Equivalent Of Taskkill | PDQ.com</a></p><blockquote><p> Okay, I'll be the first to admit it; the name is a little lackluster. Especially when compared to <strong>TASKKILL!!!!!!</strong> <strong>Stop-Process</strong> just doesn't carry the same hostile undertones Thankfully, Microsoft at least gave us <strong>kill</strong> as an alias, so we've got that going for us. Regardless, let's see if it still packs the same task-killing punch. </p></blockquote><blockquote><p> さて、最初に断っておきますが、このネーミングは少し物足りないですね。特に<strong>TASKKILL!!!!!!</strong>と比較するとね。 ありがたいことに、Microsoft は少なくとも<strong>kill</strong>という別名をつけてくれました。 ともかく、同じようにタスクを殺すパンチをパックしているかどうか見てみましょう。 </p></blockquote><p>こんなん笑うわｗ</p>
+C:\Windows\system32&gt;pwsh -NonInteractive -Command 'Write-Host 123'
+Write-Host 123
+</code></pre><p>この挙動のソースはコレ ↓ くらいしか見つからんかった。オフィシャルな情報はないのかな。あったら是非引用したい。(コマンドプロンプト界の常識過ぎるテーマなのか？)</p><p><a href='https://stackoverflow.com/questions/24173825/what-does-single-quoting-do-in-windows-batch-files/24181667#24181667'>cmd - What does single-quoting do in Windows batch files? - Stack Overflow</a></p><h3 id="<code>read-host</code>&#95;するからにゃぁ&#95;interactive&#95;で&#95;<code>pwsh</code>&#95;を起動しろよな"><code>Read-Host</code> するからにゃぁ Interactive で <code>pwsh</code> を起動しろよな</h3><p><code>Read-Host</code> する例なのに、間違って <code>-NoInteractive</code> をつけてしまうと、このようにおもしろエラーを頂戴するのでご注意。</p><pre><code class="powershell">C:\Windows\system32&gt;pwsh -NonInteractive -Command &quot;{Read-Host `&quot;press key`&quot; | Out-Null; Invoke-MyCommand}.Invoke&#40;&#41;&quot;
+MethodInvocationException: Exception calling &quot;Invoke&quot; with &quot;0&quot; argument&#40;s&#41;: &quot;PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.&quot;
+</code></pre>
 </div>
 
 <div id="post-tags">
@@ -216,7 +233,7 @@ Stop-Process -Name explorer -Force
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-01-09-planning">2022-01-09 2022 &raquo;</a>
+        <a class="right" href="/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh">2022-01-15 Windows 11 のタスクバーを天に(PowerShell で) &raquo;</a>
         
     </div>
 </div>
