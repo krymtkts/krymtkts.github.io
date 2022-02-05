@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: 下手な文章を Lint する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-04-07-lint-my-statement">
+    <title>krymtkts: 2022-02 版 PowerShell のビルド</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-02-05-build-pwsh-2022">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: 下手な文章を Lint する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-04-07-lint-my-statement" />
+    <meta property="og:title" content="krymtkts: 2022-02 版 PowerShell のビルド" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-02-05-build-pwsh-2022" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -175,34 +175,62 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-04-07</div>
+        <div class="col-lg-6">2022-02-05</div>
         
     </div>
-    <h2>下手な文章を Lint する</h2>
+    <h2>2022-02 版 PowerShell のビルド</h2>
 </div>
 <div>
     
-    <p>転職してから 2 ヶ月の間、海外労働者の同僚から、日本語のドキュメントも英語のドキュメントもレビューコメントをいただいていてつらい。</p><p>英語だけならまだしろ、わしゃ日本語もろくに扱えん日本人なんかと思うと涙ちょちょぎれる次第であります。</p><p>なので自分の文章に Lint をかけようと思った。</p><h3 id="textlint">textlint</h3><p>いつだったか文章の Linter についてググってたら、以下のようなものを見つけた。</p><ul><li><a href='https://github.com/textlint/textlint'>GitHub - textlint/textlint</a></li><li><a href='https://qiita.com/azu/items/2c565a38df5ed4c9f4e1'>Qiita - VS Code で textlint を使って文章をチェックする</a></li><li><a href='https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing'>textlint-ja/textlint-rule-preset-ja-technical-writing: 技術文書向けの textlint ルールプリセット</a></li></ul><p>...すげえな！近い内に使えるようにしよう。と思ってから数ヶ月後、実務でまともな文章を書く能力が必要になるとわ...😭 というか vscode-textlint ってホイル焼きで有名な方の作品なのですね。敬意を払うべきプロダクトだ。</p><p>以下にわたしのセットアップ手順を記す(実行は PowerShell だよ)。</p><ol><li>VSCode で vscode-textlin を入れる</li><li><code>npm i -g textlint textlint-rule-preset-ja-technical-writing</code></li><li><code>cd &#126;</code>で<code>textlint &ndash;init</code>してルールを書き込み</li><li>VSCode では設定ファイルを絶対パスで利用するからどうしたものか...(複数端末で Sync してる関係で)<ol><li><code>&#126;/,textlint</code>にしたらユーザ名とか考えなくていいから、なんかいい 😁</li></ol></li><li>ついかパッケージ <code>npm i -g textlint-rule-date-weekday-mismatch textlint-rule-terminology textlint-rule-ginger</code></li></ol><p>これで簡単な typo は減らせるんじゃないかな。</p><p>お気に入りのルールは<code>textlint-rule-date-weekday-mismatch</code>。これからのオレが曜日を間違うことはないぜええええ？(フラグ</p>
+    <p>PowerShell のパラメータバインディングについて調べていてコードに潜る時に、やっぱりローカルでビルドしたいよな！と思ったので、試してみた。 結果、副産物的に PowerShell 自体のコードをいじれる環境ができた。<h2></h2></p><p>PC は Razer Blade Stealth 2018、Windows 11 Home 21H2 22000.469 だ。</p><p>まず ビルドの方法を探す。</p><p><code>README.md</code>から辿って<a href='https://github.com/PowerShell/PowerShell/blob/master/docs/building/windows-core.md'>Build PowerShell on Windows for .NET Core</a>に辿り着いた。 わたしは <code>dotnet</code> を使った CLI ビルドがしたいので <a href='https://github.com/PowerShell/PowerShell/blob/master/docs/building/windows-core.md#net-cli'>.NET CLI</a> のやり方を使う。 ゆーても惚れ惚れするくらい簡単。以下だけ。</p><pre><code class="powershell">Import-Module ./build.psm1
+Start-PSBootstrap
+</code></pre><p>ビルドに使うのは <code>Start-PSBuild</code> らしい。<code>build.psm1</code> を見たらわかるが、多くの関数が定義されてる。今回使うのはそのうちの 3 つだけだ。 これらの関数が何を行うためのものかのコメントがあまりないので、それぞれドキュメントからタグルなり使いみちを調べるのも一興か。</p><pre><code class="powershell">&gt; Get-Command -ListImported | Where-Object -Property Source -eq build
+
+CommandType     Name                                               Version    Source
+-----------     ----                                               -------    ------
+Function        Clear-PSRepo                                       0.0        build
+# ︙
+Function        Start-PSBootstrap                                  0.0        build
+Function        Start-PSBuild                                      0.0        build
+# ︙
+</code></pre><p>PC にインストール済みの <code>dotnet</code> が <code>6.0.101</code> だったので、試しに <code>6.0.101</code> でビルドする。 <code>global.json</code>内の<code>sdk.version</code>という属性がある。このときは<code>6.0.100</code>がデフォルト値になってたので、使いたいバージョンに変える。</p><pre><code class="diff">PS&gt; git diff
+diff --git a/global.json b/global.json
+index 047020849..e52d340bc 100644
+--- a/global.json
++++ b/global.json
+@@ -1,5 +1,5 @@
+ {
+   &quot;sdk&quot;: {
+-    &quot;version&quot;: &quot;6.0.100&quot;
++    &quot;version&quot;: &quot;6.0.101&quot;
+   }
+ }
+</code></pre><p><code>Start-PSBuild</code> を実行することでビルドできる。 Razer Blade Stealth 2018 だとビルドに 2 分近くかかった。 ビルド物はドキュメントに記載の通り <code>./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe</code> に出力された。 普通に起動すると実行時エラーで死んだけど、プロファイル読み込みを外せば起動した。ﾔｯﾀﾈ！</p><pre><code class="powershell">PS&gt; ./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe # 死
+PowerShell 7.2.0-preview.10-222-g0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b
+Process terminated. Assertion failed.
+No locals tuple should have been created yet.
+   at System.Management.Automation.Diagnostics.Assert&#40;Boolean condition, String whyThisShouldNeverHappen, String detailMessage&#41; in C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\System.Management.Automation\utils\assert.cs:line 202
+   at System.Management.Automation.Diagnostics.Assert&#40;Boolean condition, String whyThisShouldNeverHappen&#41; in C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\System.Management.Automation\utils\assert.cs:line 134
+# ... スタックトレースは続く
+
+PS&gt; ./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe -NoProfile # Good!
+PowerShell 7.2.0-preview.10-222-g0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b
+PS C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\powershell-win-core\bin\Debug\net6.0\win7-x64\publish&gt;
+</code></pre><p>最後にビルド生成物などを掃除するには <code>Clear-PSRepo</code> を実行すれば良い。</p><p>終。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/vscode">vscode</a>
-    
-    <a href="/tags/textlin">textlin</a>
-    
-    <a href="/tags/nodejs">nodejs</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-04-14-add-a-badge">&laquo; 2019-04-14 プロジェクトにバッジを貼ろう</a>
         
-        
-        <a class="right" href="/posts/2019-04-02-pubslish-first-module-to-powershell-gallery">2019-04-02 はじめてのPowerShell Galleryへの公開 &raquo;</a>
+        <a class="right" href="/posts/2022-01-30-pwsh-parameter-binding-parse-datetime">2022-01-30 PowerShell のパラメータバインディングは &quot;3 時&quot; を Datetime 型にパースする &raquo;</a>
         
     </div>
 

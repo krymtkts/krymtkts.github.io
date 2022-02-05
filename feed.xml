@@ -12,11 +12,62 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sun, 30 Jan 2022 16:44:51 +0900
+Sat, 05 Feb 2022 16:26:58 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2022-02-05-build-pwsh-2022
+</guid>
+<link>
+http://krymtkts.github.io/posts/2022-02-05-build-pwsh-2022
+</link>
+<title>
+2022-02 版 PowerShell のビルド
+</title>
+<description>
+&lt;p&gt;PowerShell のパラメータバインディングについて調べていてコードに潜る時に、やっぱりローカルでビルドしたいよな！と思ったので、試してみた。 結果、副産物的に PowerShell 自体のコードをいじれる環境ができた。&lt;h2&gt;&lt;/h2&gt;&lt;/p&gt;&lt;p&gt;PC は Razer Blade Stealth 2018、Windows 11 Home 21H2 22000.469 だ。&lt;/p&gt;&lt;p&gt;まず ビルドの方法を探す。&lt;/p&gt;&lt;p&gt;&lt;code&gt;README.md&lt;/code&gt;から辿って&lt;a href='https://github.com/PowerShell/PowerShell/blob/master/docs/building/windows-core.md'&gt;Build PowerShell on Windows for .NET Core&lt;/a&gt;に辿り着いた。 わたしは &lt;code&gt;dotnet&lt;/code&gt; を使った CLI ビルドがしたいので &lt;a href='https://github.com/PowerShell/PowerShell/blob/master/docs/building/windows-core.md#net-cli'&gt;.NET CLI&lt;/a&gt; のやり方を使う。 ゆーても惚れ惚れするくらい簡単。以下だけ。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;Import-Module ./build.psm1
+Start-PSBootstrap
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;ビルドに使うのは &lt;code&gt;Start-PSBuild&lt;/code&gt; らしい。&lt;code&gt;build.psm1&lt;/code&gt; を見たらわかるが、多くの関数が定義されてる。今回使うのはそのうちの 3 つだけだ。 これらの関数が何を行うためのものかのコメントがあまりないので、それぞれドキュメントからタグルなり使いみちを調べるのも一興か。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;&amp;gt; Get-Command -ListImported | Where-Object -Property Source -eq build
+
+CommandType     Name                                               Version    Source
+-----------     ----                                               -------    ------
+Function        Clear-PSRepo                                       0.0        build
+# ︙
+Function        Start-PSBootstrap                                  0.0        build
+Function        Start-PSBuild                                      0.0        build
+# ︙
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;PC にインストール済みの &lt;code&gt;dotnet&lt;/code&gt; が &lt;code&gt;6.0.101&lt;/code&gt; だったので、試しに &lt;code&gt;6.0.101&lt;/code&gt; でビルドする。 &lt;code&gt;global.json&lt;/code&gt;内の&lt;code&gt;sdk.version&lt;/code&gt;という属性がある。このときは&lt;code&gt;6.0.100&lt;/code&gt;がデフォルト値になってたので、使いたいバージョンに変える。&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;diff&quot;&gt;PS&amp;gt; git diff
+diff --git a/global.json b/global.json
+index 047020849..e52d340bc 100644
+--- a/global.json
++++ b/global.json
+@@ -1,5 +1,5 @@
+ {
+   &amp;quot;sdk&amp;quot;: {
+-    &amp;quot;version&amp;quot;: &amp;quot;6.0.100&amp;quot;
++    &amp;quot;version&amp;quot;: &amp;quot;6.0.101&amp;quot;
+   }
+ }
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;Start-PSBuild&lt;/code&gt; を実行することでビルドできる。 Razer Blade Stealth 2018 だとビルドに 2 分近くかかった。 ビルド物はドキュメントに記載の通り &lt;code&gt;./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe&lt;/code&gt; に出力された。 普通に起動すると実行時エラーで死んだけど、プロファイル読み込みを外せば起動した。ﾔｯﾀﾈ！&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;PS&amp;gt; ./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe # 死
+PowerShell 7.2.0-preview.10-222-g0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b
+Process terminated. Assertion failed.
+No locals tuple should have been created yet.
+   at System.Management.Automation.Diagnostics.Assert&amp;#40;Boolean condition, String whyThisShouldNeverHappen, String detailMessage&amp;#41; in C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\System.Management.Automation\utils\assert.cs:line 202
+   at System.Management.Automation.Diagnostics.Assert&amp;#40;Boolean condition, String whyThisShouldNeverHappen&amp;#41; in C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\System.Management.Automation\utils\assert.cs:line 134
+# ... スタックトレースは続く
+
+PS&amp;gt; ./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe -NoProfile # Good!
+PowerShell 7.2.0-preview.10-222-g0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b
+PS C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\powershell-win-core\bin\Debug\net6.0\win7-x64\publish&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;最後にビルド生成物などを掃除するには &lt;code&gt;Clear-PSRepo&lt;/code&gt; を実行すれば良い。&lt;/p&gt;&lt;p&gt;終。&lt;/p&gt;
+</description>
+<pubDate>
+Sat, 05 Feb 2022 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2022-01-30-pwsh-parameter-binding-parse-datetime
