@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;serverless&quot;</title>
-    <link rel="canonical" href="http://krymtkts.github.io/tags/serverless">
+    <title>krymtkts: Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;serverless&quot;" />
-    <meta property="og:url" content="http://krymtkts.github.io/tags/serverless" />
+    <meta property="og:title" content="krymtkts: Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -172,25 +172,53 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;serverless&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-02-06</div>
+        
     </div>
-    <ul>
+    <h2>Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2020-06-29-contextual-sfn-example">2020-06-29 Step Functions のステートをまたいでパラメータを伝播するパターン</a>
-        </li>
+    <p>Windows11 にてコンテキストメニューの UI が変わった。 しかし自身は普段コンテキストメニューを使わないのであまり気にならなかった。</p><p>のだが、たまたま 7z 圧縮されたファイルを渡されたことで、右クリックで 7zip で開けないのクソめんどい...と気になり始めた。 なので前のコンテキストメニューに戻す。PowerShell で。</p><p>レジストリを編集する必要があるらしい。情報元 ↓ <a href='https://www.tomshardware.com/how-to/windows-11-classic-context-menus'>How to Get Full Context Menus in Windows 11 | Tom's Hardware</a></p><pre><code class="powershell">$path = 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32'
+New-Item -Path $path -Force
+Split-Path $path -Parent | Get-ChildItem
+Set-ItemProperty -Path $path -Name '&#40;Default&#41;' -Value ''
+Get-ItemProperty $path
+
+Stop-Process -Name explorer -Force
+</code></pre><p>Gist → <a href='https://gist.github.com/krymtkts/30af31454d510ce0c34cfeb2fefec072'>Return to the previous context menu in Windows 11.</a></p><p>↓ キーの名前は case insensitive なのかーい！</p><pre><code class="powershell">PS&gt; Get-ItemProperty $path
+
+&#40;default&#41;    :
+PSPath       : Microsoft.PowerShell.Core\Registry::HKEY&#95;CURRENT&#95;USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\In
+               procServer32
+PSParentPath : Microsoft.PowerShell.Core\Registry::HKEY&#95;CURRENT&#95;USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}
+PSChildName  : InprocServer32
+PSDrive      : HKCU
+PSProvider   : Microsoft.PowerShell.Core\Registry
+</code></pre><p>終わり。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2020-04-30-context-like-sfn">2020-04-30 Step Functions のステートをまたいでパラメータを伝播する</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-        <li>
-            <a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront</a>
-        </li>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-02-05-build-pwsh-2022">2022-02-05 2022-02 版 PowerShell のビルド &raquo;</a>
+        
+    </div>
+
     
-    </ul>
+
+
 </div>
 
             </div>

@@ -12,11 +12,44 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sat, 05 Feb 2022 16:26:58 +0900
+Sun, 06 Feb 2022 16:17:17 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh
+</guid>
+<link>
+http://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh
+</link>
+<title>
+Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)
+</title>
+<description>
+&lt;p&gt;Windows11 にてコンテキストメニューの UI が変わった。 しかし自身は普段コンテキストメニューを使わないのであまり気にならなかった。&lt;/p&gt;&lt;p&gt;のだが、たまたま 7z 圧縮されたファイルを渡されたことで、右クリックで 7zip で開けないのクソめんどい...と気になり始めた。 なので前のコンテキストメニューに戻す。PowerShell で。&lt;/p&gt;&lt;p&gt;レジストリを編集する必要があるらしい。情報元 ↓ &lt;a href='https://www.tomshardware.com/how-to/windows-11-classic-context-menus'&gt;How to Get Full Context Menus in Windows 11 | Tom's Hardware&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;$path = 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32'
+New-Item -Path $path -Force
+Split-Path $path -Parent | Get-ChildItem
+Set-ItemProperty -Path $path -Name '&amp;#40;Default&amp;#41;' -Value ''
+Get-ItemProperty $path
+
+Stop-Process -Name explorer -Force
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Gist → &lt;a href='https://gist.github.com/krymtkts/30af31454d510ce0c34cfeb2fefec072'&gt;Return to the previous context menu in Windows 11.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;↓ キーの名前は case insensitive なのかーい！&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;powershell&quot;&gt;PS&amp;gt; Get-ItemProperty $path
+
+&amp;#40;default&amp;#41;    :
+PSPath       : Microsoft.PowerShell.Core\Registry::HKEY&amp;#95;CURRENT&amp;#95;USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\In
+               procServer32
+PSParentPath : Microsoft.PowerShell.Core\Registry::HKEY&amp;#95;CURRENT&amp;#95;USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}
+PSChildName  : InprocServer32
+PSDrive      : HKCU
+PSProvider   : Microsoft.PowerShell.Core\Registry
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;終わり。&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 06 Feb 2022 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2022-02-05-build-pwsh-2022
