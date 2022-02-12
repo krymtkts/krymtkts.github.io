@@ -1,6 +1,6 @@
 {:title "PSGallery への公開つまづき 2021"
 :layout :post
-:tags ["powershell"]}
+:tags ["powershell","powershellgallery"]}
 
 今年のはじめに[krymtkts/Get-GzipContent: Get-Content for gzip files.](https://github.com/krymtkts/Get-GzipContent)の更新を行った際に、PoweShell Gallery への公開で手間取った。その 2 ヶ月遅れの記録である。
 
