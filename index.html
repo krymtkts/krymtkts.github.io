@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-02-19-i-cant-graduate-from-tortoise-git">Tortoise Git から卒業できない</a></li>
+                        
                         <li><a href="/posts/2022-02-12-publish-to-powershell-gallery-etc">PoweShell Gallery へ公開するためのステップ覚書</a></li>
                         
                         <li><a href="/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh">Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)</a></li>
-                        
-                        <li><a href="/posts/2022-02-05-build-pwsh-2022">2022-02 版 PowerShell のビルド</a></li>
                         
                         
 
@@ -124,6 +124,8 @@
                         
                         <li><a href="/tags/font">font</a></li>
                         
+                        <li><a href="/tags/git">git</a></li>
+                        
                         <li><a href="/tags/docker">docker</a></li>
                         
                         <li><a href="/tags/todo">todo</a></li>
@@ -143,6 +145,8 @@
                         <li><a href="/tags/fnm">fnm</a></li>
                         
                         <li><a href="/tags/lambda">lambda</a></li>
+                        
+                        <li><a href="/tags/tortoisegit">tortoisegit</a></li>
                         
                         <li><a href="/tags/docker-toolbox">docker-toolbox</a></li>
                         
@@ -175,61 +179,14 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-02-12</div>
+        <div class="col-lg-6">2022-02-19</div>
         
     </div>
-    <h2>PoweShell Gallery へ公開するためのステップ覚書</h2>
+    <h2>Tortoise Git から卒業できない</h2>
 </div>
 <div>
     
-    <p>タイトルの通り。これは未来の自分へのバトンだ。</p><p>毎回 PoweShell Gallery への公開方法を忘れたりする。 <a href='tags/powershellgallery'>弊ブログの<code>powershellgallery</code>タグ</a>を参照すればどれだけ同じミスを繰り返してるかアホさがわかる。 加えて <a href='https://github.com/microsoft/PowerShellForGitHub'>microsoft/PowerShellForGitHub</a> で repo を作るのもしょっちゅう忘れる。 こちらに関してはもうそろそろ <a href='https://github.com/cli/cli'><code>gh</code></a>に乗り換えた方がいいのかも知れん。(けど、そうすると PowerShell の旨味であるオブジェクトでゴニョゴニョやりやすい世界がなくなってしまうのは困る)</p><p>なのでこれらを定型化して <code>psake</code> タスクに落とし込む等したいな～と考えている(今度はその<code>psake</code>タスクが秘伝のソース化するかも知れんがそれはそれ)。 そのためにいつも何をやっているかを以下にリストアップする。<h2></h2></p><p>前提。</p><ul><li><code>PSMFAttendance</code> の作成時にやったことを踏まえている</li><li><a href='https://github.com/x-motemen/ghq'>ghq</a> を使っている前提</li><li>MS 公式文書はこちら <a href='https://docs.microsoft.com/en-us/powershell/scripting/gallery/concepts/publishing-guidelines?view=powershell-7.2'>PowerShell Gallery Publishing Guidelines and Best Practices - PowerShell | Microsoft Docs</a><ul><li>残念ながら過去のメモ(<a href='https://github.com/krymtkts/Get-GzipContent'>krymtkts/Get-GzipContent</a>を公開したとき)からは URL が変わっていた。今回はどうかな。</li></ul></li></ul><h3 id="step&#95;1.&#95;repo&#95;とモジュールマニフェストの作成">Step 1. repo とモジュールマニフェストの作成</h3><p>まず最初のステップはモジュールの雛形作成。</p><pre><code class="powershell"># create repo.
-$owner = 'krymtkts'
-$module = 'PSMFAttendance'
-New-GitHubRepository -RepositoryName $module -Private -LicenseTemplate MIT
-ghq get -p &#40;Get-GitHubRepository -OwnerName krymtkts -RepositoryName $module | Select-Object -ExpandProperty ssh&#95;url&#41;
-cd &quot;$&#40;ghq root&#41;/$&#40;ghq list $module&#41;&quot;
-
-# create module manifest.
-mkdir $module
-$author = 'Takatoshi Kuriyama'
-New-ModuleManifest -Path &quot;./$module/$module.psd1&quot; -ModuleVersion 1.0 -Author $author -Copyright &quot;&#40;c&#41; $&#40;&#40;get-date&#41;.Year&#41; $author. All rights reserved.&quot;
-</code></pre><p>PowerShell Gallery への公開コマンド <a href='https://docs.microsoft.com/en-us/powershell/module/powershellget/publish-module?view=powershell-7.2'><code>Publish-Module</code> (PowerShellGet)</a> は、指定したディレクトリの中身を全部 PowerShell Gallery にぶち上げるため、モジュール以外のファイルを配置していても全て雲の上に持っていかれてしまう(除外設定がないのだ)。 そういう事故を起こさないためにも、モジュールリリース用のディレクトリを作成することをおすすめする。 そこでモジュールを開発するか、リリース対象のコードをそこにコピーした上で公開する、というのに限るのではないだろうか。わたしはコピーしたあとの掃除とか考えるのが面倒なので前者。</p><p>先にモジュールマニフェストを作るのは、動作確認なんかで関数がエクスポートできているか見るのに使うからだ。</p><h3 id="step&#95;2.&#95;モジュールマニフェストの更新">Step 2. モジュールマニフェストの更新</h3><p>次は実装して、マニフェストの更新。 マニフェストに記すべき内容については公式のドキュメントを読むのが良い。</p><p><a href='https://docs.microsoft.com/en-us/powershell/scripting/gallery/how-to/publishing-packages/publishing-a-package?view=powershell-7.2#required-metadata-for-items-published-to-the-powershell-gallery'>Creating and publishing an item - PowerShell | Microsoft Docs</a></p><p>とはいえわたしは大したモジュールを作らないのもあり、いつも更新するのは限られたフィールドだけだ。主に以下。</p><ul><li><code>Description</code></li><li><code>PowerShellVersion</code></li><li><code>&#42;ToExport</code></li><li><code>PrivateData.PSData.Tags</code></li><li><code>PrivateData.PSData.LicenseUri</code></li><li><code>PrivateData.PSData.ProjectUri</code></li></ul><p>この中でわかりにくいのが、互換性のあるプラットフォームの指定。これは <code>Tags</code> で表す。 <a href='https://docs.microsoft.com/en-us/powershell/scripting/gallery/concepts/publishing-guidelines?view=powershell-7.2#tag-your-package-with-the-compatible-pseditions-and-platforms'>PowerShell Gallery Publishing Guidelines and Best Practices - PowerShell | Microsoft Docs</a></p><p>マニフェストの更新は手で書いてもよいが、<code>Update-ModuleManifest</code> も使える。 ただし <code>New-ModuleManifest</code> と <code>Update-ModuleManifest</code> で出力結果のフォーマットが異なる(後者はインデントされない)のがイライラするので、手でやることが多いか。 ただ自動化していくとすれば、ここは <code>Update-ModuleManifest</code> に従うところか(こいつインデントしてくれへんのだが)。</p><h3 id="last&#95;step.&#95;powershell&#95;gallery&#95;公開">Last Step. PowerShell Gallery 公開</h3><p>最後は PowerShell Gallery への公開だ。</p><p>PowerShell Gallery への公開を実施する前に、API キーの期限が切れていないか必ずチェックしておく。 キーの有効期限が切れている場合のエラーが非常にわかりにくいので、無駄にトラシューに時間を費やさずに済ますためにも公開前にチェック兼ねて毎回キーを更新するのが妥当では？ API キーの有効期限は最長 1 年しかないので、しょっちゅう切らしている。むしろ公開前に更新するフローであれば、期限も最短にできるのでよりセキュアかも知れない。</p><p>API キー はモジュール名に対して <a href='<a' title=href="https://en.wikipedia.org/wiki/Glob_(programming)">https://en.wikipedia.org/wiki/Glob_(programming)</a>>glob パターン</a>でスコープを切れる。過去には面倒を回避するために<code>&#42;</code>パターンを使ったりしていたが、今はパッケージ名の完全一致を利用していて、パッケージ毎に API キーを分けるようにしている。</p><p>公開の手順は <a href='https://github.com/krymtkts/Get-GzipContent'>krymtkts/Get-GzipContent</a>を公開したときスクリプトを使う。</p><p>このスクリプトでは <code>PSScriptAnalyzer</code> を使ったチェックが成功した後に公開する。 また、<code>WhatIf</code> は Dry Run として置き換えた上で使うようにしていた。 <code>WhatIf</code> を使わないことで覚えることが増えて面倒な気もするが、とにかく間違って公開すると面倒なので、初期値を Dry Run にしたいという意図だった(多分)。この辺は <a href='https://docs.microsoft.com/en-us/powershell/scripting/learn/deep-dives/everything-about-shouldprocess?view=powershell-7.2'><code>ShouldProcess</code></a> の勉強をしたらより良い案があるかも知れん。</p><p>PowerShell Gallery でのバージョニングは基本的に Semantic Versioning なので、何かしらミスったらモジュールの非公開はできるけど、同じバージョンへの更新はできない。パッチバージョンを上げて再公開とかしかできない。これはミスったら恥ずかしいしやり直しがきかないから、 Dry Run しまくる。この「何かしらミスったら」を Pester とかで事前チェックできると良いのだろうけど。</p><pre><code class="powershell">Param &#40;
-    &#91;String&#93;$ApiKey,
-    &#91;ValidateSet&#40;'Publish', 'DryRun'&#41;&#93;$Mode = 'DryRun'
-&#41;
-
-$ModuleName = Get-ChildItem -File -Path ./ -Recurse -Name '&#42;.psd1' | Split-Path -Parent
-$ArtifactPath = &quot;.\$ModuleName\&quot;
-Write-Host &quot;Check modules under $ArtifactPath.&quot;
-
-$report = Invoke-ScriptAnalyzer -Path &quot;$ArtifactPath&quot; -Recurse -Settings PSGallery
-if &#40;$report&#41; {
-    Write-Host &quot;Violation found.&quot;
-    $report
-    exit
-}
-Write-Host &quot;Check passed.&quot;
-
-switch &#40;$Mode&#41; {
-    'Publish' {
-        Write-Host &quot;Publishing module: $ModuleName&quot;
-        Publish-Module -Path $ArtifactPath -NugetAPIKey $ApiKey -Verbose
-    }
-    'DryRun' {
-        Write-Host &quot;&#91;DRY-RUN&#93;Publishing module: $ModuleName&quot;
-        Publish-Module -Path $ArtifactPath -NugetAPIKey $ApiKey -Verbose -WhatIf
-    }
-}
-if &#40;$?&#41; {
-    Write-Host 'Successfully published.'
-}
-else {
-    Write-Error 'Failed to publish.'
-}
-</code></pre><p>今改めて見るとこのスクリプト、API キーは Credential に変更した方がマトモだ。ぜひ対応したい。</p><p>このように使う。</p><pre><code class="powershell">.\publish.ps1 -Mode DryRun -ApiKey xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-.\publish.ps1 -Mode Publish -ApiKey xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-</code></pre><p>公開後は最終チェック、自端末へモジュールをインストールして一通り使えるか見ている。何しかちゃんと出来てるか不安。</p><p>公開できたら、 repo の<code>README.md</code> に以下を加筆する。これは流石に自動化無理なのでいいや。</p><ul><li>PowerShell Gallery からのインストール方法</li><li><a href='https://shields.io/category/downloads'>Shields.io</a> の PowerShell Gallery のダウンロード</li></ul><p>終。<h2></h2></p><h3 id="おわりに">おわりに</h3><p>手順起こしてみてあれやけど、これもうすぐにでも <code>psake</code> タスク化できそう。単にサボってただけだったか...</p>
+    <p>今どきの Git の使い手は、 「CLI で使ってない奴はニワカ」みたいな硬派な人とか、<a href='https://www.gitkraken.com/'>GitKraken</a> とかのイケてる Git クライアントや VS Code で <a href='https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens'>GitLens</a> やら <a href='https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph'>Git Graph</a> 使ってる勢なんじゃないだろうか。</p><p>わたしは長らく <a href='https://tortoisegit.org/'>TortoiseGit</a> から卒業できないでいる。</p><p>コミットやログ、ブランチやリセットやマージ等諸々の基本的な操作は全部 CLI でやるが、ある操作だけは TortoiseGit でやるのが楽過ぎて手放せないでいる。それは歴史の改竄だ。</p><p>わたしも VS Code ユーザなので、勿論 GitLens やら Git Graph を使ったことはある。 だが、殊この歴史の改竄については Tortoise Git を超えてない(機能を知らんだけかも知らんが)。 <a href='https://github.com/jesseduffield/lazygit'>jesseduffield/lazygit</a> だけはわたしの要求を満たせそうな素晴らしいツールに感じたのだが、 <a href='https://github.com/microsoft/terminal'>Windows Terminal</a> で利用すると<code>┐</code>とかの描画幅がワイド判定されて画面がクチャクチャになってしまう(わたしが pwsher でなくコマンドプロンプターならバッチリはまったであろうツールだ)。</p><p>具体的に言うと、 <a href='https://tortoisegit.org/docs/tortoisegit/tgit-dug-cherrypick.html'>Cherry picking</a> がめちゃくちゃ便利でずっと使ってるのだけど、みんな歴史を改竄しないのだろうか。 わたしが歴史を改竄するのは、まだ一度もリモートに push していないローカルで育てたブランチを、デビュー前に清書するためだ。ローカルで思いのままに吐き散らしたコミット粒度及びログを、push 前に整えるのはプログラマの嗜みだ。</p><p>使用例は以下の通り。</p><ol><li>思いのままにコミットを積み上げる</li><li>リセット前にタグを打つ</li><li>push 用のブランチをベースブランチにリセットする</li><li>思いのままに積み上げたコミットを丁寧に cherry pick し、公開するに適切なコミット粒度・コミットログへ書き換える</li><li>タグを打った元の状態と差分がないことを確認した後でめでたく push</li></ol><p>重要なのは 3、ここでコミットの順番を入れ替えたりまとめたり分割したりという操作をするが、Tortoise Git 以外ではこういうことができないように見える。流行り？の GitKraken でさえこの有様 → <a href='https://feedback.gitkraken.com/suggestions/191932/add-support-for-splitting-an-existing-commit'>Add support for splitting an existing commit - GitKraken</a> え、分割できへんの！？的な。</p><p>最近見た限りだと、GitLens や Git Graph では reset したコミット以降の変更を 1 コミットにまとめるとかはできるっぽかった。でもそういうのがしたいわけじゃない。もっと派手にやりたいんじゃ！</p><p>1 で思いのままにコミットを積み上げる等言語道断という意見もあろうが、都度〃やった内容をペコペココミットするリズム感がほしいので結局こうやってしまう。みんないちいちコミットの粒度を頭に入れた上で、アソコを直してココを直して...とかやってるのだろうか。多分やってないでしょう。</p><p>より良い歴史改竄体験を求めて別のツールを探してみたいが、ググった感じだと派手な歴史改竄機能がみられず、あんまりみんなやらないっぽいのではと思っている。みんな素直に <code>git rebase &ndash;interactive</code>(Interactive Rebasing) してるんだろうきっと。</p><p>あーあとひとつ重要な機能を忘れていた。 <a href='https://github.com/dahlbyk/posh-git'>dahlbyk/posh-git</a> を使っていると <a href='https://github.com/dahlbyk/posh-git/wiki/Posh&ndash;Git-Module-Functions'><code>tgit</code></a> という素敵な関数が提供されることでより一層 Tortoise Git から離れにくくなる。 <code>tgit</code> は Tortoise Git の任意の機能を召喚する魔法の関数なのだ。 この珍妙な関数を使うせいで、ペアプロ時に「あ！コマンド間違ってますよ！」と言われたこともあるが、便利なんだから仕方がない。勿論 Tab 補完もついている。</p><p>もうここまで沼に飲まれていると使い続ければ良いのでは...という気もしないではないが、より良いツールが出てきたらぜひ乗り換えたい。あるいは全部 CLI に寄せるか。 未来の自分に託した。</p>
 </div>
 
 <div id="post-tags">
@@ -237,7 +194,9 @@ else {
     
     <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/powershellgallery">powershellgallery</a>
+    <a href="/tags/git">git</a>
+    
+    <a href="/tags/tortoisegit">tortoisegit</a>
     
 </div>
 
@@ -247,7 +206,7 @@ else {
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh">2022-02-06 Windows11 のコンテキストメニューを前のんに戻す(PowerShell で) &raquo;</a>
+        <a class="right" href="/posts/2022-02-12-publish-to-powershell-gallery-etc">2022-02-12 PoweShell Gallery へ公開するためのステップ覚書 &raquo;</a>
         
     </div>
 </div>

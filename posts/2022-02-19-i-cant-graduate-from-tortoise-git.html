@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Rote53 ホストゾーンの NS レコード</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone">
+    <title>krymtkts: Tortoise Git から卒業できない</title>
+    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-02-19-i-cant-graduate-from-tortoise-git">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Rote53 ホストゾーンの NS レコード" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone" />
+    <meta property="og:title" content="krymtkts: Tortoise Git から卒業できない" />
+    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-02-19-i-cant-graduate-from-tortoise-git" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -179,35 +179,32 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2020-12-27</div>
+        <div class="col-lg-6">2022-02-19</div>
         
     </div>
-    <h2>Rote53 ホストゾーンの NS レコード</h2>
+    <h2>Tortoise Git から卒業できない</h2>
 </div>
 <div>
     
-    <p>これで 12 月だいぶ躓いたので書いとくわ。思い出じゃ。</p><p>NS レコードは Simple Routing しかサポートしてへん。まずそれは AWS Management Console でわかる。 これを AWSPowerShell のパラメータでどうやんのかがわからんかった。ワタシが阿呆やからに違いない。</p><p><script src="https://gist.github.com/krymtkts/7774bb65f2f0351697a47383aefe9ec9.js"></script></p><p>はまったところ。</p><p><a href='https://docs.aws.amazon.com/cli/latest/reference/route53/change-resource-record-sets.html'>change-resource-record-sets — AWS CLI 1.18.203 Command Reference</a></p><blockquote><p> SetIdentifier -> (string) </p><p> > > Resource record sets that have a routing policy other than simple: An identifier that differentiates among multiple resource record sets that have the same combination of name and type, such as multiple weighted resource record sets named acme.example.com that have a type of A. In a group of resource record sets that have the same name and type, the value of SetIdentifier must be unique for each resource record set. </p><p> > For information about routing policies, see Choosing a Routing Policy in the Amazon Route 53 Developer Guide . </p></blockquote><p>Alias レコードのパラメータからコピペしてたので<code>SetIdentifier</code>を残したままにしてしまっていた。NS レコードは Simple Routing のみを許可するのでエラーになるのね。↓</p><pre><code class="powershell">  52 |  Edit-R53ResourceRecordSet -HostedZoneId $ParentHostedZone.Id -ChangeB …
-     |  &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-     | Invalid request: Expected exactly one of &#91;Weight, Region, Failover, GeoLocation, or MultiValueAnswer&#93;, but found none in Change with &#91;Action=CREATE, Name=test.testtest.com, Type=NS, SetIdentifier=nandeyanen&#93;
-</code></pre><p>わかりにくぅ！</p><p>おわり 😭</p>
+    <p>今どきの Git の使い手は、 「CLI で使ってない奴はニワカ」みたいな硬派な人とか、<a href='https://www.gitkraken.com/'>GitKraken</a> とかのイケてる Git クライアントや VS Code で <a href='https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens'>GitLens</a> やら <a href='https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph'>Git Graph</a> 使ってる勢なんじゃないだろうか。</p><p>わたしは長らく <a href='https://tortoisegit.org/'>TortoiseGit</a> から卒業できないでいる。</p><p>コミットやログ、ブランチやリセットやマージ等諸々の基本的な操作は全部 CLI でやるが、ある操作だけは TortoiseGit でやるのが楽過ぎて手放せないでいる。それは歴史の改竄だ。</p><p>わたしも VS Code ユーザなので、勿論 GitLens やら Git Graph を使ったことはある。 だが、殊この歴史の改竄については Tortoise Git を超えてない(機能を知らんだけかも知らんが)。 <a href='https://github.com/jesseduffield/lazygit'>jesseduffield/lazygit</a> だけはわたしの要求を満たせそうな素晴らしいツールに感じたのだが、 <a href='https://github.com/microsoft/terminal'>Windows Terminal</a> で利用すると<code>┐</code>とかの描画幅がワイド判定されて画面がクチャクチャになってしまう(わたしが pwsher でなくコマンドプロンプターならバッチリはまったであろうツールだ)。</p><p>具体的に言うと、 <a href='https://tortoisegit.org/docs/tortoisegit/tgit-dug-cherrypick.html'>Cherry picking</a> がめちゃくちゃ便利でずっと使ってるのだけど、みんな歴史を改竄しないのだろうか。 わたしが歴史を改竄するのは、まだ一度もリモートに push していないローカルで育てたブランチを、デビュー前に清書するためだ。ローカルで思いのままに吐き散らしたコミット粒度及びログを、push 前に整えるのはプログラマの嗜みだ。</p><p>使用例は以下の通り。</p><ol><li>思いのままにコミットを積み上げる</li><li>リセット前にタグを打つ</li><li>push 用のブランチをベースブランチにリセットする</li><li>思いのままに積み上げたコミットを丁寧に cherry pick し、公開するに適切なコミット粒度・コミットログへ書き換える</li><li>タグを打った元の状態と差分がないことを確認した後でめでたく push</li></ol><p>重要なのは 3、ここでコミットの順番を入れ替えたりまとめたり分割したりという操作をするが、Tortoise Git 以外ではこういうことができないように見える。流行り？の GitKraken でさえこの有様 → <a href='https://feedback.gitkraken.com/suggestions/191932/add-support-for-splitting-an-existing-commit'>Add support for splitting an existing commit - GitKraken</a> え、分割できへんの！？的な。</p><p>最近見た限りだと、GitLens や Git Graph では reset したコミット以降の変更を 1 コミットにまとめるとかはできるっぽかった。でもそういうのがしたいわけじゃない。もっと派手にやりたいんじゃ！</p><p>1 で思いのままにコミットを積み上げる等言語道断という意見もあろうが、都度〃やった内容をペコペココミットするリズム感がほしいので結局こうやってしまう。みんないちいちコミットの粒度を頭に入れた上で、アソコを直してココを直して...とかやってるのだろうか。多分やってないでしょう。</p><p>より良い歴史改竄体験を求めて別のツールを探してみたいが、ググった感じだと派手な歴史改竄機能がみられず、あんまりみんなやらないっぽいのではと思っている。みんな素直に <code>git rebase &ndash;interactive</code>(Interactive Rebasing) してるんだろうきっと。</p><p>あーあとひとつ重要な機能を忘れていた。 <a href='https://github.com/dahlbyk/posh-git'>dahlbyk/posh-git</a> を使っていると <a href='https://github.com/dahlbyk/posh-git/wiki/Posh&ndash;Git-Module-Functions'><code>tgit</code></a> という素敵な関数が提供されることでより一層 Tortoise Git から離れにくくなる。 <code>tgit</code> は Tortoise Git の任意の機能を召喚する魔法の関数なのだ。 この珍妙な関数を使うせいで、ペアプロ時に「あ！コマンド間違ってますよ！」と言われたこともあるが、便利なんだから仕方がない。勿論 Tab 補完もついている。</p><p>もうここまで沼に飲まれていると使い続ければ良いのでは...という気もしないではないが、より良いツールが出てきたらぜひ乗り換えたい。あるいは全部 CLI に寄せるか。 未来の自分に託した。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/git">git</a>
+    
+    <a href="/tags/tortoisegit">tortoisegit</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2021-01-04-planning">&laquo; 2021-01-04 2021</a>
         
-        
-        <a class="right" href="/posts/2020-12-26-retrospective2020">2020-12-26 振り返り 2020 年 &raquo;</a>
+        <a class="right" href="/posts/2022-02-12-publish-to-powershell-gallery-etc">2022-02-12 PoweShell Gallery へ公開するためのステップ覚書 &raquo;</a>
         
     </div>
 
