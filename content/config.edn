@@ -1,0 +1,35 @@
+{:site-title                   "krymtkts"
+ :author                       "krymtkts"
+ :description                  "krymtkts's personal blog"
+ :site-url                     "http://krymtkts.github.io/"
+ :post-root                    "posts"
+ :page-root                    "pages"
+ :post-root-uri                "posts"
+ :page-root-uri                "pages"
+ :tag-root-uri                 "tags"
+ :author-root-uri              "authors"
+ :public-dest                  "docs"
+ :blog-prefix                  ""
+ :rss-name                     "feed.xml"
+ :rss-filters                  ["cryogen"]
+ :recent-posts                 3
+ :post-date-format             "yyyy-MM-dd"
+ :archive-group-format         "yyyy MM"
+ :sass-src                     []
+ :sass-path                    "sass"
+ :theme                        "solarized_light"
+ :resources                    ["img"]
+ :keep-files                   [".git" "README.md"]
+ :disqus?                      false
+ :disqus-shortname             ""
+ :ignored-files                [#"\.#.*" #".*\.swp$"]
+ :posts-per-page               5
+ :blocks-per-preview           2
+ :previews?                    false
+ :clean-urls                   :trailing-slash
+ :collapse-subdirs?            false
+ :hide-future-posts?           true
+ :klipse                       {}
+ :first-publishing             2019
+ :description-include-elements #{:p :h1 :h2 :h3 :h4 :h5 :h6}
+ :debug?                       false}
