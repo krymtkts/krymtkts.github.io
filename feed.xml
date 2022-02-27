@@ -12,11 +12,46 @@ http://krymtkts.github.io/
 krymtkts's personal blog
 </description>
 <lastBuildDate>
-Sat, 19 Feb 2022 14:50:08 +0900
+Sun, 27 Feb 2022 15:31:54 +0900
 </lastBuildDate>
 <generator>
 clj-rss
 </generator>
+<item>
+<guid>
+http://krymtkts.github.io/posts/2022-02-27-issue-with-cryogen-version-bump
+</guid>
+<link>
+http://krymtkts.github.io/posts/2022-02-27-issue-with-cryogen-version-bump
+</link>
+<title>
+Cryogen バージョンアップに伴う困りごと
+</title>
+<description>
+&lt;p&gt;このブログを作るのに &lt;a href='https://github.com/cryogen-project/cryogen'&gt;Cryogen&lt;/a&gt; を利用している。 作った当初から一切のバージョンアップをしていなかったのだが、先週からちまちま手を動かし始めた。&lt;/p&gt;&lt;p&gt;最近の Cryogen では出力先のディレクトリを指定できる様になっているので、 &lt;code&gt;docs&lt;/code&gt; 出力するようにすれば今 &lt;a href='https://github.com/krymtkts/blog-cryogen'&gt;krymtkts/blog-cryogen&lt;/a&gt; と &lt;a href='https://github.com/krymtkts/krymtkts.github.io'&gt;krymtkts/krymtkts.github.io&lt;/a&gt; の 2 つに別れている repo を統合できる。 そも、出力結果を repo の管理下に置かず Github Actions で済ます選択もできるようになるんじゃないかな。&lt;/p&gt;&lt;p&gt;新しい Cryogen では雛形のディレクトリ構造が変わっているのだが、このバージョンアップによるマイグレーション自体は大したことはない。雑に言えば以下のタスクがあるだけだ。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;新しい Cryogen で雛形を作成する&lt;ul&gt;&lt;li&gt;雛形に含まれるポストや利用しないテーマ等を取り除いておく&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;既存のコンテンツとテーマを 1 に移動する&lt;ul&gt;&lt;li&gt;&lt;code&gt;resources\templates\themes&lt;/code&gt; -&gt; &lt;code&gt;themes&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;resources\templates\img&lt;/code&gt; -&gt; &lt;code&gt;content\img&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;resources\templates\md&lt;/code&gt; -&gt; &lt;code&gt;content\md&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;config.edn&lt;/code&gt; 新しいパラメータに書き換える&lt;/li&gt;&lt;li&gt;&lt;code&gt;lein serve&lt;/code&gt; で出力して確認&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;一通り手を動かしてみて、tag へのリンクが壊れたりの細かいバグはあったが、概ね破壊的な変更なく OK やなというところまではできた。&lt;/p&gt;&lt;p&gt;ところが困ったことに、RSS Feed の出力だけは大きく変わってしまうのを避けられなかった。どうも新しい Cryogen では RSS Feed への出力は要約だけにする仕様に変わったらしい。 ワークアラウンドとして、&lt;code&gt;config.edn&lt;/code&gt; の &lt;code&gt;blocks-per-preview&lt;/code&gt; の数値を大きくすれば要約に全文を含めることはできる。でもそれまで可能だった HTML での埋め込みはできなくなってしまった。 &lt;a href='https://github.com/cryogen-project/cryogen/issues/241'&gt;RSS feed: only publishes article's &quot;summary&quot; · Issue #241 · cryogen-project/cryogen&lt;/a&gt;&lt;/p&gt;&lt;p&gt;コード的にこの辺。 ページの &lt;code&gt;description&lt;/code&gt; が Feed に出力されるのだが、 plain text 以外の選択肢がない。なんでや。&lt;/p&gt;&lt;p&gt;&lt;a href='https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj#L474-L487'&gt;cryogen-core/compiler.clj at 31bcbfdad59e8eaed4a6d417682e51ef1e90982c · cryogen-project/cryogen-core&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;clojure&quot;&gt;&amp;#40;defn add-description
+  &amp;quot;Add plain text `:description` to the page/post for use in meta description etc.&amp;quot;
+  &amp;#91;{:keys &amp;#91;blocks-per-preview description-include-elements&amp;#93;
+    :or   {description-include-elements #{:p :h1 :h2 :h3 :h4 :h5 :h6}}}
+   page&amp;#93;
+  &amp;#40;update
+    page :description
+    #&amp;#40;cond
+       &amp;#40;false? %&amp;#41; nil  ;; if set via page meta to false, do not set
+       % %    ;; if set via page meta, use it
+       :else &amp;#40;-&amp;gt;&amp;gt; &amp;#40;enlive/select
+                    &amp;#40;preview-dom blocks-per-preview &amp;#40;:content-dom page&amp;#41;&amp;#41;
+                    &amp;#91;&amp;#40;set description-include-elements&amp;#41;&amp;#93;&amp;#41;
+                  &amp;#40;util/enlive-&amp;gt;plain-text&amp;#41;&amp;#41;&amp;#41;&amp;#41;&amp;#41;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href='https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/util.clj#L38-L41'&gt;cryogen-core/util.clj at 31bcbfdad59e8eaed4a6d417682e51ef1e90982c · cryogen-project/cryogen-core&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class=&quot;clojure&quot;&gt;&amp;#40;defn enlive-&amp;gt;plain-text &amp;#91;node-or-nodes&amp;#93;
+  &amp;#40;-&amp;gt;&amp;gt; node-or-nodes
+       &amp;#40;enlive/texts&amp;#41;
+       &amp;#40;apply str&amp;#41;&amp;#41;&amp;#41;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;RSS リーダー利用者としての個人的な意見だが、正直なところ技術ブログなんかであれば全文マークアップ可能な状態で配信してほしい。割と RSS リーダーだけ読んで済ませることも多い。 最近はフィードに全文載っけないのが主流ぽくはあるが、これは多分広告表示とかアクセス解析のためにサイトを訪れてほしいからであって、そういう動機がないのであれば全文配信しない理由がない。&lt;/p&gt;&lt;p&gt;なのでわたしのブログもそのようにしていたのだけど、このバージョンアップでそれができなくなるのは個人的にちょっと受け入れられないと判断した。 RSS リーダーでこのブログを購読する最有力ユーザはわたし自身なので、自分の意見が一番えらい。&lt;/p&gt;&lt;p&gt;現状だとどうしようないのだが、 Cryogen 自体に手を入れることができるのでそれをやってみようとしている。&lt;/p&gt;&lt;p&gt;&lt;a href='https://cryogenweb.org/docs/customizing-cryogen.html#customizing-the-code'&gt;Cryogen: Customizing/Extending Cryogen - Customizing the code&lt;/a&gt;&lt;/p&gt;&lt;p&gt;続く。&lt;/p&gt;
+</description>
+<pubDate>
+Sun, 27 Feb 2022 00:00:00 +0900
+</pubDate>
+</item>
 <item>
 <guid>
 http://krymtkts.github.io/posts/2022-02-19-i-cant-graduate-from-tortoise-git
