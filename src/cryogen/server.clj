@@ -7,7 +7,7 @@
     [ring.server.standalone :as ring-server]
     [cryogen-core.watcher :refer [start-watcher! start-watcher-for-changes!]]
     [cryogen-core.plugins :refer [load-plugins]]
-    [cryogen-core.compiler :refer [compile-assets-timed]]
+    [cryogen.compiler :refer [compile-assets-timed]]
     [cryogen-core.config :refer [resolve-config]]
     [cryogen-core.io :refer [path]]
     [clojure.string :as string])

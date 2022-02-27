@@ -22,13 +22,12 @@
  :disqus?                      false
  :disqus-shortname             ""
  :ignored-files                [#"\.#.*" #".*\.swp$"]
- :posts-per-page               5
- :blocks-per-preview           2
  :previews?                    false
+ :posts-per-page               1
+ :blocks-per-preview           1
  :clean-urls                   :no-trailing-slash
  :collapse-subdirs?            false
  :hide-future-posts?           true
  :klipse                       {}
  :first-publishing             2019
- :description-include-elements #{:p :h1 :h2 :h3 :h4 :h5 :h6}
  :debug?                       false}
