@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-03-05-customize-cryogen">Cryogen のカスタマイズ</a></li>
+                        
                         <li><a href="/posts/2022-02-27-issue-with-cryogen-version-bump">Cryogen バージョンアップに伴う困りごと</a></li>
                         
                         <li><a href="/posts/2022-02-19-i-cant-graduate-from-tortoise-git">Tortoise Git から卒業できない</a></li>
-                        
-                        <li><a href="/posts/2022-02-12-publish-to-powershell-gallery-etc">PoweShell Gallery へ公開するためのステップ覚書</a></li>
                         
                         
 
@@ -179,40 +179,18 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-02-27</div>
+        <div class="col-lg-6">2022-03-05</div>
         
     </div>
-    <h2>Cryogen バージョンアップに伴う困りごと</h2>
+    <h2>Cryogen のカスタマイズ</h2>
 </div>
 <div>
     
-    <p>このブログを作るのに <a href="https://github.com/cryogen-project/cryogen">Cryogen</a> を利用している。
-作った当初から一切のバージョンアップをしていなかったのだが、先週からちまちま手を動かし始めた。</p><p>最近の Cryogen では出力先のディレクトリを指定できる様になっているので、 <code>docs</code> 出力するようにすれば今 <a href="https://github.com/krymtkts/blog-cryogen">krymtkts/blog-cryogen</a> と <a href="https://github.com/krymtkts/krymtkts.github.io">krymtkts/krymtkts.github.io</a> の 2 つに別れている repo を統合できる。
-そも、出力結果を repo の管理下に置かず Github Actions で済ます選択もできるようになるんじゃないかな。</p><p>新しい Cryogen では雛形のディレクトリ構造が変わっているのだが、このバージョンアップによるマイグレーション自体は大したことはない。雑に言えば以下のタスクがあるだけだ。</p><ol><li>新しい Cryogen で雛形を作成する
-<ul><li>雛形に含まれるポストや利用しないテーマ等を取り除いておく</li></ul></li><li>既存のコンテンツとテーマを 1 に移動する
-<ul><li><code>resources\templates\themes</code> -&gt; <code>themes</code></li><li><code>resources\templates\img</code> -&gt; <code>content\img</code></li><li><code>resources\templates\md</code> -&gt; <code>content\md</code></li></ul></li><li><code>config.edn</code> 新しいパラメータに書き換える</li><li><code>lein serve</code> で出力して確認</li></ol><p>一通り手を動かしてみて、tag へのリンクが壊れたりの細かいバグはあったが、概ね破壊的な変更なく OK やなというところまではできた。</p><p>ところが困ったことに、RSS Feed の出力だけは大きく変わってしまうのを避けられなかった。どうも新しい Cryogen では RSS Feed への出力は要約だけにする仕様に変わったらしい。
-ワークアラウンドとして、<code>config.edn</code> の <code>blocks-per-preview</code> の数値を大きくすれば要約に全文を含めることはできる。でもそれまで可能だった HTML での埋め込みはできなくなってしまった。
-<a href="https://github.com/cryogen-project/cryogen/issues/241">RSS feed: only publishes article's "summary" · Issue #241 · cryogen-project/cryogen</a></p><p>コード的にこの辺。 ページの <code>description</code> が Feed に出力されるのだが、 plain text 以外の選択肢がない。なんでや。</p><p><a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj#L474-L487">cryogen-core/compiler.clj at 31bcbfdad59e8eaed4a6d417682e51ef1e90982c · cryogen-project/cryogen-core</a></p><pre><code class="clojure">(defn add-description
-  "Add plain text `:description` to the page/post for use in meta description etc."
-  [{:keys [blocks-per-preview description-include-elements]
-    :or   {description-include-elements #{:p :h1 :h2 :h3 :h4 :h5 :h6}}}
-   page]
-  (update
-    page :description
-    #(cond
-       (false? %) nil  ;; if set via page meta to false, do not set
-       % %    ;; if set via page meta, use it
-       :else (-&gt;&gt; (enlive/select
-                    (preview-dom blocks-per-preview (:content-dom page))
-                    [(set description-include-elements)])
-                  (util/enlive-&gt;plain-text)))))
-</code></pre><p><a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/util.clj#L38-L41">cryogen-core/util.clj at 31bcbfdad59e8eaed4a6d417682e51ef1e90982c · cryogen-project/cryogen-core</a></p><pre><code class="clojure">(defn enlive-&gt;plain-text [node-or-nodes]
-  (-&gt;&gt; node-or-nodes
-       (enlive/texts)
-       (apply str)))
-</code></pre><p>RSS リーダー利用者としての個人的な意見だが、正直なところ技術ブログなんかであれば全文マークアップ可能な状態で配信してほしい。割と RSS リーダーだけ読んで済ませることも多い。
-最近はフィードに全文載っけないのが主流ぽくはあるが、これは多分広告表示とかアクセス解析のためにサイトを訪れてほしいからであって、そういう動機がないのであれば全文配信しない理由がない。</p><p>なのでわたしのブログもそのようにしていたのだけど、このバージョンアップでそれができなくなるのは個人的にちょっと受け入れられないと判断した。
-RSS リーダーでこのブログを購読する最有力ユーザはわたし自身なので、自分の意見が一番えらい。</p><p>現状だとどうしようないのだが、 Cryogen 自体に手を入れることができるのでそれをやってみようとしている。</p><p><a href="https://cryogenweb.org/docs/customizing-cryogen.html#customizing-the-code">Cryogen: Customizing/Extending Cryogen - Customizing the code</a></p><p>続く。</p>
+    <p><a href="/posts/2022-02-27-issue-with-cryogen-version-bump">前回の投稿</a>で、 <a href="https://cryogenweb.org/">Cryogen</a> のバージョンアップに伴い Cryogen 自体のカスタマイズが必要だとを書いた。</p><p>カスタマイズ自体はかなり簡単にできたのだが、 Clojure 経験不足だからか正直なところドキュメントの記載だけではピンと来なかった。
+ということで、またわからなくなること必至のため記しておく。</p><p><code>cryogen-core</code> のバージョンは <code>0.4.1</code> だ。</p><p>対象のドキュメント <a href="https://cryogenweb.org/docs/customizing-cryogen.html#customizing-the-code">Cryogen: Customizing/Extending Cryogen</a> を以下に全文引用する。</p><blockquote><p>You can copy the <code>cryogen-core.compiler</code> namespace directly into your project (where it will override the one from the cryogen-core.jar) and modify it to your liking. It is not very long or complicated and is quite easy to modify. That is <a href="https://github.com/cryogen-project/cryogen-docs/blob/fd601c857cc88f7cb633a41c47b4c692e1522ed8/src/cryogen/compiler.clj">what we did for this site</a> (although it uses a much older version of cryogen-core, you may still use the same strategy today).</p></blockquote><p>機械翻訳にリンクを添えた ↓</p><blockquote><p><code>cryogen-core.compiler</code> 名前空間をプロジェクトに直接コピーし（cryogen-core.jar のものを上書きします）、好みに応じて変更することができます。これはそれほど長くもなく、複雑でもなく、非常に簡単に修正することができます。このサイトでは、<a href="https://github.com/cryogen-project/cryogen-docs/blob/fd601c857cc88f7cb633a41c47b4c692e1522ed8/src/cryogen/compiler.clj">このような方法</a>をとっています（かなり古いバージョンの cryogen-core を使用していますが、現在でも同じ方法をとることができます）。</p></blockquote><p>早い話が「Cryogen の公式ページのコードを真似ろ」。</p><p>はじめはナンノコッチャと思ったのだけど、Cryogen の repo のコードを眺めて「<a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj"><code>cryogen_core/compiler.clj</code></a>をコピって自分でサイトジェネレータを書いたらええんやで？」だと理解した。</p><p>Cryogen のエントリポイントは <code>cryogen/core.clj</code> と <code>cryogen/server.clj</code> があるが、いずれもサイトジェネレータは <code>cryogen-core.compiler</code> 名前空間の <code>compile-assets-timed</code> を呼び出してるだけなので、これを <code>cryogen_core/compiler.clj</code> からコピった自分用ジェネレータに変える、という趣旨らしい。</p><p>とった手順は以下の通り。</p><ol><li><a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj"><code>cryogen_core/compiler.clj</code></a> をコピって自分のサイトのコードに <code>src/cryogen/compiler.clj</code> として配置する</li><li><code>src/cryogen/compiler.clj</code> を自分の必要な形に書き換える
+<ul><li>今回デフォルトの Cryogen から変えたかったのは、 RSS フィードの要約機能を取り除いて HTML 全文載せるようにすることだった</li><li><a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj#L474-L487"><code>add-description</code></a> 関数の中で利用されている <code>util/enlive-&gt;plain-text</code> を <code>util/enlive-&gt;html-text</code> に変更、<code>add-description</code> に依存する関数 <code>compile-assets</code>, <code>compile-assets-timed</code> を <code>cryogen.compiler</code> に定義した</li><li>それ以外の関数は <code>cryogen-core.compiler</code> を参照する</li></ul></li><li><code>cryogen/core.clj</code> と <code>cryogen/server.clj</code> で、 <code>compile-assets-timed</code> の名前空間を <code>cryogen-core.compiler</code> → <code>cryogen.compiler</code> に変える</li><li><code>lein serve</code> してエラーがない＆期待の出力になっていれば完了</li></ol><p>これで概ね自分が期待する出力を得られるようになった(はず)。
+気付かないところで破壊的な変更をしているかも知れないので、それは経過観測していく。この投稿をした後で RSS フィードが本当に届くか心配だ。</p><p>あと既知の問題として、新たに追加された <code>lein serve:fast</code> がちゃんと動いてんのかこれ？ であったり、 Markdown 保存時の再生成が怪しかったりする。
+これらは、ちまちま直していきたい。</p><p>これで repo の統合だったり GitHub Action 化が見えてきた。</p>
 </div>
 
 <div id="post-tags">
@@ -230,7 +208,7 @@ RSS リーダーでこのブログを購読する最有力ユーザはわたし�
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-02-19-i-cant-graduate-from-tortoise-git">2022-02-19 Tortoise Git から卒業できない &raquo;</a>
+        <a class="right" href="/posts/2022-02-27-issue-with-cryogen-version-bump">2022-02-27 Cryogen バージョンアップに伴う困りごと &raquo;</a>
         
     </div>
 </div>
