@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: 下手な文章を Lint する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-04-07-lint-my-statement">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-04-07-lint-my-statement">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: 下手な文章を Lint する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-04-07-lint-my-statement" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-04-07-lint-my-statement" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,7 +186,9 @@
 </div>
 <div>
     
-    <p>転職してから 2 ヶ月の間、海外労働者の同僚から、日本語のドキュメントも英語のドキュメントもレビューコメントをいただいていてつらい。</p><p>英語だけならまだしろ、わしゃ日本語もろくに扱えん日本人なんかと思うと涙ちょちょぎれる次第であります。</p><p>なので自分の文章に Lint をかけようと思った。</p><h3 id="textlint">textlint</h3><p>いつだったか文章の Linter についてググってたら、以下のようなものを見つけた。</p><ul><li><a href='https://github.com/textlint/textlint'>GitHub - textlint/textlint</a></li><li><a href='https://qiita.com/azu/items/2c565a38df5ed4c9f4e1'>Qiita - VS Code で textlint を使って文章をチェックする</a></li><li><a href='https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing'>textlint-ja/textlint-rule-preset-ja-technical-writing: 技術文書向けの textlint ルールプリセット</a></li></ul><p>...すげえな！近い内に使えるようにしよう。と思ってから数ヶ月後、実務でまともな文章を書く能力が必要になるとわ...😭 というか vscode-textlint ってホイル焼きで有名な方の作品なのですね。敬意を払うべきプロダクトだ。</p><p>以下にわたしのセットアップ手順を記す(実行は PowerShell だよ)。</p><ol><li>VSCode で vscode-textlin を入れる</li><li><code>npm i -g textlint textlint-rule-preset-ja-technical-writing</code></li><li><code>cd &#126;</code>で<code>textlint &ndash;init</code>してルールを書き込み</li><li>VSCode では設定ファイルを絶対パスで利用するからどうしたものか...(複数端末で Sync してる関係で)<ol><li><code>&#126;/,textlint</code>にしたらユーザ名とか考えなくていいから、なんかいい 😁</li></ol></li><li>ついかパッケージ <code>npm i -g textlint-rule-date-weekday-mismatch textlint-rule-terminology textlint-rule-ginger</code></li></ol><p>これで簡単な typo は減らせるんじゃないかな。</p><p>お気に入りのルールは<code>textlint-rule-date-weekday-mismatch</code>。これからのオレが曜日を間違うことはないぜええええ？(フラグ</p>
+    <p>転職してから 2 ヶ月の間、海外労働者の同僚から、日本語のドキュメントも英語のドキュメントもレビューコメントをいただいていてつらい。</p><p>英語だけならまだしろ、わしゃ日本語もろくに扱えん日本人なんかと思うと涙ちょちょぎれる次第であります。</p><p>なので自分の文章に Lint をかけようと思った。</p><h3 id="textlint">textlint</h3><p>いつだったか文章の Linter についてググってたら、以下のようなものを見つけた。</p><ul><li><a href="https://github.com/textlint/textlint">GitHub - textlint/textlint</a></li><li><a href="https://qiita.com/azu/items/2c565a38df5ed4c9f4e1">Qiita - VS Code で textlint を使って文章をチェックする</a></li><li><a href="https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing">textlint-ja/textlint-rule-preset-ja-technical-writing: 技術文書向けの textlint ルールプリセット</a></li></ul><p>...すげえな！近い内に使えるようにしよう。と思ってから数ヶ月後、実務でまともな文章を書く能力が必要になるとわ...😭
+というか vscode-textlint ってホイル焼きで有名な方の作品なのですね。敬意を払うべきプロダクトだ。</p><p>以下にわたしのセットアップ手順を記す(実行は PowerShell だよ)。</p><ol><li>VSCode で vscode-textlin を入れる</li><li><code>npm i -g textlint textlint-rule-preset-ja-technical-writing</code></li><li><code>cd ~</code>で<code>textlint --init</code>してルールを書き込み</li><li>VSCode では設定ファイルを絶対パスで利用するからどうしたものか...(複数端末で Sync してる関係で)
+<ol><li><code>~/,textlint</code>にしたらユーザ名とか考えなくていいから、なんかいい 😁</li></ol></li><li>ついかパッケージ <code>npm i -g textlint-rule-date-weekday-mismatch textlint-rule-terminology textlint-rule-ginger</code></li></ol><p>これで簡単な typo は減らせるんじゃないかな。</p><p>お気に入りのルールは<code>textlint-rule-date-weekday-mismatch</code>。これからのオレが曜日を間違うことはないぜええええ？(フラグ</p>
 </div>
 
 <div id="post-tags">
@@ -223,7 +225,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

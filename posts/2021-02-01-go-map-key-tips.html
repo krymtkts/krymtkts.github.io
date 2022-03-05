@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: go の map のキーの Tips</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-02-01-go-map-key-tips">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-02-01-go-map-key-tips">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: go の map のキーの Tips" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-02-01-go-map-key-tips" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-02-01-go-map-key-tips" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,12 +186,16 @@
 </div>
 <div>
     
-    <ul><li>知ってた<ul><li><code>map</code>のキーには<code>struct</code>が使える</li><li>キーがポインタやポインタを含む<code>struct</code>の場合、ポインタの指す値が同じでもポインタ値自体が比較されるため異なるキーとなる</li></ul></li><li>知らなかった<ul><li><code>interface</code>もキーにできる<ul><li>キーを追加するときにポインタを使ってないこと</li></ul></li><li><code>time.Time</code>はキーにつこたらあかん<ul><li><a href='https://go.googlesource.com/go/+/go1.15.6/src/time/time.go#147'>src/time/time.go - go - Git at Google</a></li><li><a href='https://pkg.go.dev/time#Time'>time · pkg.go.dev</a><ul><li>> Note that the Go == operator compares not just the time instant but also the Location and the monotonic clock reading. Therefore, Time values should not be used as map or database keys without first guaranteeing that the identical Location has been set for all values, which can be achieved through use of the UTC or Local method, and that the monotonic clock reading has been stripped by setting t = t.Round(0). In general, prefer t.Equal(u) to t == u, since t.Equal uses the most accurate comparison available and correctly handles the case when only one of its arguments has a monotonic clock reading.</li></ul></li><li>UT では一致しちゃいバグを見つけられなかった...😥</li><li>まだわかってないのが、<code>Location</code>が必ず同じになるようにしてた＆年月日だけの情報しか持ってなかったのにずれとんのかい！？というところ</li></ul></li></ul></li></ul><p><a href='https://play.golang.org/p/Rd5OJ2S37AT'>コード</a>。このコードでは<code>time.Time</code>のキーのズレは再現しないけど。</p><pre><code class="go">package main
+    <ul><li>知ってた
+<ul><li><code>map</code>のキーには<code>struct</code>が使える</li><li>キーがポインタやポインタを含む<code>struct</code>の場合、ポインタの指す値が同じでもポインタ値自体が比較されるため異なるキーとなる</li></ul></li><li>知らなかった
+<ul><li><code>interface</code>もキーにできる
+<ul><li>キーを追加するときにポインタを使ってないこと</li></ul></li><li><code>time.Time</code>はキーにつこたらあかん
+<ul><li><a href="https://go.googlesource.com/go/+/go1.15.6/src/time/time.go#147">src/time/time.go - go - Git at Google</a></li><li><a href="https://pkg.go.dev/time#Time">time · pkg.go.dev</a><ul><li><blockquote><p>Note that the Go == operator compares not just the time instant but also the Location and the monotonic clock reading. Therefore, Time values should not be used as map or database keys without first guaranteeing that the identical Location has been set for all values, which can be achieved through use of the UTC or Local method, and that the monotonic clock reading has been stripped by setting t = t.Round(0). In general, prefer t.Equal(u) to t == u, since t.Equal uses the most accurate comparison available and correctly handles the case when only one of its arguments has a monotonic clock reading.</p></blockquote></li></ul></li><li>UT では一致しちゃいバグを見つけられなかった...😥</li><li>まだわかってないのが、<code>Location</code>が必ず同じになるようにしてた＆年月日だけの情報しか持ってなかったのにずれとんのかい！？というところ</li></ul></li></ul></li></ul><p><a href="https://play.golang.org/p/Rd5OJ2S37AT">コード</a>。このコードでは<code>time.Time</code>のキーのズレは再現しないけど。</p><pre><code class="go">package main
 
-import &#40;
-	&quot;fmt&quot;
-	&quot;time&quot;
-&#41;
+import (
+	"fmt"
+	"time"
+)
 
 type Key interface {
 }
@@ -210,69 +214,69 @@ type KeyC struct {
 }
 
 type KeyD struct {
-	a &#42;KeyA
+	a *KeyA
 }
 
-func checkInterfaceKey&#40;&#41; {
-	m := map&#91;Key&#93;int{}
-	m&#91;KeyA{
-		s: &quot;A1&quot;,
-	}&#93; = 1
-	m&#91;KeyA{
-		s: &quot;A1&quot;,
-	}&#93; = 2
-	m&#91;KeyA{
-		s: &quot;A2&quot;,
-	}&#93; = 3
-	m&#91;KeyB{
-		s: &quot;B1&quot;,
+func checkInterfaceKey() {
+	m := map[Key]int{}
+	m[KeyA{
+		s: "A1",
+	}] = 1
+	m[KeyA{
+		s: "A1",
+	}] = 2
+	m[KeyA{
+		s: "A2",
+	}] = 3
+	m[KeyB{
+		s: "B1",
 		i: 1,
-	}&#93; = 4
-	m&#91;KeyB{
-		s: &quot;B1&quot;,
+	}] = 4
+	m[KeyB{
+		s: "B1",
 		i: 1,
-	}&#93; = 5
-	m&#91;KeyB{
-		s: &quot;B1&quot;,
+	}] = 5
+	m[KeyB{
+		s: "B1",
 		i: 2,
-	}&#93; = 6
-	fmt.Printf&#40;&quot;%v\n&quot;, m&#41;
+	}] = 6
+	fmt.Printf("%v\n", m)
 }
 
-func init&#40;&#41; {
-	location := &quot;Asia/Tokyo&quot;
-	loc, err := time.LoadLocation&#40;location&#41;
+func init() {
+	location := "Asia/Tokyo"
+	loc, err := time.LoadLocation(location)
 	if err != nil {
-		loc = time.FixedZone&#40;location, 9&#42;60&#42;60&#41;
+		loc = time.FixedZone(location, 9*60*60)
 	}
 	time.Local = loc
-	fmt.Printf&#40;&quot;%v\n&quot;, loc&#41;
+	fmt.Printf("%v\n", loc)
 }
 
-func checkPointerIncludedKey&#40;&#41; {
-	m := map&#91;Key&#93;int{}
-	m&#91;KeyC{
-		t: time.Date&#40;2021, 2, 1, 0, 0, 0, 0, time.Local&#41;,
-	}&#93; = 1
-	m&#91;KeyC{
-		t: time.Date&#40;2021, 2, 1, 0, 0, 0, 0, time.Local&#41;,
-	}&#93; = 2
-	m&#91;KeyD{
+func checkPointerIncludedKey() {
+	m := map[Key]int{}
+	m[KeyC{
+		t: time.Date(2021, 2, 1, 0, 0, 0, 0, time.Local),
+	}] = 1
+	m[KeyC{
+		t: time.Date(2021, 2, 1, 0, 0, 0, 0, time.Local),
+	}] = 2
+	m[KeyD{
 		a: &amp;KeyA{
-			s: &quot;D1&quot;,
+			s: "D1",
 		},
-	}&#93; = 3
-	m&#91;KeyD{
+	}] = 3
+	m[KeyD{
 		a: &amp;KeyA{
-			s: &quot;D1&quot;,
+			s: "D1",
 		},
-	}&#93; = 4
-	fmt.Printf&#40;&quot;%v\n&quot;, m&#41;
+	}] = 4
+	fmt.Printf("%v\n", m)
 }
 
-func main&#40;&#41; {
-	checkInterfaceKey&#40;&#41;
-	checkPointerIncludedKey&#40;&#41;
+func main() {
+	checkInterfaceKey()
+	checkPointerIncludedKey()
 }
 
 </code></pre>
@@ -308,7 +312,7 @@ func main&#40;&#41; {
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

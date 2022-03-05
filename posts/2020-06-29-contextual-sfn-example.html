@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Step Functions のステートをまたいでパラメータを伝播するパターン</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-06-29-contextual-sfn-example">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2020-06-29-contextual-sfn-example">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Step Functions のステートをまたいでパラメータを伝播するパターン" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-06-29-contextual-sfn-example" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2020-06-29-contextual-sfn-example" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,25 +186,26 @@
 </div>
 <div>
     
-    <p><a href='2020-04-30-context-like-sfn'>前の記事</a>で記したアイデアの実装例を残しておいた。</p><p><a href='https://github.com/krymtkts/contextual-sfn'>krymtkts/contextual-sfn: Example for passing parameters across states.</a></p><p>現時点で実際にお仕事で使っているパターンなのだけど、前述の通りペイロードが大幅に大きくなると問題になり得るので、より良くするすべはないものかと考え中。</p><h3 id="おさらい">おさらい</h3><p>StateMachine の構成。</p><ol><li>Task</li><li>Map</li><li>Reduce</li></ol><p>のステートがあるとする。Task は文字列、配列 A、配列 B を Output する。これらのデータについては以下の通りとする。</p><ul><li>文字列(<code>t</code>)は、フロー全体に渡って使用したいデータ。</li><li>配列 A(<code>ia</code>) は、1 つ目の Map タスクで分散したいデータ。</li><li>配列 B(<code>sa</code>) は、2 つ目の Map タスクで分散したいデータ。</li></ul><p>このパターンを実装した背景としては以下の通り。</p><ul><li>Map と Reduce で使いたいデータを Aurora Serverless から取得する必要がある</li><li>普段停止しているクラスタは結構起動に時間がかかる</li><li>Map では Reduce のパラメータも利用したい</li><li>フローの最初に全部取ってしまおう！</li></ul><h4 id="1.&#95;task">1. Task</h4><p>Lambda からの出力がこんなのだとする。</p><pre><code class="json">{
-  &quot;t&quot;: &quot;nanigashi&quot;,
-  &quot;ia&quot;: &#91;1, 2, 4, 8, 16, 32, 64&#93;,
-  &quot;sa&quot;: &#91;&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;&#93;
+    <p><a href="2020-04-30-context-like-sfn">前の記事</a>で記したアイデアの実装例を残しておいた。</p><p><a href="https://github.com/krymtkts/contextual-sfn">krymtkts/contextual-sfn: Example for passing parameters across states.</a></p><p>現時点で実際にお仕事で使っているパターンなのだけど、前述の通りペイロードが大幅に大きくなると問題になり得るので、より良くするすべはないものかと考え中。</p><h3 id="おさらい">おさらい</h3><p>StateMachine の構成。</p><ol><li>Task</li><li>Map</li><li>Reduce</li></ol><p>のステートがあるとする。Task は文字列、配列 A、配列 B を Output する。これらのデータについては以下の通りとする。</p><ul><li>文字列(<code>t</code>)は、フロー全体に渡って使用したいデータ。</li><li>配列 A(<code>ia</code>) は、1 つ目の Map タスクで分散したいデータ。</li><li>配列 B(<code>sa</code>) は、2 つ目の Map タスクで分散したいデータ。</li></ul><p>このパターンを実装した背景としては以下の通り。</p><ul><li>Map と Reduce で使いたいデータを Aurora Serverless から取得する必要がある</li><li>普段停止しているクラスタは結構起動に時間がかかる</li><li>Map では Reduce のパラメータも利用したい</li><li>フローの最初に全部取ってしまおう！</li></ul><h4 id="1-task">1. Task</h4><p>Lambda からの出力がこんなのだとする。</p><pre><code class="json">{
+  "t": "nanigashi",
+  "ia": [1, 2, 4, 8, 16, 32, 64],
+  "sa": ["A", "B", "C", "D", "E"]
 }
 </code></pre><p><code>ResultPath</code>を<code>$.data</code>にしておくと Task1 ステートの出力は ↓ になる。</p><pre><code class="json">{
-  &quot;data&quot;: {
-    &quot;t&quot;: &quot;nanigashi&quot;,
-    &quot;ia&quot;: &#91;1, 2, 4, 8, 16, 32, 64&#93;,
-    &quot;sa&quot;: &#91;&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;&#93;
+  "data": {
+    "t": "nanigashi",
+    "ia": [1, 2, 4, 8, 16, 32, 64],
+    "sa": ["A", "B", "C", "D", "E"]
   }
 }
 </code></pre><p>YAML はこう。</p><pre><code class="yml">Entrypoint:
   Type: Task
   Resource:
-    Fn::GetAtt: &#91;task, Arn&#93;
+    Fn::GetAtt: [task, Arn]
   ResultPath: $.data
   Next: Map
-</code></pre><h4 id="2.&#95;map">2. Map</h4><ul><li><code>ItemsPath</code> に <code>$.data.ia</code> を指定し、配列 A でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.data.t</code>, <code>$.data.sa</code></li><li>パラメータ名末尾の<code>.$</code>忘れがち</li></ul></li><li><code>OutputPath</code> に前のタスクの出力 <code>$.data</code> を指定すれば、同じパラメータを次のステートに回せる</li><li>ここではマッピングの出力は無視するとして、<code>ResultPath</code>に<code>$.null</code>など<code>OutputPath</code>に含まれないパスを指定する</li></ul><pre><code class="yml">Map:
+</code></pre><h4 id="2-map">2. Map</h4><ul><li><code>ItemsPath</code> に <code>$.data.ia</code> を指定し、配列 A でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り
+<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.data.t</code>, <code>$.data.sa</code></li><li>パラメータ名末尾の<code>.$</code>忘れがち</li></ul></li><li><code>OutputPath</code> に前のタスクの出力 <code>$.data</code> を指定すれば、同じパラメータを次のステートに回せる</li><li>ここではマッピングの出力は無視するとして、<code>ResultPath</code>に<code>$.null</code>など<code>OutputPath</code>に含まれないパスを指定する</li></ul><pre><code class="yml">Map:
   Type: Map
   MaxConcurrency: 10
   Parameters:
@@ -219,10 +220,11 @@
     States:
       MapTask:
         Type: Task
-        Resource: !GetAtt &#91;map, Arn&#93;
+        Resource: !GetAtt [map, Arn]
         End: true
   Next: Reduce
-</code></pre><h4 id="3.&#95;reduce">3. Reduce</h4><ul><li><code>ItemsPath</code> に <code>$.sa</code> を指定し、配列 B でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.data.t</code></li><li>パラメータ名末尾の<code>.$</code>忘れがち(2 回目)</li></ul></li><li>出力を制御したい場合は、Map 同様に<code>OutputPath</code>、<code>ResultPath</code>を指定仕分ける</li></ul><pre><code class="yml">Reduce:
+</code></pre><h4 id="3-reduce">3. Reduce</h4><ul><li><code>ItemsPath</code> に <code>$.sa</code> を指定し、配列 B でイテレーションする</li><li><code>Parameters</code> に Lambda へ渡したいパラメータを指定する。以下の通り
+<ul><li>マッピングの各要素は<code>$$.Map.Item.Value</code></li><li>追加で渡したいパラメータを <code>$.data.t</code></li><li>パラメータ名末尾の<code>.$</code>忘れがち(2 回目)</li></ul></li><li>出力を制御したい場合は、Map 同様に<code>OutputPath</code>、<code>ResultPath</code>を指定仕分ける</li></ul><pre><code class="yml">Reduce:
   Type: Map
   Parameters:
     k.$: $$.Map.Item.Value
@@ -235,10 +237,11 @@
     States:
       ReduceTask:
         Type: Task
-        Resource: !GetAtt &#91;reduce, Arn&#93;
+        Resource: !GetAtt [reduce, Arn]
         End: true
   End: true
-</code></pre><h3 id="まとめ">まとめ</h3><p>こういう例、ググっても見つからずあまり使われないパターンかも知れない。 必要だった＆実現できたので制限を理解した上で、容量用法守って使えれば良いかな。</p>
+</code></pre><h3 id="まとめ">まとめ</h3><p>こういう例、ググっても見つからずあまり使われないパターンかも知れない。
+必要だった＆実現できたので制限を理解した上で、容量用法守って使えれば良いかな。</p>
 </div>
 
 <div id="post-tags">
@@ -275,7 +278,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

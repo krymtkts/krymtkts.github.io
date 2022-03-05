@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: シェルスクリプトのフォーマッタをCLIでインストールする</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-06-02_install-shfmt-to-win-using-cli">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-06-02_install-shfmt-to-win-using-cli">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: シェルスクリプトのフォーマッタをCLIでインストールする" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-06-02_install-shfmt-to-win-using-cli" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-06-02_install-shfmt-to-win-using-cli" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,8 +186,8 @@
 </div>
 <div>
     
-    <p>小ネタ。</p><p>へーしゃの仕事では、Bashで書かれたスクリプトの出番がめちゃくちゃ多い。</p><p>Bashが得意じゃないマンのわたしにとっては、そういったスクリプトを読み書きに慣れてないこともあり、結構疲れる仕事である。</p><p>そこでせめて書くのだけは少しでも楽したいと思って、フォーマッタを導入しようと思った。</p><h3 id="ツールを導入する">ツールを導入する</h3><p>shfmtというgolang製のツールがあるので、それを採択。</p><p><a href='https://github.com/mvdan/sh'>mvdan/sh: A shell parser, formatter, and interpreter (POSIX/Bash/mksh)</a></p><p>しかし悲しいかな、Windows用に提供されてるパッケージはScoopのみ(リンク切れてるけど)でChocolateyにない様子🤔(筆者はChocolateyユーザである)。</p><p>代わりにCLIでのインストールを使うことにする。</p><pre><code class="sh">cd $&#40;mktemp -d&#41;; go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt
-</code></pre><p>でも<code>mktemp</code>コマンドはPowerShellにはないし...そこは<code>mkdir</code>で茶を濁す。あとtmpフォルダの後始末もする。</p><pre><code class="powershell">cd $&#40;mkdir tmp&#41;; go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt; cd ../; rm -r tmp
+    <p>小ネタ。</p><p>へーしゃの仕事では、Bashで書かれたスクリプトの出番がめちゃくちゃ多い。</p><p>Bashが得意じゃないマンのわたしにとっては、そういったスクリプトを読み書きに慣れてないこともあり、結構疲れる仕事である。</p><p>そこでせめて書くのだけは少しでも楽したいと思って、フォーマッタを導入しようと思った。</p><h3 id="ツールを導入する">ツールを導入する</h3><p>shfmtというgolang製のツールがあるので、それを採択。</p><p><a href="https://github.com/mvdan/sh">mvdan/sh: A shell parser, formatter, and interpreter (POSIX/Bash/mksh)</a></p><p>しかし悲しいかな、Windows用に提供されてるパッケージはScoopのみ(リンク切れてるけど)でChocolateyにない様子🤔(筆者はChocolateyユーザである)。</p><p>代わりにCLIでのインストールを使うことにする。</p><pre><code class="sh">cd $(mktemp -d); go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt
+</code></pre><p>でも<code>mktemp</code>コマンドはPowerShellにはないし...そこは<code>mkdir</code>で茶を濁す。あとtmpフォルダの後始末もする。</p><pre><code class="powershell">cd $(mkdir tmp); go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt; cd ../; rm -r tmp
 </code></pre><p>ええがな。</p><h3 id="雑記">雑記</h3><p>5月後半はうまく波に乗れずブログを書けなかった。まだアウトプットが習慣化していないようなので、きちんと積み重ねしていきたいもんやで🤔</p>
 </div>
 
@@ -223,7 +223,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

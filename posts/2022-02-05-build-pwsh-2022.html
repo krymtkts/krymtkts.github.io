@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: 2022-02 版 PowerShell のビルド</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-02-05-build-pwsh-2022">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-02-05-build-pwsh-2022">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: 2022-02 版 PowerShell のビルド" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-02-05-build-pwsh-2022" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-02-05-build-pwsh-2022" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,9 +186,13 @@
 </div>
 <div>
     
-    <p>PowerShell のパラメータバインディングについて調べていてコードに潜る時に、やっぱりローカルでビルドしたいよな！と思ったので、試してみた。 結果、副産物的に PowerShell 自体のコードをいじれる環境ができた。<h2></h2></p><p>PC は Razer Blade Stealth 2018、Windows 11 Home 21H2 22000.469 だ。</p><p>まず ビルドの方法を探す。</p><p><code>README.md</code>から辿って<a href='https://github.com/PowerShell/PowerShell/blob/master/docs/building/windows-core.md'>Build PowerShell on Windows for .NET Core</a>に辿り着いた。 わたしは <code>dotnet</code> を使った CLI ビルドがしたいので <a href='https://github.com/PowerShell/PowerShell/blob/master/docs/building/windows-core.md#net-cli'>.NET CLI</a> のやり方を使う。 ゆーても惚れ惚れするくらい簡単。以下だけ。</p><pre><code class="powershell">Import-Module ./build.psm1
+    <p>PowerShell のパラメータバインディングについて調べていてコードに潜る時に、やっぱりローカルでビルドしたいよな！と思ったので、試してみた。
+結果、副産物的に PowerShell 自体のコードをいじれる環境ができた。</p><hr /><p>PC は Razer Blade Stealth 2018、Windows 11 Home 21H2 22000.469 だ。</p><p>まず ビルドの方法を探す。</p><p><code>README.md</code>から辿って<a href="https://github.com/PowerShell/PowerShell/blob/master/docs/building/windows-core.md">Build PowerShell on Windows for .NET Core</a>に辿り着いた。
+わたしは <code>dotnet</code> を使った CLI ビルドがしたいので <a href="https://github.com/PowerShell/PowerShell/blob/master/docs/building/windows-core.md#net-cli">.NET CLI</a> のやり方を使う。
+ゆーても惚れ惚れするくらい簡単。以下だけ。</p><pre><code class="powershell">Import-Module ./build.psm1
 Start-PSBootstrap
-</code></pre><p>ビルドに使うのは <code>Start-PSBuild</code> らしい。<code>build.psm1</code> を見たらわかるが、多くの関数が定義されてる。今回使うのはそのうちの 3 つだけだ。 これらの関数が何を行うためのものかのコメントがあまりないので、それぞれドキュメントからタグルなり使いみちを調べるのも一興か。</p><pre><code class="powershell">&gt; Get-Command -ListImported | Where-Object -Property Source -eq build
+</code></pre><p>ビルドに使うのは <code>Start-PSBuild</code> らしい。<code>build.psm1</code> を見たらわかるが、多くの関数が定義されてる。今回使うのはそのうちの 3 つだけだ。
+これらの関数が何を行うためのものかのコメントがあまりないので、それぞれドキュメントからタグルなり使いみちを調べるのも一興か。</p><pre><code class="powershell">&gt; Get-Command -ListImported | Where-Object -Property Source -eq build
 
 CommandType     Name                                               Version    Source
 -----------     ----                                               -------    ------
@@ -197,24 +201,28 @@ Function        Clear-PSRepo                                       0.0        bu
 Function        Start-PSBootstrap                                  0.0        build
 Function        Start-PSBuild                                      0.0        build
 # ︙
-</code></pre><p>PC にインストール済みの <code>dotnet</code> が <code>6.0.101</code> だったので、試しに <code>6.0.101</code> でビルドする。 <code>global.json</code>内の<code>sdk.version</code>という属性がある。このときは<code>6.0.100</code>がデフォルト値になってたので、使いたいバージョンに変える。</p><pre><code class="diff">PS&gt; git diff
+</code></pre><p>PC にインストール済みの <code>dotnet</code> が <code>6.0.101</code> だったので、試しに <code>6.0.101</code> でビルドする。
+<code>global.json</code>内の<code>sdk.version</code>という属性がある。このときは<code>6.0.100</code>がデフォルト値になってたので、使いたいバージョンに変える。</p><pre><code class="diff">PS&gt; git diff
 diff --git a/global.json b/global.json
 index 047020849..e52d340bc 100644
 --- a/global.json
 +++ b/global.json
 @@ -1,5 +1,5 @@
  {
-   &quot;sdk&quot;: {
--    &quot;version&quot;: &quot;6.0.100&quot;
-+    &quot;version&quot;: &quot;6.0.101&quot;
+   "sdk": {
+-    "version": "6.0.100"
++    "version": "6.0.101"
    }
  }
-</code></pre><p><code>Start-PSBuild</code> を実行することでビルドできる。 Razer Blade Stealth 2018 だとビルドに 2 分近くかかった。 ビルド物はドキュメントに記載の通り <code>./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe</code> に出力された。 普通に起動すると実行時エラーで死んだけど、プロファイル読み込みを外せば起動した。ﾔｯﾀﾈ！</p><pre><code class="powershell">PS&gt; ./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe # 死
+</code></pre><p><code>Start-PSBuild</code> を実行することでビルドできる。
+Razer Blade Stealth 2018 だとビルドに 2 分近くかかった。
+ビルド物はドキュメントに記載の通り <code>./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe</code> に出力された。
+普通に起動すると実行時エラーで死んだけど、プロファイル読み込みを外せば起動した。ﾔｯﾀﾈ！</p><pre><code class="powershell">PS&gt; ./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe # 死
 PowerShell 7.2.0-preview.10-222-g0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b
 Process terminated. Assertion failed.
 No locals tuple should have been created yet.
-   at System.Management.Automation.Diagnostics.Assert&#40;Boolean condition, String whyThisShouldNeverHappen, String detailMessage&#41; in C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\System.Management.Automation\utils\assert.cs:line 202
-   at System.Management.Automation.Diagnostics.Assert&#40;Boolean condition, String whyThisShouldNeverHappen&#41; in C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\System.Management.Automation\utils\assert.cs:line 134
+   at System.Management.Automation.Diagnostics.Assert(Boolean condition, String whyThisShouldNeverHappen, String detailMessage) in C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\System.Management.Automation\utils\assert.cs:line 202
+   at System.Management.Automation.Diagnostics.Assert(Boolean condition, String whyThisShouldNeverHappen) in C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\System.Management.Automation\utils\assert.cs:line 134
 # ... スタックトレースは続く
 
 PS&gt; ./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe -NoProfile # Good!
@@ -253,7 +261,7 @@ PS C:\Users\takatoshi\dev\github.com\PowerShell\PowerShell\src\powershell-win-co
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

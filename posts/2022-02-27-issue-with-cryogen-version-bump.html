@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Cryogen バージョンアップに伴う困りごと</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-02-27-issue-with-cryogen-version-bump">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-02-27-issue-with-cryogen-version-bump">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Cryogen バージョンアップに伴う困りごと" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-02-27-issue-with-cryogen-version-bump" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-02-27-issue-with-cryogen-version-bump" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,25 +186,33 @@
 </div>
 <div>
     
-    <p>このブログを作るのに <a href='https://github.com/cryogen-project/cryogen'>Cryogen</a> を利用している。 作った当初から一切のバージョンアップをしていなかったのだが、先週からちまちま手を動かし始めた。</p><p>最近の Cryogen では出力先のディレクトリを指定できる様になっているので、 <code>docs</code> 出力するようにすれば今 <a href='https://github.com/krymtkts/blog-cryogen'>krymtkts/blog-cryogen</a> と <a href='https://github.com/krymtkts/krymtkts.github.io'>krymtkts/krymtkts.github.io</a> の 2 つに別れている repo を統合できる。 そも、出力結果を repo の管理下に置かず Github Actions で済ます選択もできるようになるんじゃないかな。</p><p>新しい Cryogen では雛形のディレクトリ構造が変わっているのだが、このバージョンアップによるマイグレーション自体は大したことはない。雑に言えば以下のタスクがあるだけだ。</p><ol><li>新しい Cryogen で雛形を作成する<ul><li>雛形に含まれるポストや利用しないテーマ等を取り除いておく</li></ul></li><li>既存のコンテンツとテーマを 1 に移動する<ul><li><code>resources\templates\themes</code> -> <code>themes</code></li><li><code>resources\templates\img</code> -> <code>content\img</code></li><li><code>resources\templates\md</code> -> <code>content\md</code></li></ul></li><li><code>config.edn</code> 新しいパラメータに書き換える</li><li><code>lein serve</code> で出力して確認</li></ol><p>一通り手を動かしてみて、tag へのリンクが壊れたりの細かいバグはあったが、概ね破壊的な変更なく OK やなというところまではできた。</p><p>ところが困ったことに、RSS Feed の出力だけは大きく変わってしまうのを避けられなかった。どうも新しい Cryogen では RSS Feed への出力は要約だけにする仕様に変わったらしい。 ワークアラウンドとして、<code>config.edn</code> の <code>blocks-per-preview</code> の数値を大きくすれば要約に全文を含めることはできる。でもそれまで可能だった HTML での埋め込みはできなくなってしまった。 <a href='https://github.com/cryogen-project/cryogen/issues/241'>RSS feed: only publishes article's "summary" · Issue #241 · cryogen-project/cryogen</a></p><p>コード的にこの辺。 ページの <code>description</code> が Feed に出力されるのだが、 plain text 以外の選択肢がない。なんでや。</p><p><a href='https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj#L474-L487'>cryogen-core/compiler.clj at 31bcbfdad59e8eaed4a6d417682e51ef1e90982c · cryogen-project/cryogen-core</a></p><pre><code class="clojure">&#40;defn add-description
-  &quot;Add plain text `:description` to the page/post for use in meta description etc.&quot;
-  &#91;{:keys &#91;blocks-per-preview description-include-elements&#93;
+    <p>このブログを作るのに <a href="https://github.com/cryogen-project/cryogen">Cryogen</a> を利用している。
+作った当初から一切のバージョンアップをしていなかったのだが、先週からちまちま手を動かし始めた。</p><p>最近の Cryogen では出力先のディレクトリを指定できる様になっているので、 <code>docs</code> 出力するようにすれば今 <a href="https://github.com/krymtkts/blog-cryogen">krymtkts/blog-cryogen</a> と <a href="https://github.com/krymtkts/krymtkts.github.io">krymtkts/krymtkts.github.io</a> の 2 つに別れている repo を統合できる。
+そも、出力結果を repo の管理下に置かず Github Actions で済ます選択もできるようになるんじゃないかな。</p><p>新しい Cryogen では雛形のディレクトリ構造が変わっているのだが、このバージョンアップによるマイグレーション自体は大したことはない。雑に言えば以下のタスクがあるだけだ。</p><ol><li>新しい Cryogen で雛形を作成する
+<ul><li>雛形に含まれるポストや利用しないテーマ等を取り除いておく</li></ul></li><li>既存のコンテンツとテーマを 1 に移動する
+<ul><li><code>resources\templates\themes</code> -&gt; <code>themes</code></li><li><code>resources\templates\img</code> -&gt; <code>content\img</code></li><li><code>resources\templates\md</code> -&gt; <code>content\md</code></li></ul></li><li><code>config.edn</code> 新しいパラメータに書き換える</li><li><code>lein serve</code> で出力して確認</li></ol><p>一通り手を動かしてみて、tag へのリンクが壊れたりの細かいバグはあったが、概ね破壊的な変更なく OK やなというところまではできた。</p><p>ところが困ったことに、RSS Feed の出力だけは大きく変わってしまうのを避けられなかった。どうも新しい Cryogen では RSS Feed への出力は要約だけにする仕様に変わったらしい。
+ワークアラウンドとして、<code>config.edn</code> の <code>blocks-per-preview</code> の数値を大きくすれば要約に全文を含めることはできる。でもそれまで可能だった HTML での埋め込みはできなくなってしまった。
+<a href="https://github.com/cryogen-project/cryogen/issues/241">RSS feed: only publishes article's "summary" · Issue #241 · cryogen-project/cryogen</a></p><p>コード的にこの辺。 ページの <code>description</code> が Feed に出力されるのだが、 plain text 以外の選択肢がない。なんでや。</p><p><a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj#L474-L487">cryogen-core/compiler.clj at 31bcbfdad59e8eaed4a6d417682e51ef1e90982c · cryogen-project/cryogen-core</a></p><pre><code class="clojure">(defn add-description
+  "Add plain text `:description` to the page/post for use in meta description etc."
+  [{:keys [blocks-per-preview description-include-elements]
     :or   {description-include-elements #{:p :h1 :h2 :h3 :h4 :h5 :h6}}}
-   page&#93;
-  &#40;update
+   page]
+  (update
     page :description
-    #&#40;cond
-       &#40;false? %&#41; nil  ;; if set via page meta to false, do not set
+    #(cond
+       (false? %) nil  ;; if set via page meta to false, do not set
        % %    ;; if set via page meta, use it
-       :else &#40;-&gt;&gt; &#40;enlive/select
-                    &#40;preview-dom blocks-per-preview &#40;:content-dom page&#41;&#41;
-                    &#91;&#40;set description-include-elements&#41;&#93;&#41;
-                  &#40;util/enlive-&gt;plain-text&#41;&#41;&#41;&#41;&#41;
-</code></pre><p><a href='https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/util.clj#L38-L41'>cryogen-core/util.clj at 31bcbfdad59e8eaed4a6d417682e51ef1e90982c · cryogen-project/cryogen-core</a></p><pre><code class="clojure">&#40;defn enlive-&gt;plain-text &#91;node-or-nodes&#93;
-  &#40;-&gt;&gt; node-or-nodes
-       &#40;enlive/texts&#41;
-       &#40;apply str&#41;&#41;&#41;
-</code></pre><p>RSS リーダー利用者としての個人的な意見だが、正直なところ技術ブログなんかであれば全文マークアップ可能な状態で配信してほしい。割と RSS リーダーだけ読んで済ませることも多い。 最近はフィードに全文載っけないのが主流ぽくはあるが、これは多分広告表示とかアクセス解析のためにサイトを訪れてほしいからであって、そういう動機がないのであれば全文配信しない理由がない。</p><p>なのでわたしのブログもそのようにしていたのだけど、このバージョンアップでそれができなくなるのは個人的にちょっと受け入れられないと判断した。 RSS リーダーでこのブログを購読する最有力ユーザはわたし自身なので、自分の意見が一番えらい。</p><p>現状だとどうしようないのだが、 Cryogen 自体に手を入れることができるのでそれをやってみようとしている。</p><p><a href='https://cryogenweb.org/docs/customizing-cryogen.html#customizing-the-code'>Cryogen: Customizing/Extending Cryogen - Customizing the code</a></p><p>続く。</p>
+       :else (-&gt;&gt; (enlive/select
+                    (preview-dom blocks-per-preview (:content-dom page))
+                    [(set description-include-elements)])
+                  (util/enlive-&gt;plain-text)))))
+</code></pre><p><a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/util.clj#L38-L41">cryogen-core/util.clj at 31bcbfdad59e8eaed4a6d417682e51ef1e90982c · cryogen-project/cryogen-core</a></p><pre><code class="clojure">(defn enlive-&gt;plain-text [node-or-nodes]
+  (-&gt;&gt; node-or-nodes
+       (enlive/texts)
+       (apply str)))
+</code></pre><p>RSS リーダー利用者としての個人的な意見だが、正直なところ技術ブログなんかであれば全文マークアップ可能な状態で配信してほしい。割と RSS リーダーだけ読んで済ませることも多い。
+最近はフィードに全文載っけないのが主流ぽくはあるが、これは多分広告表示とかアクセス解析のためにサイトを訪れてほしいからであって、そういう動機がないのであれば全文配信しない理由がない。</p><p>なのでわたしのブログもそのようにしていたのだけど、このバージョンアップでそれができなくなるのは個人的にちょっと受け入れられないと判断した。
+RSS リーダーでこのブログを購読する最有力ユーザはわたし自身なので、自分の意見が一番えらい。</p><p>現状だとどうしようないのだが、 Cryogen 自体に手を入れることができるのでそれをやってみようとしている。</p><p><a href="https://cryogenweb.org/docs/customizing-cryogen.html#customizing-the-code">Cryogen: Customizing/Extending Cryogen - Customizing the code</a></p><p>続く。</p>
 </div>
 
 <div id="post-tags">
@@ -237,7 +245,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

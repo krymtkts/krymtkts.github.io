@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: PowerShell で Money Forward クラウド勤怠を操作する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-11-27-psmfattendance">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-11-27-psmfattendance">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: PowerShell で Money Forward クラウド勤怠を操作する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-11-27-psmfattendance" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-11-27-psmfattendance" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,7 +186,15 @@
 </div>
 <div>
     
-    <p>現職について 2 ヶ月が経とうとしているが、まだ爆殺されてない。ので馴染んできているのかも知れない。コミュニケーションが少なくても(定例を除き、最少 DM1 通/週とか)何とかやっていけるものだなという気づきを得た。<h2></h2></p><p>現職では勤怠の管理に Money Forward クラウド勤怠を利用している(時間管理なのだ)。 始めに書いておくと、勤怠管理システムはなんでか知らんがそれぞれに特色があって、どのツールを使っても一癖あるモノだというのがわたしの見解。その中でも Money Forward クラウド勤怠は悪くない印象だ。</p><p>しかし、わたしという人間がどうにもこうにも打刻という行為が大の苦手で、非常に億劫だ(労務管理の上で必要なんはわかるけど仕事の前後で打刻しないといけないとかワシら機械か、人間のやることじゃないと。某筋肉番組のショットガンタッチならいざ知らず)。</p><p>プログラマというのは怠惰なので、ブラウザで一々アクセスして打刻ボタンを押すのも苦痛なのであって、即ち半自動化に至るのは自然なことだ。 自動化じゃなく半自動化なのがポイント。自動化したら勤務してないのに勤務してるみたいなやばいことになりかねへん。自動化できるケーパビリティを持ちつつも半自動で使うのが職業プログラマの倫理？</p><p>そこでまず自分で作りたくないので誰かが書いたツールを探すと、<a href='https://github.com/puhitaku/mfpy'>puhitaku/mfpy: MoneyForward クラウド勤怠といい感じに通信していい感じに打刻するやつ</a> が見つかった。良さそう。</p><p>でも PowerShell でどうしてもやりたかった。なので PowerShell で作った ↓</p><p><a href='https://github.com/krymtkts/PSMFAttendance'>krymtkts/PSMFAttendance</a></p><p>今は出退勤のリアルタイム打刻しかできない。今後、わたしがグータラできる水準まで高めるには次の機能が必要かなーと考えている。</p><ul><li>二重打刻防止<ul><li>なんと出勤や退勤が無限多重打刻できる仕様なので、これを防止したい<ul><li>そのためには勤怠実績の一覧を取得する機能が必要になる</li></ul></li></ul></li><li>打刻のリマインド機能<ul><li>これは <code>&#42;-ScheduledTask</code> でなんとかでけへんかなと考えているが...やったことない<ul><li>過去にタスクスケジューラでスケジュール実行をしてたけど PowerShell でやりたいし</li></ul></li></ul></li><li>勤務実績の入力<ul><li>打刻忘れの場合この作業が必要なので</li></ul></li></ul><p>あと、PowerShell Gallery の登録まだなのでしないと。アレのやり方毎回忘れるし簡単な方法ないんかというのも悩みどころ。あの工程を<code>psake</code> のタスクにまとめるのはなんかで見たことあるけど、初回は手でやるか。<h2></h2></p><p>因みに自動化について利用規約に触れないか気になったのだが、見た感じ問題なさそうだった。 <a href='https://biz.moneyforward.com/agreement/'>利用規約 | 会計ソフト マネーフォワード クラウド</a></p>
+    <p>現職について 2 ヶ月が経とうとしているが、まだ爆殺されてない。ので馴染んできているのかも知れない。コミュニケーションが少なくても(定例を除き、最少 DM1 通/週とか)何とかやっていけるものだなという気づきを得た。</p><hr /><p>現職では勤怠の管理に Money Forward クラウド勤怠を利用している(時間管理なのだ)。
+始めに書いておくと、勤怠管理システムはなんでか知らんがそれぞれに特色があって、どのツールを使っても一癖あるモノだというのがわたしの見解。その中でも Money Forward クラウド勤怠は悪くない印象だ。</p><p>しかし、わたしという人間がどうにもこうにも打刻という行為が大の苦手で、非常に億劫だ(労務管理の上で必要なんはわかるけど仕事の前後で打刻しないといけないとかワシら機械か、人間のやることじゃないと。某筋肉番組のショットガンタッチならいざ知らず)。</p><p>プログラマというのは怠惰なので、ブラウザで一々アクセスして打刻ボタンを押すのも苦痛なのであって、即ち半自動化に至るのは自然なことだ。
+自動化じゃなく半自動化なのがポイント。自動化したら勤務してないのに勤務してるみたいなやばいことになりかねへん。自動化できるケーパビリティを持ちつつも半自動で使うのが職業プログラマの倫理？</p><p>そこでまず自分で作りたくないので誰かが書いたツールを探すと、<a href="https://github.com/puhitaku/mfpy">puhitaku/mfpy: MoneyForward クラウド勤怠といい感じに通信していい感じに打刻するやつ</a> が見つかった。良さそう。</p><p>でも PowerShell でどうしてもやりたかった。なので PowerShell で作った ↓</p><p><a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a></p><p>今は出退勤のリアルタイム打刻しかできない。今後、わたしがグータラできる水準まで高めるには次の機能が必要かなーと考えている。</p><ul><li>二重打刻防止
+<ul><li>なんと出勤や退勤が無限多重打刻できる仕様なので、これを防止したい
+<ul><li>そのためには勤怠実績の一覧を取得する機能が必要になる</li></ul></li></ul></li><li>打刻のリマインド機能
+<ul><li>これは <code>*-ScheduledTask</code> でなんとかでけへんかなと考えているが...やったことない
+<ul><li>過去にタスクスケジューラでスケジュール実行をしてたけど PowerShell でやりたいし</li></ul></li></ul></li><li>勤務実績の入力
+<ul><li>打刻忘れの場合この作業が必要なので</li></ul></li></ul><p>あと、PowerShell Gallery の登録まだなのでしないと。アレのやり方毎回忘れるし簡単な方法ないんかというのも悩みどころ。あの工程を<code>psake</code> のタスクにまとめるのはなんかで見たことあるけど、初回は手でやるか。</p><hr /><p>因みに自動化について利用規約に触れないか気になったのだが、見た感じ問題なさそうだった。
+<a href="https://biz.moneyforward.com/agreement/">利用規約 | 会計ソフト マネーフォワード クラウド</a></p>
 </div>
 
 <div id="post-tags">
@@ -219,7 +227,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

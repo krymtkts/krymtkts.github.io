@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Rote53 ホストゾーンの NS レコード</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Rote53 ホストゾーンの NS レコード" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2020-12-27-ns-record-of-route53-hosted-zone" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,9 +186,10 @@
 </div>
 <div>
     
-    <p>これで 12 月だいぶ躓いたので書いとくわ。思い出じゃ。</p><p>NS レコードは Simple Routing しかサポートしてへん。まずそれは AWS Management Console でわかる。 これを AWSPowerShell のパラメータでどうやんのかがわからんかった。ワタシが阿呆やからに違いない。</p><p><script src="https://gist.github.com/krymtkts/7774bb65f2f0351697a47383aefe9ec9.js"></script></p><p>はまったところ。</p><p><a href='https://docs.aws.amazon.com/cli/latest/reference/route53/change-resource-record-sets.html'>change-resource-record-sets — AWS CLI 1.18.203 Command Reference</a></p><blockquote><p> SetIdentifier -> (string) </p><p> > > Resource record sets that have a routing policy other than simple: An identifier that differentiates among multiple resource record sets that have the same combination of name and type, such as multiple weighted resource record sets named acme.example.com that have a type of A. In a group of resource record sets that have the same name and type, the value of SetIdentifier must be unique for each resource record set. </p><p> > For information about routing policies, see Choosing a Routing Policy in the Amazon Route 53 Developer Guide . </p></blockquote><p>Alias レコードのパラメータからコピペしてたので<code>SetIdentifier</code>を残したままにしてしまっていた。NS レコードは Simple Routing のみを許可するのでエラーになるのね。↓</p><pre><code class="powershell">  52 |  Edit-R53ResourceRecordSet -HostedZoneId $ParentHostedZone.Id -ChangeB …
-     |  &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-     | Invalid request: Expected exactly one of &#91;Weight, Region, Failover, GeoLocation, or MultiValueAnswer&#93;, but found none in Change with &#91;Action=CREATE, Name=test.testtest.com, Type=NS, SetIdentifier=nandeyanen&#93;
+    <p>これで 12 月だいぶ躓いたので書いとくわ。思い出じゃ。</p><p>NS レコードは Simple Routing しかサポートしてへん。まずそれは AWS Management Console でわかる。
+これを AWSPowerShell のパラメータでどうやんのかがわからんかった。ワタシが阿呆やからに違いない。</p><script src="https://gist.github.com/krymtkts/7774bb65f2f0351697a47383aefe9ec9.js"></script><p>はまったところ。</p><p><a href="https://docs.aws.amazon.com/cli/latest/reference/route53/change-resource-record-sets.html">change-resource-record-sets — AWS CLI 1.18.203 Command Reference</a></p><blockquote><p>SetIdentifier -&gt; (string)</p><blockquote><blockquote><p>Resource record sets that have a routing policy other than simple: An identifier that differentiates among multiple resource record sets that have the same combination of name and type, such as multiple weighted resource record sets named acme.example.com that have a type of A. In a group of resource record sets that have the same name and type, the value of SetIdentifier must be unique for each resource record set.</p></blockquote></blockquote><blockquote><p>For information about routing policies, see Choosing a Routing Policy in the Amazon Route 53 Developer Guide .</p></blockquote></blockquote><p>Alias レコードのパラメータからコピペしてたので<code>SetIdentifier</code>を残したままにしてしまっていた。NS レコードは Simple Routing のみを許可するのでエラーになるのね。↓</p><pre><code class="powershell">  52 |  Edit-R53ResourceRecordSet -HostedZoneId $ParentHostedZone.Id -ChangeB …
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Invalid request: Expected exactly one of [Weight, Region, Failover, GeoLocation, or MultiValueAnswer], but found none in Change with [Action=CREATE, Name=test.testtest.com, Type=NS, SetIdentifier=nandeyanen]
 </code></pre><p>わかりにくぅ！</p><p>おわり 😭</p>
 </div>
 
@@ -224,7 +225,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

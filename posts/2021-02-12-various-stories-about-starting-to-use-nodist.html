@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: 色々あって Nodist を使い始めた話</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-02-12-various-stories-about-starting-to-use-nodist">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-02-12-various-stories-about-starting-to-use-nodist">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: 色々あって Nodist を使い始めた話" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-02-12-various-stories-about-starting-to-use-nodist" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-02-12-various-stories-about-starting-to-use-nodist" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,12 +186,13 @@
 </div>
 <div>
     
-    <p>重い腰を上げて、<a href='https://github.com/krymtkts/mccall-bot'>Slackbot のマッコールさん</a>の Typo を直す気になった。 タイポの修正と追加のセンテンスを登録して、いざ deploy しようとしたら、Serverless Framework がエラーを吐くようになっていた。↓ らしい。</p><p><a href='https://github.com/serverless/serverless/issues/8794'>Unable to deploy to Serverless due to 'empty zip' · Issue #8794 · serverless/serverless</a></p><p>aws-cdk の方も同様のバグがあるらしいけど、あっちは直してくれてるみたい。</p><p><a href='https://github.com/aws/aws-cdk/issues/12536'>lambda: corrupt zip archive asset produced when using node v15.6 · Issue #12536 · aws/aws-cdk</a></p><p>残念ながら Serverless Framework の方は直してないっぽなので、Node.js のバージョンを 15 から 14 に落とす必要が出てきた。この時リアルタイムで友人に <a href='https://github.com/nullivex/nodist'>nodist</a> を教えてもらったので、これを使って複数の系を利用できるようにした。</p><p><del>(というか Chocolatey で Node.js の v15 を uninstall して v14 入れようとしてもなんかエラーになって、ログ見たら「新しい版いるから失敗するね！」てあって「はぁ!?」と調べたら<code>choco uninstall nodejs</code>は仕事してくれへんらしい。古き良き Chocolatey 流儀はやめろ。で日頃使ってた node modules も全部吹っ飛んで災難やで...)</del></p><pre><code class="powershell">choco install nodist -y
-# RapidEE で PATH に `C:\Program Files &#40;x86&#41;\Nodist\bin` を追加した
+    <p>重い腰を上げて、<a href="https://github.com/krymtkts/mccall-bot">Slackbot のマッコールさん</a>の Typo を直す気になった。
+タイポの修正と追加のセンテンスを登録して、いざ deploy しようとしたら、Serverless Framework がエラーを吐くようになっていた。↓ らしい。</p><p><a href="https://github.com/serverless/serverless/issues/8794">Unable to deploy to Serverless due to 'empty zip' · Issue #8794 · serverless/serverless</a></p><p>aws-cdk の方も同様のバグがあるらしいけど、あっちは直してくれてるみたい。</p><p><a href="https://github.com/aws/aws-cdk/issues/12536">lambda: corrupt zip archive asset produced when using node v15.6 · Issue #12536 · aws/aws-cdk</a></p><p>残念ながら Serverless Framework の方は直してないっぽなので、Node.js のバージョンを 15 から 14 に落とす必要が出てきた。この時リアルタイムで友人に <a href="https://github.com/nullivex/nodist">nodist</a> を教えてもらったので、これを使って複数の系を利用できるようにした。</p><p><del>(というか Chocolatey で Node.js の v15 を uninstall して v14 入れようとしてもなんかエラーになって、ログ見たら「新しい版いるから失敗するね！」てあって「はぁ!?」と調べたら<code>choco uninstall nodejs</code>は仕事してくれへんらしい。古き良き Chocolatey 流儀はやめろ。で日頃使ってた node modules も全部吹っ飛んで災難やで...)</del></p><pre><code class="powershell">choco install nodist -y
+# RapidEE で PATH に `C:\Program Files (x86)\Nodist\bin` を追加した
 
 # nodist と一緒に install される系は古い
 nodist list
-  &#40;x64&#41;
+  (x64)
 &gt; 11.13.0
 # 15 系と 14 系の最新を入れる
 nodist add 15.8.0
@@ -203,7 +204,8 @@ nodist npm list
 &gt; 6.9.0
 # 選択中の node と合わせる
 nodist npm match
-</code></pre><p><a href='https://nodejs.org/ja/download/releases/'>Node.js のリリース一覧</a>から node と npm の対応を見て選んでってやってもいいけど、そんなんめんどすぎるので <code>nodist npm match</code> の一度ではないかと考える。 もし、厳密に指定のバージョン使いたいとかあったら加初環境をコンテナに構築したりすればいいし、そもそも nodist を使ってローカル PC のグローバル node をこねくったりしてないはず。</p><p>ちょっとおもしろいのが、node/npm の version を変えても install した node_modules は同じものを使えるところ。 v14.15.5 で入れたモジュールが v15.8.0 でも見れた。何度も同じモジュールをインストールしなくていいのは楽やけど、バージョン互換性の厳しいモジュールは使うのが難しいのでは。</p><p>node、npm、モジュールの実態はそれぞれ、<code>$env:NODIST&#95;PREFIX/v-x64</code>(32bit が<code>$env:NODIST&#95;PREFIX/v</code>?) <code>$env:NODIST&#95;PREFIX/npmv</code> <code>$env:NODIST&#95;PREFIX/bin/node&#95;modules</code> 配下にインストールされる様子。</p><p>nodist、どうも 2019 年を最後にメンテが止まっている様子(単にマジで変更がないのかも知れん)。現時点でこいつが最後 <a href='https://github.com/nullivex/nodist/commit/bb099ba3723027469bf46e3159f51171b5dd4b59'>Fix deprecated use of Tar.Extract in npm.js, release 0.9.1 · nullivex/nodist@bb099ba</a></p><p>とはいえ便利なので不都合ない限り利用してみるつもり。</p><p>と色々やったことでようやくマッコールさん Bot の最新版を deploy できるようになったとさ。めでたし x2。</p>
+</code></pre><p><a href="https://nodejs.org/ja/download/releases/">Node.js のリリース一覧</a>から node と npm の対応を見て選んでってやってもいいけど、そんなんめんどすぎるので <code>nodist npm match</code> の一度ではないかと考える。
+もし、厳密に指定のバージョン使いたいとかあったら加初環境をコンテナに構築したりすればいいし、そもそも nodist を使ってローカル PC のグローバル node をこねくったりしてないはず。</p><p>ちょっとおもしろいのが、node/npm の version を変えても install した node_modules は同じものを使えるところ。 v14.15.5 で入れたモジュールが v15.8.0 でも見れた。何度も同じモジュールをインストールしなくていいのは楽やけど、バージョン互換性の厳しいモジュールは使うのが難しいのでは。</p><p>node、npm、モジュールの実態はそれぞれ、<code>$env:NODIST_PREFIX/v-x64</code>(32bit が<code>$env:NODIST_PREFIX/v</code>?) <code>$env:NODIST_PREFIX/npmv</code> <code>$env:NODIST_PREFIX/bin/node_modules</code> 配下にインストールされる様子。</p><p>nodist、どうも 2019 年を最後にメンテが止まっている様子(単にマジで変更がないのかも知れん)。現時点でこいつが最後 <a href="https://github.com/nullivex/nodist/commit/bb099ba3723027469bf46e3159f51171b5dd4b59">Fix deprecated use of Tar.Extract in npm.js, release 0.9.1 · nullivex/nodist@bb099ba</a></p><p>とはいえ便利なので不都合ない限り利用してみるつもり。</p><p>と色々やったことでようやくマッコールさん Bot の最新版を deploy できるようになったとさ。めでたし x2。</p>
 </div>
 
 <div id="post-tags">
@@ -236,7 +238,7 @@ nodist npm match
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

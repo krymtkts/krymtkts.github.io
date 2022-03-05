@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Windows 11 のタスクバーを天に(PowerShell で)</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Windows 11 のタスクバーを天に(PowerShell で)" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,15 +186,20 @@
 </div>
 <div>
     
-    <p>Windows11 ではメニューからタスクバーを天に持ち上げれなくなったので、みんなレジストリを操作して実現している。手順はどこでも手に入るが、以下のページを参照した。</p><p><a href='https://www.tomshardware.com/how-to/windows-11-taskbar-move-to-top'>How to Move the Taskbar to the Top in Windows 11 | Tom's Hardware</a></p><ol><li><code>regedit</code> を開く</li><li><code>HKEY&#95;CURRENT&#95;USER\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3</code> を開く</li><li><code>Settings</code> を編集し保存する<ul><li>2 行目を <code>7A F4 00 00 03 00 00 00</code> -> <code>7A F4 00 00 01 00 00 00</code>にする<ul><li>デフォルトの<code>03</code>が下、<code>01</code>が上というわけ</li></ul></li></ul></li><li><code>explorer</code> を再起動する<ul><li>コマンドプロンプトで<ol><li><code>taskkill /f /im explorer.exe</code></li><li><code>start explorer.exe</code></li></ol></li></ul></li></ol><p>これが PC 変わる度にやるのクソめんどいので、PowerShell でスクリプト化した。 そんなに機会はないけど一々覚えてないので先程のページを見にったりと、とにかくめんどい。</p><p>PowerShell 7.2.1 でやった。</p><pre><code class="powershell">$ShowHex = {param &#40;&#91;array&#93;$arr&#41; &#40;$arr | %{&#91;System.Convert&#93;::ToHexString&#40;$&#95;&#41;}&#41; -join ' '}
+    <p>Windows11 ではメニューからタスクバーを天に持ち上げれなくなったので、みんなレジストリを操作して実現している。手順はどこでも手に入るが、以下のページを参照した。</p><p><a href="https://www.tomshardware.com/how-to/windows-11-taskbar-move-to-top">How to Move the Taskbar to the Top in Windows 11 | Tom's Hardware</a></p><ol><li><code>regedit</code> を開く</li><li><code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3</code> を開く</li><li><code>Settings</code> を編集し保存する
+<ul><li>2 行目を <code>7A F4 00 00 03 00 00 00</code> -&gt; <code>7A F4 00 00 01 00 00 00</code>にする
+<ul><li>デフォルトの<code>03</code>が下、<code>01</code>が上というわけ</li></ul></li></ul></li><li><code>explorer</code> を再起動する
+<ul><li>コマンドプロンプトで
+<ol><li><code>taskkill /f /im explorer.exe</code></li><li><code>start explorer.exe</code></li></ol></li></ul></li></ol><p>これが PC 変わる度にやるのクソめんどいので、PowerShell でスクリプト化した。
+そんなに機会はないけど一々覚えてないので先程のページを見にったりと、とにかくめんどい。</p><p>PowerShell 7.2.1 でやった。</p><pre><code class="powershell">$ShowHex = {param ([array]$arr) ($arr | %{[System.Convert]::ToHexString($_)}) -join ' '}
 $path = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3'
 $key = 'Settings'
 $org = Get-ItemProperty $path | Select-Object -ExpandProperty $key
-$ShowHex.Invoke&#40;&#40;,$org&#41;&#41;
+$ShowHex.Invoke((,$org))
 
-$new = @&#40;&#41; + $org
-$new&#91;12&#93; = 0x01
-$ShowHex.Invoke&#40;&#40;,$new&#41;&#41;
+$new = @() + $org
+$new[12] = 0x01
+$ShowHex.Invoke((,$new))
 Compare-Object $org $new
 
 Set-ItemProperty $path -name $key -Value $new
@@ -202,7 +207,8 @@ Set-ItemProperty $path -name $key -Value $new
 Stop-Process -Name explorer -Force
 ## if explorer doesn't restart, start explorer manually.
 # Start-Process -Name explorer
-</code></pre><p>万が一失敗してたら <code>$org</code> で <code>Set-ItemProperty</code> して戻す必要があるので、成功(≒ 天にタスクバー)を確認するまで窓を閉じない方が良かろう。 ちゃんと期待の更新ができているか確認するために、レジストリの値を 16 進数に変換して標準出力までしちゃう。</p><p><a href='https://gist.github.com/krymtkts/ba83a0612bba84b5e8229d64e9d8681a'>Gist はこちら</a>。</p><h3 id="おまけ">おまけ</h3><p><code>taskkill</code> は PowerShell で言うところの何か調べたときのページ ↓</p><p><a href='https://www.pdq.com/blog/what-is-the-powershell-equivalent-of-taskkill/'>What Is The PowerShell Equivalent Of Taskkill | PDQ.com</a></p><blockquote><p> Okay, I'll be the first to admit it; the name is a little lackluster. Especially when compared to <strong>TASKKILL!!!!!!</strong> <strong>Stop-Process</strong> just doesn't carry the same hostile undertones Thankfully, Microsoft at least gave us <strong>kill</strong> as an alias, so we've got that going for us. Regardless, let's see if it still packs the same task-killing punch. </p></blockquote><blockquote><p> さて、最初に断っておきますが、このネーミングは少し物足りないですね。特に<strong>TASKKILL!!!!!!</strong>と比較するとね。 ありがたいことに、Microsoft は少なくとも<strong>kill</strong>という別名をつけてくれました。 ともかく、同じようにタスクを殺すパンチをパックしているかどうか見てみましょう。 </p></blockquote><p>こんなん笑うわｗ</p>
+</code></pre><p>万が一失敗してたら <code>$org</code> で <code>Set-ItemProperty</code> して戻す必要があるので、成功(≒ 天にタスクバー)を確認するまで窓を閉じない方が良かろう。
+ちゃんと期待の更新ができているか確認するために、レジストリの値を 16 進数に変換して標準出力までしちゃう。</p><p><a href="https://gist.github.com/krymtkts/ba83a0612bba84b5e8229d64e9d8681a">Gist はこちら</a>。</p><h3 id="おまけ">おまけ</h3><p><code>taskkill</code> は PowerShell で言うところの何か調べたときのページ ↓</p><p><a href="https://www.pdq.com/blog/what-is-the-powershell-equivalent-of-taskkill/">What Is The PowerShell Equivalent Of Taskkill | PDQ.com</a></p><blockquote><p>Okay, I'll be the first to admit it; the name is a little lackluster. Especially when compared to <strong>TASKKILL!!!!!!</strong> <strong>Stop-Process</strong> just doesn't carry the same hostile undertones Thankfully, Microsoft at least gave us <strong>kill</strong> as an alias, so we've got that going for us. Regardless, let's see if it still packs the same task-killing punch.</p></blockquote><blockquote><p>さて、最初に断っておきますが、このネーミングは少し物足りないですね。特に<strong>TASKKILL!!!!!!<strong>と比較するとね。 ありがたいことに、Microsoft は少なくとも</strong>kill</strong>という別名をつけてくれました。 ともかく、同じようにタスクを殺すパンチをパックしているかどうか見てみましょう。</p></blockquote><p>こんなん笑うわｗ</p>
 </div>
 
 <div id="post-tags">
@@ -237,7 +243,7 @@ Stop-Process -Name explorer -Force
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

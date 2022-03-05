@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: PowerShell で Docker Toolbox を使う</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: PowerShell で Docker Toolbox を使う" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,7 +186,7 @@
 </div>
 <div>
     
-    <p>へーしゃはちょっといけてなくて、秘伝の古い VM をコンテナ化しない<del>できない</del>まま使っている。</p><p>加えて社内は Windows ユーザと Mac ユーザがごちゃまぜなので VM が VirtualBox のため、Windows ユーザであるわたしは Docker on Windows を使えず。</p><p>Docker Toolbox を日常使いしているのだが、<code>docker</code>に<code>docker-compose</code>に<code>docker-machine</code>まで現れたらコマンドやオプションが覚えきれないのが現状である 😭</p><p>これらを PowerShell で楽ちんに使おう。いますぐ以下のモジュールを PSGallery からゲットしよう。これらを発見したときは狂喜乱舞した。</p><ul><li><a href='https://www.powershellgallery.com/packages/DockerCompletion/1.1903.0.190723'>PowerShell Gallery | DockerCompletion 1.1903.0.190723</a></li><li><a href='https://www.powershellgallery.com/packages/DockerComposeCompletion/1.24.0.190329'>PowerShell Gallery | DockerComposeCompletion 1.24.0.190329</a></li><li><a href='https://www.powershellgallery.com/packages/DockerMachineCompletion/0.16.2.190903'>PowerShell Gallery | DockerMachineCompletion 0.16.2.190903</a></li></ul><p>以下、雑なインストール例。もちろん PowerShell Guys(勝手にそう呼んでいる)なら自前の Profile に追記しよう。</p><pre><code class="powershell">Install-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
+    <p>へーしゃはちょっといけてなくて、秘伝の古い VM をコンテナ化しない<del>できない</del>まま使っている。</p><p>加えて社内は Windows ユーザと Mac ユーザがごちゃまぜなので VM が VirtualBox のため、Windows ユーザであるわたしは Docker on Windows を使えず。</p><p>Docker Toolbox を日常使いしているのだが、<code>docker</code>に<code>docker-compose</code>に<code>docker-machine</code>まで現れたらコマンドやオプションが覚えきれないのが現状である 😭</p><p>これらを PowerShell で楽ちんに使おう。いますぐ以下のモジュールを PSGallery からゲットしよう。これらを発見したときは狂喜乱舞した。</p><ul><li><a href="https://www.powershellgallery.com/packages/DockerCompletion/1.1903.0.190723">PowerShell Gallery | DockerCompletion 1.1903.0.190723</a></li><li><a href="https://www.powershellgallery.com/packages/DockerComposeCompletion/1.24.0.190329">PowerShell Gallery | DockerComposeCompletion 1.24.0.190329</a></li><li><a href="https://www.powershellgallery.com/packages/DockerMachineCompletion/0.16.2.190903">PowerShell Gallery | DockerMachineCompletion 0.16.2.190903</a></li></ul><p>以下、雑なインストール例。もちろん PowerShell Guys(勝手にそう呼んでいる)なら自前の Profile に追記しよう。</p><pre><code class="powershell">Install-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
 Import-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
 </code></pre><p>これで<code>docker-machine start</code>に始まり<code>docker</code>やら<code>docker-compose</code>でのイメージ・コンテナの名前補完とか諸々できるようになる。世の中、すごいモジュールを作る方がいるもんやねえ 🤔</p>
 </div>
@@ -225,7 +225,7 @@ Import-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineComple
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

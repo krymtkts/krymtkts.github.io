@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: またOpenSSHが動かなくなる季節がやってきた</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-06-29-season-of-openssh-error">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-06-29-season-of-openssh-error">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: またOpenSSHが動かなくなる季節がやってきた" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-06-29-season-of-openssh-error" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-06-29-season-of-openssh-error" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,17 +186,17 @@
 </div>
 <div>
     
-    <p>アップデートの度に何かあるので、もはや風物詩と化したOpenSSHのエラー。</p><p><a href='/posts/2019-03-31-win-openssh-is-gone'>前回のエラー</a></p><p>きょうChocolateyでパッケージ更新したらWindowsのOpenSSHがアップデートされた様子。<a href='https://github.com/PowerShell/Win32-OpenSSH/releases/tag/v8.0.0.0p1-Beta'>Release v8.0.0.0p1-Beta · PowerShell/Win32-OpenSSH</a>かな？</p><p>それに伴い<code>ssh-agent</code>サービスが消え去ってしまった。</p><pre><code class="powershell">$ Get-Service -Name 'ssh-agent'
+    <p>アップデートの度に何かあるので、もはや風物詩と化したOpenSSHのエラー。</p><p><a href="/posts/2019-03-31-win-openssh-is-gone">前回のエラー</a></p><p>きょうChocolateyでパッケージ更新したらWindowsのOpenSSHがアップデートされた様子。<a href="https://github.com/PowerShell/Win32-OpenSSH/releases/tag/v8.0.0.0p1-Beta">Release v8.0.0.0p1-Beta · PowerShell/Win32-OpenSSH</a>かな？</p><p>それに伴い<code>ssh-agent</code>サービスが消え去ってしまった。</p><pre><code class="powershell">$ Get-Service -Name 'ssh-agent'
 Get-Service : Cannot find any service with service name 'ssh-agent'.
 At line:1 char:1
 + Get-Service -Name 'ssh-agent'
-+ &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-+ CategoryInfo          : ObjectNotFound: &#40;ssh-agent:String&#41; &#91;Get-Service&#93;, ServiceCommandException
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ CategoryInfo          : ObjectNotFound: (ssh-agent:String) [Get-Service], ServiceCommandException
 + FullyQualifiedErrorId : NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.GetServiceCommand
-</code></pre><p>単純に再インストールしても自動でサービス登録はされなかったのだけど、同梱されているファイルを見てみたところそれらしいスクリプト<code>install-sshd.ps1</code>を発見した。Wikiにも記載がある。</p><p><a href='https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH#install-win32-openssh-test-release'>Install Win32 OpenSSH · PowerShell/Win32-OpenSSH Wiki</a></p><p>実行してみたところ無事にサービスが作成されたので一安心。サービス自動起動の設定をしておいて完了した。</p><pre><code class="powershell">$ .\install-sshd.ps1
-&#91;SC&#93; SetServiceObjectSecurity SUCCESS
-&#91;SC&#93; ChangeServiceConfig2 SUCCESS
-&#91;SC&#93; ChangeServiceConfig2 SUCCESS
+</code></pre><p>単純に再インストールしても自動でサービス登録はされなかったのだけど、同梱されているファイルを見てみたところそれらしいスクリプト<code>install-sshd.ps1</code>を発見した。Wikiにも記載がある。</p><p><a href="https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH#install-win32-openssh-test-release">Install Win32 OpenSSH · PowerShell/Win32-OpenSSH Wiki</a></p><p>実行してみたところ無事にサービスが作成されたので一安心。サービス自動起動の設定をしておいて完了した。</p><pre><code class="powershell">$ .\install-sshd.ps1
+[SC] SetServiceObjectSecurity SUCCESS
+[SC] ChangeServiceConfig2 SUCCESS
+[SC] ChangeServiceConfig2 SUCCESS
 sshd and ssh-agent services successfully installed
 $ Get-Service 'ssh-agent'
 
@@ -204,7 +204,7 @@ Status   Name               DisplayName
 ------   ----               -----------
 Stopped  ssh-agent          OpenSSH Authentication Agent
 
-$ Set-Service -name &quot;ssh-agent&quot; -startuptype &quot;automatic&quot;
+$ Set-Service -name "ssh-agent" -startuptype "automatic"
 </code></pre><p>ふう🙃</p>
 </div>
 
@@ -240,7 +240,7 @@ $ Set-Service -name &quot;ssh-agent&quot; -startuptype &quot;automatic&quot;
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

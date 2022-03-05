@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: CementというCLIフレームワーク</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-07-07-cement-the-cli-framework">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-07-07-cement-the-cli-framework">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: CementというCLIフレームワーク" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-07-07-cement-the-cli-framework" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-07-07-cement-the-cli-framework" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,7 +186,9 @@
 </div>
 <div>
     
-    <p>仕事で、なんかDBに通信しながらAWSのAPIをぶん殴ってゴニョゴニョするバックエンド処理を書く必要があって、Pythonで書くことになった。</p><p><a href='https://python-guideja.readthedocs.io/ja/latest/index.html'>Python ヒッチハイク・ガイド — The Hitchhiker's Guide to Python</a>を参考にCLIのフレームワークを見ていって、サンプル的に作ってみた感じや継続的にメンテされてることとかで<a href='https://builtoncement.com/'>Cement Framework</a>を採用することにした。</p><p>簡潔に説明すると、CLIアプリケーション作成を容易にするためのフレームワーク。なんとAWS Elastic Beanstalkに使われてるらしい。</p><p>数少ない日本語の資料。</p><ul><li><a href='https://qiita.com/ma2saka/items/9aacc46e20b9886ec156'>自分が必要とする最低限の Cement の情報 - Qiita</a></li></ul><p>ほんとに少ないのでなんか自分用にメモを取ろうとこの記事をしたためた次第である。</p><p>ボイラープレートでCLIのベースはできてしまうので、あとはその中身を書いていくだけ。ちょっとAPIドキュメントがわかりにくい気もするが、YAMLの設定ファイル読み込みやロギングなども拡張機能としてある。今の所はとてもよくできた使いやすいFWだと思っている。こんどコードの生成らへんの簡単な手順をまとめてみたい。</p><p>すでに途中までCementをベースに開発しているのだけど、少し困った点がある。</p><h3 id="困った点">困った点</h3><p><a href='https://github.com/datafolklabs/cement/issues/549'>Cement not compatible with pipenv · Issue #549 · datafolklabs/cement</a></p><p>バグでpipenvは<code>setup.py</code>をインストール出来ないのでエラーで死ぬのだ😭わたしが考えた対策としてはイカのトーリである。</p><ul><li>開発環境<ul><li><code>pipenv install -r requirement.txt</code>などを使いつつ開発</li><li>実行時には作業ディレクトリでスクリプト実行する感じ<code>python -m myapp.main</code></li></ul></li><li>製品環境<ul><li><code>pip</code>を使ったインストール及び<code>setup.py</code>でモジュールをインストール</li><li>モジュール実行を行うのでどこでもok(なはず)</li></ul></li></ul><p>まだ開発途上なので、製品環境の想定がそのままうまくいくかはビミョーなところ🤔また試行錯誤しなくては。</p><p>最近は[Poetry(https://cocoatomo.github.io/poetry-ja/index.html)のほうがイケてると聞くし、はじめからPipenvを使わないようにしてたら良かった感はしなくはない😭</p>
+    <p>仕事で、なんかDBに通信しながらAWSのAPIをぶん殴ってゴニョゴニョするバックエンド処理を書く必要があって、Pythonで書くことになった。</p><p><a href="https://python-guideja.readthedocs.io/ja/latest/index.html">Python ヒッチハイク・ガイド — The Hitchhiker's Guide to Python</a>を参考にCLIのフレームワークを見ていって、サンプル的に作ってみた感じや継続的にメンテされてることとかで<a href="https://builtoncement.com/">Cement Framework</a>を採用することにした。</p><p>簡潔に説明すると、CLIアプリケーション作成を容易にするためのフレームワーク。なんとAWS Elastic Beanstalkに使われてるらしい。</p><p>数少ない日本語の資料。</p><ul><li><a href="https://qiita.com/ma2saka/items/9aacc46e20b9886ec156">自分が必要とする最低限の Cement の情報 - Qiita</a></li></ul><p>ほんとに少ないのでなんか自分用にメモを取ろうとこの記事をしたためた次第である。</p><p>ボイラープレートでCLIのベースはできてしまうので、あとはその中身を書いていくだけ。ちょっとAPIドキュメントがわかりにくい気もするが、YAMLの設定ファイル読み込みやロギングなども拡張機能としてある。今の所はとてもよくできた使いやすいFWだと思っている。こんどコードの生成らへんの簡単な手順をまとめてみたい。</p><p>すでに途中までCementをベースに開発しているのだけど、少し困った点がある。</p><h3 id="困った点">困った点</h3><p><a href="https://github.com/datafolklabs/cement/issues/549">Cement not compatible with pipenv · Issue #549 · datafolklabs/cement</a></p><p>バグでpipenvは<code>setup.py</code>をインストール出来ないのでエラーで死ぬのだ😭わたしが考えた対策としてはイカのトーリである。</p><ul><li>開発環境
+<ul><li><code>pipenv install -r requirement.txt</code>などを使いつつ開発</li><li>実行時には作業ディレクトリでスクリプト実行する感じ<code>python -m myapp.main</code></li></ul></li><li>製品環境
+<ul><li><code>pip</code>を使ったインストール及び<code>setup.py</code>でモジュールをインストール</li><li>モジュール実行を行うのでどこでもok(なはず)</li></ul></li></ul><p>まだ開発途上なので、製品環境の想定がそのままうまくいくかはビミョーなところ🤔また試行錯誤しなくては。</p><p>最近は[Poetry(https://cocoatomo.github.io/poetry-ja/index.html)のほうがイケてると聞くし、はじめからPipenvを使わないようにしてたら良かった感はしなくはない😭</p>
 </div>
 
 <div id="post-tags">
@@ -221,7 +223,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

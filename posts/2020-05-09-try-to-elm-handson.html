@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Elm のハンズオンを試した</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-05-09-try-to-elm-handson">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2020-05-09-try-to-elm-handson">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Elm のハンズオンを試した" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-05-09-try-to-elm-handson" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2020-05-09-try-to-elm-handson" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,7 +186,10 @@
 </div>
 <div>
     
-    <p>会社の勉強会で Elm のハンズオンをしてみた。それだけ。</p><h3 id="elm&#95;とわたし">Elm とわたし</h3><p>いつ頃 Elm を知ったのだろう。なんか前職ですごい H 本の輪読会をした 2015 年らへんか、2016 年とかそのあたりに知ったような気がする。</p><p>爆発炎上中の新製品開発(Backbone.js なのに誰も使えてなくてやばい製品だった)のヘルプに入ってちょっとした頃。フロントエンドを全然知らなかったので一通り新しめの情報をさらってて、その中に Elm を見つけたような気がしている。</p><p>最近までずっと Elm と付き合うことなく来た<a href='#fn-1' id='fnref1'><sup>1</sup></a>が、ちょうどへーしゃにてフロントエンド刷新の機運があると聞き、Elm 一択ですね！と押し込むためにも開催してみた。今思えばこいつ何様やねん 🤔</p><h3 id="勉強会について">勉強会について</h3><p><a href='https://github.com/mather/elm-handson'>mather/elm-handson: ハンズオン資料</a> を流用させていただいた。めちゃくちゃやりやすかったですありがとうございました。</p><p>カンペ用にわたしは回答例みたいなのを fork して添えさせていただいた。<a href='https://github.com/krymtkts/elm-handson'>krymtkts/elm-handson: ハンズオン資料</a></p><p>元々はデータストアがあって、CRUD 操作ができて、みたいなバックエンドも含めたやつをやろうとしてた。 のだけど、わたしに Elm でハンズオンを作りきるパワーもなく、「う、めんどくせえ！」となり、またインターネッツで探してみるもめぼしいものを見つけられなかった。</p><p>やはり導入部ということもあり、もっとシンプルにできるものはないか－と探していたところ、前述のハンズオンにたどり着いたのだ。</p><h3 id="やってみた感想">やってみた感想</h3><p>へーしゃのフロントエンドに Elm を採用するのには至らなそうだけど、他のエンジニアに興味を持ってもらえり静的型付け＆関数型言語のパワーを知ってもらったのは良かった。Message を足したり型変えたらめちゃくちゃ親切なコンパイルエラーになるやでー、が結構ウケた印象。 現行が複雑怪奇な PHP(Smarty)や jQuery でメンテも苦痛なところに、Elm が爽やかな風を送り込んでくれたのだから、そりゃエンジニアの認識が変わるのも必然やで。</p><p>最終的に CRUD ある画面のハンズオンを目指す。遊び用 AWS 垢が支給されてるし、Amplify で Sample 探すか。 まだ何回か企画してるので、刺激を与えていきたい所存。 <ol class='footnotes'><li id='fn-1'><a href='https://www.amazon.co.jp/dp/4863542224/'>基礎からわかる Elm</a>はもちろん読んでるで。ポチってからかなり待ったけど、無事出版され、読むことができてホッとした。<a href='#fnref1'>&#8617;</a></li></ol></p>
+    <p>会社の勉強会で Elm のハンズオンをしてみた。それだけ。</p><h3 id="elm-とわたし">Elm とわたし</h3><p>いつ頃 Elm を知ったのだろう。なんか前職ですごい H 本の輪読会をした 2015 年らへんか、2016 年とかそのあたりに知ったような気がする。</p><p>爆発炎上中の新製品開発(Backbone.js なのに誰も使えてなくてやばい製品だった)のヘルプに入ってちょっとした頃。フロントエンドを全然知らなかったので一通り新しめの情報をさらってて、その中に Elm を見つけたような気がしている。</p><p>最近までずっと Elm と付き合うことなく来た<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>が、ちょうどへーしゃにてフロントエンド刷新の機運があると聞き、Elm 一択ですね！と押し込むためにも開催してみた。今思えばこいつ何様やねん 🤔</p><h3 id="勉強会について">勉強会について</h3><p><a href="https://github.com/mather/elm-handson">mather/elm-handson: ハンズオン資料</a> を流用させていただいた。めちゃくちゃやりやすかったですありがとうございました。</p><p>カンペ用にわたしは回答例みたいなのを fork して添えさせていただいた。<a href="https://github.com/krymtkts/elm-handson">krymtkts/elm-handson: ハンズオン資料</a></p><p>元々はデータストアがあって、CRUD 操作ができて、みたいなバックエンドも含めたやつをやろうとしてた。
+のだけど、わたしに Elm でハンズオンを作りきるパワーもなく、「う、めんどくせえ！」となり、またインターネッツで探してみるもめぼしいものを見つけられなかった。</p><p>やはり導入部ということもあり、もっとシンプルにできるものはないか－と探していたところ、前述のハンズオンにたどり着いたのだ。</p><h3 id="やってみた感想">やってみた感想</h3><p>へーしゃのフロントエンドに Elm を採用するのには至らなそうだけど、他のエンジニアに興味を持ってもらえり静的型付け＆関数型言語のパワーを知ってもらったのは良かった。Message を足したり型変えたらめちゃくちゃ親切なコンパイルエラーになるやでー、が結構ウケた印象。
+現行が複雑怪奇な PHP(Smarty)や jQuery でメンテも苦痛なところに、Elm が爽やかな風を送り込んでくれたのだから、そりゃエンジニアの認識が変わるのも必然やで。</p><p>最終的に CRUD ある画面のハンズオンを目指す。遊び用 AWS 垢が支給されてるし、Amplify で Sample 探すか。
+まだ何回か企画してるので、刺激を与えていきたい所存。</p><div class="footnotes"><hr /><ol><li id="fn-1"><p><a href="https://www.amazon.co.jp/dp/4863542224/">基礎からわかる Elm</a>はもちろん読んでるで。ポチってからかなり待ったけど、無事出版され、読むことができてホッとした。</p><a href="#fnref-1" class="footnote-backref">↩</a></li></ol></div>
 </div>
 
 <div id="post-tags">
@@ -219,7 +222,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

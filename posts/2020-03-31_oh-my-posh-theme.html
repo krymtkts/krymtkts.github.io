@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: My own oh-my-posh theme</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2020-03-31_oh-my-posh-theme">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2020-03-31_oh-my-posh-theme">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: My own oh-my-posh theme" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2020-03-31_oh-my-posh-theme" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2020-03-31_oh-my-posh-theme" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,7 +186,12 @@
 </div>
 <div>
     
-    <p>oh-my-posh の話。 ご存じない？ <a href='https://github.com/JanDeDobbeleer/oh-my-posh'>JanDeDobbeleer/oh-my-posh: A prompt theming engine for Powershell</a></p><p>元々、Agnoster のシンボルを変えるだけで使ってた。</p><p>が、最近になって諸々の不満点 ↓ を解決したくなって、自分用のテーマを作ろうと思ったのがきっかけ。</p><ul><li>コマンドを打った時間を出したくなった<ul><li>分割して Terminal を使うことが多いので仕事で CLI を使ったときにどこがいちばん最後に使ったかわかりやすくしたい</li></ul></li><li>階層が深いディレクトリで仕事することが多く working directory の短縮表示をもっと短くしたかった<ul><li>デフォルトの<code>..</code>を<code>.</code>にする(ほんとは頭文字にしたいが)</li></ul></li><li>Windows10 のいつの Version からか忘れたが一部の絵文字の表示が化ける(管理者権限には 💪 を使ってた)<ul><li>⚡ に戻す</li></ul></li></ul><p>作ったのはこれ。<a href='https://gist.github.com/krymtkts/6f7e365fd1683d6edeb7e531f725d280'>My own oh-my-posh theme.</a></p><p>oh-my-posh のテーマを作るのはかんたん。その作り方を以下に記す。</p><h2 id="how&#95;to&#95;make&#95;it">How to make it</h2><p>テンプレを生成してくれる機能とかはない。そのため theme の PS モジュールは手で配置することになる。ちなみに export されている function たちは以下の通りである。</p><p><a href='https://github.com/JanDeDobbeleer/oh-my-posh/blob/master/oh-my-posh.psd1#L48'>oh-my-posh/oh-my-posh.psd1 at master · JanDeDobbeleer/oh-my-posh</a></p><p>ユーザ定義のテーマは <code>$ThemeSettings.MyThemesLocation</code> に配置する(<code>Get-ThemesLocation</code>でも同じ様子)。フォルダがなければ合わせて作成する。</p><p>元ファイルはいまあるテーマからコピって作るのが手っ取り早い。わたしは<a href='https://github.com/JanDeDobbeleer/oh-my-posh/blob/master/Themes/Agnoster.psm1'>Agnoster.psm1</a>から作成した。 今あるテーマの配置フォルダを知るには<code>Get-Theme</code>を実行すれば良い。</p><pre><code class="powershell">PS&gt; Get-Theme
+    <p>oh-my-posh の話。
+ご存じない？ <a href="https://github.com/JanDeDobbeleer/oh-my-posh">JanDeDobbeleer/oh-my-posh: A prompt theming engine for Powershell</a></p><p>元々、Agnoster のシンボルを変えるだけで使ってた。</p><p>が、最近になって諸々の不満点 ↓ を解決したくなって、自分用のテーマを作ろうと思ったのがきっかけ。</p><ul><li>コマンドを打った時間を出したくなった
+<ul><li>分割して Terminal を使うことが多いので仕事で CLI を使ったときにどこがいちばん最後に使ったかわかりやすくしたい</li></ul></li><li>階層が深いディレクトリで仕事することが多く working directory の短縮表示をもっと短くしたかった
+<ul><li>デフォルトの<code>..</code>を<code>.</code>にする(ほんとは頭文字にしたいが)</li></ul></li><li>Windows10 のいつの Version からか忘れたが一部の絵文字の表示が化ける(管理者権限には 💪 を使ってた)
+<ul><li>⚡ に戻す</li></ul></li></ul><p>作ったのはこれ。<a href="https://gist.github.com/krymtkts/6f7e365fd1683d6edeb7e531f725d280">My own oh-my-posh theme.</a></p><p>oh-my-posh のテーマを作るのはかんたん。その作り方を以下に記す。</p><h2 id="how-to-make-it">How to make it</h2><p>テンプレを生成してくれる機能とかはない。そのため theme の PS モジュールは手で配置することになる。ちなみに export されている function たちは以下の通りである。</p><p><a href="https://github.com/JanDeDobbeleer/oh-my-posh/blob/master/oh-my-posh.psd1#L48">oh-my-posh/oh-my-posh.psd1 at master · JanDeDobbeleer/oh-my-posh</a></p><p>ユーザ定義のテーマは <code>$ThemeSettings.MyThemesLocation</code> に配置する(<code>Get-ThemesLocation</code>でも同じ様子)。フォルダがなければ合わせて作成する。</p><p>元ファイルはいまあるテーマからコピって作るのが手っ取り早い。わたしは<a href="https://github.com/JanDeDobbeleer/oh-my-posh/blob/master/Themes/Agnoster.psm1">Agnoster.psm1</a>から作成した。
+今あるテーマの配置フォルダを知るには<code>Get-Theme</code>を実行すれば良い。</p><pre><code class="powershell">PS&gt; Get-Theme
 
 Name                  Type     Location
 ----                  ----     --------
@@ -214,16 +219,16 @@ tehrob                Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\
 -    $prompt = Write-Prompt -Object $sl.PromptSymbols.StartSymbol -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
 -
 +    $now = Get-Date -UFormat '%Y-%m-%d %R'
-+    $backwardSymbol = &quot;$&#40;$sl.PromptSymbols.SegmentBackwardSymbol&#41;&quot;
++    $backwardSymbol = "$($sl.PromptSymbols.SegmentBackwardSymbol)"
      #check the last command state and indicate if failed
-     If &#40;$lastCommandFailed&#41; {
--        $prompt += Write-Prompt -Object &quot;$&#40;$sl.PromptSymbols.FailedCommandSymbol&#41; &quot; -ForegroundColor $sl.Colors.CommandFailedIconForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
-+        $rightText = &quot; $&#40;$sl.PromptSymbols.FailedCommandSymbol&#41; $now &quot;
+     If ($lastCommandFailed) {
+-        $prompt += Write-Prompt -Object "$($sl.PromptSymbols.FailedCommandSymbol) " -ForegroundColor $sl.Colors.CommandFailedIconForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
++        $rightText = " $($sl.PromptSymbols.FailedCommandSymbol) $now "
 +        $rightLength = $rightText.Length + $backwardSymbol.Length + 1 # care the symbol size blur.
 +        $foregroundColor = $ThemeSettings.Colors.CommandFailedIconForegroundColor
      }
 +    else {
-+        $rightText = &quot; $now &quot;
++        $rightText = " $now "
 +        $rightLength = $rightText.Length + $backwardSymbol.Length
 +        $foregroundColor = $ThemeSettings.Colors.PromptForegroundColor
 +    }
@@ -237,31 +242,33 @@ tehrob                Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\
 +    $prompt += Write-Prompt -Object $sl.PromptSymbols.StartSymbol -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
 
      #check for elevated prompt
-     If &#40;Test-Administrator&#41; {
+     If (Test-Administrator) {
 @@ -24,9 +39,8 @@
      }
 
      $user = $sl.CurrentUser
 -    $computer = $sl.CurrentHostname
-     if &#40;Test-NotDefaultUser&#40;$user&#41;&#41; {
--        $prompt += Write-Prompt -Object &quot;$user@$computer &quot; -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
-+        $prompt += Write-Prompt -Object &quot;$user &quot; -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
+     if (Test-NotDefaultUser($user)) {
+-        $prompt += Write-Prompt -Object "$user@$computer " -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
++        $prompt += Write-Prompt -Object "$user " -ForegroundColor $sl.Colors.SessionInfoForegroundColor -BackgroundColor $sl.Colors.SessionInfoBackgroundColor
      }
 
-     if &#40;Test-VirtualEnv&#41; {
+     if (Test-VirtualEnv) {
 @@ -63,7 +77,11 @@
  }
 
  $sl = $global:ThemeSettings #local settings
-+$sl.PromptSymbols.ElevatedSymbol = &#91;char&#93;::ConvertFromUtf32&#40;0x26A1&#41;
-+$sl.PromptSymbols.FailedCommandSymbol = &#91;char&#93;::ConvertFromUtf32&#40;0x274C&#41;
- $sl.PromptSymbols.SegmentForwardSymbol = &#91;char&#93;::ConvertFromUtf32&#40;0xE0B0&#41;
-+$sl.PromptSymbols.SegmentBackwardSymbol = &#91;char&#93;::ConvertFromUtf32&#40;0xe0b2&#41;
++$sl.PromptSymbols.ElevatedSymbol = [char]::ConvertFromUtf32(0x26A1)
++$sl.PromptSymbols.FailedCommandSymbol = [char]::ConvertFromUtf32(0x274C)
+ $sl.PromptSymbols.SegmentForwardSymbol = [char]::ConvertFromUtf32(0xE0B0)
++$sl.PromptSymbols.SegmentBackwardSymbol = [char]::ConvertFromUtf32(0xe0b2)
 +$sl.PromptSymbols.TruncatedFolderSymbol = '.'
- $sl.Colors.PromptForegroundColor = &#91;ConsoleColor&#93;::White
- $sl.Colors.PromptSymbolColor = &#91;ConsoleColor&#93;::White
- $sl.Colors.PromptHighlightColor = &#91;ConsoleColor&#93;::DarkBlue
-</code></pre><p>ちょっと実行時間のあたりが Cmder で出した場合にずれてしまうことがあって、微妙に余白をとってたりする。 でもこれでだいたい Cmder で見ても Windows Terminal でみても美しく出力される様になっている。 Windows Terminal ではシンボルフォントがめちゃくちゃ小さくなってしまうバグが有るのでまだ 100%最高とはいけないけど(<a href='https://github.com/microsoft/terminal/issues/900'>Certain "emoji" are still half-sized · Issue #900 · microsoft/terminal</a>)</p><p>余談だが、こんかい自作テーマの作成にあたり、既存テーマの PS モジュールにフォーマットの崩れを見つけたので PR 送ったら受け入れてもらえた。</p><p><a href='https://github.com/JanDeDobbeleer/oh-my-posh/pull/211'>Format some themes. by krymtkts · Pull Request #211 · JanDeDobbeleer/oh-my-posh</a></p><p>自分の気に入っている OSS に PR を受けれてもらえるのはちょっとした感動があるな 😚</p>
+ $sl.Colors.PromptForegroundColor = [ConsoleColor]::White
+ $sl.Colors.PromptSymbolColor = [ConsoleColor]::White
+ $sl.Colors.PromptHighlightColor = [ConsoleColor]::DarkBlue
+</code></pre><p>ちょっと実行時間のあたりが Cmder で出した場合にずれてしまうことがあって、微妙に余白をとってたりする。
+でもこれでだいたい Cmder で見ても Windows Terminal でみても美しく出力される様になっている。
+Windows Terminal ではシンボルフォントがめちゃくちゃ小さくなってしまうバグが有るのでまだ 100%最高とはいけないけど(<a href="https://github.com/microsoft/terminal/issues/900">Certain "emoji" are still half-sized · Issue #900 · microsoft/terminal</a>)</p><p>余談だが、こんかい自作テーマの作成にあたり、既存テーマの PS モジュールにフォーマットの崩れを見つけたので PR 送ったら受け入れてもらえた。</p><p><a href="https://github.com/JanDeDobbeleer/oh-my-posh/pull/211">Format some themes. by krymtkts · Pull Request #211 · JanDeDobbeleer/oh-my-posh</a></p><p>自分の気に入っている OSS に PR を受けれてもらえるのはちょっとした感動があるな 😚</p>
 </div>
 
 <div id="post-tags">
@@ -296,7 +303,7 @@ tehrob                Defaults C:\Users\takatoshi\OneDrive\Documents\PowerShell\
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

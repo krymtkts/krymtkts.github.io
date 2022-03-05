@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Register-ArgumentCompleter</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-02-04-Register-ArgumentCompleter">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-02-04-Register-ArgumentCompleter">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Register-ArgumentCompleter" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-02-04-Register-ArgumentCompleter" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-02-04-Register-ArgumentCompleter" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,17 +186,17 @@
 </div>
 <div>
     
-    <p>まだoutputが習慣化してなくて随分空いてしまった🤔</p><h3 id="<a href='https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/register-argumentcompleter?view=powershell-6'>Register-ArgumentCompleter</a>"><a href='https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/register-argumentcompleter?view=powershell-6'>Register-ArgumentCompleter</a></h3><p>PowerShell5から、従来の<code>TabExpansion</code>に代わる<code>Register-ArgumentCompleter</code>なるモノが現れたのは、PowerShellerなら知っているだろう(わたしは去年まで知らんかったのでPowerShellerではないのだ)。</p><h3 id="サンプル書いてみた">サンプル書いてみた</h3><p>Mavenのよく使うコマンドでお試し。</p><pre><code class="powershell">Register-ArgumentCompleter -Native -CommandName mvn -ScriptBlock {
-    param&#40;$wordToComplete, $commandAst, $cursorPosition&#41;
+    <p>まだoutputが習慣化してなくて随分空いてしまった🤔</p><h3 id="register-argumentcompleter"><a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/register-argumentcompleter?view=powershell-6">Register-ArgumentCompleter</a></h3><p>PowerShell5から、従来の<code>TabExpansion</code>に代わる<code>Register-ArgumentCompleter</code>なるモノが現れたのは、PowerShellerなら知っているだろう(わたしは去年まで知らんかったのでPowerShellerではないのだ)。</p><h3 id="サンプル書いてみた">サンプル書いてみた</h3><p>Mavenのよく使うコマンドでお試し。</p><pre><code class="powershell">Register-ArgumentCompleter -Native -CommandName mvn -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
 
     echo -- clean install eclipse:eclipse |
-        Where-Object { $&#95; -like &quot;$wordToComplete&#42;&quot; } |
+        Where-Object { $_ -like "$wordToComplete*" } |
         Sort-Object |
         ForEach-Object {
-            &#91;System.Management.Automation.CompletionResult&#93;::new&#40;$&#95;, $&#95;, 'ParameterValue', $&#95;&#41;
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
         }
 }
-</code></pre><p>めちゃんこ簡単。</p><h3 id="作ったもの">作ったもの</h3><p>当時仕事で巨大なMavenプロジェクトを使っていて、コマンド打つのも億劫だったのでPowerShellで自動補完がほしいなと思っていたのだが、<code>TabExpantion</code>はちょっと自分には使いこなせなかった。関数のオーバーライドをしたりのおまじないが必要だし。</p><p><code>Register-ArgumentCompleter</code>なら簡単に作れたので、APIが進化してる感をひしと感じたのであった。以下成果物↓</p><p><a href='https://github.com/krymtkts/MavenAutoCompletion'>krymtkts/MavenAutoCompletion: MavenAutoCompletion provides a simple auto completion of Maven 3 to PowerShell.</a></p><h3 id="既知のバグ">既知のバグ</h3><p>PowerShell5だと<code>-Native</code>オプションありの場合に<code>-</code>を利用した補完ができないバグがあって、前述の自動補完がうまく使えなくて辛い...</p><p><a href='https://github.com/PowerShell/PowerShell/issues/2912'>Native ArgumentCompleter not invoked for inputs that begin with hyphen (-) · Issue #2912 · PowerShell/PowerShell</a></p><p>PowerShell5.xでも使えないものかと試してみたところ、Trickyな回避策として<code>&#x60;</code>で<code>-</code>をエスケープしたらイケるというのを見つけたが...posh-gitもchocolateyもそれで従来からの<code>TabExpantion</code>を使ってたのかーという気付きは得られた。</p><p>ちなみにわたしはPowerShell6を使ってるのでかんけーないのだ😜</p><h3 id="残">残</h3><p><code>Register-ArgumentCompleter</code>のScriptBlockの引数をちまちま調べたのがあるけど、長いから別に書こう。</p>
+</code></pre><p>めちゃんこ簡単。</p><h3 id="作ったもの">作ったもの</h3><p>当時仕事で巨大なMavenプロジェクトを使っていて、コマンド打つのも億劫だったのでPowerShellで自動補完がほしいなと思っていたのだが、<code>TabExpantion</code>はちょっと自分には使いこなせなかった。関数のオーバーライドをしたりのおまじないが必要だし。</p><p><code>Register-ArgumentCompleter</code>なら簡単に作れたので、APIが進化してる感をひしと感じたのであった。以下成果物↓</p><p><a href="https://github.com/krymtkts/MavenAutoCompletion">krymtkts/MavenAutoCompletion: MavenAutoCompletion provides a simple auto completion of Maven 3 to PowerShell.</a></p><h3 id="既知のバグ">既知のバグ</h3><p>PowerShell5だと<code>-Native</code>オプションありの場合に<code>-</code>を利用した補完ができないバグがあって、前述の自動補完がうまく使えなくて辛い...</p><p><a href="https://github.com/PowerShell/PowerShell/issues/2912">Native ArgumentCompleter not invoked for inputs that begin with hyphen (-) · Issue #2912 · PowerShell/PowerShell</a></p><p>PowerShell5.xでも使えないものかと試してみたところ、Trickyな回避策として<code>`</code>で<code>-</code>をエスケープしたらイケるというのを見つけたが...posh-gitもchocolateyもそれで従来からの<code>TabExpantion</code>を使ってたのかーという気付きは得られた。</p><p>ちなみにわたしはPowerShell6を使ってるのでかんけーないのだ😜</p><h3 id="残">残</h3><p><code>Register-ArgumentCompleter</code>のScriptBlockの引数をちまちま調べたのがあるけど、長いから別に書こう。</p>
 </div>
 
 <div id="post-tags">
@@ -229,7 +229,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: pyenv-win</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-12-04-pyenv-win">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-12-04-pyenv-win">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: pyenv-win" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-12-04-pyenv-win" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-12-04-pyenv-win" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,10 +186,10 @@
 </div>
 <div>
     
-    <p>Python の処理系をローカルに直で入れることに抵抗はなかったのだが、chocolatey で Python3 を入れていると pin でもしない限りバージョンが進んでいって処理系が乱雑に配置されるので、Python 自体のバージョン管理をすることにした。</p><p><a href='https://github.com/pyenv-win/pyenv-win'>pyenv-win/pyenv-win: pyenv for Windows. pyenv is a simple python version management tool. It lets you easily switch between multiple versions of Python. It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools that do one thing well.</a></p><p>事前に Windows が Microsoft Store アプリの Python を使わないようにしておく必要がある。これがクソめんどい。以下は <code>README.md</code> からの引用。</p><blockquote><p> NOTE: If you are running Windows 10 1905 or newer, you might need to disable the built-in Python launcher via Start > "Manage App Execution Aliases" and turning off the "App Installer" aliases for Python </p></blockquote><p>Win キーを押下して "Manage App Execution Aliases" をタイプするのが現状の最速と思うが、できたら <code>ms-settings</code> スキームで一発で飛べたら良いのに(<code>ms-settings:appsfeatures</code>で手前まで行くのが精一杯)。</p><p>わたしは chocolatey ユーザなので、 chocolatey でこの pyenv をインストールした。この場合環境変数の設定が chocolatey により行われるので幾分サボれる。</p><p><a href='https://community.chocolatey.org/packages/pyenv-win#psdsc'>Chocolatey Software | pyenv-win 2.64.11</a></p><p>わたしの場合は chocolatey 操作とゴミを消すのだけ管理者権限が必要なようにしてるのでそうしたが、それ以外は普通で行った。</p><pre><code class="powershell">&#40;pip freeze | ConvertFrom-StringData&#41;.Keys | Set-Content requirements.txt # モジュールを控える
+    <p>Python の処理系をローカルに直で入れることに抵抗はなかったのだが、chocolatey で Python3 を入れていると pin でもしない限りバージョンが進んでいって処理系が乱雑に配置されるので、Python 自体のバージョン管理をすることにした。</p><p><a href="https://github.com/pyenv-win/pyenv-win">pyenv-win/pyenv-win: pyenv for Windows. pyenv is a simple python version management tool. It lets you easily switch between multiple versions of Python. It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools that do one thing well.</a></p><p>事前に Windows が Microsoft Store アプリの Python を使わないようにしておく必要がある。これがクソめんどい。以下は <code>README.md</code> からの引用。</p><blockquote><p>NOTE: If you are running Windows 10 1905 or newer, you might need to disable the built-in Python launcher via Start &gt; "Manage App Execution Aliases" and turning off the "App Installer" aliases for Python</p></blockquote><p>Win キーを押下して "Manage App Execution Aliases" をタイプするのが現状の最速と思うが、できたら <code>ms-settings</code> スキームで一発で飛べたら良いのに(<code>ms-settings:appsfeatures</code>で手前まで行くのが精一杯)。</p><p>わたしは chocolatey ユーザなので、 chocolatey でこの pyenv をインストールした。この場合環境変数の設定が chocolatey により行われるので幾分サボれる。</p><p><a href="https://community.chocolatey.org/packages/pyenv-win#psdsc">Chocolatey Software | pyenv-win 2.64.11</a></p><p>わたしの場合は chocolatey 操作とゴミを消すのだけ管理者権限が必要なようにしてるのでそうしたが、それ以外は普通で行った。</p><pre><code class="powershell">(pip freeze | ConvertFrom-StringData).Keys | Set-Content requirements.txt # モジュールを控える
 
 choco uninstall python3 -y
-rm C:/Python&#42; -recurse -force # ゴミを消す
+rm C:/Python* -recurse -force # ゴミを消す
 choco install pyenv-win -y
 
 pyenv install 3.9.6 # まだ 3.10.0 がリリースキャンディデートしかなかったので
@@ -200,7 +200,8 @@ pip --version # 確認
 python -m pip install --upgrade pip # 更新してって出たので更新
 pip install -r requirements.txt # モジュール復元
 # done.
-</code></pre><h3 id="バージョン移行時の&#95;<code>requirements.txt</code>">バージョン移行時の <code>requirements.txt</code></h3><p>バージョン乗り換え時の <code>requirements.txt</code> の作成だが、単純に <code>pip freeze</code> の出力を使うとバージョン不整合で取り込めないことがある。 なのでわたしの場合は雑にモジュール名だけにフィルタリングしたものを使う。</p><pre><code class="powershell">&#40;pip freeze | ConvertFrom-StringData&#41;.Keys | Set-Content requirements.txt
+</code></pre><h3 id="バージョン移行時の-requirementstxt">バージョン移行時の <code>requirements.txt</code></h3><p>バージョン乗り換え時の <code>requirements.txt</code> の作成だが、単純に <code>pip freeze</code> の出力を使うとバージョン不整合で取り込めないことがある。
+なのでわたしの場合は雑にモジュール名だけにフィルタリングしたものを使う。</p><pre><code class="powershell">(pip freeze | ConvertFrom-StringData).Keys | Set-Content requirements.txt
 </code></pre>
 </div>
 
@@ -234,7 +235,7 @@ pip install -r requirements.txt # モジュール復元
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

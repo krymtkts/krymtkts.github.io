@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Clojureでブログを作った</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-01-10-make-blog-with-clojure">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-01-10-make-blog-with-clojure">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Clojureでブログを作った" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-01-10-make-blog-with-clojure" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-01-10-make-blog-with-clojure" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,7 +186,9 @@
 </div>
 <div>
     
-    <p>このブログはClojure製の静的サイトジェネレータ<a href='http://cryogenweb.org/'>Cryogen</a>で作った。</p><h3 id="動機">動機</h3><p>現在有給消化中のため暇である。プログラマ的暇潰しが必要だったのだが、ブログを作るのはそれなりに楽しめそうな気がした。</p><p>あと、過去にブログサービスを使ってたときブログが長続きしなかった理由に、わたしは物書きじゃあないので簡単にブログが書けるとかいう部分が琴線に触れない、というようなものが根底にあるような気もする🤔</p><p>自分で作るならその心配はない。</p><p>ついでに折角GitHubのアカウントも持ってるので、GitHub Pagesを使わない手はない。blogのコードをrepoに登録しておけば芝生も青々としてええな！的な。</p><p>また別の観点としてブログサービスを選ぶとなった場合、書く記事の内容が技術的なものだったり単なる趣味の話だったり内容がブレると思うので、利用規約に触れて垢バンされるようなサービスは選び辛い。ちょうど良い選択かも知れない。</p><p>そこで今回はブログ自体を自分で作ってしまおうと決めた。</p><p>因みにClojureを選んだのは個人的な好みである。</p><h3 id="静的サイトジェネレータの選定">静的サイトジェネレータの選定</h3><p>普通にググって調べようと思ってたけど、いまはこんなのクソ便利なんがあるのね...→<a href='https://www.staticgen.com/'>StaticGen</a></p><p>LanguageをClojureにしたら3個hitしたのでそれぞれ見てみた。</p><ul><li><a href='https://github.com/cryogen-project/cryogen'>Cryogen</a></li><li><a href='https://github.com/liquidz/misaki'>Misaki</a></li><li><a href='https://github.com/hashobject/perun'>Perun</a></li></ul><p>Misakiは永らくメンテされてないからなし。 CryogenもPerunも、検索したら日本語の情報にhitするのでやりがいに違いはなさそう。 単純に⭐が多いのとBootを使ったことがないというだけの理由で<a href='https://github.com/cryogen-project/cryogen'>Cryogen</a>を使うことにした。</p><p>(後知恵だが、ここはもっと慎重に考えた方が良かった)</p><h3 id="<a href='https://github.com/cryogen-project/cryogen'>Cryogen</a>を使ってぶろぐを作ろうぜ"><a href='https://github.com/cryogen-project/cryogen'>Cryogen</a>を使ってぶろぐを作ろうぜ</h3><p>ドキュメントが充実してるので、書いたてることに従うだけで簡単にできた。</p><p>出来上がったコードはこちら→<a href='https://github.com/krymtkts/blog-cryogen'>My personal blog project</a></p><p>以降に記すコマンド例はPowerShellで実行したものである。筆者はWindows10ユーザなので。</p><h4 id="手始めに">手始めに</h4><p>Leiningenでテンプレートを作成する。</p><pre><code class="poershell">lein new cryogen blog
+    <p>このブログはClojure製の静的サイトジェネレータ<a href="http://cryogenweb.org/">Cryogen</a>で作った。</p><h3 id="動機">動機</h3><p>現在有給消化中のため暇である。プログラマ的暇潰しが必要だったのだが、ブログを作るのはそれなりに楽しめそうな気がした。</p><p>あと、過去にブログサービスを使ってたときブログが長続きしなかった理由に、わたしは物書きじゃあないので簡単にブログが書けるとかいう部分が琴線に触れない、というようなものが根底にあるような気もする🤔</p><p>自分で作るならその心配はない。</p><p>ついでに折角GitHubのアカウントも持ってるので、GitHub Pagesを使わない手はない。blogのコードをrepoに登録しておけば芝生も青々としてええな！的な。</p><p>また別の観点としてブログサービスを選ぶとなった場合、書く記事の内容が技術的なものだったり単なる趣味の話だったり内容がブレると思うので、利用規約に触れて垢バンされるようなサービスは選び辛い。ちょうど良い選択かも知れない。</p><p>そこで今回はブログ自体を自分で作ってしまおうと決めた。</p><p>因みにClojureを選んだのは個人的な好みである。</p><h3 id="静的サイトジェネレータの選定">静的サイトジェネレータの選定</h3><p>普通にググって調べようと思ってたけど、いまはこんなのクソ便利なんがあるのね...→<a href="https://www.staticgen.com/">StaticGen</a></p><p>LanguageをClojureにしたら3個hitしたのでそれぞれ見てみた。</p><ul><li><a href="https://github.com/cryogen-project/cryogen">Cryogen</a></li><li><a href="https://github.com/liquidz/misaki">Misaki</a></li><li><a href="https://github.com/hashobject/perun">Perun</a></li></ul><p>Misakiは永らくメンテされてないからなし。
+CryogenもPerunも、検索したら日本語の情報にhitするのでやりがいに違いはなさそう。
+単純に⭐が多いのとBootを使ったことがないというだけの理由で<a href="https://github.com/cryogen-project/cryogen">Cryogen</a>を使うことにした。</p><p>(後知恵だが、ここはもっと慎重に考えた方が良かった)</p><h3 id="cryogenを使ってぶろぐを作ろうぜ"><a href="https://github.com/cryogen-project/cryogen">Cryogen</a>を使ってぶろぐを作ろうぜ</h3><p>ドキュメントが充実してるので、書いたてることに従うだけで簡単にできた。</p><p>出来上がったコードはこちら→<a href="https://github.com/krymtkts/blog-cryogen">My personal blog project</a></p><p>以降に記すコマンド例はPowerShellで実行したものである。筆者はWindows10ユーザなので。</p><h4 id="手始めに">手始めに</h4><p>Leiningenでテンプレートを作成する。</p><pre><code class="poershell">lein new cryogen blog
 Retrieving cryogen/lein-template/0.3.7/lein-template-0.3.7.pom from clojars
 Retrieving leinjacker/leinjacker/0.4.2/leinjacker-0.4.2.pom from clojars
 Retrieving org/clojure/core.contracts/0.0.1/core.contracts-0.0.1.pom from central
@@ -200,17 +202,20 @@ Retrieving leinjacker/leinjacker/0.4.2/leinjacker-0.4.2.jar from clojars
 Generating fresh 'lein new' Cryogen project.
 </code></pre><p>ブログを動かしてみよう</p><pre><code class="poershell">lein ring server
 </code></pre><p>ブラウザに表示された。OK👍</p><h4 id="コンテンツを整理する">コンテンツを整理する</h4><p>わたしの場合はMarkdownで書くのでAsciiDocのディレクトリは消してしまう。サーバ起動中にこれをやると例外が発生する、止めてからやるのが良いだろう。</p><pre><code class="powershell">Remove-Item -Recurse -Path ./resources/templates/ascii
-</code></pre><p>あとsampleで置いてあるpostやaboutを自分用に書き換えるなど。</p><h4 id="テーマを作る">テーマを作る</h4><p>themeはデフォで<code>blue</code>, <code>blue&#95;centered</code>, <code>lotus</code>, <code>nucleus</code>の4種類置いてある。<code>lotus</code>を使うとエラーになったけど、これを直すのが目的じゃないので無視した🙈</p><p>自分用のテーマとしては何が良いかな？と検討して、お気に入りのSolarizedにしようと決めた。terminalやeditorはSolarized darkを使っているが、ブログはlightでやろうと思う。syntax highlightingについてはいつも通りのdarkを採用することにした。</p><p><a href='https://ethanschoonover.com/solarized/'>Solarized</a>を参考に自分でthemeを作る。元にするのは<code>blue&#95;centered</code>にした。ブラウザの開発者ツールで見てみてもレスポンシブデザインになってたし、cssのコード量も少なくてシンプルなのがいい。</p><p><code>resources/templates/themes</code>にファイル名<code>solarized&#95;light</code>でコピって書き換える。</p><p>基本は書いたあるルールに沿うけど一部それとなく変える。カラーコードの編集はsassにしたら楽だろうけどコピった元はそうじゃないので、該当する箇所を書き換えるだけに留めた。</p><p>Cryogenのsyntax highlightingは<code>highlight.js</code>が採用されている。 デフォの24種だと使わないやつもいるので削って、使いそうな言語を足したものを<a href='https://highlightjs.org/download/'>highlight.js</a>で作ってダウンロードする。 これは手動でダウンロードして、デフォの<code>highlight.pack.js</code>に上書きした。</p><p>スタイルは<code>base.html</code>で<code>default</code>が指定されているので<code>solarized&#95;dark</code>を選ぶ。ついでにhighlight.jsのversionも9.7から9.13.1へ上げちゃう。</p><p>404 Page not foundのときのページがどうやって表示されるのかわからなかったが、GitHub Pagesの機能で提供されるルールに従えば良い様子。</p><p><a href='https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/'>Customizing GitHub Pages / Creating a custom 404 page for your GitHub Pages site</a></p><p>デフォの404ページのスタイルが他のページとぜんぜん違うので、スタイルに合わせておいた。</p><p>ページが縦に長くなって垂直スクロールバーが出るとコンテンツのズレが生じるのだけど、これ多分bootstrapに起因する問題か🤔悩ましいが一旦そのままに。</p><p>これでおおよそのデザイン面は完成した。</p><p>作業中のコードは一旦BitBucketのprivate repoにブチ込んでおいたのだけど、GitHubの無償アカウントでもprivate repoが使えるようになって分ける理由がなくなってしまった...まあよし。</p><p>あと、</p><ul><li>Bootstrap3から4に上げたい</li><li>Google Analytics</li></ul><p>など残しているが、一旦はコンテンツの公開を優先して後回しにする予定。</p><h4 id="github&#95;pagesにうｐる">GitHub Pagesにうｐる</h4><p><a href='https://pages.github.com/'>GitHub Pages</a>の説明と<a href='http://cryogenweb.org/docs/deploying-to-github-pages.html'>Cryogen - GitHub Pages</a>を見たらできる。</p><p>作るのはユーザーのpageなので、まず<code>krymtkts.github.io</code>のrepoを作る。 中身は空で。Licenseの選択もなし。</p><p>Cryogenのドキュメントに従い、<code>config.edn</code>の<code>blog-prefix</code>キーの値は空にする。</p><p>あとはCryogenが出力した<code>resource/public</code>を先程作ったrepoのmasterブランチにpushするのみ。</p><p>この出力先<code>resource/public</code>を変更する方法がわからなかったので、<code>krymtkts.github.io</code>という名前のシンボリックリンクを作って、あたかもそういう名前のフォルダをGitで管理してる感を醸し出して茶を濁した。</p><pre><code class="poershell">New-Item -Value '.\blog\resources\public\' -Path './' -Name 'krymtkts.github.io' -ItemType SymbolicLink
+</code></pre><p>あとsampleで置いてあるpostやaboutを自分用に書き換えるなど。</p><h4 id="テーマを作る">テーマを作る</h4><p>themeはデフォで<code>blue</code>, <code>blue_centered</code>, <code>lotus</code>, <code>nucleus</code>の4種類置いてある。<code>lotus</code>を使うとエラーになったけど、これを直すのが目的じゃないので無視した🙈</p><p>自分用のテーマとしては何が良いかな？と検討して、お気に入りのSolarizedにしようと決めた。terminalやeditorはSolarized darkを使っているが、ブログはlightでやろうと思う。syntax highlightingについてはいつも通りのdarkを採用することにした。</p><p><a href="https://ethanschoonover.com/solarized/">Solarized</a>を参考に自分でthemeを作る。元にするのは<code>blue_centered</code>にした。ブラウザの開発者ツールで見てみてもレスポンシブデザインになってたし、cssのコード量も少なくてシンプルなのがいい。</p><p><code>resources/templates/themes</code>にファイル名<code>solarized_light</code>でコピって書き換える。</p><p>基本は書いたあるルールに沿うけど一部それとなく変える。カラーコードの編集はsassにしたら楽だろうけどコピった元はそうじゃないので、該当する箇所を書き換えるだけに留めた。</p><p>Cryogenのsyntax highlightingは<code>highlight.js</code>が採用されている。
+デフォの24種だと使わないやつもいるので削って、使いそうな言語を足したものを<a href="https://highlightjs.org/download/">highlight.js</a>で作ってダウンロードする。
+これは手動でダウンロードして、デフォの<code>highlight.pack.js</code>に上書きした。</p><p>スタイルは<code>base.html</code>で<code>default</code>が指定されているので<code>solarized_dark</code>を選ぶ。ついでにhighlight.jsのversionも9.7から9.13.1へ上げちゃう。</p><p>404 Page not foundのときのページがどうやって表示されるのかわからなかったが、GitHub Pagesの機能で提供されるルールに従えば良い様子。</p><p><a href="https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/">Customizing GitHub Pages / Creating a custom 404 page for your GitHub Pages site</a></p><p>デフォの404ページのスタイルが他のページとぜんぜん違うので、スタイルに合わせておいた。</p><p>ページが縦に長くなって垂直スクロールバーが出るとコンテンツのズレが生じるのだけど、これ多分bootstrapに起因する問題か🤔悩ましいが一旦そのままに。</p><p>これでおおよそのデザイン面は完成した。</p><p>作業中のコードは一旦BitBucketのprivate repoにブチ込んでおいたのだけど、GitHubの無償アカウントでもprivate repoが使えるようになって分ける理由がなくなってしまった...まあよし。</p><p>あと、</p><ul><li>Bootstrap3から4に上げたい</li><li>Google Analytics</li></ul><p>など残しているが、一旦はコンテンツの公開を優先して後回しにする予定。</p><h4 id="github-pagesにうｐる">GitHub Pagesにうｐる</h4><p><a href="https://pages.github.com/">GitHub Pages</a>の説明と<a href="http://cryogenweb.org/docs/deploying-to-github-pages.html">Cryogen - GitHub Pages</a>を見たらできる。</p><p>作るのはユーザーのpageなので、まず<code>krymtkts.github.io</code>のrepoを作る。
+中身は空で。Licenseの選択もなし。</p><p>Cryogenのドキュメントに従い、<code>config.edn</code>の<code>blog-prefix</code>キーの値は空にする。</p><p>あとはCryogenが出力した<code>resource/public</code>を先程作ったrepoのmasterブランチにpushするのみ。</p><p>この出力先<code>resource/public</code>を変更する方法がわからなかったので、<code>krymtkts.github.io</code>という名前のシンボリックリンクを作って、あたかもそういう名前のフォルダをGitで管理してる感を醸し出して茶を濁した。</p><pre><code class="poershell">New-Item -Value '.\blog\resources\public\' -Path './' -Name 'krymtkts.github.io' -ItemType SymbolicLink
 cd krymtkts.github.io
 git init
-echo &quot;# krymtkts.github.io&quot; &gt;&gt; README.md
+echo "# krymtkts.github.io" &gt;&gt; README.md
 git add README.md
-git commit -m &quot;First commit&quot;
+git commit -m "First commit"
 git add .
 git commit -m 'Add contents'
 git remote add origin git@github.com:krymtkts/krymtkts.github.io.git
 git push -u origin master
-</code></pre><p>これでわたしのブログがpublishされたのであった🎉</p><p>めでたしめでたし...</p><h3 id="to&#95;be&#95;continued">To be continued</h3><p>で終わらなかった。</p><p>これを作りきって、急激にCryogenに興味がなくなってしまった。</p><p>結局の所、テンプレートエンジンにSelmerを使ってることで、HTMLやスタイルの編集自体にClojure感の薄さがあってなんか楽しみがないのかなと。最初から予想できそうな結果やけどな🤔</p><p>コンテンツ自体はMarkdownで書くし可搬性があるので記事の更新はしつつ、次段階としてPerunで作り直してみようと思う。</p><p>破壊と創造こそが人類の本質ですね(違う</p>
+</code></pre><p>これでわたしのブログがpublishされたのであった🎉</p><p>めでたしめでたし...</p><h3 id="to-be-continued">To be continued</h3><p>で終わらなかった。</p><p>これを作りきって、急激にCryogenに興味がなくなってしまった。</p><p>結局の所、テンプレートエンジンにSelmerを使ってることで、HTMLやスタイルの編集自体にClojure感の薄さがあってなんか楽しみがないのかなと。最初から予想できそうな結果やけどな🤔</p><p>コンテンツ自体はMarkdownで書くし可搬性があるので記事の更新はしつつ、次段階としてPerunで作り直してみようと思う。</p><p>破壊と創造こそが人類の本質ですね(違う</p>
 </div>
 
 <div id="post-tags">
@@ -245,7 +250,7 @@ git push -u origin master
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

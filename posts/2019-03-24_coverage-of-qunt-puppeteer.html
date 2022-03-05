@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: QUnit で CI したい その 2</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-03-24_coverage-of-qunt-puppeteer">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-03-24_coverage-of-qunt-puppeteer">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: QUnit で CI したい その 2" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-03-24_coverage-of-qunt-puppeteer" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-03-24_coverage-of-qunt-puppeteer" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,27 +186,27 @@
 </div>
 <div>
     
-    <p><a href='./2019-03-21_want-to-run-qunit-in-cli.md'>前回</a>、QUnit のユニットテストを puppeteer で CLI 実行できるようにした</p><p>今回は code coverage を計測できるようにする。</p><h3 id="前回のおさらい">前回のおさらい</h3><p>puppeteer で JavaScript のカバレッジを計測することができる(<a href='https://developers.google.com/web/updates/2017/04/devtools-release-notes'>What's New In DevTools (Chrome 59)  |  Web  |  Google Developers</a>)のだが、現状利用している<a href='https://www.npmjs.com/package/node-qunit-puppeteer'>node-qunit-puppeteer</a>だと、puppeteer の部分をモジュール外部から触れないので利用できなくて困った、ということろまで書いた。</p><p>理想ではユニットテストの実施と同時にカバレッジを計測したいところなのだが、一旦は簡単のために別々に、つまりユニットテストの実行後さらにカバレッジ取得のためにユニットテスを再実行する、というかたちで楽しようと考えた。ユニットテストの実行が軽いうちは 2 度実行したところで大した負荷にならないというのもあり。</p><h3 id="やったこと">やったこと</h3><p>これ ↓</p><p><a href='https://github.com/istanbuljs/puppeteer-to-istanbul'>istanbuljs/puppeteer-to-istanbul: given coverage information output by puppeteer's API output a format consumable by Istanbul reports</a></p><p>puppeteer で計測したカバレッジを istanbul(nyc)で利用できる形に書き出すモジュールを使う。</p><p><a href='https://github.com/krymtkts/qunit-trial/blob/master/test/run.js'>すでにある node-qunit-puppeteer のテストランナー</a>と一緒には使えないので、カバレッジ計測のためのスクリプトも新たに書く(無駄)。</p><pre><code class="js">const pti = require&#40;&quot;puppeteer-to-istanbul&quot;&#41;;
-const puppeteer = require&#40;&quot;puppeteer&quot;&#41;;
-const path = require&#40;&quot;path&quot;&#41;;
+    <p><a href="./2019-03-21_want-to-run-qunit-in-cli.md">前回</a>、QUnit のユニットテストを puppeteer で CLI 実行できるようにした</p><p>今回は code coverage を計測できるようにする。</p><h3 id="前回のおさらい">前回のおさらい</h3><p>puppeteer で JavaScript のカバレッジを計測することができる(<a href="https://developers.google.com/web/updates/2017/04/devtools-release-notes">What's New In DevTools (Chrome 59)  |  Web  |  Google Developers</a>)のだが、現状利用している<a href="https://www.npmjs.com/package/node-qunit-puppeteer">node-qunit-puppeteer</a>だと、puppeteer の部分をモジュール外部から触れないので利用できなくて困った、ということろまで書いた。</p><p>理想ではユニットテストの実施と同時にカバレッジを計測したいところなのだが、一旦は簡単のために別々に、つまりユニットテストの実行後さらにカバレッジ取得のためにユニットテスを再実行する、というかたちで楽しようと考えた。ユニットテストの実行が軽いうちは 2 度実行したところで大した負荷にならないというのもあり。</p><h3 id="やったこと">やったこと</h3><p>これ ↓</p><p><a href="https://github.com/istanbuljs/puppeteer-to-istanbul">istanbuljs/puppeteer-to-istanbul: given coverage information output by puppeteer's API output a format consumable by Istanbul reports</a></p><p>puppeteer で計測したカバレッジを istanbul(nyc)で利用できる形に書き出すモジュールを使う。</p><p><a href="https://github.com/krymtkts/qunit-trial/blob/master/test/run.js">すでにある node-qunit-puppeteer のテストランナー</a>と一緒には使えないので、カバレッジ計測のためのスクリプトも新たに書く(無駄)。</p><pre><code class="js">const pti = require("puppeteer-to-istanbul");
+const puppeteer = require("puppeteer");
+const path = require("path");
 
-&#40;async &#40;&#41; =&gt; {
+(async () =&gt; {
   try {
-    const browser = await puppeteer.launch&#40;&#41;;
-    const page = await browser.newPage&#40;&#41;;
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
 
-    await page.coverage.startJSCoverage&#40;&#41;;
-    await page.goto&#40;`file://${path.join&#40;&#95;&#95;dirname, &quot;/index.html&quot;&#41;}`&#41;;
-    const jsCoverage = await page.coverage.stopJSCoverage&#40;&#41;;
+    await page.coverage.startJSCoverage();
+    await page.goto(`file://${path.join(__dirname, "/index.html")}`);
+    const jsCoverage = await page.coverage.stopJSCoverage();
 
-    pti.write&#40;jsCoverage&#41;;
-    await browser.close&#40;&#41;;
-  } catch &#40;error&#41; {
-    console.error&#40;error&#41;;
+    pti.write(jsCoverage);
+    await browser.close();
+  } catch (error) {
+    console.error(error);
   }
-}&#41;&#40;&#41;;
+})();
 </code></pre><p>これもほぼサンプルママで使えた。読み込ませるページのパスだけ工夫が必要ってだけ。</p><p>あとはカバレッジ計測に成功したら nyc のレポート作成を実行するだけでおｋ。これを npm のタスクにする。</p><pre><code class="sh">node test/coverage.js &amp;&amp; nyc report --reporter=html
-</code></pre><p>これでページを開いたときに読み込まれる JS のカバレッジを計測できた。ただしこのままだと、QUnit やユニットテスト自体のカバレッジも含まれてしまうので、仕事の CI で使う場合なんかには特定のファイルのカバレッジだけを見るか、あるいは除外設定があればいいのだけど。</p><h3 id="まとめ">まとめ</h3><p>また今回試した内容は以下の repo に反映してある</p><p><a href='https://github.com/krymtkts/qunit-trial'>krymtkts/qunit-trial: sandbox to enhance legacy QUnit test.</a></p><p>2 回ユニットテストを実行していて無駄感があるので、node-qunit-puppeteer に手を入れることも検討していいかも 🤔</p><p>続く</p>
+</code></pre><p>これでページを開いたときに読み込まれる JS のカバレッジを計測できた。ただしこのままだと、QUnit やユニットテスト自体のカバレッジも含まれてしまうので、仕事の CI で使う場合なんかには特定のファイルのカバレッジだけを見るか、あるいは除外設定があればいいのだけど。</p><h3 id="まとめ">まとめ</h3><p>また今回試した内容は以下の repo に反映してある</p><p><a href="https://github.com/krymtkts/qunit-trial">krymtkts/qunit-trial: sandbox to enhance legacy QUnit test.</a></p><p>2 回ユニットテストを実行していて無駄感があるので、node-qunit-puppeteer に手を入れることも検討していいかも 🤔</p><p>続く</p>
 </div>
 
 <div id="post-tags">
@@ -245,7 +245,7 @@ const path = require&#40;&quot;path&quot;&#41;;
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

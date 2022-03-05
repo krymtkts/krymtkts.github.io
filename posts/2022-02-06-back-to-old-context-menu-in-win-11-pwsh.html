@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,19 +186,22 @@
 </div>
 <div>
     
-    <p>Windows11 にてコンテキストメニューの UI が変わった。 しかし自身は普段コンテキストメニューを使わないのであまり気にならなかった。</p><p>のだが、たまたま 7z 圧縮されたファイルを渡されたことで、右クリックで 7zip で開けないのクソめんどい...と気になり始めた。 なので前のコンテキストメニューに戻す。PowerShell で。</p><p>レジストリを編集する必要があるらしい。情報元 ↓ <a href='https://www.tomshardware.com/how-to/windows-11-classic-context-menus'>How to Get Full Context Menus in Windows 11 | Tom's Hardware</a></p><pre><code class="powershell">$path = 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32'
+    <p>Windows11 にてコンテキストメニューの UI が変わった。
+しかし自身は普段コンテキストメニューを使わないのであまり気にならなかった。</p><p>のだが、たまたま 7z 圧縮されたファイルを渡されたことで、右クリックで 7zip で開けないのクソめんどい...と気になり始めた。
+なので前のコンテキストメニューに戻す。PowerShell で。</p><p>レジストリを編集する必要があるらしい。情報元 ↓
+<a href="https://www.tomshardware.com/how-to/windows-11-classic-context-menus">How to Get Full Context Menus in Windows 11 | Tom's Hardware</a></p><pre><code class="powershell">$path = 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32'
 New-Item -Path $path -Force
 Split-Path $path -Parent | Get-ChildItem
-Set-ItemProperty -Path $path -Name '&#40;Default&#41;' -Value ''
+Set-ItemProperty -Path $path -Name '(Default)' -Value ''
 Get-ItemProperty $path
 
 Stop-Process -Name explorer -Force
-</code></pre><p>Gist → <a href='https://gist.github.com/krymtkts/30af31454d510ce0c34cfeb2fefec072'>Return to the previous context menu in Windows 11.</a></p><p>↓ キーの名前は case insensitive なのかーい！</p><pre><code class="powershell">PS&gt; Get-ItemProperty $path
+</code></pre><p>Gist → <a href="https://gist.github.com/krymtkts/30af31454d510ce0c34cfeb2fefec072">Return to the previous context menu in Windows 11.</a></p><p>↓ キーの名前は case insensitive なのかーい！</p><pre><code class="powershell">PS&gt; Get-ItemProperty $path
 
-&#40;default&#41;    :
-PSPath       : Microsoft.PowerShell.Core\Registry::HKEY&#95;CURRENT&#95;USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\In
+(default)    :
+PSPath       : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\In
                procServer32
-PSParentPath : Microsoft.PowerShell.Core\Registry::HKEY&#95;CURRENT&#95;USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}
+PSParentPath : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}
 PSChildName  : InprocServer32
 PSDrive      : HKCU
 PSProvider   : Microsoft.PowerShell.Core\Registry
@@ -235,7 +238,7 @@ PSProvider   : Microsoft.PowerShell.Core\Registry
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

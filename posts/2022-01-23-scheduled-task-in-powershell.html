@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Windows のタスクを操作する(PowerShell で)</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-01-23-scheduled-task-in-powershell">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-01-23-scheduled-task-in-powershell">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Windows のタスクを操作する(PowerShell で)" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-01-23-scheduled-task-in-powershell" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-01-23-scheduled-task-in-powershell" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,39 +186,45 @@
 </div>
 <div>
     
-    <p>決まった時間までにやらなければいけないことがあるとする。それを人間力でカバーするのは、それなりに資源の浪費になるので自動化したいとする。 最近の Windows ならタスクスケジューラで直に書いてもいいけど、操作めんどすぎるので普通に考えたらスクリプトにするでしょう。 これを Windows 11 と PowerShell 7.2.1 でやる。</p><p>それでは <a href='https://docs.microsoft.com/en-us/powershell/module/scheduledtasks/?view=windowsserver2019-ps'>ScheduledTasks Module</a> を使う。 このモジュールは Window なら以下のシステムフォルダにひっそりと存在する。令和のこの時代になんつー古い(v1)話なんや、とは思う。</p><pre><code class="powershell">Get-Module -Name ScheduledTasks -ListAvailable
+    <p>決まった時間までにやらなければいけないことがあるとする。それを人間力でカバーするのは、それなりに資源の浪費になるので自動化したいとする。
+最近の Windows ならタスクスケジューラで直に書いてもいいけど、操作めんどすぎるので普通に考えたらスクリプトにするでしょう。
+これを Windows 11 と PowerShell 7.2.1 でやる。</p><p>それでは <a href="https://docs.microsoft.com/en-us/powershell/module/scheduledtasks/?view=windowsserver2019-ps">ScheduledTasks Module</a> を使う。
+このモジュールは Window なら以下のシステムフォルダにひっそりと存在する。令和のこの時代になんつー古い(v1)話なんや、とは思う。</p><pre><code class="powershell">Get-Module -Name ScheduledTasks -ListAvailable
 
     Directory: C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
 
 ModuleType Version    PreRelease Name                                PSEdition ExportedCommands
 ---------- -------    ---------- ----                                --------- ----------------
 Manifest   1.0.0.0               ScheduledTasks                      Core,Desk {Get-ScheduledTask, Set-ScheduledTask, Register-Sche…
-</code></pre><p>WindowsPowerShell(v5.1)なら <a href='https://docs.microsoft.com/en-us/powershell/module/psscheduledjob/?view=powershell-5.1'>PSScheduledJob Module</a> が使えるが、 PowerShell 7 では使えない(<code>Import-Module</code> もできない)ので、 <code>ScheduledTask</code> 一択かと。</p><p>ではいくつかのレシピを以下に記す。</p><h3 id="日次で指定時間に実行(人間味のあるズレを添えて)">日次で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = &#40;get-command pwsh&#41;.Source
-$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command &quot;Invoke-MyCommand&quot;'
+</code></pre><p>WindowsPowerShell(v5.1)なら <a href="https://docs.microsoft.com/en-us/powershell/module/psscheduledjob/?view=powershell-5.1">PSScheduledJob Module</a> が使えるが、 PowerShell 7 では使えない(<code>Import-Module</code> もできない)ので、 <code>ScheduledTask</code> 一択かと。</p><p>ではいくつかのレシピを以下に記す。</p><h3 id="日次で指定時間に実行人間味のあるズレを添えて">日次で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = (get-command pwsh).Source
+$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command "Invoke-MyCommand"'
 $trigger = New-ScheduledTaskTrigger -Daily -At 7:46 -RandomDelay 00:10
 $task = New-ScheduledTask -Action $action -Trigger $trigger
 Register-ScheduledTask -InputObject $task -TaskName 'morning-action'
-</code></pre><h3 id="指定時間に起動して実行待ちするタスク&#95;≒&#95;実行許諾の通知的なもの">指定時間に起動して実行待ちするタスク ≒ 実行許諾の通知的なもの</h3><pre><code class="powershell">$pwsh = &#40;get-command pwsh&#41;.Source
-$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-Command &quot;{Read-Host `&quot;press key`&quot; | Out-Null; Invoke-MyCommand}.Invoke&#40;&#41;&quot;'
+</code></pre><h3 id="指定時間に起動して実行待ちするタスク--実行許諾の通知的なもの">指定時間に起動して実行待ちするタスク ≒ 実行許諾の通知的なもの</h3><pre><code class="powershell">$pwsh = (get-command pwsh).Source
+$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-Command "{Read-Host `"press key`" | Out-Null; Invoke-MyCommand}.Invoke()"'
 $trigger = New-ScheduledTaskTrigger -Daily -At 17:00
 $task = New-ScheduledTask -Action $action -Trigger $trigger
 Register-ScheduledTask -InputObject $task -TaskName 'evening-action'
-</code></pre><h3 id="単発で指定時間に実行(人間味のあるズレを添えて)">単発で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = &#40;get-command pwsh&#41;.Source
-$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command &quot;Invoke-MyCommand&quot;'
-$jitter = &#40;Get-Random -Minimum 30 -Maximum &#40;60&#42;5&#41;&#41;
-$timing = &#40;Get-Date '2022-01-30 17:05'&#41;.AddSeconds&#40;$jitter&#41;
+</code></pre><h3 id="単発で指定時間に実行人間味のあるズレを添えて">単発で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = (get-command pwsh).Source
+$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command "Invoke-MyCommand"'
+$jitter = (Get-Random -Minimum 30 -Maximum (60*5))
+$timing = (Get-Date '2022-01-30 17:05').AddSeconds($jitter)
 $trigger = New-ScheduledTaskTrigger -At $timing -Once
 $setting = New-ScheduledTaskSettingsSet -DeleteExpiredTaskAfter 00:00:10
 $task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $setting | `
-    %{ $&#95;.Triggers&#91;0&#93;.EndBoundary = $timing.AddMinutes&#40;1&#41;.ToString&#40;'s'&#41;; $&#95;}
+    %{ $_.Triggers[0].EndBoundary = $timing.AddMinutes(1).ToString('s'); $_}
 Register-ScheduledTask -InputObject $task -TaskName 'single-action'
-</code></pre><p>このレシピではズレの算出は自前で行っている。<code>New-ScheduledTaskTrigger</code> に <code>-RandomDelay</code> を指定しておくのもアリだが、単発であるし具体的にいつ実行されるかがわかる方が好ましいかと考えた。</p><p>単発タスクなので、実行後にタスクを廃棄したいとする。その場合は例のように <code>-Settings</code> で自動削除の設定を有効にする必要がある。 同時に、タスクの期限切れの日時も指定する必要があるが、これはコマンドレットのオプションでは設定できない。直接オブジェクトに代入することで設定する(各 <code>Triggers</code> で <code>EndBoundary</code> を設定)。</p><p>参照: <a href='https://stackoverflow.com/questions/29337135/powershell-v4-create-remote-task-scheduler-task-set-to-expire-and-delete/35777432#35777432'>Powershell v4. Create remote task scheduler task set to expire and delete - Stack Overflow</a></p><h3 id="注意">注意</h3><p>いくつかの注意点がある。</p><h4 id="実行ファイルは絶対パス指定">実行ファイルは絶対パス指定</h4><p>実行ファイルは絶パス(絶対パスのわかりにくい略称)指定じゃないといけない。コマンドプロンプトでパスを通していたとしても、 <code>pwsh</code> とかだとタスクスケジューラちゃんは実行ファイルを見つけられない。</p><h4 id="<code>pwsh</code>&#95;の引数&#95;<code>command</code>&#95;はダブルクォートで書く"><code>pwsh</code> の引数 <code>Command</code> はダブルクォートで書く</h4><p><code>New-ScheduledTaskAction</code> の引数 <code>Argument</code> に、 <code>pwsh</code> に渡す引数を定義する。 この時、引数 <code>Command</code> に渡す文字列はダブルクォートで書くこと。 コマンドプロンプトで試せばわかるが、ダブルクォートはコマンドプロンプトで文字列として解釈され <code>pwsh</code> に渡るのに対し、シングルクォートは文字列と解釈されないそのままが渡されている様子。</p><pre><code class="cmd">C:\Windows\system32&gt;pwsh -NonInteractive -Command &quot;Write-Host 123&quot;
+</code></pre><p>このレシピではズレの算出は自前で行っている。<code>New-ScheduledTaskTrigger</code> に <code>-RandomDelay</code> を指定しておくのもアリだが、単発であるし具体的にいつ実行されるかがわかる方が好ましいかと考えた。</p><p>単発タスクなので、実行後にタスクを廃棄したいとする。その場合は例のように <code>-Settings</code> で自動削除の設定を有効にする必要がある。
+同時に、タスクの期限切れの日時も指定する必要があるが、これはコマンドレットのオプションでは設定できない。直接オブジェクトに代入することで設定する(各 <code>Triggers</code> で <code>EndBoundary</code> を設定)。</p><p>参照: <a href="https://stackoverflow.com/questions/29337135/powershell-v4-create-remote-task-scheduler-task-set-to-expire-and-delete/35777432#35777432">Powershell v4. Create remote task scheduler task set to expire and delete - Stack Overflow</a></p><h3 id="注意">注意</h3><p>いくつかの注意点がある。</p><h4 id="実行ファイルは絶対パス指定">実行ファイルは絶対パス指定</h4><p>実行ファイルは絶パス(絶対パスのわかりにくい略称)指定じゃないといけない。コマンドプロンプトでパスを通していたとしても、 <code>pwsh</code> とかだとタスクスケジューラちゃんは実行ファイルを見つけられない。</p><h4 id="pwsh-の引数-command-はダブルクォートで書く"><code>pwsh</code> の引数 <code>Command</code> はダブルクォートで書く</h4><p><code>New-ScheduledTaskAction</code> の引数 <code>Argument</code> に、 <code>pwsh</code> に渡す引数を定義する。
+この時、引数 <code>Command</code> に渡す文字列はダブルクォートで書くこと。
+コマンドプロンプトで試せばわかるが、ダブルクォートはコマンドプロンプトで文字列として解釈され <code>pwsh</code> に渡るのに対し、シングルクォートは文字列と解釈されないそのままが渡されている様子。</p><pre><code class="cmd">C:\Windows\system32&gt;pwsh -NonInteractive -Command "Write-Host 123"
 123
 
 C:\Windows\system32&gt;pwsh -NonInteractive -Command 'Write-Host 123'
 Write-Host 123
-</code></pre><p>この挙動のソースはコレ ↓ くらいしか見つからんかった。オフィシャルな情報はないのかな。あったら是非引用したい。(コマンドプロンプト界の常識過ぎるテーマなのか？)</p><p><a href='https://stackoverflow.com/questions/24173825/what-does-single-quoting-do-in-windows-batch-files/24181667#24181667'>cmd - What does single-quoting do in Windows batch files? - Stack Overflow</a></p><h3 id="<code>read-host</code>&#95;するからにゃぁ&#95;interactive&#95;で&#95;<code>pwsh</code>&#95;を起動しろよな"><code>Read-Host</code> するからにゃぁ Interactive で <code>pwsh</code> を起動しろよな</h3><p><code>Read-Host</code> する例なのに、間違って <code>-NoInteractive</code> をつけてしまうと、このようにおもしろエラーを頂戴するのでご注意。</p><pre><code class="powershell">C:\Windows\system32&gt;pwsh -NonInteractive -Command &quot;{Read-Host `&quot;press key`&quot; | Out-Null; Invoke-MyCommand}.Invoke&#40;&#41;&quot;
-MethodInvocationException: Exception calling &quot;Invoke&quot; with &quot;0&quot; argument&#40;s&#41;: &quot;PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.&quot;
+</code></pre><p>この挙動のソースはコレ ↓ くらいしか見つからんかった。オフィシャルな情報はないのかな。あったら是非引用したい。(コマンドプロンプト界の常識過ぎるテーマなのか？)</p><p><a href="https://stackoverflow.com/questions/24173825/what-does-single-quoting-do-in-windows-batch-files/24181667#24181667">cmd - What does single-quoting do in Windows batch files? - Stack Overflow</a></p><h3 id="read-host-するからにゃぁ-interactive-で-pwsh-を起動しろよな"><code>Read-Host</code> するからにゃぁ Interactive で <code>pwsh</code> を起動しろよな</h3><p><code>Read-Host</code> する例なのに、間違って <code>-NoInteractive</code> をつけてしまうと、このようにおもしろエラーを頂戴するのでご注意。</p><pre><code class="powershell">C:\Windows\system32&gt;pwsh -NonInteractive -Command "{Read-Host `"press key`" | Out-Null; Invoke-MyCommand}.Invoke()"
+MethodInvocationException: Exception calling "Invoke" with "0" argument(s): "PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
 </code></pre>
 </div>
 
@@ -254,7 +260,7 @@ MethodInvocationException: Exception calling &quot;Invoke&quot; with &quot;0&quo
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

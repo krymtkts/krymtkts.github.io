@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: psake の Task 名を自動補完する</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2021-07-18-psake-completion">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-07-18-psake-completion">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: psake の Task 名を自動補完する" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2021-07-18-psake-completion" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-07-18-psake-completion" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,19 +186,21 @@
 </div>
 <div>
     
-    <p>ほぼ趣味レベルなのだが、所謂タスクランナーとして<a href='https://github.com/psake/psake'>psake</a>を使っている。趣味レベルなのは、Go とか Python とかでは <code>make</code> を使うので <code>psake</code> を製品コードでは使ったことなくて、自分の細々とした面倒な処理をスクリプト化してまとめるのに <code>psake</code> を使ってるからだ。</p><p>そんな訳で利用頻度も高くなかったのだが、なんか最近は AWS のリソースを操作するニッチなスクリプト(例えば開発環境とかステージング環境だけに使うようなやつ)が大量にあって、それをまとめるのに使い出した。 その御蔭で利用頻度が高まり、いやーよくできたツールやな～などと改めて思っていたが、今まで不満に感じなかった自動補完がないことがストレスになってきた。タスクが増え過ぎて名前が覚えられないのだ。</p><p>ｷﾞｯﾊﾌﾞの repo を確認すると、古の<code>TabExpansion</code>版はあれど、今どきの<code>Register-ArgumentCompleter</code>版がない。 <a href='https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1'>psake/PsakeTabExpansion.ps1 at master · psake/psake</a></p><p>今更<code>TabExpansion</code>使いたくないので、<code>Register-ArgumentCompleter</code>用に合わせてこしらえた。</p><p><a href='https://gist.github.com/krymtkts/b2e6742691fdca6ca09567ca146063df'>This is Register-ArgumentCompleter version of https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1.</a></p><p>使ってみていまんとこ良さそうな感じ。問題なさそうなら本家に PRO ぶん投げてみてもいいかもね。<h2></h2></p><p>以下は<code>Register-ArgumentCompleter</code>のスクリプトブロックをデバッグするときの個人的メモ。</p><p>その時の入力でトリガーされたスクリプトブロックの引数を確認するのに <code>Write-Host</code> とか使うと厄介だと思うので、ログファイル的なものをこしらえておき、別窓で<code>tail</code>してあげると見易くなる(と思っている)。</p><pre><code class="powershell">Register-ArgumentCompleter -CommandName Invoke-Psake -ParameterName taskList -ScriptBlock {
-    param&#40;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&#41;
-    &quot;$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters&quot; &gt;&gt; test.log
-    if &#40;$commandAst -match '&#40;?&lt;file&gt;&#91;&#94;\.&#93;&#42;\.ps1&#41;'&#41; {
+    <p>ほぼ趣味レベルなのだが、所謂タスクランナーとして<a href="https://github.com/psake/psake">psake</a>を使っている。趣味レベルなのは、Go とか Python とかでは <code>make</code> を使うので <code>psake</code> を製品コードでは使ったことなくて、自分の細々とした面倒な処理をスクリプト化してまとめるのに <code>psake</code> を使ってるからだ。</p><p>そんな訳で利用頻度も高くなかったのだが、なんか最近は AWS のリソースを操作するニッチなスクリプト(例えば開発環境とかステージング環境だけに使うようなやつ)が大量にあって、それをまとめるのに使い出した。
+その御蔭で利用頻度が高まり、いやーよくできたツールやな～などと改めて思っていたが、今まで不満に感じなかった自動補完がないことがストレスになってきた。タスクが増え過ぎて名前が覚えられないのだ。</p><p>ｷﾞｯﾊﾌﾞの repo を確認すると、古の<code>TabExpansion</code>版はあれど、今どきの<code>Register-ArgumentCompleter</code>版がない。
+<a href="https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1">psake/PsakeTabExpansion.ps1 at master · psake/psake</a></p><p>今更<code>TabExpansion</code>使いたくないので、<code>Register-ArgumentCompleter</code>用に合わせてこしらえた。</p><p><a href="https://gist.github.com/krymtkts/b2e6742691fdca6ca09567ca146063df">This is Register-ArgumentCompleter version of https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1.</a></p><p>使ってみていまんとこ良さそうな感じ。問題なさそうなら本家に PRO ぶん投げてみてもいいかもね。</p><hr /><p>以下は<code>Register-ArgumentCompleter</code>のスクリプトブロックをデバッグするときの個人的メモ。</p><p>その時の入力でトリガーされたスクリプトブロックの引数を確認するのに <code>Write-Host</code> とか使うと厄介だと思うので、ログファイル的なものをこしらえておき、別窓で<code>tail</code>してあげると見易くなる(と思っている)。</p><pre><code class="powershell">Register-ArgumentCompleter -CommandName Invoke-Psake -ParameterName taskList -ScriptBlock {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    "$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters" &gt;&gt; test.log
+    if ($commandAst -match '(?&lt;file&gt;[^\.]*\.ps1)') {
         $file = $Matches.file
-        &quot;YEAH&quot; &gt;&gt; test.log
+        "YEAH" &gt;&gt; test.log
     }
     else {
         $file = 'psakefile.ps1'
-        &quot;DEFAULT&quot; &gt;&gt; test.log
+        "DEFAULT" &gt;&gt; test.log
     }
-    &amp; $commandName -buildFile $file -docs -nologo | Out-String -Stream | ForEach-Object { if &#40;$&#95; -match &quot;&#94;&#91;&#94; &#93;&#42;&quot;&#41; { $matches&#91;0&#93; } } | `
-        Where-Object { $&#95; -notin &#40;'Name', '----', ''&#41; } | Where-Object { !$wordToComplete -or $&#95; -like &quot;$wordToComplete&#42;&quot; }
+    &amp; $commandName -buildFile $file -docs -nologo | Out-String -Stream | ForEach-Object { if ($_ -match "^[^ ]*") { $matches[0] } } | `
+        Where-Object { $_ -notin ('Name', '----', '') } | Where-Object { !$wordToComplete -or $_ -like "$wordToComplete*" }
 }
 </code></pre><pre><code class="powershell">Get-Content .\test.log -Wait -Tail 10
 # Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
@@ -206,24 +208,24 @@
 # DEFAULT
 # Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
 # YEAH
-</code></pre><p>どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。<h2></h2></p><p>追記。</p><p>デバッグ中に気づいたのだが、プロファイル内で <code>$psake</code> という変数を作ると <code>Invoke-psake</code> が壊れるという事に気づいた。</p><pre><code class="powershell">🤖 takatoshi  invoke-psake -nologo
+</code></pre><p>どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。</p><hr /><p>追記。</p><p>デバッグ中に気づいたのだが、プロファイル内で <code>$psake</code> という変数を作ると <code>Invoke-psake</code> が壊れるという事に気づいた。</p><pre><code class="powershell">🤖 takatoshi  invoke-psake -nologo
 Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:9
 Line |
-   9 |      if &#40;test-path $psake.config&#95;default.buildFileName -pathType Leaf&#41; …
-     |          &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-     | Value cannot be null. &#40;Parameter 'The provided Path argument was null or an empty collection.'&#41;
+   9 |      if (test-path $psake.config_default.buildFileName -pathType Leaf) …
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Value cannot be null. (Parameter 'The provided Path argument was null or an empty collection.')
 
 Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:11
 Line |
-  11 |  …   } elseif &#40;test-path $psake.config&#95;default.legacyBuildFileName -path …
-     |                &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-     | Value cannot be null. &#40;Parameter 'The provided Path argument was null or an empty collection.'&#41;
+  11 |  …   } elseif (test-path $psake.config_default.legacyBuildFileName -path …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Value cannot be null. (Parameter 'The provided Path argument was null or an empty collection.')
 
 InvalidOperation: C:\Program Files\PowerShell\Modules\psake\4.9.0\public\Invoke-psake.ps1:327
 Line |
- 327 |          $psake.build&#95;success = $false
-     |          &#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;&#126;
-     | The property 'build&#95;success' cannot be found on this object. Verify that the property exists and can be set.
+ 327 |          $psake.build_success = $false
+     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | The property 'build_success' cannot be found on this object. Verify that the property exists and can be set.
 </code></pre><p>罠すぎる...</p>
 </div>
 
@@ -259,7 +261,7 @@ Line |
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

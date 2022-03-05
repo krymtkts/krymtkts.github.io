@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Register-ArgumentCompleterのScriptBlockの引数</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-02-11-Register-ArgumentCompleter2">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-02-11-Register-ArgumentCompleter2">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Register-ArgumentCompleterのScriptBlockの引数" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-02-11-Register-ArgumentCompleter2" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-02-11-Register-ArgumentCompleter2" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,11 +186,11 @@
 </div>
 <div>
     
-    <p><a href='./2019-02-04-Register-ArgumentCompleter.md'>前回</a>の続き。</p><pre><code class="powershell">Register-ArgumentCompleter -Native -CommandName mvn -ScriptBlock {
-    param&#40;$wordToComplete, $commandAst, $cursorPosition&#41;
-</code></pre><p>↑こんなんいるやん？</p><p><code>wordToComplete</code>には入力中の文字列が入ってくる。</p><p><code>$commandAst</code>にはコマンドラインが全部載ってくる。</p><p>でも実際詳しく知らんので、たとえば<code>maven clean install -pl :module1 -</code>ってとこまで入力してCtrl+Spaceやったときにはどういうパラメータになるかわからんので調べた。</p><p>結論から言うと<code>$commandAst</code>はASTが乗ってくる。<code>mvn clean install &ndash;d</code>でtabしたときのデバッガでの出力は以下の通り(デバッグ実行にはISEを利用した)。 <a href='https://docs.microsoft.com/ja-jp/powershell/scripting/components/ise/exploring-the-windows-powershell-ise?view=powershell-6'>Windows PowerShell ISE の操作 | Microsoft Docs</a></p><pre><code class="powershell">PS C:\Users\takatoshi\Desktop\maven&gt; mvn clean install --d
+    <p><a href="./2019-02-04-Register-ArgumentCompleter.md">前回</a>の続き。</p><pre><code class="powershell">Register-ArgumentCompleter -Native -CommandName mvn -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+</code></pre><p>↑こんなんいるやん？</p><p><code>wordToComplete</code>には入力中の文字列が入ってくる。</p><p><code>$commandAst</code>にはコマンドラインが全部載ってくる。</p><p>でも実際詳しく知らんので、たとえば<code>maven clean install -pl :module1 -</code>ってとこまで入力してCtrl+Spaceやったときにはどういうパラメータになるかわからんので調べた。</p><p>結論から言うと<code>$commandAst</code>はASTが乗ってくる。<code>mvn clean install --d</code>でtabしたときのデバッガでの出力は以下の通り(デバッグ実行にはISEを利用した)。 <a href="https://docs.microsoft.com/ja-jp/powershell/scripting/components/ise/exploring-the-windows-powershell-ise?view=powershell-6">Windows PowerShell ISE の操作 | Microsoft Docs</a></p><pre><code class="powershell">PS C:\Users\takatoshi\Desktop\maven&gt; mvn clean install --d
 ヒット 'C:\Users\takatoshi\dev\powershell\MavenAutoCompletion\MavenAutoCompletion.ps1:152' の行のブレークポイント
-&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst
+[DBG]: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst
 
 
 CommandElements    : {mvn, clean, install, --d}
@@ -203,12 +203,12 @@ Parent             : mvn clean install --d
 
 
 
-&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $wordToComplete
+[DBG]: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $wordToComplete
 --d
-</code></pre><p><code>mvn clean install &ndash;projects :</code>でtabした場合↓</p><pre><code class="powershell">&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt;
+</code></pre><p><code>mvn clean install --projects :</code>でtabした場合↓</p><pre><code class="powershell">[DBG]: PS C:\Users\takatoshi\Desktop\maven&gt;&gt;
 mvn clean install --projects :
 ヒット 'C:\Users\takatoshi\dev\powershell\MavenAutoCompletion\MavenAutoCompletion.ps1:152' の行のブレークポイント
-&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst
+[DBG]: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst
 
 
 CommandElements    : {mvn, clean, install, --projects...}
@@ -221,7 +221,7 @@ Parent             : mvn clean install --projects :
 
 
 
-&#91;DBG&#93;: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst.CommandElements
+[DBG]: PS C:\Users\takatoshi\Desktop\maven&gt;&gt; $commandAst.CommandElements
 
 
 StringConstantType : BareWord
@@ -253,8 +253,8 @@ Value              : :
 StaticType         : System.String
 Extent             : :
 Parent             : mvn clean install --projects :
-</code></pre><p><code>wordToComplete</code> こいつはまじでただの文字列。<code>commandAst.CommandElements</code>の最後の要素の<code>value</code>が出てる。</p><p>という感じだったので、MavenAutoCompletion的には<code>commandAst.CommandElements</code>の最後から2要素を対象に正規表現してやれば、だいたい望みのことができるのがわかったのであった。</p><h3 id="余談">余談</h3><p>PowerShellで配列の任意の連続した要素を抜き出すのに、slice的なんがないんかと調べたところ、以下のようにするようだ。</p><pre><code class="powershell">&gt; $a = @&#40;'mvn', 'clean', 'install', '-pl', ':'&#41;
-&gt; $a&#91;&#40;$a.Length -2&#41;..$a.Length&#93;
+</code></pre><p><code>wordToComplete</code> こいつはまじでただの文字列。<code>commandAst.CommandElements</code>の最後の要素の<code>value</code>が出てる。</p><p>という感じだったので、MavenAutoCompletion的には<code>commandAst.CommandElements</code>の最後から2要素を対象に正規表現してやれば、だいたい望みのことができるのがわかったのであった。</p><h3 id="余談">余談</h3><p>PowerShellで配列の任意の連続した要素を抜き出すのに、slice的なんがないんかと調べたところ、以下のようにするようだ。</p><pre><code class="powershell">&gt; $a = @('mvn', 'clean', 'install', '-pl', ':')
+&gt; $a[($a.Length -2)..$a.Length]
 -pl
 :
 </code></pre><p>cool😉</p>
@@ -290,7 +290,7 @@ Parent             : mvn clean install --projects :
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

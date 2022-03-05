@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: PoweShell Gallery へ公開するためのステップ覚書</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2022-02-12-publish-to-powershell-gallery-etc">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-02-12-publish-to-powershell-gallery-etc">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: PoweShell Gallery へ公開するためのステップ覚書" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2022-02-12-publish-to-powershell-gallery-etc" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-02-12-publish-to-powershell-gallery-etc" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,45 +186,58 @@
 </div>
 <div>
     
-    <p>タイトルの通り。これは未来の自分へのバトンだ。</p><p>毎回 PoweShell Gallery への公開方法を忘れたりする。 <a href='tags/powershellgallery'>弊ブログの<code>powershellgallery</code>タグ</a>を参照すればどれだけ同じミスを繰り返してるかアホさがわかる。 加えて <a href='https://github.com/microsoft/PowerShellForGitHub'>microsoft/PowerShellForGitHub</a> で repo を作るのもしょっちゅう忘れる。 こちらに関してはもうそろそろ <a href='https://github.com/cli/cli'><code>gh</code></a>に乗り換えた方がいいのかも知れん。(けど、そうすると PowerShell の旨味であるオブジェクトでゴニョゴニョやりやすい世界がなくなってしまうのは困る)</p><p>なのでこれらを定型化して <code>psake</code> タスクに落とし込む等したいな～と考えている(今度はその<code>psake</code>タスクが秘伝のソース化するかも知れんがそれはそれ)。 そのためにいつも何をやっているかを以下にリストアップする。<h2></h2></p><p>前提。</p><ul><li><code>PSMFAttendance</code> の作成時にやったことを踏まえている</li><li><a href='https://github.com/x-motemen/ghq'>ghq</a> を使っている前提</li><li>MS 公式文書はこちら <a href='https://docs.microsoft.com/en-us/powershell/scripting/gallery/concepts/publishing-guidelines?view=powershell-7.2'>PowerShell Gallery Publishing Guidelines and Best Practices - PowerShell | Microsoft Docs</a><ul><li>残念ながら過去のメモ(<a href='https://github.com/krymtkts/Get-GzipContent'>krymtkts/Get-GzipContent</a>を公開したとき)からは URL が変わっていた。今回はどうかな。</li></ul></li></ul><h3 id="step&#95;1.&#95;repo&#95;とモジュールマニフェストの作成">Step 1. repo とモジュールマニフェストの作成</h3><p>まず最初のステップはモジュールの雛形作成。</p><pre><code class="powershell"># create repo.
+    <p>タイトルの通り。これは未来の自分へのバトンだ。</p><p>毎回 PoweShell Gallery への公開方法を忘れたりする。 <a href="/tags/powershellgallery">弊ブログの<code>powershellgallery</code>タグ</a>を参照すればどれだけ同じミスを繰り返してるかアホさがわかる。
+加えて <a href="https://github.com/microsoft/PowerShellForGitHub">microsoft/PowerShellForGitHub</a> で repo を作るのもしょっちゅう忘れる。
+こちらに関してはもうそろそろ <a href="https://github.com/cli/cli"><code>gh</code></a>に乗り換えた方がいいのかも知れん。(けど、そうすると PowerShell の旨味であるオブジェクトでゴニョゴニョやりやすい世界がなくなってしまうのは困る)</p><p>なのでこれらを定型化して <code>psake</code> タスクに落とし込む等したいな～と考えている(今度はその<code>psake</code>タスクが秘伝のソース化するかも知れんがそれはそれ)。
+そのためにいつも何をやっているかを以下にリストアップする。</p><hr /><p>前提。</p><ul><li><code>PSMFAttendance</code> の作成時にやったことを踏まえている</li><li><a href="https://github.com/x-motemen/ghq">ghq</a> を使っている前提</li><li>MS 公式文書はこちら <a href="https://docs.microsoft.com/en-us/powershell/scripting/gallery/concepts/publishing-guidelines?view=powershell-7.2">PowerShell Gallery Publishing Guidelines and Best Practices - PowerShell | Microsoft Docs</a><ul><li>残念ながら過去のメモ(<a href="https://github.com/krymtkts/Get-GzipContent">krymtkts/Get-GzipContent</a>を公開したとき)からは URL が変わっていた。今回はどうかな。</li></ul></li></ul><h3 id="step-1-repo-とモジュールマニフェストの作成">Step 1. repo とモジュールマニフェストの作成</h3><p>まず最初のステップはモジュールの雛形作成。</p><pre><code class="powershell"># create repo.
 $owner = 'krymtkts'
 $module = 'PSMFAttendance'
 New-GitHubRepository -RepositoryName $module -Private -LicenseTemplate MIT
-ghq get -p &#40;Get-GitHubRepository -OwnerName krymtkts -RepositoryName $module | Select-Object -ExpandProperty ssh&#95;url&#41;
-cd &quot;$&#40;ghq root&#41;/$&#40;ghq list $module&#41;&quot;
+ghq get -p (Get-GitHubRepository -OwnerName krymtkts -RepositoryName $module | Select-Object -ExpandProperty ssh_url)
+cd "$(ghq root)/$(ghq list $module)"
 
 # create module manifest.
 mkdir $module
 $author = 'Takatoshi Kuriyama'
-New-ModuleManifest -Path &quot;./$module/$module.psd1&quot; -ModuleVersion 1.0 -Author $author -Copyright &quot;&#40;c&#41; $&#40;&#40;get-date&#41;.Year&#41; $author. All rights reserved.&quot;
-</code></pre><p>PowerShell Gallery への公開コマンド <a href='https://docs.microsoft.com/en-us/powershell/module/powershellget/publish-module?view=powershell-7.2'><code>Publish-Module</code> (PowerShellGet)</a> は、指定したディレクトリの中身を全部 PowerShell Gallery にぶち上げるため、モジュール以外のファイルを配置していても全て雲の上に持っていかれてしまう(除外設定がないのだ)。 そういう事故を起こさないためにも、モジュールリリース用のディレクトリを作成することをおすすめする。 そこでモジュールを開発するか、リリース対象のコードをそこにコピーした上で公開する、というのに限るのではないだろうか。わたしはコピーしたあとの掃除とか考えるのが面倒なので前者。</p><p>先にモジュールマニフェストを作るのは、動作確認なんかで関数がエクスポートできているか見るのに使うからだ。</p><h3 id="step&#95;2.&#95;モジュールマニフェストの更新">Step 2. モジュールマニフェストの更新</h3><p>次は実装して、マニフェストの更新。 マニフェストに記すべき内容については公式のドキュメントを読むのが良い。</p><p><a href='https://docs.microsoft.com/en-us/powershell/scripting/gallery/how-to/publishing-packages/publishing-a-package?view=powershell-7.2#required-metadata-for-items-published-to-the-powershell-gallery'>Creating and publishing an item - PowerShell | Microsoft Docs</a></p><p>とはいえわたしは大したモジュールを作らないのもあり、いつも更新するのは限られたフィールドだけだ。主に以下。</p><ul><li><code>Description</code></li><li><code>PowerShellVersion</code></li><li><code>&#42;ToExport</code></li><li><code>PrivateData.PSData.Tags</code></li><li><code>PrivateData.PSData.LicenseUri</code></li><li><code>PrivateData.PSData.ProjectUri</code></li></ul><p>この中でわかりにくいのが、互換性のあるプラットフォームの指定。これは <code>Tags</code> で表す。 <a href='https://docs.microsoft.com/en-us/powershell/scripting/gallery/concepts/publishing-guidelines?view=powershell-7.2#tag-your-package-with-the-compatible-pseditions-and-platforms'>PowerShell Gallery Publishing Guidelines and Best Practices - PowerShell | Microsoft Docs</a></p><p>マニフェストの更新は手で書いてもよいが、<code>Update-ModuleManifest</code> も使える。 ただし <code>New-ModuleManifest</code> と <code>Update-ModuleManifest</code> で出力結果のフォーマットが異なる(後者はインデントされない)のがイライラするので、手でやることが多いか。 ただ自動化していくとすれば、ここは <code>Update-ModuleManifest</code> に従うところか(こいつインデントしてくれへんのだが)。</p><h3 id="last&#95;step.&#95;powershell&#95;gallery&#95;公開">Last Step. PowerShell Gallery 公開</h3><p>最後は PowerShell Gallery への公開だ。</p><p>PowerShell Gallery への公開を実施する前に、API キーの期限が切れていないか必ずチェックしておく。 キーの有効期限が切れている場合のエラーが非常にわかりにくいので、無駄にトラシューに時間を費やさずに済ますためにも公開前にチェック兼ねて毎回キーを更新するのが妥当では？ API キーの有効期限は最長 1 年しかないので、しょっちゅう切らしている。むしろ公開前に更新するフローであれば、期限も最短にできるのでよりセキュアかも知れない。</p><p>API キー はモジュール名に対して <a href='<a' title=href="https://en.wikipedia.org/wiki/Glob_(programming)">https://en.wikipedia.org/wiki/Glob_(programming)</a>>glob パターン</a>でスコープを切れる。過去には面倒を回避するために<code>&#42;</code>パターンを使ったりしていたが、今はパッケージ名の完全一致を利用していて、パッケージ毎に API キーを分けるようにしている。</p><p>公開の手順は <a href='https://github.com/krymtkts/Get-GzipContent'>krymtkts/Get-GzipContent</a>を公開したときスクリプトを使う。</p><p>このスクリプトでは <code>PSScriptAnalyzer</code> を使ったチェックが成功した後に公開する。 また、<code>WhatIf</code> は Dry Run として置き換えた上で使うようにしていた。 <code>WhatIf</code> を使わないことで覚えることが増えて面倒な気もするが、とにかく間違って公開すると面倒なので、初期値を Dry Run にしたいという意図だった(多分)。この辺は <a href='https://docs.microsoft.com/en-us/powershell/scripting/learn/deep-dives/everything-about-shouldprocess?view=powershell-7.2'><code>ShouldProcess</code></a> の勉強をしたらより良い案があるかも知れん。</p><p>PowerShell Gallery でのバージョニングは基本的に Semantic Versioning なので、何かしらミスったらモジュールの非公開はできるけど、同じバージョンへの更新はできない。パッチバージョンを上げて再公開とかしかできない。これはミスったら恥ずかしいしやり直しがきかないから、 Dry Run しまくる。この「何かしらミスったら」を Pester とかで事前チェックできると良いのだろうけど。</p><pre><code class="powershell">Param &#40;
-    &#91;String&#93;$ApiKey,
-    &#91;ValidateSet&#40;'Publish', 'DryRun'&#41;&#93;$Mode = 'DryRun'
-&#41;
+New-ModuleManifest -Path "./$module/$module.psd1" -ModuleVersion 1.0 -Author $author -Copyright "(c) $((get-date).Year) $author. All rights reserved."
+</code></pre><p>PowerShell Gallery への公開コマンド <a href="https://docs.microsoft.com/en-us/powershell/module/powershellget/publish-module?view=powershell-7.2"><code>Publish-Module</code> (PowerShellGet)</a> は、指定したディレクトリの中身を全部 PowerShell Gallery にぶち上げるため、モジュール以外のファイルを配置していても全て雲の上に持っていかれてしまう(除外設定がないのだ)。
+そういう事故を起こさないためにも、モジュールリリース用のディレクトリを作成することをおすすめする。
+そこでモジュールを開発するか、リリース対象のコードをそこにコピーした上で公開する、というのに限るのではないだろうか。わたしはコピーしたあとの掃除とか考えるのが面倒なので前者。</p><p>先にモジュールマニフェストを作るのは、動作確認なんかで関数がエクスポートできているか見るのに使うからだ。</p><h3 id="step-2-モジュールマニフェストの更新">Step 2. モジュールマニフェストの更新</h3><p>次は実装して、マニフェストの更新。
+マニフェストに記すべき内容については公式のドキュメントを読むのが良い。</p><p><a href="https://docs.microsoft.com/en-us/powershell/scripting/gallery/how-to/publishing-packages/publishing-a-package?view=powershell-7.2#required-metadata-for-items-published-to-the-powershell-gallery">Creating and publishing an item - PowerShell | Microsoft Docs</a></p><p>とはいえわたしは大したモジュールを作らないのもあり、いつも更新するのは限られたフィールドだけだ。主に以下。</p><ul><li><code>Description</code></li><li><code>PowerShellVersion</code></li><li><code>*ToExport</code></li><li><code>PrivateData.PSData.Tags</code></li><li><code>PrivateData.PSData.LicenseUri</code></li><li><code>PrivateData.PSData.ProjectUri</code></li></ul><p>この中でわかりにくいのが、互換性のあるプラットフォームの指定。これは <code>Tags</code> で表す。
+<a href="https://docs.microsoft.com/en-us/powershell/scripting/gallery/concepts/publishing-guidelines?view=powershell-7.2#tag-your-package-with-the-compatible-pseditions-and-platforms">PowerShell Gallery Publishing Guidelines and Best Practices - PowerShell | Microsoft Docs</a></p><p>マニフェストの更新は手で書いてもよいが、<code>Update-ModuleManifest</code> も使える。
+ただし <code>New-ModuleManifest</code> と <code>Update-ModuleManifest</code> で出力結果のフォーマットが異なる(後者はインデントされない)のがイライラするので、手でやることが多いか。
+ただ自動化していくとすれば、ここは <code>Update-ModuleManifest</code> に従うところか(こいつインデントしてくれへんのだが)。</p><h3 id="last-step-powershell-gallery-公開">Last Step. PowerShell Gallery 公開</h3><p>最後は PowerShell Gallery への公開だ。</p><p>PowerShell Gallery への公開を実施する前に、API キーの期限が切れていないか必ずチェックしておく。
+キーの有効期限が切れている場合のエラーが非常にわかりにくいので、無駄にトラシューに時間を費やさずに済ますためにも公開前にチェック兼ねて毎回キーを更新するのが妥当では？
+API キーの有効期限は最長 1 年しかないので、しょっちゅう切らしている。むしろ公開前に更新するフローであれば、期限も最短にできるのでよりセキュアかも知れない。</p><p>API キー はモジュール名に対して <a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob パターン</a>でスコープを切れる。過去には面倒を回避するために<code>*</code>パターンを使ったりしていたが、今はパッケージ名の完全一致を利用していて、パッケージ毎に API キーを分けるようにしている。</p><p>公開の手順は <a href="https://github.com/krymtkts/Get-GzipContent">krymtkts/Get-GzipContent</a>を公開したときスクリプトを使う。</p><p>このスクリプトでは <code>PSScriptAnalyzer</code> を使ったチェックが成功した後に公開する。
+また、<code>WhatIf</code> は Dry Run として置き換えた上で使うようにしていた。
+<code>WhatIf</code> を使わないことで覚えることが増えて面倒な気もするが、とにかく間違って公開すると面倒なので、初期値を Dry Run にしたいという意図だった(多分)。この辺は <a href="https://docs.microsoft.com/en-us/powershell/scripting/learn/deep-dives/everything-about-shouldprocess?view=powershell-7.2"><code>ShouldProcess</code></a> の勉強をしたらより良い案があるかも知れん。</p><p>PowerShell Gallery でのバージョニングは基本的に Semantic Versioning なので、何かしらミスったらモジュールの非公開はできるけど、同じバージョンへの更新はできない。パッチバージョンを上げて再公開とかしかできない。これはミスったら恥ずかしいしやり直しがきかないから、 Dry Run しまくる。この「何かしらミスったら」を Pester とかで事前チェックできると良いのだろうけど。</p><pre><code class="powershell">Param (
+    [String]$ApiKey,
+    [ValidateSet('Publish', 'DryRun')]$Mode = 'DryRun'
+)
 
-$ModuleName = Get-ChildItem -File -Path ./ -Recurse -Name '&#42;.psd1' | Split-Path -Parent
-$ArtifactPath = &quot;.\$ModuleName\&quot;
-Write-Host &quot;Check modules under $ArtifactPath.&quot;
+$ModuleName = Get-ChildItem -File -Path ./ -Recurse -Name '*.psd1' | Split-Path -Parent
+$ArtifactPath = ".\$ModuleName\"
+Write-Host "Check modules under $ArtifactPath."
 
-$report = Invoke-ScriptAnalyzer -Path &quot;$ArtifactPath&quot; -Recurse -Settings PSGallery
-if &#40;$report&#41; {
-    Write-Host &quot;Violation found.&quot;
+$report = Invoke-ScriptAnalyzer -Path "$ArtifactPath" -Recurse -Settings PSGallery
+if ($report) {
+    Write-Host "Violation found."
     $report
     exit
 }
-Write-Host &quot;Check passed.&quot;
+Write-Host "Check passed."
 
-switch &#40;$Mode&#41; {
+switch ($Mode) {
     'Publish' {
-        Write-Host &quot;Publishing module: $ModuleName&quot;
+        Write-Host "Publishing module: $ModuleName"
         Publish-Module -Path $ArtifactPath -NugetAPIKey $ApiKey -Verbose
     }
     'DryRun' {
-        Write-Host &quot;&#91;DRY-RUN&#93;Publishing module: $ModuleName&quot;
+        Write-Host "[DRY-RUN]Publishing module: $ModuleName"
         Publish-Module -Path $ArtifactPath -NugetAPIKey $ApiKey -Verbose -WhatIf
     }
 }
-if &#40;$?&#41; {
+if ($?) {
     Write-Host 'Successfully published.'
 }
 else {
@@ -233,7 +246,7 @@ else {
 </code></pre><p>今改めて見るとこのスクリプト、API キーは Credential に変更した方がマトモだ。ぜひ対応したい。</p><p>このように使う。</p><pre><code class="powershell">.\publish.ps1 -Mode DryRun -ApiKey xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 .\publish.ps1 -Mode Publish -ApiKey xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-</code></pre><p>公開後は最終チェック、自端末へモジュールをインストールして一通り使えるか見ている。何しかちゃんと出来てるか不安。</p><p>公開できたら、 repo の<code>README.md</code> に以下を加筆する。これは流石に自動化無理なのでいいや。</p><ul><li>PowerShell Gallery からのインストール方法</li><li><a href='https://shields.io/category/downloads'>Shields.io</a> の PowerShell Gallery のダウンロード</li></ul><p>終。<h2></h2></p><h3 id="おわりに">おわりに</h3><p>手順起こしてみてあれやけど、これもうすぐにでも <code>psake</code> タスク化できそう。単にサボってただけだったか...</p>
+</code></pre><p>公開後は最終チェック、自端末へモジュールをインストールして一通り使えるか見ている。何しかちゃんと出来てるか不安。</p><p>公開できたら、 repo の<code>README.md</code> に以下を加筆する。これは流石に自動化無理なのでいいや。</p><ul><li>PowerShell Gallery からのインストール方法</li><li><a href="https://shields.io/category/downloads">Shields.io</a> の PowerShell Gallery のダウンロード</li></ul><p>終。</p><hr /><h3 id="おわりに">おわりに</h3><p>手順起こしてみてあれやけど、これもうすぐにでも <code>psake</code> タスク化できそう。単にサボってただけだったか...</p>
 </div>
 
 <div id="post-tags">
@@ -268,7 +281,7 @@ else {
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

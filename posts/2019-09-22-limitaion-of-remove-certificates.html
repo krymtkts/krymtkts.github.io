@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: ALBのListenerから証明書を削除するときの制限</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-09-22-limitaion-of-remove-certificates">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-09-22-limitaion-of-remove-certificates">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: ALBのListenerから証明書を削除するときの制限" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-09-22-limitaion-of-remove-certificates" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-09-22-limitaion-of-remove-certificates" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,19 +186,19 @@
 </div>
 <div>
     
-    <p>タイトルの通り。</p><p>仕事中にわかっただけで2つある。</p><ol><li>ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい</li><li>ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない</li></ol><p>上記はPython(boto3)からAWSのリソースを操作した際のもの。boto3はpipでインストールできる最新のv1.9.233。</p><h3 id="1.&#95;albのlistenerに登録された証明書を一度にまとめて消せる上限は10件ぽい">1. ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい</h3><p>ドキュメントには書かれてない気がする。少なくとも<a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html#ElasticLoadBalancingv2.Client.remove_listener_certificates'>boto3</a>と<a href='https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_RemoveListenerCertificates.html'>ELBのAPIリファレンス</a>のどちらにも記載がない。</p><p>問い合わせして聞いてないねんけど、書いてあったら教えてほしい🤔</p><p>以下はListener Certificatesの上限25件全部を一気に消そうとしたときのログ。センシティブな部分は削ってある。</p><pre><code class="log">Traceback &#40;most recent call last&#41;:
-  File &quot;C:\workspace\alb-batch\albbatch\elbapi.py&quot;, line 102, in remove&#95;cerificates
-    Certificates=params&#41;
-  File &quot;C:\Users\takatoshi&#95;kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py&quot;, line 357, in &#95;api&#95;call
-    return self.&#95;make&#95;api&#95;call&#40;operation&#95;name, kwargs&#41;
-  File &quot;C:\Users\takatoshi&#95;kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py&quot;, line 661, in &#95;make&#95;api&#95;call
-    raise error&#95;class&#40;parsed&#95;response, operation&#95;name&#41;
-botocore.exceptions.ClientError: An error occurred &#40;ValidationError&#41; when calling the RemoveListenerCertificates operation: Up to '10' certificate ARNs can be specified, but '25' were specified
-</code></pre><h3 id="2.&#95;albのlistenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない">2. ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない</h3><p>ACMで証明書を削除する場合、その証明書が他のAWSリソースに関連付けられていると<code>ResourceInUseException</code>(boto3では<code>ClientError</code>)で削除できない。</p><p><a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/acm.html#ACM.Client.delete_certificate'>ACM.Client.delete_certificate</a> から抜粋。</p><blockquote><p> You cannot delete an ACM certificate that is being used by another AWS service. To delete a certificate that is in use, the certificate association must first be removed. </p></blockquote><p>なのでまず関連付けられたLoad BalancerのListenerなどから証明書を取り除いた後、かつ証明書の情報からもその関連付けが取り除かれたことを確認しないと安全に削除できない😱</p><p>どうすればよいかというと、ACMの<code>DescribeCertificate</code>のレスポンスに含まれる<code>InUseBy</code>リストの中が空になってたら、それらの関連付けが取り除かれた状態なので安全に削除できる。</p><p>ACMで提供されてる<code>Waiter</code>は検証待ちのみで、それ用にはないみたいなので、以下のように手動で待ち合わせする...🤔</p><pre><code class="python">def wait&#95;until&#95;certificate&#95;unused&#40;self, arn: str&#41;:
-    cert = self.acm&#95;client.describe&#95;certificate&#40;CertificateArn=arn&#41;
-    while len&#40;cert&#91;'InUseBy'&#93;&#41; &gt; 0:
-        time.sleep&#40;1&#41;
-        cert = self.acm&#95;client.describe&#95;certificate&#40;CertificateArn=arn&#41;
+    <p>タイトルの通り。</p><p>仕事中にわかっただけで2つある。</p><ol><li>ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい</li><li>ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない</li></ol><p>上記はPython(boto3)からAWSのリソースを操作した際のもの。boto3はpipでインストールできる最新のv1.9.233。</p><h3 id="1-albのlistenerに登録された証明書を一度にまとめて消せる上限は10件ぽい">1. ALBのListenerに登録された証明書を一度にまとめて消せる上限は10件ぽい</h3><p>ドキュメントには書かれてない気がする。少なくとも<a href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html#ElasticLoadBalancingv2.Client.remove_listener_certificates">boto3</a>と<a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_RemoveListenerCertificates.html">ELBのAPIリファレンス</a>のどちらにも記載がない。</p><p>問い合わせして聞いてないねんけど、書いてあったら教えてほしい🤔</p><p>以下はListener Certificatesの上限25件全部を一気に消そうとしたときのログ。センシティブな部分は削ってある。</p><pre><code class="log">Traceback (most recent call last):
+  File "C:\workspace\alb-batch\albbatch\elbapi.py", line 102, in remove_cerificates
+    Certificates=params)
+  File "C:\Users\takatoshi_kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py", line 357, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+  File "C:\Users\takatoshi_kuriyama\.virtualenvs\alb-batch-J4EQQ8Xf\lib\site-packages\botocore\client.py", line 661, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.exceptions.ClientError: An error occurred (ValidationError) when calling the RemoveListenerCertificates operation: Up to '10' certificate ARNs can be specified, but '25' were specified
+</code></pre><h3 id="2-albのlistenerから証明書を消したあと証明書に関連づいたリソースが消えるまで待たないといけない">2. ALBのListenerから証明書を消したあと、証明書に関連づいたリソースが消えるまで待たないといけない</h3><p>ACMで証明書を削除する場合、その証明書が他のAWSリソースに関連付けられていると<code>ResourceInUseException</code>(boto3では<code>ClientError</code>)で削除できない。</p><p><a href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/acm.html#ACM.Client.delete_certificate">ACM.Client.delete_certificate</a> から抜粋。</p><blockquote><p>You cannot delete an ACM certificate that is being used by another AWS service. To delete a certificate that is in use, the certificate association must first be removed.</p></blockquote><p>なのでまず関連付けられたLoad BalancerのListenerなどから証明書を取り除いた後、かつ証明書の情報からもその関連付けが取り除かれたことを確認しないと安全に削除できない😱</p><p>どうすればよいかというと、ACMの<code>DescribeCertificate</code>のレスポンスに含まれる<code>InUseBy</code>リストの中が空になってたら、それらの関連付けが取り除かれた状態なので安全に削除できる。</p><p>ACMで提供されてる<code>Waiter</code>は検証待ちのみで、それ用にはないみたいなので、以下のように手動で待ち合わせする...🤔</p><pre><code class="python">def wait_until_certificate_unused(self, arn: str):
+    cert = self.acm_client.describe_certificate(CertificateArn=arn)
+    while len(cert['InUseBy']) &gt; 0:
+        time.sleep(1)
+        cert = self.acm_client.describe_certificate(CertificateArn=arn)
 </code></pre><p>めんどくせえええええ、こんなsnipetレベルのモノは<code>Waiter</code>作って欲しいわ😭</p>
 </div>
 
@@ -236,7 +236,7 @@ botocore.exceptions.ClientError: An error occurred &#40;ValidationError&#41; whe
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

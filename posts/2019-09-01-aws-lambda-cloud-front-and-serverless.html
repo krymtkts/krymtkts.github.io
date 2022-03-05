@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Serverless FrameworkでAWS LambdaとCloudFront</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Serverless FrameworkでAWS LambdaとCloudFront" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-09-01-aws-lambda-cloud-front-and-serverless" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-09-01-aws-lambda-cloud-front-and-serverless" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,7 +186,7 @@
 </div>
 <div>
     
-    <p>AWS Lambdaって書くのはホント簡単。</p><p>でも手動でデプロイするのはほんまに勘弁してほしいわ...って感じだったのでAWS強メンの同僚に相談してみたところ、<a href='https://serverless.com/framework/'>Serverless Framework</a>ってのがいい具合に抽象化してくれてるので試しに使ってみては？と助言いただけた。</p><h3 id="使ってみた">使ってみた</h3><p>事前にNodeが必要なことくらい。</p><pre><code class="powershell"># global install
+    <p>AWS Lambdaって書くのはホント簡単。</p><p>でも手動でデプロイするのはほんまに勘弁してほしいわ...って感じだったのでAWS強メンの同僚に相談してみたところ、<a href="https://serverless.com/framework/">Serverless Framework</a>ってのがいい具合に抽象化してくれてるので試しに使ってみては？と助言いただけた。</p><h3 id="使ってみた">使ってみた</h3><p>事前にNodeが必要なことくらい。</p><pre><code class="powershell"># global install
 $ npm install -g serverless
 
 # installed version
@@ -198,35 +198,35 @@ SDK: 2.1.0
 # generate boilerplate
 $ serverless create --template aws-python3
 Serverless: Generating boilerplate...
- &#95;&#95;&#95;&#95;&#95;&#95;&#95;                             &#95;&#95;
-|   &#95;   .-----.----.--.--.-----.----|  .-----.-----.-----.
-|   |&#95;&#95;&#95;|  -&#95;&#95;|   &#95;|  |  |  -&#95;&#95;|   &#95;|  |  -&#95;&#95;|&#95;&#95; --|&#95;&#95; --|
-|&#95;&#95;&#95;&#95;   |&#95;&#95;&#95;&#95;&#95;|&#95;&#95;|  \&#95;&#95;&#95;/|&#95;&#95;&#95;&#95;&#95;|&#95;&#95;| |&#95;&#95;|&#95;&#95;&#95;&#95;&#95;|&#95;&#95;&#95;&#95;&#95;|&#95;&#95;&#95;&#95;&#95;|
+ _______                             __
+|   _   .-----.----.--.--.-----.----|  .-----.-----.-----.
+|   |___|  -__|   _|  |  |  -__|   _|  |  -__|__ --|__ --|
+|____   |_____|__|  \___/|_____|__| |__|_____|_____|_____|
 |   |   |             The Serverless Application Framework
 |       |                           serverless.com, v1.51.0
  -------'
 
-Serverless: Successfully generated boilerplate for template: &quot;aws-python3&quot;
-Serverless: NOTE: Please update the &quot;service&quot; property in serverless.yml with your service name
+Serverless: Successfully generated boilerplate for template: "aws-python3"
+Serverless: NOTE: Please update the "service" property in serverless.yml with your service name
 </code></pre><p>これで生成された関数に処理を書くだけ。あ～らかんたん😁</p><p>デプロイも超簡単なので、これならCDに組み込むのも楽そう。</p><pre><code class="powershell"># deploy
 serverless deploy -v
 
 # deploy to specific stage
 serverless deploy -v --stage dev
-</code></pre><h3 id="cloudfrontを添えて">CloudFrontを添えて</h3><p>今回の仕事ではちょっと特殊な事情でCloudFrontを経由してLambdaのエンドポイントURLへリクエストする必要があった。</p><p>プラグインを使えばかんたんに記述することもできる。</p><p><a href='https://github.com/Droplr/serverless-api-cloudfront'>Droplr/serverless-api-cloudfront: Serverless Plugin - CloudFront distribution in front of your API Gateway</a></p><p>が、かんたんに記述できる＝かんたんな内容しかいじれない、のため片手落ちな点が多かった。諸々のパラメータの指定ができなくて細かな指定をする場合は結局<code>resources</code>セクションに自力でCloudFormationを書くことになった。</p><p>以下はresourceセクションのサンプル。<code>DomainName</code>の解決は以下のStackoverflowからヒントを得た。</p><p><a href='https://stackoverflow.com/questions/50931730/deploying-lambda-api-gateway-cloudfront-through-serverless-framework-at-a-ti'>amazon web services - Deploying Lambda + API-gateway + CloudFront through serverless framework at a time - Stack Overflow</a></p><pre><code class="yaml">resources:
+</code></pre><h3 id="cloudfrontを添えて">CloudFrontを添えて</h3><p>今回の仕事ではちょっと特殊な事情でCloudFrontを経由してLambdaのエンドポイントURLへリクエストする必要があった。</p><p>プラグインを使えばかんたんに記述することもできる。</p><p><a href="https://github.com/Droplr/serverless-api-cloudfront">Droplr/serverless-api-cloudfront: Serverless Plugin - CloudFront distribution in front of your API Gateway</a></p><p>が、かんたんに記述できる＝かんたんな内容しかいじれない、のため片手落ちな点が多かった。諸々のパラメータの指定ができなくて細かな指定をする場合は結局<code>resources</code>セクションに自力でCloudFormationを書くことになった。</p><p>以下はresourceセクションのサンプル。<code>DomainName</code>の解決は以下のStackoverflowからヒントを得た。</p><p><a href="https://stackoverflow.com/questions/50931730/deploying-lambda-api-gateway-cloudfront-through-serverless-framework-at-a-ti">amazon web services - Deploying Lambda + API-gateway + CloudFront through serverless framework at a time - Stack Overflow</a></p><pre><code class="yaml">resources:
   Resources:
     LambdaDistribution:
       Type: AWS::CloudFront::Distribution
       Properties:
         DistributionConfig:
           Enabled: true
-          Comment: &quot;managed by serverless framewrok&quot;
+          Comment: "managed by serverless framewrok"
           HttpVersion: http2
-          PriceClass: PriceClass&#95;All
+          PriceClass: PriceClass_All
           Origins:
             - Id: ApiGateway
               DomainName: !Join
-                - &quot;.&quot;
+                - "."
                 - - !Ref ApiGatewayRestApi
                   - execute-api
                   - !Ref AWS::Region
@@ -238,10 +238,10 @@ serverless deploy -v --stage dev
                 OriginProtocolPolicy: https-only
                 OriginReadTimeout: 10
                 OriginSSLProtocols:
-                  - &quot;SSLv3&quot;
-                  - &quot;TLSv1&quot;
-                  - &quot;TLSv1.1&quot;
-                  - &quot;TLSv1.2&quot;
+                  - "SSLv3"
+                  - "TLSv1"
+                  - "TLSv1.1"
+                  - "TLSv1.2"
           DefaultCacheBehavior:
             AllowedMethods:
               - HEAD
@@ -263,7 +263,7 @@ serverless deploy -v --stage dev
               QueryString: false
             TargetOriginId: ApiGateway
             ViewerProtocolPolicy: redirect-to-https
-</code></pre><p>ちなみにLambda@Edgeにはまだ対応していないみたいでプラグインの利用が必須となっている様子。</p><p><a href='https://github.com/serverless/serverless/issues/3944'>Support for Lambda@Edge · Issue #3944 · serverless/serverless</a></p><h3 id="感想">感想</h3><p>AWSだけにベンダーロックインせずServeless Computingの開発ができるよーな抽象化層を提供するようなCLIのイメージ。</p><p>誕生は数年前でまだまだ新し目のため、web上には新旧の情報が玉石混交の状態であるからして、細かなYAMLの記述内容の確認なんかは<a href='https://serverless.com/framework/docs/'>Serverless Framework Documentation</a>を参考にし、大まかな書き方はそのへんのブログなどから引っこ抜いてくるのが良いと思われる。</p><p>まだ1プロダクトでしか使ってないけど、いい感触を得た。YAMLの記述内容は、AWSの場合でいうとresourcesはまんまCloudFormationなので、そのへんの知識があれば使いこなせそう。SaaSのやつはまだ使ってないので感触なし。</p><h3 id="おまけ:&#95;<code>sls</code>というコマンド名">おまけ: <code>sls</code>というコマンド名</h3><p>ばかみたいな話なんやけど、Serverless Frameworkの短縮形コマンド<code>sls</code>はPowerShellで言うところの<code>Select-String</code>コマンドレットにエイリアスされてるので使えねえｗ</p><p>ではアデュー😘</p>
+</code></pre><p>ちなみにLambda@Edgeにはまだ対応していないみたいでプラグインの利用が必須となっている様子。</p><p><a href="https://github.com/serverless/serverless/issues/3944">Support for Lambda@Edge · Issue #3944 · serverless/serverless</a></p><h3 id="感想">感想</h3><p>AWSだけにベンダーロックインせずServeless Computingの開発ができるよーな抽象化層を提供するようなCLIのイメージ。</p><p>誕生は数年前でまだまだ新し目のため、web上には新旧の情報が玉石混交の状態であるからして、細かなYAMLの記述内容の確認なんかは<a href="https://serverless.com/framework/docs/">Serverless Framework Documentation</a>を参考にし、大まかな書き方はそのへんのブログなどから引っこ抜いてくるのが良いと思われる。</p><p>まだ1プロダクトでしか使ってないけど、いい感触を得た。YAMLの記述内容は、AWSの場合でいうとresourcesはまんまCloudFormationなので、そのへんの知識があれば使いこなせそう。SaaSのやつはまだ使ってないので感触なし。</p><h3 id="おまけ-slsというコマンド名">おまけ: <code>sls</code>というコマンド名</h3><p>ばかみたいな話なんやけど、Serverless Frameworkの短縮形コマンド<code>sls</code>はPowerShellで言うところの<code>Select-String</code>コマンドレットにエイリアスされてるので使えねえｗ</p><p>ではアデュー😘</p>
 </div>
 
 <div id="post-tags">
@@ -300,7 +300,7 @@ serverless deploy -v --stage dev
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

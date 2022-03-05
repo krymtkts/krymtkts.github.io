@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: pocoで捗る日常生活</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-07-28-have-a-good-day-with-poco">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-07-28-have-a-good-day-with-poco">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: pocoで捗る日常生活" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-07-28-have-a-good-day-with-poco" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-07-28-have-a-good-day-with-poco" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,32 +186,32 @@
 </div>
 <div>
     
-    <p><a href='/posts/2019-06-23-poco'>以前ちょっとだけ触れたpoco</a>を使いだしてから、よく使うディレクトリへの移動とか、<code>PSReadline</code>のHistoryからよく使うコマンドを引っ張り出すとかの、インタラクティブなコマンドが作りやすくとて捗っている。</p><p><a href='https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be'>Gistにあげたプロファイル</a>にまるっと書いているのだけど、ココではコメントも添えて書いておく。</p><h3 id="<code>psreadline</code>のhistoryを見る/実行する"><code>PSReadline</code>のhistoryを見る/実行する</h3><p>作った関数は以下の通り。似たようなモジュールはPSGalleryに何個かあるけど、pocoで書きたかったので自作した次第。</p><pre><code class="powershell">function Show-ReadLineHistory&#40;&#41; {
-    Get-Content -Path &#40;Get-PSReadlineOption&#41;.HistorySavePath | Select-Object -Unique | Select-Poco -CaseSensitive
+    <p><a href="/posts/2019-06-23-poco">以前ちょっとだけ触れたpoco</a>を使いだしてから、よく使うディレクトリへの移動とか、<code>PSReadline</code>のHistoryからよく使うコマンドを引っ張り出すとかの、インタラクティブなコマンドが作りやすくとて捗っている。</p><p><a href="https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be">Gistにあげたプロファイル</a>にまるっと書いているのだけど、ココではコメントも添えて書いておく。</p><h3 id="psreadlineのhistoryを見る実行する"><code>PSReadline</code>のhistoryを見る/実行する</h3><p>作った関数は以下の通り。似たようなモジュールはPSGalleryに何個かあるけど、pocoで書きたかったので自作した次第。</p><pre><code class="powershell">function Show-ReadLineHistory() {
+    Get-Content -Path (Get-PSReadlineOption).HistorySavePath | Select-Object -Unique | Select-Poco -CaseSensitive
 }
 Set-Alias pghy Show-ReadLineHistory -Option AllScope
 
-function Invoke-ReadLineHistory&#40;&#41; {
+function Invoke-ReadLineHistory() {
     Show-ReadLineHistory | Select-Object -First 1 | Invoke-Expression
 }
 Set-Alias pihy Invoke-ReadLineHistory -Option AllScope
-</code></pre><p>途中で<code>Select-Object -Unique</code>を挟んでいるのは、わたしがやたら同じコマンドを繰り返すので重複を省くため😅</p><p><code>Select-Object -First 1</code>はpoco自体の機能不足(選択機能がない)のを補うためである😭</p><p>ちなみにPowerShellのHistoryが謎な件についてはソースはこの辺。</p><ul><li><a href='https://qiita.com/yuta0801/items/ad0cf608144fb1546e54'>PowerShellの完全な履歴を取得する - Qiita</a><ul><li><a href='https://stackoverflow.com/questions/44104043/how-can-i-see-the-command-history-across-all-powershell-sessions-in-windows-serv'>How can I see the command history across all PowerShell sessions in Windows Server 2016? - Stack Overflow</a></li></ul></li></ul><p><code>Get-History</code>は現在のセッションの情報しか取らない。でも実は<code>&#40;Get-PSREeadlineOption&#41;.HistorySavePath</code>に保存されている、という話🤔</p><p><code>&#126;\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost&#95;history.txt</code>な感じでテキストファイルに保存されている。</p><p>ちなみに本来の<code>Get-History</code>実行結果のような履歴ごとにIDを振るのはやってない。</p><h3 id="お気に入りのディレクトリへ移動する">お気に入りのディレクトリへ移動する</h3><p>これはパクリ。仕事で使うリポジトリはghqを使わないで決められたディレクトリへcloneすることを期待されてたりするので、そのときにこういう任意のディレクトリへの移動ができるやつが重宝してる。</p><p><a href='https://mattn.kaoriya.net/software/peco.htm'>Big Sky :: Windows のコマンドプロンプトを10倍便利にするコマンド「peco」</a></p><p>あと編集機能は未実装。わたしの用途では編集よりも削除機能のほうが良いかなと思ったりしてるところ🤔</p><pre><code class="powershell">function Set-SelectedLocation {
-    param&#40;
-        &#91;ValidateSet&#40;&quot;Add&quot;, &quot;Move&quot;, &quot;Edit&quot;&#41;&#93;$Mode = &quot;Move&quot;,
-        &#91;string&#93;$Location
-    &#41;
-    switch &#40;$Mode&#41; {
-        &quot;Add&quot; {
-            if &#40;$Location&#41; {
-                Write-Output &quot;$Location&quot; | Out-File -Append -Encoding UTF8 &quot;&#126;/.poco-cd&quot;
+</code></pre><p>途中で<code>Select-Object -Unique</code>を挟んでいるのは、わたしがやたら同じコマンドを繰り返すので重複を省くため😅</p><p><code>Select-Object -First 1</code>はpoco自体の機能不足(選択機能がない)のを補うためである😭</p><p>ちなみにPowerShellのHistoryが謎な件についてはソースはこの辺。</p><ul><li><a href="https://qiita.com/yuta0801/items/ad0cf608144fb1546e54">PowerShellの完全な履歴を取得する - Qiita</a><ul><li><a href="https://stackoverflow.com/questions/44104043/how-can-i-see-the-command-history-across-all-powershell-sessions-in-windows-serv">How can I see the command history across all PowerShell sessions in Windows Server 2016? - Stack Overflow</a></li></ul></li></ul><p><code>Get-History</code>は現在のセッションの情報しか取らない。でも実は<code>(Get-PSREeadlineOption).HistorySavePath</code>に保存されている、という話🤔</p><p><code>~\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt</code>な感じでテキストファイルに保存されている。</p><p>ちなみに本来の<code>Get-History</code>実行結果のような履歴ごとにIDを振るのはやってない。</p><h3 id="お気に入りのディレクトリへ移動する">お気に入りのディレクトリへ移動する</h3><p>これはパクリ。仕事で使うリポジトリはghqを使わないで決められたディレクトリへcloneすることを期待されてたりするので、そのときにこういう任意のディレクトリへの移動ができるやつが重宝してる。</p><p><a href="https://mattn.kaoriya.net/software/peco.htm">Big Sky :: Windows のコマンドプロンプトを10倍便利にするコマンド「peco」</a></p><p>あと編集機能は未実装。わたしの用途では編集よりも削除機能のほうが良いかなと思ったりしてるところ🤔</p><pre><code class="powershell">function Set-SelectedLocation {
+    param(
+        [ValidateSet("Add", "Move", "Edit")]$Mode = "Move",
+        [string]$Location
+    )
+    switch ($Mode) {
+        "Add" {
+            if ($Location) {
+                Write-Output "$Location" | Out-File -Append -Encoding UTF8 "~/.poco-cd"
                 break
             }
         }
-        &quot;Move&quot; {
-            Get-Content -Path &quot;&#126;/.poco-cd&quot; | Select-Poco -CaseSensitive | Select-Object -First 1 | Set-Location
+        "Move" {
+            Get-Content -Path "~/.poco-cd" | Select-Poco -CaseSensitive | Select-Object -First 1 | Set-Location
             break
         }
-        &quot;Edit&quot; {
+        "Edit" {
             break
         }
     }
@@ -252,7 +252,7 @@ Set-Alias pcd Set-SelectedLocation -Option AllScope
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 

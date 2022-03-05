@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>krymtkts: Poco</title>
-    <link rel="canonical" href="http://krymtkts.github.io/posts/2019-06-23-poco">
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-06-23-poco">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
     <meta property="og:title" content="krymtkts: Poco" />
-    <meta property="og:url" content="http://krymtkts.github.io/posts/2019-06-23-poco" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-06-23-poco" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,10 +186,11 @@
 </div>
 <div>
     
-    <p>5月以降outputのリズムが崩れております🤔</p><p>時間の使い方の改善を目論み、ポモドーロを導入するなど。まだ効果の程は見えていないので今日はPowerShell版pecoのpocoを紹介する。</p><h3 id="peco">peco</h3><p>まずpecoってなんじゃこらって感じでもあるのだが、linuxなどで使えるインクリメンタルなフィルタリングコマンドらしい。</p><p>[Unix :: コマンド / peco [Tipsというかメモ]](http://tm.root-n.com/unix:command:peco)</p><p>こんなに便利な機能なので、もちろんWindowsでも使えるようになってある <a href='https://github.com/peco/peco'>peco/peco: Simplistic interactive filtering tool</a></p><p>ただ日常使いのシェルをPowerShellにしている身としては、単純なテキストの絞り込みじゃなくてオブジェクトを扱えるやつが望ましいわけで...</p><h3 id="poco">poco</h3><p>というふうに思ってたら普通にPowerShell Galleryにあったわ😲</p><p>PowerShellの場合は<a href='https://gist.github.com/yumura/8df37c22ae1b7942dec7'>powershell peco</a>というのがあって、それを使ったPSModuleがPSGalleryに上がっている...!!!これは使わない手はないぞよ🤔</p><ul><li><a href='https://www.powershellgallery.com/packages/poco/1.1.0'>PowerShell Gallery | poco 1.1.0</a></li><li><a href='https://github.com/jasonmarcher/poco'>jasonmarcher/poco: Interactive pipeline filtering in PowerShell (a port of peco).</a></li></ul><p>ただしこのモジュール、<a href='https://gist.github.com/yumura/8df37c22ae1b7942dec7'>powershell peco</a>のコードをそのまま使ってるのが現状みたいで、作者の方が書かれている改善点そのまま残ってるくさい😭</p><p><a href='https://qiita.com/yumura_s/items/a068329769c6338471dd'>PowerShell で peco (インタラクティブ・フィルタリングツール)っぽいものを作った - Qiita</a></p><p>という具合に不完全なできであるのは確かなんやが、雰囲気でCLIにPowerShellを使っているようなワイには非常に便利なツールなのである。</p><h3 id="pocoを使ってなにか書こう">pocoを使ってなにか書こう</h3><p>例えば、PowerShellではCLIの完全な入力履歴を取ろうとしたら<code>PSReadLine</code>に頼ることになるのだが、こいつをインタラクティブにフィルタリングするコマンドをぺぺっと書いてしまうこともできる↓</p><pre><code class="powershell">function Show-ReadLineHistory&#40;&#41; {
-    Get-Content -Path &#40;Get-PSReadlineOption&#41;.HistorySavePath | poco
+    <p>5月以降outputのリズムが崩れております🤔</p><p>時間の使い方の改善を目論み、ポモドーロを導入するなど。まだ効果の程は見えていないので今日はPowerShell版pecoのpocoを紹介する。</p><h3 id="peco">peco</h3><p>まずpecoってなんじゃこらって感じでもあるのだが、linuxなどで使えるインクリメンタルなフィルタリングコマンドらしい。</p><p><a href="http://tm.root-n.com/unix:command:peco">Unix :: コマンド / peco [Tipsというかメモ]</a></p><p>こんなに便利な機能なので、もちろんWindowsでも使えるようになってある <a href="https://github.com/peco/peco">peco/peco: Simplistic interactive filtering tool</a></p><p>ただ日常使いのシェルをPowerShellにしている身としては、単純なテキストの絞り込みじゃなくてオブジェクトを扱えるやつが望ましいわけで...</p><h3 id="poco">poco</h3><p>というふうに思ってたら普通にPowerShell Galleryにあったわ😲</p><p>PowerShellの場合は<a href="https://gist.github.com/yumura/8df37c22ae1b7942dec7">powershell peco</a>というのがあって、それを使ったPSModuleがPSGalleryに上がっている...!!!これは使わない手はないぞよ🤔</p><ul><li><a href="https://www.powershellgallery.com/packages/poco/1.1.0">PowerShell Gallery | poco 1.1.0</a></li><li><a href="https://github.com/jasonmarcher/poco">jasonmarcher/poco: Interactive pipeline filtering in PowerShell (a port of peco).</a></li></ul><p>ただしこのモジュール、<a href="https://gist.github.com/yumura/8df37c22ae1b7942dec7">powershell peco</a>のコードをそのまま使ってるのが現状みたいで、作者の方が書かれている改善点そのまま残ってるくさい😭</p><p><a href="https://qiita.com/yumura_s/items/a068329769c6338471dd">PowerShell で peco (インタラクティブ・フィルタリングツール)っぽいものを作った - Qiita</a></p><p>という具合に不完全なできであるのは確かなんやが、雰囲気でCLIにPowerShellを使っているようなワイには非常に便利なツールなのである。</p><h3 id="pocoを使ってなにか書こう">pocoを使ってなにか書こう</h3><p>例えば、PowerShellではCLIの完全な入力履歴を取ろうとしたら<code>PSReadLine</code>に頼ることになるのだが、こいつをインタラクティブにフィルタリングするコマンドをぺぺっと書いてしまうこともできる↓</p><pre><code class="powershell">function Show-ReadLineHistory() {
+    Get-Content -Path (Get-PSReadlineOption).HistorySavePath | poco
 }
-</code></pre><p>こんな風な単純なやつは正直なところpecoで十分なのだけど...</p><p>あと、検索結果の1行を選んで即実行なんしたいのだけど、pocoの機能不足でリストアップされた検索結果をarrow keyで選んだりとかできないので、今のところかなり癖のある使い方になってる😅</p><p>そんな感じPowerShellにも育てたい？ツールがあって使っていくモチベーションみたいなもんが湧いてきますな？🤔現状至らないところ多いからなんかコントリビュートしたい。 でもまず時間を作らなあかんな🤔</p>
+</code></pre><p>こんな風な単純なやつは正直なところpecoで十分なのだけど...</p><p>あと、検索結果の1行を選んで即実行なんしたいのだけど、pocoの機能不足でリストアップされた検索結果をarrow keyで選んだりとかできないので、今のところかなり癖のある使い方になってる😅</p><p>そんな感じPowerShellにも育てたい？ツールがあって使っていくモチベーションみたいなもんが湧いてきますな？🤔現状至らないところ多いからなんかコントリビュートしたい。
+でもまず時間を作らなあかんな🤔</p>
 </div>
 
 <div id="post-tags">
@@ -224,7 +225,7 @@
 </div>
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="/js/highlight.pack.js" type="text/javascript"></script>
+<script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
 
