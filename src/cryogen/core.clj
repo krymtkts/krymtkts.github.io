@@ -1,5 +1,5 @@
 (ns cryogen.core
-  (:require [cryogen-core.compiler :refer [compile-assets-timed]]
+  (:require [cryogen.compiler :refer [compile-assets-timed]]
             [cryogen-core.plugins :refer [load-plugins]]))
 
 (defn -main []
