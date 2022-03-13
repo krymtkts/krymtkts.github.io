@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Terminal Icons が動かなくなるケース</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2020-11-01-terminal-icons-not-work-case">
+    <title>krymtkts: PowerShell でクソデカテキストファイルを作る</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-03-13-create-huge-text-file-in-pwsh">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Terminal Icons が動かなくなるケース" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2020-11-01-terminal-icons-not-work-case" />
+    <meta property="og:title" content="krymtkts: PowerShell でクソデカテキストファイルを作る" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-03-13-create-huge-text-file-in-pwsh" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -179,16 +179,33 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2020-11-01</div>
+        <div class="col-lg-6">2022-03-13</div>
         
     </div>
-    <h2>Terminal Icons が動かなくなるケース</h2>
+    <h2>PowerShell でクソデカテキストファイルを作る</h2>
 </div>
 <div>
     
-    <p>9 月&amp;10 月と文字起こしするのをサボった 😪</p><p>肉親の不幸やトラブルがあったりで気乗りしなかったのもあるが、お仕事の方で WFH になって以降最高潮に忙しさのピークを迎えていたというのもある。この辺はチームビルディングぽい要素大いにあったのでまたなんかまとめたい所存 🤔</p><p>この間、OSS 活動も特に何のアクションもなく過ごしたが、ただ無為に過ごしたわけではない(と言い聞かせたい)のでなんか貢献したぽいことをネタに記事に残そうと思う。</p><hr /><p>先日<a href="https://devblogs.microsoft.com/commandline/windows-terminal-tips-and-tricks/">Windows Terminal Tips and Tricks | Windows Command Line</a>を見てたら、愛すべき oh my posh の紹介の後に <a href="https://github.com/devblackops/Terminal-Icons">Terminal-Icons: A PowerShell module to show file and folder icons in the terminal</a> が紹介されていた。
-なんじゃこりゃー即導入せねばなるまいな、という感じで導入してみたのだが、初回は<code>Get-ChildItem</code>の結果に可愛らしいアイコンフォントが付与されるのに、2 回目以降は普通の見た目に戻ってしまい、なんでや...とトラシューしてみた。</p><p>わかったのは、一緒に使っていた <a href="https://github.com/joonro/Get-ChildItemColor">Get-ChildItemColor: Add coloring to the output of Get-ChildItem Cmdlet of PowerShell.</a> の実行後に、Terminal Icons のアイコンフォントが反映されなくなること。
-試しに <code>Remove-Module Get-ChildItemColor</code> すればあ～ら不思議、アイコンが復活するのである。</p><p>Terminal Icons では<code>format.ps1xml</code> で表示内容の改変を行っているのだけど、<code>Get-ChildItemColor</code>も色の改変をしてるし、競合してるのだろう。詳しくは追っていくのがめんどくて競合できないという結論だけだした。↓ の Issue で同じく困ってる人がいたので共有してあげた。</p><p><a href="https://github.com/devblackops/Terminal-Icons/issues/12">No icons after installation. · Issue #12 · devblackops/Terminal-Icons · GitHub</a></p>
+    <p>先日、クソデカテキストファイルを作成しなければならない場面があり、以下のスクリプトをしたためた。
+Windows なので単にサイズが大きいだけのファイルなら <code>fsutil createnew</code> を使えるけど、クソデカテキストファイルを作る手段は知らなかったからだ。</p><pre><code class="powershell">Set-Content kusodeka.txt -Encoding ascii -NoNewline -Value ('x' * [Math]::Pow(1024, 3))
+</code></pre><p>このスクリプト、 Out of Memory でエラー終了する。</p><pre><code class="powershell">PS&gt; Set-Content kusodeka.txt -Encoding ascii -NoNewline -Value ('x' * [Math]::Pow(1024, 3))
+OperationStopped: Exception of type 'System.OutOfMemoryException' was thrown.
+</code></pre><p>どうも文字列の確保できる最大サイズの制限みたい。</p><pre><code class="powershell">PS&gt; 'x' * [Math]::Pow(1024, 3) | Out-Null
+OperationStopped: Exception of type 'System.OutOfMemoryException' was thrown.
+</code></pre><p>↓ のサイズならいける。 1GB - 32B からはエラーになる。</p><pre><code class="powershell">'x' * ([Math]::Pow(1024, 3)-33) | Out-Null
+</code></pre><p>答えは.NET の<code>String</code>クラスのドキュメントに書いてた →<a href="https://docs.microsoft.com/en-us/dotnet/api/system.string?redirectedfrom=MSDN&amp;view=net-6.0">String Class (System) | Microsoft Docs</a></p><blockquote><p>The maximum size of a String object in memory is 2-GB, or about 1 billion characters.</p></blockquote><p>2GB には到底届いてないし、今回引っかかってるのは後者か。
+ほーん、という感じ。最大の文字列長とか考えたこともなかったわ。</p><p>因みにこの最大文字数の超過エラーを回避してクソデカテキストファイルを作るには、以下のようにデータを分割して小分けに書き込みする必要がある。</p><pre><code class="powershell">1..1024 | Add-Content kusodeka.txt -Encoding ascii -NoNewline -Value ('x' * [Math]::Pow(1024, 2))
+</code></pre><p>ついでに調べた PowerShell の配列の上限は、添字の型であろう <code>int</code> の範囲っぽいがドキュメントは見当たらなかった。これはまた PowerShell のソースコードでも読むか。</p><pre><code class="powershell"># いける
+[int]::MinValue..[int]::MaxValue | Out-Null
+
+# いけない(int の演算エラーかこれ)
+[int]::MinValue..([int]::MaxValue + 1) | Out-Null
+# &gt; OperationStopped: Value was either too large or too small for an Int32.
+
+# いけない(カッコで評価されちゃい overflow か)
+([int]::MinValue..[int]::MaxValue) | Out-Null
+# OperationStopped: Arithmetic operation resulted in an overflow.
+</code></pre><p>世の中まだ知らないことがいっぱいあるもんやなあ。</p>
 </div>
 
 <div id="post-tags">
@@ -201,10 +218,8 @@
 
     <div id="prev-next">
         
-        <a href="/posts/2020-12-26-retrospective2020">&laquo; 2020-12-26 振り返り 2020 年</a>
         
-        
-        <a class="right" href="/posts/2020-08-31-how-do-i-manage-todos">2020-08-31 TODO の管理どないしてまっか？ &raquo;</a>
+        <a class="right" href="/posts/2022-03-05-customize-cryogen">2022-03-05 Cryogen のカスタマイズ &raquo;</a>
         
     </div>
 
