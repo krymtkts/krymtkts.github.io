@@ -58,3 +58,27 @@ OperationStopped: Exception of type 'System.OutOfMemoryException' was thrown.
 ```
 
 世の中まだ知らないことがいっぱいあるもんやなあ。
+
+### 2022-03-15 追記
+
+```powershell
+# これが限界ぽい。
+(1..2147483591) | Out-Null
+
+(1..2147483592) | Out-Null
+# OperationStopped: Array dimensions exceeded supported range.
+```
+
+でエラー。この場合ちゃんと Array の range の問題だとエラーに出る。
+カッコを入れてなかったら評価が端折られて期待の振る舞いをしていなかった。
+
+[Array Class (System) | Microsoft Docs](https://docs.microsoft.com/en-us/dotnet/api/system.array?view=net-6.0#remarks) に記載のカッコの中に該当するわけやな。
+
+> The array size is limited to a total of 4 billion elements, and to a maximum index of 0X7FEFFFFF in any given dimension (0X7FFFFFC7 for byte arrays and arrays of single-byte structures).
+
+```powershell
+[long]::Parse('7FFFFFC7',[System.Globalization.NumberStyles]::HexNumber)
+# 2147483591
+```
+
+いやー、スッキリした！
