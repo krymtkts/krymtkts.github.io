@@ -1,4 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Tue, 15 Mar 2022 12:10:00 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-03-13-create-huge-text-file-in-pwsh</guid><link>https://krymtkts.github.io/posts/2022-03-13-create-huge-text-file-in-pwsh</link><title>PowerShell でクソデカテキストファイルを作る</title><description>&lt;p&gt;先日、クソデカテキストファイルを作成しなければならない場面があり、以下のスクリプトをしたためた。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 19 Mar 2022 17:38:19 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-03-19-useful-usafe-of-gist-permalink</guid><link>https://krymtkts.github.io/posts/2022-03-19-useful-usafe-of-gist-permalink</link><title>Gist の便利な使い方 ~ Permalink</title><description>&lt;p&gt;今更ながら最近知った。 Gist の Raw コンテンツの URL からコミットハッシュを取り除けば常に最新のリビジョンへの Permalink になる。&lt;/p&gt;&lt;p&gt;&lt;a href="https://stackoverflow.com/questions/16589511/how-do-i-get-the-raw-version-of-a-gist-from-github/16589638#16589638"&gt;How do I get the raw version of a gist from github? - Stack Overflow&lt;/a&gt;&lt;/p&gt;&lt;p&gt;これを使えば、ローカルで patch を当てるのにめちゃくちゃ役に立つと気づいた。
+ダウンロードの保存先を patch したいコード直にしたらそれで終わり。
+patch を当てたいファイルの数だけ Gist 作らなあかんやんけ、というのはあれど、あまりに多い場合は Gist の中に複数ファイル置くとかかな。まだその規模まで届いてないのでそこはまあよい。&lt;/p&gt;&lt;p&gt;これとか。 &lt;a href="https://krymtkts.github.io/posts/2021-08-30-patch-to-vscode-extension"&gt;VS Code の拡張機能に ローカル patch する&lt;/a&gt;&lt;/p&gt;&lt;p&gt;メンテナがもう活動してないっぽくて PR がマージされることもないので、ローカル patch するのが手っ取り早い。&lt;/p&gt;&lt;p&gt;Gist に変更対象のコードを置いて、こういう関数を作りまして、実行すればパッチが完了する。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function Edit-EverMonkey {
+    $evermonkey = '~\.vscode\extensions\michalyao.evermonkey-2.4.5'
+    if (-not $evermonkey) {
+        Write-Verbose 'There is no evermonkey.'
+        return
+    }
+    $params = @{
+        Uri     = 'https://gist.githubusercontent.com/krymtkts/8a5a3a5a7e1efe9db7f2c6bbda337571/raw/converterplus.js'
+        OutFile = "$evermonkey\out\src\converterplus.js"
+    }
+    Invoke-WebRequest @params
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;あとこれ。&lt;a href="/posts/2021-07-11-my-terminal-icons"&gt;Terminal-Icons のアイコングリフのコードポイントを変えたい&lt;/a&gt;&lt;/p&gt;&lt;p&gt;version up の度にいっつも自分用グリフを上書きしてるけど、それが楽になる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function Edit-TerminalIcons {
+    $ti = Get-Module Terminal-Icons -ErrorAction SilentlyContinue
+    if (-not $ti) {
+        Write-Error 'Terminal-Icons not found. install it!'
+        return
+    }
+    $params = @{
+        Uri     = 'https://gist.githubusercontent.com/krymtkts/4457a23124b2db860a6b32eba6490b03/raw/glyphs.ps1'
+        OutFile = "$(Split-Path $ti.Path -Parent)\Data\glyphs.ps1"
+    }
+    Invoke-WebRequest @params
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;他に PowerShell の profile も Gist で管理しているので、複数の端末間で共有するのに使っている。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function Update-Profile {
+    $profilehome = ($PROFILE | Split-Path -Parent)
+    $params = @{
+        Uri     = 'https://gist.githubusercontent.com/krymtkts/f8af667c32b16fc28a815243b316c5be/raw/Microsoft.PowerShell_profile.ps1'
+        OutFile = "$profilehome/Microsoft.PowerShell_profile.ps1"
+    }
+    Invoke-WebRequest @params
+
+    if (-not (Test-Path "$profilehome\Microsoft.VSCode_profile.ps1")) {
+        New-Item -ItemType HardLink -Path $profilehome -Name 'Microsoft.VSCode_profile.ps1' -Value "$profilehome\Microsoft.PowerShell_profile.ps1"
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;便利だ。&lt;/p&gt;</description><pubDate>Sat, 19 Mar 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-03-13-create-huge-text-file-in-pwsh</guid><link>https://krymtkts.github.io/posts/2022-03-13-create-huge-text-file-in-pwsh</link><title>PowerShell でクソデカテキストファイルを作る</title><description>&lt;p&gt;先日、クソデカテキストファイルを作成しなければならない場面があり、以下のスクリプトをしたためた。
 Windows なので単にサイズが大きいだけのファイルなら &lt;code&gt;fsutil createnew&lt;/code&gt; を使えるけど、クソデカテキストファイルを作る手段は知らなかったからだ。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;Set-Content kusodeka.txt -Encoding ascii -NoNewline -Value ('x' * [Math]::Pow(1024, 3))
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;このスクリプト、 Out of Memory でエラー終了する。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; Set-Content kusodeka.txt -Encoding ascii -NoNewline -Value ('x' * [Math]::Pow(1024, 3))
 OperationStopped: Exception of type 'System.OutOfMemoryException' was thrown.
