@@ -3,9 +3,7 @@ pom.xml.asc
 *jar
 /checkouts/
 /classes/
-/docs/
 /lib/
-/resources/
 /target/
 .lein-deps-sum
 .lein-repl-history
