@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;cryogen&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/cryogen">
+    <title>krymtkts: Blog 用 Git repositories のマージ</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-03-26-merge-blog-repo">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;cryogen&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/cryogen" />
+    <meta property="og:title" content="krymtkts: Blog 用 Git repositories のマージ" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-03-26-merge-blog-repo" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -178,25 +178,52 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;cryogen&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-03-26</div>
+        
     </div>
-    <ul>
+    <h2>Blog 用 Git repositories のマージ</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2022-03-05-customize-cryogen">2022-03-05 Cryogen のカスタマイズ</a>
-        </li>
+    <p><a href="/posts/2022-03-05-customize-cryogen">Cryogen の更新</a> で 2 つに別れていた repo を統合できるようになったので、した。</p><p><a href="https://github.com/krymtkts/krymtkts.github.io">krymtkts/krymtkts.github.io</a> に <a href="https://github.com/krymtkts/blog-cryogen">krymtkts/blog-cryogen</a> の歴史をすべて引き込む。</p><p>元は 1 つのコンテンツを 2 つに分けてるだけなので、統合は簡単だった。</p><pre><code class="powershell">git switch --create feature/merge-repo
+
+# Move existing blog contents.
+mkdir docs
+ls -Exclude docs | %{mv $_.Name ./docs }
+git add .
+git commit -m "Move blog files to 'docs'."
+# Merge generator repo.
+git remote add upstream ssh://git@krymtkts.github.com:krymtkts/blog-cryogen.git
+git fetch upstream
+git merge --allow-unrelated-histories upstream/master
+# miscellaneous work.
+</code></pre><p>次に GitHub Pages の Source を <code>/docs</code> に変えて表示確認する。
+PR 作成後、GitHub Pages の対象 branch をマージ用の branch に向けて、 GitHub Actions による deploy を確認した。</p><ol><li>GitHub Pages の Source を <code>master</code> の <code>/(root)</code>-&gt; <code>feature/merge-repo</code> の <code>/docs</code> に変えて deploy 確認</li><li>PR をマージ＆ branch を残す</li><li>GitHub Pages の Source を <code>feature/merge-repo</code> の <code>/docs</code> -&gt; <code>master</code> の <code>/docs</code> に変えて deploy 確認</li><li><code>feature/merge-repo</code> を消す</li></ol><p>branch を消したときに自動で Source を追随してくれんのかも知れんが、 壊れたら面倒なので 1 手順ずつ確認した。</p><p>スッキリした。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2022-02-27-issue-with-cryogen-version-bump">2022-02-27 Cryogen バージョンアップに伴う困りごと</a>
-        </li>
+    <a href="/tags/github">github</a>
     
-        <li>
-            <a href="/posts/2019-01-10-make-blog-with-clojure">2019-01-10 Clojureでブログを作った</a>
-        </li>
+    <a href="/tags/git">git</a>
     
-    </ul>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-03-19-useful-usafe-of-gist-permalink">2022-03-19 Gist の便利な使い方 ~ Permalink &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>

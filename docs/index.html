@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-03-26-merge-blog-repo">Blog 用 Git repositories のマージ</a></li>
+                        
                         <li><a href="/posts/2022-03-19-useful-usafe-of-gist-permalink">Gist の便利な使い方 ~ Permalink</a></li>
                         
                         <li><a href="/posts/2022-03-13-create-huge-text-file-in-pwsh">PowerShell でクソデカテキストファイルを作る</a></li>
-                        
-                        <li><a href="/posts/2022-03-05-customize-cryogen">Cryogen のカスタマイズ</a></li>
                         
                         
 
@@ -181,60 +181,35 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-03-19</div>
+        <div class="col-lg-6">2022-03-26</div>
         
     </div>
-    <h2>Gist の便利な使い方 ~ Permalink</h2>
+    <h2>Blog 用 Git repositories のマージ</h2>
 </div>
 <div>
     
-    <p>今更ながら最近知った。 Gist の Raw コンテンツの URL からコミットハッシュを取り除けば常に最新のリビジョンへの Permalink になる。</p><p><a href="https://stackoverflow.com/questions/16589511/how-do-i-get-the-raw-version-of-a-gist-from-github/16589638#16589638">How do I get the raw version of a gist from github? - Stack Overflow</a></p><p>これを使えば、ローカルで patch を当てるのにめちゃくちゃ役に立つと気づいた。
-ダウンロードの保存先を patch したいコード直にしたらそれで終わり。
-patch を当てたいファイルの数だけ Gist 作らなあかんやんけ、というのはあれど、あまりに多い場合は Gist の中に複数ファイル置くとかかな。まだその規模まで届いてないのでそこはまあよい。</p><p>これとか。 <a href="https://krymtkts.github.io/posts/2021-08-30-patch-to-vscode-extension">VS Code の拡張機能に ローカル patch する</a></p><p>メンテナがもう活動してないっぽくて PR がマージされることもないので、ローカル patch するのが手っ取り早い。</p><p>Gist に変更対象のコードを置いて、こういう関数を作りまして、実行すればパッチが完了する。</p><pre><code class="powershell">function Edit-EverMonkey {
-    $evermonkey = '~\.vscode\extensions\michalyao.evermonkey-2.4.5'
-    if (-not $evermonkey) {
-        Write-Verbose 'There is no evermonkey.'
-        return
-    }
-    $params = @{
-        Uri     = 'https://gist.githubusercontent.com/krymtkts/8a5a3a5a7e1efe9db7f2c6bbda337571/raw/converterplus.js'
-        OutFile = "$evermonkey\out\src\converterplus.js"
-    }
-    Invoke-WebRequest @params
-}
-</code></pre><p>あとこれ。<a href="/posts/2021-07-11-my-terminal-icons">Terminal-Icons のアイコングリフのコードポイントを変えたい</a></p><p>version up の度にいっつも自分用グリフを上書きしてるけど、それが楽になる。</p><pre><code class="powershell">function Edit-TerminalIcons {
-    $ti = Get-Module Terminal-Icons -ErrorAction SilentlyContinue
-    if (-not $ti) {
-        Write-Error 'Terminal-Icons not found. install it!'
-        return
-    }
-    $params = @{
-        Uri     = 'https://gist.githubusercontent.com/krymtkts/4457a23124b2db860a6b32eba6490b03/raw/glyphs.ps1'
-        OutFile = "$(Split-Path $ti.Path -Parent)\Data\glyphs.ps1"
-    }
-    Invoke-WebRequest @params
-}
-</code></pre><p>他に PowerShell の profile も Gist で管理しているので、複数の端末間で共有するのに使っている。</p><pre><code class="powershell">function Update-Profile {
-    $profilehome = ($PROFILE | Split-Path -Parent)
-    $params = @{
-        Uri     = 'https://gist.githubusercontent.com/krymtkts/f8af667c32b16fc28a815243b316c5be/raw/Microsoft.PowerShell_profile.ps1'
-        OutFile = "$profilehome/Microsoft.PowerShell_profile.ps1"
-    }
-    Invoke-WebRequest @params
+    <p><a href="/posts/2022-03-05-customize-cryogen">Cryogen の更新</a> で 2 つに別れていた repo を統合できるようになったので、した。</p><p><a href="https://github.com/krymtkts/krymtkts.github.io">krymtkts/krymtkts.github.io</a> に <a href="https://github.com/krymtkts/blog-cryogen">krymtkts/blog-cryogen</a> の歴史をすべて引き込む。</p><p>元は 1 つのコンテンツを 2 つに分けてるだけなので、統合は簡単だった。</p><pre><code class="powershell">git switch --create feature/merge-repo
 
-    if (-not (Test-Path "$profilehome\Microsoft.VSCode_profile.ps1")) {
-        New-Item -ItemType HardLink -Path $profilehome -Name 'Microsoft.VSCode_profile.ps1' -Value "$profilehome\Microsoft.PowerShell_profile.ps1"
-    }
-}
-</code></pre><p>便利だ。</p>
+# Move existing blog contents.
+mkdir docs
+ls -Exclude docs | %{mv $_.Name ./docs }
+git add .
+git commit -m "Move blog files to 'docs'."
+# Merge generator repo.
+git remote add upstream ssh://git@krymtkts.github.com:krymtkts/blog-cryogen.git
+git fetch upstream
+git merge --allow-unrelated-histories upstream/master
+# miscellaneous work.
+</code></pre><p>次に GitHub Pages の Source を <code>/docs</code> に変えて表示確認する。
+PR 作成後、GitHub Pages の対象 branch をマージ用の branch に向けて、 GitHub Actions による deploy を確認した。</p><ol><li>GitHub Pages の Source を <code>master</code> の <code>/(root)</code>-&gt; <code>feature/merge-repo</code> の <code>/docs</code> に変えて deploy 確認</li><li>PR をマージ＆ branch を残す</li><li>GitHub Pages の Source を <code>feature/merge-repo</code> の <code>/docs</code> -&gt; <code>master</code> の <code>/docs</code> に変えて deploy 確認</li><li><code>feature/merge-repo</code> を消す</li></ol><p>branch を消したときに自動で Source を追随してくれんのかも知れんが、 壊れたら面倒なので 1 手順ずつ確認した。</p><p>スッキリした。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/github">github</a>
     
-    <a href="/tags/gist">gist</a>
+    <a href="/tags/git">git</a>
     
 </div>
 
@@ -244,7 +219,7 @@ patch を当てたいファイルの数だけ Gist 作らなあかんやんけ�
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-03-13-create-huge-text-file-in-pwsh">2022-03-13 PowerShell でクソデカテキストファイルを作る &raquo;</a>
+        <a class="right" href="/posts/2022-03-19-useful-usafe-of-gist-permalink">2022-03-19 Gist の便利な使い方 ~ Permalink &raquo;</a>
         
     </div>
 </div>
