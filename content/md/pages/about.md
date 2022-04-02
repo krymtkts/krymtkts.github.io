@@ -4,7 +4,7 @@
  :navbar? true}
 
 - Takatoshi Kuriyama / 栗山 貴年
-  - Engineer
+  - Programmer
   - Love split / minimal keyboard
     - Using Iris, ErgoDox, Planck
   - Love HEAVY METAL
