@@ -1,4 +1,167 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 26 Mar 2022 15:09:38 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-03-26-merge-blog-repo</guid><link>https://krymtkts.github.io/posts/2022-03-26-merge-blog-repo</link><title>Blog 用 Git repositories のマージ</title><description>&lt;p&gt;&lt;a href="/posts/2022-03-05-customize-cryogen"&gt;Cryogen の更新&lt;/a&gt; で 2 つに別れていた repo を統合できるようになったので、した。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/krymtkts/krymtkts.github.io"&gt;krymtkts/krymtkts.github.io&lt;/a&gt; に &lt;a href="https://github.com/krymtkts/blog-cryogen"&gt;krymtkts/blog-cryogen&lt;/a&gt; の歴史をすべて引き込む。&lt;/p&gt;&lt;p&gt;元は 1 つのコンテンツを 2 つに分けてるだけなので、統合は簡単だった。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;git switch --create feature/merge-repo
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 02 Apr 2022 16:15:40 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-04-02-convert-textile-to-md</guid><link>https://krymtkts.github.io/posts/2022-04-02-convert-textile-to-md</link><title>Textile を Markdown に変換する(いい感じに)</title><description>&lt;p&gt;プレーンテキストで日記をつけ始めて今年で 9 年目になったぽい。
+その日記だが、昔 Redmine を使ってたこともあって、最初の 5 年位の間 &lt;a href="https://textile-lang.com/"&gt;Textile&lt;/a&gt; で日記を書いていた時期がある。
+この頃の文書を Markdown に変換したいと度々思っていたが、最近重い腰を上げて取り組み始めた。&lt;/p&gt;&lt;p&gt;マークアップ言語の相互変換といえば、やはり Haskell で書かれた &lt;a href="https://pandoc.org/"&gt;Pandoc&lt;/a&gt; やろーというのが個人的なイメージ。簡単なケースで永らく使ってきたが、今回は困ったというか一筋縄ではいかない点が出てきた。&lt;/p&gt;&lt;p&gt;例えば、 Pandoc で過去の日記を Textile から Markdown に変換するとしたらこんな感じのコマンドになる。&lt;/p&gt;&lt;p&gt;(以降は視認性を確保するため、実際に実行したコマンドに改行を含めて記載する)&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;pandoc --from=textile --to=gfm+east_asian_line_breaks `
+       --shift-heading-level-by=-4 --eol=lf --wrap=preserve `
+       ./diary.textile --output=./diary.md
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;参照 &lt;a href="https://pandoc.org/MANUAL.html"&gt;Pandoc - Pandoc User’s Guide&lt;/a&gt;&lt;/p&gt;&lt;p&gt;結構いい感じの結果を導くオプションの組み合わせに手間取った。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;改行に半角スペース 2 つを使い、表の syntax も使うので &lt;code&gt;gfm+east_asian_line_breaks&lt;/code&gt;&lt;/li&gt;&lt;li&gt;見出しのレベルを変えるための &lt;code&gt;shift-heading-level-by=-4&lt;/code&gt; を指定
+&lt;ul&gt;&lt;li&gt;Redmine の見た目上 &lt;code&gt;h5.&lt;/code&gt; にしてた(確か)&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;改行コードは LF で統一する &lt;code&gt;--eol=lf&lt;/code&gt;&lt;/li&gt;&lt;li&gt;長い行に空白があると折り返そうとするので &lt;code&gt;--wrap=preserve&lt;/code&gt; 原文を維持する&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;仮に日記が以下のような記述とする。&lt;/p&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;h5. 見出し
+
+# 順序付きリスト1
+** 箇条書きリスト1-1
+# 順序付きリスト2
+** bullet listアイテム2-1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+* 箇条書きリスト3
+## 箇条書きリスト3-1
+箇条書きリスト3-1の 改行したコンテンツ
+
+* *箇条書きリスト2*
+箇条書きリスト2。
+|_.行1|1|
+|_.行2|20|
+
+* *箇条書きリスト3*
+&amp;lt;pre&amp;gt;
+コード
+&amp;lt;/pre&amp;gt;
+テキスト
+
+|_.行1|1|
+|_.行2|20|
+
+    |_.行1|1|
+    |_.行2|20|
+
+&amp;lt;pre&amp;gt;&amp;lt;code class='sh'&amp;gt;
+コード
+&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これを先述のコマンドで Textile から Markdown に変換すると...&lt;/p&gt;&lt;pre&gt;&lt;code class="md"&gt;# 見出し
+
+\# 順序付きリスト1
+
+箇条書きリスト1-1
+
+\# 順序付きリスト2
+
+bullet listアイテム2-1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+-   箇条書きリスト3
+    1.  箇条書きリスト3-1  
+        箇条書きリスト3-1の 改行したコンテンツ
+
+&amp;lt;!-- --&amp;gt;
+
+-   **箇条書きリスト2**  
+    箇条書きリスト2。  
+    \|\_.行1\|1\|  
+    \|\_.行2\|20\|
+
+&amp;lt;!-- --&amp;gt;
+
+-   **箇条書きリスト3**
+        コード
+
+      
+    テキスト
+
+| 行1 | 1   |
+|-----|-----|
+| 行2 | 20  |
+
+\|\_.行1\|1\|  
+\|\_.行2\|20\|
+
+    &amp;lt;code class='sh'&amp;gt;
+    コード
+    &amp;lt;/code&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;このように、おもしろいことになる。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;順序付きリストと箇条書きリストが同じレベルに存在すると、後ろの方(この場合箇条書きリスト)しか変換できない
+&lt;ul&gt;&lt;li&gt;これは事前に混在するリストを Textile から取り除くしかないか&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;リストと文の間の過剰な空白が気持ち悪い
+&lt;ul&gt;&lt;li&gt;まだどうにかできそうなオプションを見つけられていないので、これは Textile -&amp;gt; Markdown 変換後に Prettier で変換する必要があるか&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;新たに挿入された謎の HTML コメントの行は、以下の Pandoc の仕様によるらしい
+&lt;ul&gt;&lt;li&gt;&lt;a href="https://pandoc.org/MANUAL.html#ending-a-list"&gt;Ending a list | Pandoc - Pandoc User’s Guide&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;blockquote&gt;&lt;p&gt;To “cut off” the list after item two, you can insert some non-indented content, like an HTML comment, which won’t produce visible output in any format:&lt;/p&gt;&lt;/blockquote&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;表の変換は、箇条書きに連続しない＆インデントされていない箇所に限り、 Markdown の Table Syntax に変換される&lt;/li&gt;&lt;li&gt;当時の Redmine で使えなかったこともあり、コードブロックを &lt;code&gt;&amp;lt;pre&amp;gt;&amp;lt;code class='lang'&amp;gt;&lt;/code&gt; で表現していた。これが Markdown に変換したとき &lt;code&gt;pre&lt;/code&gt; 要素だけ解釈されてしまう&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;1,4 は Pandoc で変換をかける前に手で直さざるを得ないので、正規表現に引っかかる範囲は一括変換をかける。1000 超える Textile ファイルがあるので流石に手作業は無理、可能な限り一括変換や。&lt;/p&gt;&lt;p&gt;2, 3, 5 は変換後に対処する。これも機械的にどうにでもできそうか。&lt;/p&gt;&lt;p&gt;日記のディレクトリ構造はこのような形になっており、変換作業はルートディレクトリから行う。&lt;/p&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;+---2013
+|   +---2013-01
+|   |       17.textile
+|   |       18.textile
+|   ︙      ︙
+|   \---2013-12
+︙
+\---2022
+   +---2022-01
+   ︙
+   \---2022-03
+            01.md
+            ︙
+            31.md
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;(色々 try &amp;amp; error して変換していたので、 入力の手間を省く目的でわかりきったコマンドはエイリアスを多用している)&lt;/p&gt;&lt;h3 id="4-の解消"&gt;4 の解消&lt;/h3&gt;&lt;p&gt;インデントされている表はなかったが、箇条書きの後に表が記載されているパターンがあり、そのうち、以下の 2 パターンがあった。&lt;/p&gt;&lt;ol&gt;&lt;li&gt;箇条書き直後に表がある&lt;/li&gt;&lt;li&gt;箇条書きの後、更に文を挟んだ後に表がある&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;この 2 を引っ掛けるパターンを書くのに難儀した。
+何故なら、表の syntax の行末に余分に空白や不要な文字がついていて、どうにもわたしの正規表現力では引っ掛けられない。&lt;/p&gt;&lt;p&gt;どうにもうまくできないので妥協して、 2 回に分けて変換する。&lt;/p&gt;&lt;p&gt;1 については雑ながらも一括変換可能。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;ls -Recurse -File *.textile |
+? {(cat $_.FullName ) -join "`n" | sls -Pattern '(\*|#).+\n\|'} |
+%{
+    $file = $_.FullName
+    ((cat $file) -join "`n") -replace '((\*|#).+\n)(\|)',"`$1`n`$3" |
+        Set-Content $file -NoNewline
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;改行コードは LF を使うので &lt;code&gt;-NoNewLine&lt;/code&gt; だ。&lt;/p&gt;&lt;p&gt;2 はリストアップして清書がてら手メンテ...&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# ファイル一覧をクリップボードへ
+ls -Recurse -File *.textile | ? {
+    (cat $_.FullName ) -join "`n" | sls -Pattern '\n[^\*#\|].+\n\|'
+} | select -ExpandProperty FullName | Set-Clipboard
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="1-の解消"&gt;1 の解消&lt;/h3&gt;&lt;p&gt;Textile を見るに、箇条書きの後に太字 &lt;code&gt;*〇〇*&lt;/code&gt; を書いて見出しの代わりにしたかったような気配がするので、それを除外した順序づき/箇条書きリストを変換の対象にする。&lt;/p&gt;&lt;p&gt;番号を参照していたりすると文脈が失われるので、一括変換できるか対象 23 件を目検したところ、レベル誤りだったり単に順序付きリストにし忘れているだけの箇所だったり。
+それぞれに対処の仕方が異なるので、仕方ないがリストアップした対象を清書がてら手メンテ(2 回目)...&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# ファイル一覧をクリップボードへ
+ls -Recurse -File *.textile | ? {
+    (cat $_.FullName | ? {$_ -match '(^\*\s[^\*]|^#\s[^\*])'}) -join "`n" |
+        sls -Pattern '(\*.+\n#|#.+\n\*)'
+} | select -ExpandProperty FullName | Set-Clipboard
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="textile---markdown-の変換"&gt;Textile -&amp;gt; Markdown の変換&lt;/h3&gt;&lt;p&gt;先述の通りのオプションで Pandoc を実行する。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;ls -Recurse -File *.textile | %{
+    pandoc `
+        --from=textile --to=gfm+east_asian_line_breaks `
+        --shift-heading-level-by=-4 --eol=lf `
+        $_.FullName --output="$($_.Directory)\$($_.Name -replace 'textile','md')"
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="3-の解消"&gt;3 の解消&lt;/h3&gt;&lt;p&gt;変換後、まず最初に &lt;code&gt;&amp;lt;!-- --&amp;gt;&lt;/code&gt; を取り除く。最後に Prettier を実行してきれいな状態にしたいからだ。&lt;/p&gt;&lt;p&gt;置換対象が Pandoc によって追加されたコメントだけなのか調べる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; ls -Recurse -File *.md | % {cat $_.FullName | sls -Pattern '^&amp;lt;!--.+--&amp;gt;'} | group
+
+Count Name                      Group
+----- ----                      -----
+ 2275 &amp;lt;!-- --&amp;gt;                  {&amp;lt;!-- --&amp;gt;, &amp;lt;!-- --&amp;gt;, &amp;lt;!-- --&amp;gt;, &amp;lt;!-- --&amp;gt;…}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;問題ないようなので一括置換する。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;ls -Recurse -File *.md | ? {sls -Path $_.FullName -Pattern '^&amp;lt;!--.+--&amp;gt;'} | %{
+    $file = $_.FullName
+    (cat $file | ? {$_ -notmatch '^&amp;lt;!--.+--&amp;gt;'}) -join "`n" |
+        Set-Content $file -NoNewline
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;この一括変換結果、1000 超のファイルの差分に問題ないか &lt;code&gt;git diff --word-diff&lt;/code&gt; で見る。流石に多いので変更をグルーピングして見た。全部同じ変換結果なら1つにまとまる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;git diff --word-diff | ? {$_ -match '\[(\+|-)'} | group
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;この置換により HTML コメント削除後は空行が 2 行になり、かつ文末の改行が消えてしまうが、後に行う Prettier で補修される(はず)。&lt;/p&gt;&lt;h3 id="5-の解消"&gt;5 の解消&lt;/h3&gt;&lt;p&gt;幸い、&lt;code&gt;class&lt;/code&gt; 属性なしの &lt;code&gt;code&lt;/code&gt; タグはなかった。&lt;/p&gt;&lt;p&gt;&lt;code&gt;&amp;lt;code class="${language}"&lt;/code&gt; → &lt;code&gt;```${language}&lt;/code&gt; 、 &lt;code&gt;&amp;lt;/code&amp;gt;&lt;/code&gt; → &lt;code&gt;```&lt;/code&gt; へ変換する。一緒にやるイメージがなかったので 2 回置換する。
+同時に、&lt;code&gt;pre&lt;/code&gt; タグが変換されたことによる半角スペース 4 個 があると文章のインデントと合わず正しくレンダリングできないので、取り除く。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;ls -Recurse -File *.md | ? {sls -Path $_.FullName -Pattern '&amp;lt;code class='} | % {
+    $file = $_.FullName
+    (cat $file | % {
+        $_ -replace '\s{0,4}&amp;lt;code class="(\w+)"&amp;gt;','```$1' `
+           -replace '\s{0,4}&amp;lt;/code&amp;gt;','```'
+    }) -join "`n" | Set-Content $file -NoNewline
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="2-の解消"&gt;2 の解消&lt;/h3&gt;&lt;p&gt;&lt;a href="https://prettier.io/"&gt;Prettier&lt;/a&gt; を使う。数年前から Markdown の整形に使っているのでそれに合わせる。&lt;/p&gt;&lt;p&gt;&lt;code&gt;ForEach-Object&lt;/code&gt; して 1 ファイルずつ &lt;code&gt;prettier&lt;/code&gt; を実行するとそこそこに遅い。 &lt;a href="https://en.wikipedia.org/wiki/Glob_(programming)"&gt;glob&lt;/a&gt; にまとめた方が速く実行できるので、ちょっとパターンが雑だがそのようにする。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;prettier --write "**/{$((
+    ls -Recurse -File *.textile | select -ExpandProperty DirectoryName |
+    Split-Path -Leaf | group | select -ExpandProperty Name ) -join ',')}/*.md"
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;が、先述のコマンドを実行したあとでPrettier 導入前から Markdown で書いていた古い日記もあまり綺麗でないことが判明した。
+なので、全体的に整形してしまう。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;prettier --write .
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;このとき箇条書きの書き忘れが見つかった。後述するような箇条書きがあると、 &lt;code&gt;prettier&lt;/code&gt; に見出しと判断されてレイアウトが崩れるので、事前に手で取り除く。&lt;/p&gt;&lt;pre&gt;&lt;code class="txt"&gt;- Bad な bullet list
+  -
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="最終チェック"&gt;最終チェック&lt;/h3&gt;&lt;p&gt;ココまで来たらもう大丈夫やろう、という感じで最終チェックしてたら、ココに来て痛恨のミス。
+どうも箇条書き/順序付きリストの階層を誤っていると変換に失敗するようだった。
+1 の解消のときに回収しきれていないかった。&lt;/p&gt;&lt;p&gt;before.&lt;/p&gt;&lt;pre&gt;&lt;code class="textile"&gt;** 壊れる箇条書きリスト
+#### 壊れる順序付きリスト
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;after.&lt;/p&gt;&lt;pre&gt;&lt;code class="textile"&gt;壊れる箇条書きリスト
+
+\#### 壊れる順序付きリスト
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;調べてみたら 50 ファイルくらい結構派手にぶち壊れている部分があった。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;ls -Recurse -File *.md | ? {sls -Path $_.FullName -Pattern '\\(\*|#)\s'} |
+    select -ExpandProperty FullName
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これらは textile の段階から手直しし、 Textile → Markdown の変換からやり直す。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;ls -Recurse -File *.md | ? {sls -Path $_.FullName -Pattern '\\(\*|#)\s'} | % {
+    pandoc `
+        --from=textile --to=gfm+east_asian_line_breaks `
+        --shift-heading-level-by=-4 --eol=lf `
+        ($_.FullName -replace '.md','.textile') --output="$($_.FullName)"
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;この後で先に行っていた 2,3,5 の変換をすれば、期待の変換結果が得られた。&lt;/p&gt;&lt;h3 id="後始末"&gt;後始末&lt;/h3&gt;&lt;p&gt;最後に、残しておいた Textile を全て削除する。当然、削除対象が正しいことを確認した後に消す。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# Dry run.
+rm * -Include *.textile -Recurse -WhatIf
+# Execution.
+rm * -Include *.textile -Recurse
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="まとめ"&gt;まとめ&lt;/h3&gt;&lt;p&gt;なかなか手間がかかったが、うまくできた。
+今回の移行作業の中で、検知していない見落としもあるはずなので、そういうものは見つけたときに対処するものとする。&lt;/p&gt;&lt;p&gt;以下気づき。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Pandoc のオプションが大量にあり選ぶのが大変だが、おかげで期待する変換がしやすい
+&lt;ul&gt;&lt;li&gt;2013 年位からちょくちょく使うがこんなにゴテゴテとオプションをつけたのは初めて&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;「息の長くなりそうなドキュメント」は事前にわからないので、普段からきれいなフォーマットにすれば、後々変換する機会があっても手間が省ける&lt;/li&gt;&lt;li&gt;プレーンテキストは正義&lt;/li&gt;&lt;li&gt;複数行またがるタイプの正規表現のパターン記述力が足りない&lt;/li&gt;&lt;li&gt;日記に事象と感情の変化をセットで書いていたので、あとから見ても面白い。自己分析に使えそう&lt;/li&gt;&lt;/ul&gt;</description><pubDate>Sat, 02 Apr 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-03-26-merge-blog-repo</guid><link>https://krymtkts.github.io/posts/2022-03-26-merge-blog-repo</link><title>Blog 用 Git repositories のマージ</title><description>&lt;p&gt;&lt;a href="/posts/2022-03-05-customize-cryogen"&gt;Cryogen の更新&lt;/a&gt; で 2 つに別れていた repo を統合できるようになったので、した。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/krymtkts/krymtkts.github.io"&gt;krymtkts/krymtkts.github.io&lt;/a&gt; に &lt;a href="https://github.com/krymtkts/blog-cryogen"&gt;krymtkts/blog-cryogen&lt;/a&gt; の歴史をすべて引き込む。&lt;/p&gt;&lt;p&gt;元は 1 つのコンテンツを 2 つに分けてるだけなので、統合は簡単だった。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;git switch --create feature/merge-repo
 
 # Move existing blog contents.
 mkdir docs
