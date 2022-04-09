@@ -3,7 +3,7 @@
  :page-index 0
  :navbar? true}
 
-- Takatoshi Kuriyama / 栗山 貴年
+- Takatoshi KURIYAMA / 栗山 貴年
   - Programmer
   - Love split / minimal keyboard
     - Using Iris, ErgoDox, Planck
