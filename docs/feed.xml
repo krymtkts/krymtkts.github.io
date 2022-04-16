@@ -1,7 +1,102 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 10 Apr 2022 07:42:03 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-04-09-jobchange-2022</guid><link>https://krymtkts.github.io/posts/2022-04-09-jobchange-2022</link><title>転職した 2022</title><description>&lt;p&gt;また転職した。&lt;a href="/posts/2021-09-28-jobchange-2021"&gt;前回の転職&lt;/a&gt;から半年しか経ってないけど。&lt;/p&gt;&lt;p&gt;退職前に諸々の誓約書に署名してるので諸々の守秘義務があり、多くを語ることはできない。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 16 Apr 2022 15:22:24 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-04-16-convert-hatena-xml-to-md</guid><link>https://krymtkts.github.io/posts/2022-04-16-convert-hatena-xml-to-md</link><title>古のはてなダイアリー XML を Markdwon に変換する(いい感じに)</title><description>&lt;p&gt;先日 Google ドライブの中に眠っていた XML を発掘した。古のはてなダイアリーからエクスポートされたやつだこれ。&lt;/p&gt;&lt;p&gt;昔、プレーンテキストで日記をつけ始める前に、誰に見せるでもないブログを書いていた。何度かブログサービスに書いては止めるを繰り返していた。
+そのうち最も最近までやってたのがはてなダイアリーで、そのバックアップがこれっぽい。
+178 記事、2009 ~ 2011 の 3 年間もあるのに、すっかり忘れていた。&lt;/p&gt;&lt;p&gt;これはぜひ今の日記に統合したい。ということではてなダイアリーの XML を Markdown に変換して取り込むことにした。&lt;/p&gt;&lt;h3 id="変換する"&gt;変換する&lt;/h3&gt;&lt;p&gt;今回は Pandoc を使わず純粋に PowerShell だけで処理する。
+Pandoc で&lt;a href="https://help.hatenablog.com/entry/text-hatena-list"&gt;はてな記法&lt;/a&gt;から Markdown に変換できるが、ごく一部の記事は既に日記があって追記しないといけないこともあり、PowerShell だけでやる方が融通が利く。&lt;/p&gt;&lt;p&gt;XML なら PowerShell の主戦場なので、何をするにも楽だ。
+使っているはてな記法もおおよそパターンマッチで置換できる(鬼の連続置換)。&lt;/p&gt;&lt;p&gt;引用だけ正規表現での変換がわからんけど、一桁件数しかなかったので、手で書き換える。&lt;/p&gt;&lt;p&gt;以下変換スクリプト。 &lt;code&gt;hatena2md.ps1&lt;/code&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;[CmdletBinding()]
+param (
+    [Parameter(
+        Mandatory,
+        HelpMessage = "XML Path of hatena diary.")]
+    [ValidateScript({
+            if (-Not ($_ | Test-Path) -or ($_ -notmatch "\.xml")) {
+                throw "The file specified in the XmlPath argument must be XML."
+            }
+            return $True
+        })]
+    [System.IO.FileInfo]
+    $XmlPath,
+    [Parameter(
+        Mandatory,
+        HelpMessage = "Output Path of Markdown diaries.")]
+    [ValidateScript({
+            if (-Not (Test-Path $_ ) -or -not (Test-Path $_ -PathType Container)) {
+                throw "The BlogPath argument must be a folder."
+            }
+            return $True
+        })]
+    [System.IO.FileInfo]
+    $BlogPath
+)
+
+$xml = [XML](Get-Content $XmlPath)
+Write-Host "Convert $($xml.diary.day.Length) hatena XML to Markdown."
+
+$xml.diary.day | ForEach-Object {
+    $date = Get-Date $_.date -ErrorAction SilentlyContinue
+    if (-not $?) {
+        Write-Error "Cannot convert diary of $($_.date)"
+        return
+    }
+    $diaryPath = "$BlogPath/$($date.Year)/$($date.ToString('yyyy-MM'))/$($date.toString('dd')).md"
+    Get-ChildItem $diaryPath -ErrorAction SilentlyContinue | Out-Null
+    if ($?) {
+        Write-Host "Add Content to exists diary of $($_.date)"
+        $InvokeContent = 'Add-Content'
+        $content = @"
+
+## はてなの日記
+
+"@
+    }
+    else {
+        Write-Host "Create new diary of $($_.date)"
+        $InvokeContent = 'Set-Content'
+        mkdir -Force (Split-Path $diaryPath -Parent) | Out-Null
+        $content = @"
+# $($date.ToString('yyyy-MM/dd (ddd)'))
+
+## はてなの日記
+
+"@
+    }
+    $content += (
+        $_.body -split "`n" | ForEach-Object {
+            $_ `
+                -replace '^\*\d+\*(.+)$', "### `$1`n" `
+                -replace '^=+$', "`n---`n" `
+                -replace '^--(.+)', '    - $1' `
+                -replace '^-(.+)', '- $1' `
+                -replace '^\+\+(.+)', '    1. $1' `
+                -replace '^\+(.+)', '1. $1' `
+                -replace '\&amp;gt;\|(\w+)\|', "`n```````$1" `
+                -replace '(\&amp;gt;\|\||\&amp;gt;\|)', "`n``````" `
+                -replace '(\|\|\&amp;lt;|\|\&amp;lt;)', "```````n" `
+                -replace '\[(.+?)\:title=(.+?)]', '[$2]($1)'
+        }) -join "`n"
+    $content | &amp;amp; $InvokeContent -Path $diaryPath -Encoding utf8 -NoNewline | Out-Null
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;はてなダイアリーの XML から、自分の日記の構造に変換している。
+はてなダイアリーの記事にはわかりやすく「はてなの日記」というセクションを設ける。&lt;/p&gt;&lt;p&gt;基本ファイルを作成するが、既存のファイルが存在する場合は、追記する。
+先述の通りセクションがあるので追記しても自然だ。&lt;/p&gt;&lt;p&gt;ディレクトリ構造は&lt;a href="/posts/2022-04-02-convert-textile-to-md"&gt;前回の Textile → Markdown 変換&lt;/a&gt; で記した通り ↓ 。 1 つの XML からこの形にファイルを出力する。&lt;/p&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;+---2013
+|   +---2013-01
+|   |       17.textile
+|   ︙      ︙
+︙
+\---2022
+   +---2022-01
+   ︙
+   \---2022-03
+            01.md
+            ︙
+            31.md
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;実行する。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;. .\hatena2md.ps1 -XmlPath $XmlPath -BlogPath $BlogPath
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="変換後の処理"&gt;変換後の処理&lt;/h3&gt;&lt;p&gt;変換後のファイルから&lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt; で検索して該当するものを一覧し、書き換える。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;ls -File -Recurse | ? {cat $_ | % {$_ -split "`n"} | ? {$_ -match '^&amp;gt;&amp;gt;'}} | select -Property FullName
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;ココに来て順序付きリストの数字をやっぱりインクリメントしたい(前のステップでは&lt;code&gt;1.&lt;/code&gt;固定でいいかと思ってた)...ということで一部書き直した。&lt;/p&gt;&lt;p&gt;最後に全体を &lt;a href="https://prettier.io/"&gt;Prettier&lt;/a&gt; で清書する。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;prettier --write .
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;最終チェックをして完了。&lt;/p&gt;&lt;h3 id="まとめ"&gt;まとめ&lt;/h3&gt;&lt;p&gt;Textile からの変換よりも、量が 1/10 程度と少なかったこともあり、簡単にできた。&lt;/p&gt;&lt;p&gt;コンテンツそれ自体は中々に青臭く、読んでると「わー！！！」と声を上げたくなるところもある。
+ただ人生の転機が集中した期間だったこともあって、興味深い内容だった。貴重なログなので、これまた自己分析に使いたい。&lt;/p&gt;</description><pubDate>Sat, 16 Apr 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-04-09-jobchange-2022</guid><link>https://krymtkts.github.io/posts/2022-04-09-jobchange-2022</link><title>転職した 2022</title><description>&lt;p&gt;また転職した。&lt;a href="/posts/2021-09-28-jobchange-2021"&gt;前回の転職&lt;/a&gt;から半年しか経ってないけど。&lt;/p&gt;&lt;p&gt;退職前に諸々の誓約書に署名してるので諸々の守秘義務があり、多くを語ることはできない。
 結構高く評価してもらってたのに辞めた理由を語るとすれば、ただひとえに「音楽性の違い」が原因かな。
 あ、入社して知り合った 1 ヶ月パイセンが信頼のおける人だったのは良かった。&lt;/p&gt;&lt;p&gt;幸運にも、より良い条件で次のご縁があったので、これは自分の真摯な姿勢が信頼を紡いできたおかげなんかなーと自分自身を讃えてみる。讃えてみるテスト。&lt;/p&gt;&lt;p&gt;結果的にジョブホッパーみたいになってしまったから、ヘッドハンター()とかには「キャリアに傷がついてる」とかいちびられそうだが、こちとら仕事はちゃんと納めたからええのよ。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;この半年の間で伸びたところもなくはないけど、結構停滞感みたいなのを感じていた。
-結局半年の間、技術情報を交換したり意見することもないし、あらゆる権限がなくて何なら自分の Google アカウントのアバターを変更する権限もなかった。全然人に会うこともなくコミュニケーションは週 1 回くらいとかだったので、初対面の人と会話したり、単に送るメッセージ考えるのも疲れるというのが現状。&lt;/p&gt;&lt;p&gt;自分の職掌にはクラウドの「ク」もなかったので、全く触ることがなかったので、使っていない筋肉随分衰えてしまった。
+結局半年の間、技術情報を交換したり意見することもないし、あらゆる権限がなくて何なら自分の Google アカウントのアバターを変更する権限もなかった。全然人に会うこともなくコミュニケーションは週 1 回くらいとかだったので、初対面の人と会話したり、単に送るメッセージ考えるのも疲れるというのが現状。&lt;/p&gt;&lt;p&gt;自分の職掌にはクラウドの「ク」もなく、全く触ることがなかったので、使っていない筋肉が随分衰えてしまった。
 細かいことを忘れてるので、現職でしょーもないことであっても「アレ？どうやっけ？」となったりする。まだリハビリ中。&lt;/p&gt;&lt;p&gt;また、ビジネスサイドの声から遠ざかっていたことで、言葉の理解力とか肌感覚が鈍った気がする。ここもリハビリ中。&lt;/p&gt;&lt;p&gt;たった 1 週間程働いてみこの感覚なので、これからも他の衰えに気づくことが度々あるだろう。&lt;/p&gt;&lt;p&gt;いずれの衰えも「強くてニューゲーム」できると嬉しいけど、そこはやってみないとわからんから、ただただ真摯に取り組むのみやな。自分の変化に気づけてるだけでアドバンテージかな。&lt;/p&gt;&lt;p&gt;それにしても久しぶりに「仕事してる！」という実感があって良い。これはまさに「音楽性」が一致した結果なんかな。しらんけど。&lt;/p&gt;&lt;p&gt;ただのポエムになった。&lt;/p&gt;</description><pubDate>Sat, 09 Apr 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-04-02-convert-textile-to-md</guid><link>https://krymtkts.github.io/posts/2022-04-02-convert-textile-to-md</link><title>Textile を Markdown に変換する(いい感じに)</title><description>&lt;p&gt;プレーンテキストで日記をつけ始めて今年で 9 年目になったぽい。
 その日記だが、昔 Redmine を使ってたこともあって、最初の 5 年位の間 &lt;a href="https://textile-lang.com/"&gt;Textile&lt;/a&gt; で日記を書いていた時期がある。
 この頃の文書を Markdown に変換したいと度々思っていたが、最近重い腰を上げて取り組み始めた。&lt;/p&gt;&lt;p&gt;マークアップ言語の相互変換といえば、やはり Haskell で書かれた &lt;a href="https://pandoc.org/"&gt;Pandoc&lt;/a&gt; やろーというのが個人的なイメージ。簡単なケースで永らく使ってきたが、今回は困ったというか一筋縄ではいかない点が出てきた。&lt;/p&gt;&lt;p&gt;例えば、 Pandoc で過去の日記を Textile から Markdown に変換するとしたらこんな感じのコマンドになる。&lt;/p&gt;&lt;p&gt;(以降は視認性を確保するため、実際に実行したコマンドに改行を含めて記載する)&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;pandoc --from=textile --to=gfm+east_asian_line_breaks `
