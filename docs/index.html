@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-04-23-aws-rehabilitation">AWS リハビリのハマり集</a></li>
+                        
                         <li><a href="/posts/2022-04-16-convert-hatena-xml-to-md">古のはてなダイアリー XML を Markdwon に変換する(いい感じに)</a></li>
                         
                         <li><a href="/posts/2022-04-09-jobchange-2022">転職した 2022</a></li>
-                        
-                        <li><a href="/posts/2022-04-02-convert-textile-to-md">Textile を Markdown に変換する(いい感じに)</a></li>
                         
                         
 
@@ -183,113 +183,37 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-04-16</div>
+        <div class="col-lg-6">2022-04-23</div>
         
     </div>
-    <h2>古のはてなダイアリー XML を Markdwon に変換する(いい感じに)</h2>
+    <h2>AWS リハビリのハマり集</h2>
 </div>
 <div>
     
-    <p>先日 Google ドライブの中に眠っていた XML を発掘した。古のはてなダイアリーからエクスポートされたやつだこれ。</p><p>昔、プレーンテキストで日記をつけ始める前に、誰に見せるでもないブログを書いていた。何度かブログサービスに書いては止めるを繰り返していた。
-そのうち最も最近までやってたのがはてなダイアリーで、そのバックアップがこれっぽい。
-178 記事、2009 ~ 2011 の 3 年間もあるのに、すっかり忘れていた。</p><p>これはぜひ今の日記に統合したい。ということではてなダイアリーの XML を Markdown に変換して取り込むことにした。</p><h3 id="変換する">変換する</h3><p>今回は Pandoc を使わず純粋に PowerShell だけで処理する。
-Pandoc で<a href="https://help.hatenablog.com/entry/text-hatena-list">はてな記法</a>から Markdown に変換できるが、ごく一部の記事は既に日記があって追記しないといけないこともあり、PowerShell だけでやる方が融通が利く。</p><p>XML なら PowerShell の主戦場なので、何をするにも楽だ。
-使っているはてな記法もおおよそパターンマッチで置換できる(鬼の連続置換)。</p><p>引用だけ正規表現での変換がわからんけど、一桁件数しかなかったので、手で書き換える。</p><p>以下変換スクリプト。 <code>hatena2md.ps1</code></p><pre><code class="powershell">[CmdletBinding()]
-param (
-    [Parameter(
-        Mandatory,
-        HelpMessage = "XML Path of hatena diary.")]
-    [ValidateScript({
-            if (-Not ($_ | Test-Path) -or ($_ -notmatch "\.xml")) {
-                throw "The file specified in the XmlPath argument must be XML."
-            }
-            return $True
-        })]
-    [System.IO.FileInfo]
-    $XmlPath,
-    [Parameter(
-        Mandatory,
-        HelpMessage = "Output Path of Markdown diaries.")]
-    [ValidateScript({
-            if (-Not (Test-Path $_ ) -or -not (Test-Path $_ -PathType Container)) {
-                throw "The BlogPath argument must be a folder."
-            }
-            return $True
-        })]
-    [System.IO.FileInfo]
-    $BlogPath
-)
-
-$xml = [XML](Get-Content $XmlPath)
-Write-Host "Convert $($xml.diary.day.Length) hatena XML to Markdown."
-
-$xml.diary.day | ForEach-Object {
-    $date = Get-Date $_.date -ErrorAction SilentlyContinue
-    if (-not $?) {
-        Write-Error "Cannot convert diary of $($_.date)"
-        return
-    }
-    $diaryPath = "$BlogPath/$($date.Year)/$($date.ToString('yyyy-MM'))/$($date.toString('dd')).md"
-    Get-ChildItem $diaryPath -ErrorAction SilentlyContinue | Out-Null
-    if ($?) {
-        Write-Host "Add Content to exists diary of $($_.date)"
-        $InvokeContent = 'Add-Content'
-        $content = @"
-
-## はてなの日記
-
-"@
-    }
-    else {
-        Write-Host "Create new diary of $($_.date)"
-        $InvokeContent = 'Set-Content'
-        mkdir -Force (Split-Path $diaryPath -Parent) | Out-Null
-        $content = @"
-# $($date.ToString('yyyy-MM/dd (ddd)'))
-
-## はてなの日記
-
-"@
-    }
-    $content += (
-        $_.body -split "`n" | ForEach-Object {
-            $_ `
-                -replace '^\*\d+\*(.+)$', "### `$1`n" `
-                -replace '^=+$', "`n---`n" `
-                -replace '^--(.+)', '    - $1' `
-                -replace '^-(.+)', '- $1' `
-                -replace '^\+\+(.+)', '    1. $1' `
-                -replace '^\+(.+)', '1. $1' `
-                -replace '\&gt;\|(\w+)\|', "`n```````$1" `
-                -replace '(\&gt;\|\||\&gt;\|)', "`n``````" `
-                -replace '(\|\|\&lt;|\|\&lt;)', "```````n" `
-                -replace '\[(.+?)\:title=(.+?)]', '[$2]($1)'
-        }) -join "`n"
-    $content | &amp; $InvokeContent -Path $diaryPath -Encoding utf8 -NoNewline | Out-Null
-}
-</code></pre><p>はてなダイアリーの XML から、自分の日記の構造に変換している。
-はてなダイアリーの記事にはわかりやすく「はてなの日記」というセクションを設ける。</p><p>基本ファイルを作成するが、既存のファイルが存在する場合は、追記する。
-先述の通りセクションがあるので追記しても自然だ。</p><p>ディレクトリ構造は<a href="/posts/2022-04-02-convert-textile-to-md">前回の Textile → Markdown 変換</a> で記した通り ↓ 。 1 つの XML からこの形にファイルを出力する。</p><pre><code class="plaintext">+---2013
-|   +---2013-01
-|   |       17.textile
-|   ︙      ︙
-︙
-\---2022
-   +---2022-01
-   ︙
-   \---2022-03
-            01.md
-            ︙
-            31.md
-</code></pre><p>実行する。</p><pre><code class="powershell">. .\hatena2md.ps1 -XmlPath $XmlPath -BlogPath $BlogPath
-</code></pre><h3 id="変換後の処理">変換後の処理</h3><p>変換後のファイルから<code>&gt;&gt;</code> で検索して該当するものを一覧し、書き換える。</p><pre><code class="powershell">ls -File -Recurse | ? {cat $_ | % {$_ -split "`n"} | ? {$_ -match '^&gt;&gt;'}} | select -Property FullName
-</code></pre><p>ココに来て順序付きリストの数字をやっぱりインクリメントしたい(前のステップでは<code>1.</code>固定でいいかと思ってた)...ということで一部書き直した。</p><p>最後に全体を <a href="https://prettier.io/">Prettier</a> で清書する。</p><pre><code class="powershell">prettier --write .
-</code></pre><p>最終チェックをして完了。</p><h3 id="まとめ">まとめ</h3><p>Textile からの変換よりも、量が 1/10 程度と少なかったこともあり、簡単にできた。</p><p>コンテンツそれ自体は中々に青臭く、読んでると「わー！！！」と声を上げたくなるところもある。
-ただ人生の転機が集中した期間だったこともあって、興味深い内容だった。貴重なログなので、これまた自己分析に使いたい。</p>
+    <p>現職は半年ぶりの AWS ということで、ちまちまリハビリをしている。
+諸々忘れてたりものによってはハマっている現状。記憶に定着させるため、ハマったところを記す。</p><h3 id="hello-world-以外の-sam-init-できません">Hello World 以外の <code>sam init</code> できません</h3><p>AWS SAM は前職でも使っていたが、久しぶりに触ったら詰まるところがあったので書いておく。</p><p>久しぶりに <code>sam init</code> すると 100%エラーで終わる。端末は Windows 11。
+こんな風に ↓。</p><pre><code class="log">Cloning from https://github.com/aws/aws-sam-cli-app-templates (process may take a moment)
+Error: Can't find application template quick-start-web - check valid values in interactive init.
+</code></pre><p><a href="https://github.com/aws/aws-sam-cli/issues/3692#issuecomment-1070222512">Unable to create Serverless API using SAM v1.40.0 · Issue #3692 · aws/aws-sam-cli</a></p><p>どうも Windows 限定の問題らしい。 <code>sam</code> が使う template repository を <code>git clone</code> できないという深刻なやつ。
+AWS SAM の一時ディレクトリを消して、手動で <code>git clone</code> したら解消する。これは Issue は Closed になっているものの、中々気付かんし原因を究明したい気がする。</p><h3 id="mfa-有効化されたアクセスキーの使い方忘れた">MFA 有効化されたアクセスキーの使い方忘れた</h3><p>タイトルの通り。</p><p>そのまま使うとワンタイムパスの入力を求められないが、一時クリデンシャルを発行するときに出る。</p><p>昔は MFA が必要な switch role するときに aws-mfa を使っていたが、 この度 AWS Tools for PowerShell で自分の利用ケースのみシンプルにこしらえた。
+ワンタイムパスワードの入力には 1Password の CLI である <a href="https://developer.1password.com/docs/cli/get-started"><code>op</code></a> を使うと究極に楽。現職で 1Password を使ってるので導入したみた。</p><pre><code class="powershell">$env:AWS_REGION = 'ap-northeast-1'
+$user = 'krymtkts'
+$AWSLogin = 'AWS'
+$c = Get-STSSessionToken -SerialNumber (Get-IAMMFADevice -UserName $user).SerialNumber -TokenCode (op item get $AWSLogin --otp) -ProfileName $user
+$env:AWS_ACCESS_KEY_ID = $c.AccessKeyId
+$env:AWS_SECRET_ACCESS_KEY = $c.SecretAccessKey
+$env:AWS_SESSION_TOKEN = $c.SessionToken
+</code></pre><p>楽～。これは PowerShell の profile に関数書いておいた。</p><h3 id="aws-tools-for-powershell-は自動補完で一覧する-profile-を絞り込んでる">AWS Tools for PowerShell は自動補完で一覧する profile を絞り込んでる</h3><p><code>.aws/credentials</code> にこういう profile があるとする。これ、 <code>mfa_serial</code> が紛れ込んでる。</p><pre><code class="ini">[profile]
+aws_access_key_id = XXXXXXXXXXXXXXXXXXXX
+aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+mfa_serial = xxx
+</code></pre><p>AWS CLI のタブ補完コマンド <code>aws_completer</code> はこういうのがあっても問題なく profile を一覧できるが、 AWS Tools for PowerShell では一覧されなくなる。 <code>mfa_serial</code> 以外には <code>role_arn</code>, <code>source_profile</code> があると一覧されなくなる。</p><p>これ初めて知った。今後は、書き間違ってるから一覧されないんだ～と思いつくことができるが、一発目だったのでとても時間がかかった。ドキュメントに書いてる挙動なんかな～しらんけど。今度調べたい(いつ)。</p><p>続くかも。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
+    
+    <a href="/tags/aws">aws</a>
     
     <a href="/tags/powershell">powershell</a>
     
@@ -301,7 +225,7 @@ $xml.diary.day | ForEach-Object {
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-04-09-jobchange-2022">2022-04-09 転職した 2022 &raquo;</a>
+        <a class="right" href="/posts/2022-04-16-convert-hatena-xml-to-md">2022-04-16 古のはてなダイアリー XML を Markdwon に変換する(いい感じに) &raquo;</a>
         
     </div>
 </div>

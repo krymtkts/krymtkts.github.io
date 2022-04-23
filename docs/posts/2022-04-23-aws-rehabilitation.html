@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: boto3 の Waiter さんとの戯れ</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-10-14-how-to-handle-waiter-of-boto3">
+    <title>krymtkts: AWS リハビリのハマり集</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-04-23-aws-rehabilitation">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: boto3 の Waiter さんとの戯れ" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-10-14-how-to-handle-waiter-of-boto3" />
+    <meta property="og:title" content="krymtkts: AWS リハビリのハマり集" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-04-23-aws-rehabilitation" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -183,15 +183,31 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-10-14</div>
+        <div class="col-lg-6">2022-04-23</div>
         
     </div>
-    <h2>boto3 の Waiter さんとの戯れ</h2>
+    <h2>AWS リハビリのハマり集</h2>
 </div>
 <div>
     
-    <p>こないだの仕事。AWS Certificate Manager で証明書をごにょごにょするアプリを書いた。</p><p>Python で書いたので AWS のリソースを操作するのに <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/index.html">Boto3</a> というライブラリを利用した。証明書を発行したあと検証済みになるまでの待受処理が<code>Waiter</code>という機能で提供されていたり、非常に便利で大変お世話になっている。</p><ul><li><a href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/acm.html#ACM.Waiter.CertificateValidated">ACM.Waiter.CertificateValidated — Boto 3 Docs 1.9.248 documentation</a></li></ul><p>ただ、一つバグらせてしまったところがあった。</p><p><code>Waiter</code>さんは AWS のリソースを操作する API をラップしているだけ<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>なので、API がエラーを発生させた場合と待受処理がタイムアウトした場合のどちらとも、<code>WaiterError</code>を発生させる。つまり単純にキャッチするだけの例外処理では違いに気づけないのだ 😱</p><p>どのようにハンドリングするか？<code>WaiterError</code>さんの属性を調べてあげれば良い。</p><p><code>dir</code>したら<code>last_response</code>なる属性があったのでそいつを見たら、もとのエラーが何だったのかは分かる形にはなってた。</p><p>エラーの場合、<code>WaiterError.last_response['Error']</code>にエラー情報が格納される。<code>Waiter</code>さんがリトライ回数の上限に達して<code>WaiterError</code>をぶん投げてきた場合は、<code>last_response</code>には<code>Waiter</code>さんが内包する API の戻り値が架空されるので、それをもとにエラー処理すれば良いのがわかった。以下イメージ。</p><pre><code class="python">{'Error': {'Message': 'Could not find certificate arn:aws:acm:ap-northeast-1:xxxxxxxxxxxx:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx in account xxxxxxxxxxxx.', 'Code': 'ResourceNotFoundException'}, 'ResponseMetadata': {'RequestId': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 'HTTPStatusCode': 400, 'HTTPHeaders': {'x-amzn-requestid': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 'content-type': 'application/x-amz-json-1.1', 'content-length': '191', 'date': 'Fri, 11 Oct 2019 03:51:10 GMT', 'connection': 'close'}, 'RetryAttempts': 0}}
-</code></pre><p>👍</p><div class="footnotes"><hr /><ol><li id="fn-1"><p>証明書の検証済みを待つ<code>ACM.Waiter.CertificateValidated</code>の場合は<code>ACM.Client.describe_certificate()</code>をラップしている。</p><a href="#fnref-1" class="footnote-backref">↩</a></li></ol></div>
+    <p>現職は半年ぶりの AWS ということで、ちまちまリハビリをしている。
+諸々忘れてたりものによってはハマっている現状。記憶に定着させるため、ハマったところを記す。</p><h3 id="hello-world-以外の-sam-init-できません">Hello World 以外の <code>sam init</code> できません</h3><p>AWS SAM は前職でも使っていたが、久しぶりに触ったら詰まるところがあったので書いておく。</p><p>久しぶりに <code>sam init</code> すると 100%エラーで終わる。端末は Windows 11。
+こんな風に ↓。</p><pre><code class="log">Cloning from https://github.com/aws/aws-sam-cli-app-templates (process may take a moment)
+Error: Can't find application template quick-start-web - check valid values in interactive init.
+</code></pre><p><a href="https://github.com/aws/aws-sam-cli/issues/3692#issuecomment-1070222512">Unable to create Serverless API using SAM v1.40.0 · Issue #3692 · aws/aws-sam-cli</a></p><p>どうも Windows 限定の問題らしい。 <code>sam</code> が使う template repository を <code>git clone</code> できないという深刻なやつ。
+AWS SAM の一時ディレクトリを消して、手動で <code>git clone</code> したら解消する。これは Issue は Closed になっているものの、中々気付かんし原因を究明したい気がする。</p><h3 id="mfa-有効化されたアクセスキーの使い方忘れた">MFA 有効化されたアクセスキーの使い方忘れた</h3><p>タイトルの通り。</p><p>そのまま使うとワンタイムパスの入力を求められないが、一時クリデンシャルを発行するときに出る。</p><p>昔は MFA が必要な switch role するときに aws-mfa を使っていたが、 この度 AWS Tools for PowerShell で自分の利用ケースのみシンプルにこしらえた。
+ワンタイムパスワードの入力には 1Password の CLI である <a href="https://developer.1password.com/docs/cli/get-started"><code>op</code></a> を使うと究極に楽。現職で 1Password を使ってるので導入したみた。</p><pre><code class="powershell">$env:AWS_REGION = 'ap-northeast-1'
+$user = 'krymtkts'
+$AWSLogin = 'AWS'
+$c = Get-STSSessionToken -SerialNumber (Get-IAMMFADevice -UserName $user).SerialNumber -TokenCode (op item get $AWSLogin --otp) -ProfileName $user
+$env:AWS_ACCESS_KEY_ID = $c.AccessKeyId
+$env:AWS_SECRET_ACCESS_KEY = $c.SecretAccessKey
+$env:AWS_SESSION_TOKEN = $c.SessionToken
+</code></pre><p>楽～。これは PowerShell の profile に関数書いておいた。</p><h3 id="aws-tools-for-powershell-は自動補完で一覧する-profile-を絞り込んでる">AWS Tools for PowerShell は自動補完で一覧する profile を絞り込んでる</h3><p><code>.aws/credentials</code> にこういう profile があるとする。これ、 <code>mfa_serial</code> が紛れ込んでる。</p><pre><code class="ini">[profile]
+aws_access_key_id = XXXXXXXXXXXXXXXXXXXX
+aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+mfa_serial = xxx
+</code></pre><p>AWS CLI のタブ補完コマンド <code>aws_completer</code> はこういうのがあっても問題なく profile を一覧できるが、 AWS Tools for PowerShell では一覧されなくなる。 <code>mfa_serial</code> 以外には <code>role_arn</code>, <code>source_profile</code> があると一覧されなくなる。</p><p>これ初めて知った。今後は、書き間違ってるから一覧されないんだ～と思いつくことができるが、一発目だったのでとても時間がかかった。ドキュメントに書いてる挙動なんかな～しらんけど。今度調べたい(いつ)。</p><p>続くかも。</p>
 </div>
 
 <div id="post-tags">
@@ -199,19 +215,15 @@
     
     <a href="/tags/aws">aws</a>
     
-    <a href="/tags/boto3">boto3</a>
-    
-    <a href="/tags/python">python</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-12-29-retrospective2019">&laquo; 2019-12-29 振り返り 2019 年</a>
         
-        
-        <a class="right" href="/posts/2019-10-13-docker-toolbox-with-powershell">2019-10-13 PowerShell で Docker Toolbox を使う &raquo;</a>
+        <a class="right" href="/posts/2022-04-16-convert-hatena-xml-to-md">2022-04-16 古のはてなダイアリー XML を Markdwon に変換する(いい感じに) &raquo;</a>
         
     </div>
 
