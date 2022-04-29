@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-04-29-good-bye-omp-module">さよなら oh-my-posh モジュール</a></li>
+                        
                         <li><a href="/posts/2022-04-23-aws-rehabilitation">AWS リハビリのハマり集</a></li>
                         
                         <li><a href="/posts/2022-04-16-convert-hatena-xml-to-md">古のはてなダイアリー XML を Markdwon に変換する(いい感じに)</a></li>
-                        
-                        <li><a href="/posts/2022-04-09-jobchange-2022">転職した 2022</a></li>
                         
                         
 
@@ -183,37 +183,43 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-04-23</div>
+        <div class="col-lg-6">2022-04-29</div>
         
     </div>
-    <h2>AWS リハビリのハマり集</h2>
+    <h2>さよなら oh-my-posh モジュール</h2>
 </div>
 <div>
     
-    <p>現職は半年ぶりの AWS ということで、ちまちまリハビリをしている。
-諸々忘れてたりものによってはハマっている現状。記憶に定着させるため、ハマったところを記す。</p><h3 id="hello-world-以外の-sam-init-できません">Hello World 以外の <code>sam init</code> できません</h3><p>AWS SAM は前職でも使っていたが、久しぶりに触ったら詰まるところがあったので書いておく。</p><p>久しぶりに <code>sam init</code> すると 100%エラーで終わる。端末は Windows 11。
-こんな風に ↓。</p><pre><code class="log">Cloning from https://github.com/aws/aws-sam-cli-app-templates (process may take a moment)
-Error: Can't find application template quick-start-web - check valid values in interactive init.
-</code></pre><p><a href="https://github.com/aws/aws-sam-cli/issues/3692#issuecomment-1070222512">Unable to create Serverless API using SAM v1.40.0 · Issue #3692 · aws/aws-sam-cli</a></p><p>どうも Windows 限定の問題らしい。 <code>sam</code> が使う template repository を <code>git clone</code> できないという深刻なやつ。
-AWS SAM の一時ディレクトリを消して、手動で <code>git clone</code> したら解消する。これは Issue は Closed になっているものの、中々気付かんし原因を究明したい気がする。</p><h3 id="mfa-有効化されたアクセスキーの使い方忘れた">MFA 有効化されたアクセスキーの使い方忘れた</h3><p>タイトルの通り。</p><p>そのまま使うとワンタイムパスの入力を求められないが、一時クリデンシャルを発行するときに出る。</p><p>昔は MFA が必要な switch role するときに aws-mfa を使っていたが、 この度 AWS Tools for PowerShell で自分の利用ケースのみシンプルにこしらえた。
-ワンタイムパスワードの入力には 1Password の CLI である <a href="https://developer.1password.com/docs/cli/get-started"><code>op</code></a> を使うと究極に楽。現職で 1Password を使ってるので導入したみた。</p><pre><code class="powershell">$env:AWS_REGION = 'ap-northeast-1'
-$user = 'krymtkts'
-$AWSLogin = 'AWS'
-$c = Get-STSSessionToken -SerialNumber (Get-IAMMFADevice -UserName $user).SerialNumber -TokenCode (op item get $AWSLogin --otp) -ProfileName $user
-$env:AWS_ACCESS_KEY_ID = $c.AccessKeyId
-$env:AWS_SECRET_ACCESS_KEY = $c.SecretAccessKey
-$env:AWS_SESSION_TOKEN = $c.SessionToken
-</code></pre><p>楽～。これは PowerShell の profile に関数書いておいた。</p><h3 id="aws-tools-for-powershell-は自動補完で一覧する-profile-を絞り込んでる">AWS Tools for PowerShell は自動補完で一覧する profile を絞り込んでる</h3><p><code>.aws/credentials</code> にこういう profile があるとする。これ、 <code>mfa_serial</code> が紛れ込んでる。</p><pre><code class="ini">[profile]
-aws_access_key_id = XXXXXXXXXXXXXXXXXXXX
-aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-mfa_serial = xxx
-</code></pre><p>AWS CLI のタブ補完コマンド <code>aws_completer</code> はこういうのがあっても問題なく profile を一覧できるが、 AWS Tools for PowerShell では一覧されなくなる。 <code>mfa_serial</code> 以外には <code>role_arn</code>, <code>source_profile</code> があると一覧されなくなる。</p><p>これ初めて知った。今後は、書き間違ってるから一覧されないんだ～と思いつくことができるが、一発目だったのでとても時間がかかった。ドキュメントに書いてる挙動なんかな～しらんけど。今度調べたい(いつ)。</p><p>続くかも。</p>
+    <p>いつものように PowerShell Module を更新して PowerShell を立ち上げると次のようなメッセージが表示された。</p><pre><code class="txt">Hey friend
+
+In an effort to grow oh-my-posh, the decision was made to no
+longer support the PowerShell module. Over the past year, the
+added benefit of the module disappeared, while the burden of
+maintaining it increased.
+
+However, this doesn't mean oh-my-posh disappears from your
+terminal, it just means that you'll have to use a different
+tool to install it.
+
+All you need to do, is follow the migration guide here:
+
+https://ohmyposh.dev/docs/migrating
+</code></pre><p>あら... oh-my-posh 3 から Go で実装されて、マルチプラットフォームなプロンプトテーマエンジンになってたけど、ついにその時が来たか...という感じ。</p><p>とりあえず使えなくなる(というか更新できなくなる)と困るので、<a href="https://ohmyposh.dev/docs/migrating">移行手順</a> に記載された移行手順を行うことにした。</p><h3 id="わたしの移行手順">わたしの移行手順</h3><p>記載の順番にやってもいいけど、慎重を期すため順番を変えた。</p><p>まず <code>oh-my-posh</code> が <code>PATH</code> にある状態で、 <code>Set-PoshPrompt</code> を <code>oh-my-posh init pwsh</code> に変え、プロンプトの表示をチェックした。</p><pre><code class="powershell"># Set-PoshPrompt -Theme ~/.oh-my-posh.omp.json
+oh-my-posh init pwsh --config ~/.custom.omp.json | Invoke-Expression
+</code></pre><p>当然のごとくきれいに出力されるので、 PowerShell Module から置き換える。</p><p><a href="https://ohmyposh.dev/docs/installation/windows">Windows 向けの公式なインストール手順</a>では <code>winget</code>, <code>scoop</code> それか手動での更新になっている。</p><p>でもわたしは永らく <code>chocolatey</code> を使っていることもあり、有志が公開してくれているパッケージを利用する。見たところバージョンも最新に追随していていい感じ。
+<a href="https://community.chocolatey.org/packages/oh-my-posh#versionhistory">Chocolatey Software | Oh-My-Posh 7.74.3</a></p><p>管理者権限で <code>cmd</code> を開き、インストールする。補足：PowerShell でもインストールできるが、PowerShell 自体を <code>chocolatey</code> でインストールしているのもあり <code>chocolatey</code> でのインストールは <code>cmd</code> で行うようにしている。</p><pre><code class="cmd">choco install oh-my-posh -y
+</code></pre><p>このインストールの最後に、</p><pre><code class="plaintext">PROFILE: C:\Users\takatoshi\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+oh-my-posh has been added to your profile. You may wish to append 'Set-PoshPrompt paradox' to set a theme
+</code></pre><p>と言われたが、 Windows PowerShell のプロファイルはおろかどこにも加筆されてないようだった。</p><p>管理者権限で PowerShell を起動し、 oh-my-posh の Powershell Module を削除する。</p><pre><code class="powershell">Uninstall-Module oh-my-posh -AllVersions
+</code></pre><p><code>Import-Module oh-my-posh</code> は元々書いてなかったので削除なし。代わりにプロファイルの中でインストール・更新するモジュール名を管理しているので、そこから取り除いた。</p><p>以上。</p><h3 id="感想">感想</h3><p>何事もなく移行できて良かった。</p><p>ただこれを機に、もう oh-my-posh にこだわらず、 <a href="https://starship.rs/">Starship</a> みたいなもっとイケてるプロンプトテーマエンジンに積極的に乗り換えてもいいかなーと思えてきた。</p><p>元々 oh-my-posh を使ってたのは、 2018 年頃の PowerShell でいい感じの Powerline ができる唯一のツールだったからだ(わたしの観測範囲では。もう一つその名の通り Powerline というモジュールがあったが満足の行くカスタマイズができなかった<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>)。
+テーマを PowerShell で書けて、PowerShellGet からインストールできるのも楽だった。</p><p>とはいえ、それがマルチプラットフォームに対応した oh-my-posh の足枷になったみたいやけど。</p><p>逆に利用者の立場からいえば、 oh-my-posh が明確に PowerShell に特化しなくなったということ。
+これは、わたしが Power Fighter(勝手に作った PowerShell 使いの呼び名)であるから oh-my-posh を使い続けていたという理由もなくなったことになる。</p><p>oh-my-posh が Go で書き換わったときに一番気に入らなかったのは <em><strong>設定ファイルが JSON</strong></em> なとこなので、そのフラストレーションを解消するいい機会をもらったのかも知れない。</p><div class="footnotes"><hr /><ol><li id="fn-1"><p>まだあったわ →<a href="https://www.powershellgallery.com/packages/PowerLine/3.4.0">PowerShell Gallery | PowerLine 3.4.0</a></p><a href="#fnref-1" class="footnote-backref">↩</a></li></ol></div>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
+    <a href="/tags/oh-my-posh">oh-my-posh</a>
     
     <a href="/tags/powershell">powershell</a>
     
@@ -225,7 +231,7 @@ mfa_serial = xxx
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-04-16-convert-hatena-xml-to-md">2022-04-16 古のはてなダイアリー XML を Markdwon に変換する(いい感じに) &raquo;</a>
+        <a class="right" href="/posts/2022-04-23-aws-rehabilitation">2022-04-23 AWS リハビリのハマり集 &raquo;</a>
         
     </div>
 </div>

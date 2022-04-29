@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: 振り返り 2019 年</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-12-29-retrospective2019">
+    <title>krymtkts: さよなら oh-my-posh モジュール</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-04-29-good-bye-omp-module">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: 振り返り 2019 年" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-12-29-retrospective2019" />
+    <meta property="og:title" content="krymtkts: さよなら oh-my-posh モジュール" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-04-29-good-bye-omp-module" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -183,44 +183,53 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-12-29</div>
+        <div class="col-lg-6">2022-04-29</div>
         
     </div>
-    <h2>振り返り 2019 年</h2>
+    <h2>さよなら oh-my-posh モジュール</h2>
 </div>
 <div>
     
-    <p>ことし 2019 年も残すところあと僅か。2019 年の自身の成長などを振り返ろう。</p><p>短くまとめると、2019 年は新しいことを始めた年になった。</p><p>転職し、未体験の事業領域の企業で働き始めた。
-会社の後押しもあって積極的に未経験の技術を取り入れ、部分的ではあるが在宅ワークもしてみた。</p><hr /><p>前職は、実にチョロいかいしゃだったので、6 年ほどの在職中に入社前の 8 割ほど昇給できたのはこの会社のおかげ(前々職がリーマンのあおりもあって給料安すぎたのだけど)。
-しかしながら、従業員に対する評価や報酬については不誠実極まりなかったし、自分の思い描くエンジニア像に必要な経験を積めなくなったのは一番痛かった。
-やる気と実力を以て希望さえすれば挑戦させてくれる、入社時にあったような腕を磨ける環境が失われていくのは、1 度ならずこの会社を最後の会社にできそうだと心に思った自分には辛いものがあった。これは過去の話だけど。</p><p>転職して今の会社に入れたのもよかった。適切な判断を下すのにインフラ、クラウドの知識を求められ、わたしの技術スタックのうすーいところを絶妙に攻め立ててくれる。
-おかげで徐々にではあるが弱いところを克服できている。
-また強みである積極性と吸収スピードの高さが上手く活かせて、CI/CD の補填、未体験だったのにサーバーレスアーキテクチャや Python を選ばせてくれたり。
-カンファレンスに積極的に参加して、社内に情報を持ち帰ったり、やりたかったことが色々でき始めた。
-会社での評価も今のところは順調で、現場での自身の成長スピードを増幅できていると感じる。</p><p>心配事があるとしたら、前職の 1 年目年末もこんなのだったので、同じ轍を踏みたくないなというところか 😅</p><hr /><p>自分でも御しきれていなかったのは、在宅ワークの部分。
-今は子供の面倒を見る機会を平日は週に 1 回設けて、その日を早く帰って在宅ワークの日としている。
-在宅中の仕事の進め方と家族との関わり方の両立が難しくて、まだ納得の行く形になっていない。そりゃ家族からしたら、家にいるのだから色々やってほしいことができてしまうし、このままだと単純に自身の過重労働だなあと思っている。
-こういった我が家のパターンだと、在宅ワークよりもちょっとカフェとかで仕事するとかがよいのか。
-通勤時間を削る＆家族とも連絡を断つ、という手段がいるのかも、ただしそれは元々わたしの考えていた在宅ワークの動機と違うけど。
-この辺は来年 2020 年になってからも、また別の手段を検討していきたい。</p><hr /><p>最後に今年密かに目標としていた、1 年間毎月投稿を書く、について。
-どこにも宣言してなかったけどブログを継続するという習慣づくりのためにこの目標を据えた。
-結果は未達。11 月が現職の障害対応で気持ちに余裕がなかったため。まあ投稿の数は平均月 2 のペースになってたので、この点は目をつぶろう 🙈</p><p>来年も目標をゆるくだが設定して邁進したく。もっと情報に触れて、コードを書いて、という生活に昇華しよう。</p><p>(きょうの投稿には 1 文字もコードがなかったけど、特例日 😆)</p>
+    <p>いつものように PowerShell Module を更新して PowerShell を立ち上げると次のようなメッセージが表示された。</p><pre><code class="txt">Hey friend
+
+In an effort to grow oh-my-posh, the decision was made to no
+longer support the PowerShell module. Over the past year, the
+added benefit of the module disappeared, while the burden of
+maintaining it increased.
+
+However, this doesn't mean oh-my-posh disappears from your
+terminal, it just means that you'll have to use a different
+tool to install it.
+
+All you need to do, is follow the migration guide here:
+
+https://ohmyposh.dev/docs/migrating
+</code></pre><p>あら... oh-my-posh 3 から Go で実装されて、マルチプラットフォームなプロンプトテーマエンジンになってたけど、ついにその時が来たか...という感じ。</p><p>とりあえず使えなくなる(というか更新できなくなる)と困るので、<a href="https://ohmyposh.dev/docs/migrating">移行手順</a> に記載された移行手順を行うことにした。</p><h3 id="わたしの移行手順">わたしの移行手順</h3><p>記載の順番にやってもいいけど、慎重を期すため順番を変えた。</p><p>まず <code>oh-my-posh</code> が <code>PATH</code> にある状態で、 <code>Set-PoshPrompt</code> を <code>oh-my-posh init pwsh</code> に変え、プロンプトの表示をチェックした。</p><pre><code class="powershell"># Set-PoshPrompt -Theme ~/.oh-my-posh.omp.json
+oh-my-posh init pwsh --config ~/.custom.omp.json | Invoke-Expression
+</code></pre><p>当然のごとくきれいに出力されるので、 PowerShell Module から置き換える。</p><p><a href="https://ohmyposh.dev/docs/installation/windows">Windows 向けの公式なインストール手順</a>では <code>winget</code>, <code>scoop</code> それか手動での更新になっている。</p><p>でもわたしは永らく <code>chocolatey</code> を使っていることもあり、有志が公開してくれているパッケージを利用する。見たところバージョンも最新に追随していていい感じ。
+<a href="https://community.chocolatey.org/packages/oh-my-posh#versionhistory">Chocolatey Software | Oh-My-Posh 7.74.3</a></p><p>管理者権限で <code>cmd</code> を開き、インストールする。補足：PowerShell でもインストールできるが、PowerShell 自体を <code>chocolatey</code> でインストールしているのもあり <code>chocolatey</code> でのインストールは <code>cmd</code> で行うようにしている。</p><pre><code class="cmd">choco install oh-my-posh -y
+</code></pre><p>このインストールの最後に、</p><pre><code class="plaintext">PROFILE: C:\Users\takatoshi\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+oh-my-posh has been added to your profile. You may wish to append 'Set-PoshPrompt paradox' to set a theme
+</code></pre><p>と言われたが、 Windows PowerShell のプロファイルはおろかどこにも加筆されてないようだった。</p><p>管理者権限で PowerShell を起動し、 oh-my-posh の Powershell Module を削除する。</p><pre><code class="powershell">Uninstall-Module oh-my-posh -AllVersions
+</code></pre><p><code>Import-Module oh-my-posh</code> は元々書いてなかったので削除なし。代わりにプロファイルの中でインストール・更新するモジュール名を管理しているので、そこから取り除いた。</p><p>以上。</p><h3 id="感想">感想</h3><p>何事もなく移行できて良かった。</p><p>ただこれを機に、もう oh-my-posh にこだわらず、 <a href="https://starship.rs/">Starship</a> みたいなもっとイケてるプロンプトテーマエンジンに積極的に乗り換えてもいいかなーと思えてきた。</p><p>元々 oh-my-posh を使ってたのは、 2018 年頃の PowerShell でいい感じの Powerline ができる唯一のツールだったからだ(わたしの観測範囲では。もう一つその名の通り Powerline というモジュールがあったが満足の行くカスタマイズができなかった<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>)。
+テーマを PowerShell で書けて、PowerShellGet からインストールできるのも楽だった。</p><p>とはいえ、それがマルチプラットフォームに対応した oh-my-posh の足枷になったみたいやけど。</p><p>逆に利用者の立場からいえば、 oh-my-posh が明確に PowerShell に特化しなくなったということ。
+これは、わたしが Power Fighter(勝手に作った PowerShell 使いの呼び名)であるから oh-my-posh を使い続けていたという理由もなくなったことになる。</p><p>oh-my-posh が Go で書き換わったときに一番気に入らなかったのは <em><strong>設定ファイルが JSON</strong></em> なとこなので、そのフラストレーションを解消するいい機会をもらったのかも知れない。</p><div class="footnotes"><hr /><ol><li id="fn-1"><p>まだあったわ →<a href="https://www.powershellgallery.com/packages/PowerLine/3.4.0">PowerShell Gallery | PowerLine 3.4.0</a></p><a href="#fnref-1" class="footnote-backref">↩</a></li></ol></div>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/retrospective">retrospective</a>
+    <a href="/tags/oh-my-posh">oh-my-posh</a>
+    
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2020-01-29-plannning">&laquo; 2020-01-29 2020</a>
         
-        
-        <a class="right" href="/posts/2019-10-14-how-to-handle-waiter-of-boto3">2019-10-14 boto3 の Waiter さんとの戯れ &raquo;</a>
+        <a class="right" href="/posts/2022-04-23-aws-rehabilitation">2022-04-23 AWS リハビリのハマり集 &raquo;</a>
         
     </div>
 
