@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Migu Nerd Font のアイコンフォントを narrow にしたい</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-05-07-i-want-to-resize-migu-icon">
+    <title>krymtkts: Posts Tagged &quot;fsharp&quot;</title>
+    <link rel="canonical" href="https://krymtkts.github.io/tags/fsharp">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Migu Nerd Font のアイコンフォントを narrow にしたい" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-05-07-i-want-to-resize-migu-icon" />
+    <meta property="og:title" content="krymtkts: Posts Tagged &quot;fsharp&quot;" />
+    <meta property="og:url" content="https://krymtkts.github.io/tags/fsharp" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -182,72 +182,17 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="post">
-    <div class="post-header">
-    <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-05-07</div>
-        
+<div id="posts-by-tag">
+    <div id="page-header">
+        <h2>Posts Tagged &quot;fsharp&quot;</h2>
     </div>
-    <h2>Migu Nerd Font のアイコンフォントを narrow にしたい</h2>
-</div>
-<div>
+    <ul>
     
-    <p><a href="/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu">以前</a>、Nerd Fonts の<code>font-patcher</code>で Migu に Narrow サイズの Symbol グリフぶちこみゃええやんけ、まで来てた。
-その後を記す。</p><h3 id="nerd-fonts">Nerd Fonts</h3><p>Nerd Font の font-patcher を試す。事前にパッチ済みの M+を見ると完璧なので期待に胸が高ぶる。実行してみると Python モジュールに Windows のライブラリが含まれていたので WSL2 内の Ubuntu では実行できなかった。Windows で実行する。</p><pre><code class="powershell">fontforge -script font-patcher migu-1m-regular.ttf -s -l -w -c --careful --progressbars -out patched
-</code></pre><p>結果、全然アカン... <code>-s, --mono, --use-single-width-glyphs</code>オプションを有効にすると全グリフが single-width になってしまい日本語フォントとして使いものにならなくなる。</p><p>逆にこの完璧な M+が惚れ惚れする出来なので、こちらに半濁音を移植するだけでいい気がしてきた。</p><h2 id="font-merger-再び">font-merger 再び</h2><p>コードポイントがわからないので、取得するための関数を PowerShell で作る。</p><pre><code class="powershell">function UC {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [ValidateNotNullOrEmpty()]
-        [String[]]$s
-    )
-    process {
-        foreach ($c in $s) {
-            [Convert]::ToInt32($c -as [char]).ToString("x")
-        }
-    }
-}
-
-('がぎぐげござじずぜぞだぢづでどばぱびぴぶぷべぺぼぽゔ'+''+''+'ゞガギグゲゴザジズゼゾダヂヅデドバパビピブプベペボポヴヷヸヹヺ').ToCharArray() | UC
-</code></pre><p>これで置き換えたい文字(Migu のチャーミングな濁音半濁音たち)のコードポイントを取れるよにした。
-特定のコードポイントの移植といえば font-merger 使えるやん！というところではあるが、ほしいコードポイントは連続せず細切れになっているので、これを 1 個ずつ設定に書くのはめんどい...
-ということで font-merger の改造をした。</p><p><a href="https://github.com/krymtkts/fontmerger/commit/33c775ef4f1fd47f90b6359f5ae74529552a87a6">Add codepoint option to copy glyph from specific code points. · krymtkts/fontmerger@33c775e</a></p><pre><code class="sh">/usr/bin/fontforge -script fontmerger/__init__.py -x migu-1m-regular -o patched --suffix=migu -- ./source/M+1mNerdFontCompleteWindowsCompatible.ttf
-</code></pre><p>コードポイントを個別に指定できるようにしまして実行したところ、なんかそれっぽく半濁点が反映されてる。
-いや待てよ...微妙に縦長になってしまった...これは M+と Migu でフォントの縦横比が異なるせいやろな。</p><p>もう FontForge のスクリプティング真面目にやってくしか残された将来はない気がしてきた。😰</p><h2 id="font-merger-再び-再び">font-merger 再び 再び</h2><p>Nerd Fonts の font-patcher を読んでいるときに気づいたのが、<code>--mono</code> オプションを有効にしている場合すべての glyph に narrow 幅を設定するようになっていたこと。</p><p><a href="https://github.com/ryanoasis/nerd-fonts/blob/master/font-patcher#L71-L74">nerd-fonts/font-patcher at master · ryanoasis/nerd-fonts · GitHub</a></p><p>日本語フォントの場合 wide 幅を書き換えてしまうから先述の通り Nerf Fonts はえらいことになってしまっていたので、これをパッチするグリフにのみ適用すれば良いという力技に気づく。
-ということで更に font-merger を改造した。</p><p><a href="https://github.com/krymtkts/fontmerger/commit/25ed2b1dfd547d6599417793fb679ea9fdbe4548">Adds mono command line option that forces glyph to be single width. · krymtkts/fontmerger@25ed2b1</a></p><h2 id="現状">現状</h2><p>これにより全ての追加したアイコングリフが narrow 幅になることで、漸く Windows Terminal でもﾐﾆﾐﾆアイコンフォントにならずに表示できるようになった。</p><p><img src="/img/2021-05-07-terminal/mypowerline.png" alt="現在のpowerline。左向き三角が残念" /></p><p>しかしご覧の通り、右に寄るべきフォントの見た目が非常に残念なので、今後もちょいちょいいじらねばならない。完成はいつになるのか...😪
-(幅 500 以上になってるためずれる)</p><p>なんとなく、次は Powerline グリフの narrow 幅を大きく超過するものを左右の align をつけて変形しないといけない気がしている。
-この辺の頂点の xmax, ymax からどないか計算できんかな →
-<a href="https://fontforge.org/docs/scripting/python/fontforge.html#fontforge.contour.boundingBox">fontforge — FontForge 20201107 documentation</a></p><ul><li>[x] お亡くなりになられた fontmerger を Python3 化して動かす</li><li>[x] 最新の Migu に対して fontmerger で Nerd font patch する</li><li>[x] <code>0xE0B0</code> を始めとした Cascadia でだけうまく表示されるグリフを Migu に移植する
-<ul><li>そして効果なし！</li></ul></li><li>[x] Nerd Fonts の font-patcher で Migu にパッチしてみる
-<ul><li>フォントが使い物にならなくなった</li></ul></li><li>[x] Migu のチャーミングな部分を M+に移植
-<ul><li>縦横比の違いから縦長に...</li></ul></li><li>[x] font-merger がパッチするグリフのみ narrow 幅にしてみる
-<ul><li>おしい！右よりフォントが残念</li></ul></li><li>[ ] 完璧な Migu の完成！
-<ul><li>To Be Continued...</li></ul></li></ul>
-</div>
-
-<div id="post-tags">
-    <b>Tags: </b>
+        <li>
+            <a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">2022-05-07 F#で PowerShell コマンドレットを書き始めた</a>
+        </li>
     
-    <a href="/tags/font">font</a>
-    
-</div>
-
-
-    <div id="prev-next">
-        
-        <a href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font">&laquo; 2021-05-30 Migu Nerd Font の改善が完了したっぽい</a>
-        
-        
-        <a class="right" href="/posts/2021-05-06-simple-way-to-update-pwsh-special-module">2021-05-06 PowerShell の特殊なモジュールを更新する方法 &raquo;</a>
-        
-    </div>
-
-    
-
-
+    </ul>
 </div>
 
             </div>

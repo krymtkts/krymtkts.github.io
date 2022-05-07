@@ -1,4 +1,56 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Fri, 29 Apr 2022 16:54:25 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-04-29-good-bye-omp-module</guid><link>https://krymtkts.github.io/posts/2022-04-29-good-bye-omp-module</link><title>さよなら oh-my-posh モジュール</title><description>&lt;p&gt;いつものように PowerShell Module を更新して PowerShell を立ち上げると次のようなメッセージが表示された。&lt;/p&gt;&lt;pre&gt;&lt;code class="txt"&gt;Hey friend
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 07 May 2022 15:23:59 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-05-07-start-to-write-cmdlet-by-fsharp</guid><link>https://krymtkts.github.io/posts/2022-05-07-start-to-write-cmdlet-by-fsharp</link><title>F#で PowerShell コマンドレットを書き始めた</title><description>&lt;p&gt;勉強がてら、F# で PowerShell のコマンドレットを書きはじめる。
+↓ を参考にやる。ただし .NET 6.0 を対象にする。&lt;/p&gt;&lt;p&gt;&lt;a href="https://webcoder.info/fspsmodule.html"&gt;Writing a PowerShell Core Module With F#, A Complete Guide | Brianary&lt;/a&gt;&lt;/p&gt;&lt;p&gt;初めての要素が多いので、ゆっくり進める。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;F# でアプリ書くのが初&lt;/li&gt;&lt;li&gt;コマンドレットを書くのが初&lt;/li&gt;&lt;li&gt;dotnet CLI を使った開発が初&lt;/li&gt;&lt;li&gt;その他 PowerShell 系のツール(&lt;a href="https://github.com/pester/Pester"&gt;Pester&lt;/a&gt;,&lt;a href="https://github.com/PowerShell/platyPS"&gt;platyPS&lt;/a&gt;)をちゃんと使うのが初
+&lt;ul&gt;&lt;li&gt;参考にする記事にはないが、ビルドスクリプトも &lt;a href="https://github.com/psake/psake"&gt;psake&lt;/a&gt; で書く&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;題材としては、&lt;a href="https://github.com/jasonmarcher/poco"&gt;poco&lt;/a&gt; の再実装をしてみるつもり。&lt;/p&gt;&lt;p&gt;諸々のツールが出てくるので一覧しておく。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;GitHub の Repo の作成に &lt;a href="https://github.com/microsoft/PowerShellForGitHub"&gt;PowerShellForGitHub&lt;/a&gt;&lt;/li&gt;&lt;li&gt;remote repo の管理に &lt;a href="https://github.com/x-motemen/ghq"&gt;ghq&lt;/a&gt;&lt;/li&gt;&lt;li&gt;コミット署名のために &lt;a href="https://community.chocolatey.org/packages/Gpg4win"&gt;Gpg4win&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;h3 id="repo-とプロジェクトを作成する"&gt;repo とプロジェクトを作成する&lt;/h3&gt;&lt;p&gt;動くものになるまでは private repo で運用する。動かないなら公開しても意味がないからね。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# private repo を作成する。
+$owner = 'krymtkts'
+$module = 'pocof'
+New-GitHubRepository -RepositoryName 'pocof' -Private
+
+# remote repo を clone する。
+ghq get -p (Get-GitHubRepository -OwnerName $owner -RepositoryName $module | Select-Object -ExpandProperty ssh_url)
+cd "$(ghq root)/$(ghq list $module)"
+
+# initial commit を刻む。
+gpg-connect-agent reloadagent /bye # &amp;lt;- gpg-agent が立ち上がってこないので先に起こす。
+git commit --allow-empty -m 'Initial commit.'
+dotnet new sln
+
+# 空のプロジェクトを作成。
+dotnet new classlib --language 'F#' --framework net6.0 -o src/$module
+dotnet sln add src/$module/$module.fsproj
+cd src/$module
+# PowerShell 開発の依存関係を追加。
+dotnet add package PowerShellStandard.Library
+New-ModuleManifest "$module.psd1"
+'&amp;lt;helpItems schema="maml" xmlns="http://msh" /&amp;gt;' | Set-Content "$module.dll-Help.xml" -Encoding utf8
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これで repo と空の F# プロジェクト &lt;code&gt;pocof.fsproj&lt;/code&gt; ができた。
+次に、記事に記載の通り、 &lt;code&gt;pocof.fsproj&lt;/code&gt; に必要な情報を加筆する。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;PropertyGroup&lt;/code&gt; に &lt;code&gt;Version&lt;/code&gt; 属性を追加&lt;/li&gt;&lt;li&gt;&lt;code&gt;ItemGroup&lt;/code&gt; 属性を追加して、コピーするファイルを記載する&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;また PowerShell のモジュール情報を &lt;code&gt;pocof.psd1&lt;/code&gt; 書き込む。
+コマンドレットなので、 &lt;code&gt;RootModule&lt;/code&gt; を書き忘れるとコマンドがインポートできないのでご注意(書き忘れてて &lt;code&gt;Import-Module&lt;/code&gt; しても使えない！となった)。&lt;/p&gt;&lt;p&gt;あと作成後に気づいたのだが、 作成された &lt;code&gt;*.sln&lt;/code&gt; 等のエンコーディングが UTF8 with BOM だったり改行が CRLF だったりするので、それらを UTF8 と LF に手で補正した。&lt;/p&gt;&lt;p&gt;最後に 空の XML-based help file を作成しているが、これは &lt;code&gt;Get-Help&lt;/code&gt; で使うヘルプファイルで、後で PlatyPS で上書きされるやつ。
+&lt;a href="https://docs.microsoft.com/en-us/powershell/scripting/developer/help/naming-help-files?view=powershell-7.2"&gt;Naming Help Files - PowerShell | Microsoft Docs&lt;/a&gt;&lt;/p&gt;&lt;h3 id="f-開発環境を準備する"&gt;F# 開発環境を準備する&lt;/h3&gt;&lt;p&gt;わたしは VS Code を使っているので、F# 用の拡張機能を入れる。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="https://marketplace.visualstudio.com/items?itemName=Ionide.Ionide-fsharp"&gt;Ionide for F# - Visual Studio Marketplace&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;F# でフォーマッタといえば &lt;code&gt;fantomas&lt;/code&gt; のようなのだけど、個別に入れなくても Ionide がうまく拾えるらしい。 &lt;a href="https://github.com/ionide/ionide-vscode-fsharp/issues/1346"&gt;Formatting Settings · Issue #1346 · ionide/ionide-vscode-fsharp&lt;/a&gt;&lt;/p&gt;&lt;h3 id="コードを編集する"&gt;コードを編集する&lt;/h3&gt;&lt;p&gt;自動生成されたコードを編集する。
+記事に記載のものだとパラメータに &lt;code&gt;Position&lt;/code&gt; がなくて Pester こけそうなのと、自分のやりたいことに合わせた引数を書くなど諸々の調整をする。&lt;/p&gt;&lt;p&gt;Pester のテストコードも作成する。テストコードは &lt;code&gt;tests&lt;/code&gt; ディレクトリ配下に配置した。&lt;/p&gt;&lt;h3 id="ビルドテスト実行"&gt;ビルド＆テスト実行&lt;/h3&gt;&lt;p&gt;記事に記載の通りだと typo があったり &lt;code&gt;Import-Module&lt;/code&gt; 前に削除があって消えてしまう等ある。
+編集して実行した。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;$ModuleName = Resolve-Path ./src/* | Split-Path -Leaf
+Import-LocalizedData -BindingVariable module -BaseDirectory (Resolve-Path ./src/*) -FileName "$ModuleName.psd1"
+if ($module.ModuleVersion -ne (Resolve-Path ./src/*/*.fsproj | Select-Xml '//Version/text()').Node.Value) {
+    throw 'Module manifest (.psd1) version does not match project (.fsproj) version.'
+}
+dotnet publish
+cp (Resolve-Path ./src/*/bin/Debug/*/publish/FSharp.Core.dll) (Resolve-Path ./src/*/bin/Debug/*/) -Verbose
+
+# import して Pester 実行。
+# モジュールのバージョンであったり export される Cmdlet が正しいかなど見る。
+Import-Module (Resolve-Path ./src/*/bin/Debug/*/publish/*.psd1) -Force
+Invoke-Pester
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;あとこれらを &lt;code&gt;psake&lt;/code&gt; で実行できるように &lt;code&gt;psakefile.ps1&lt;/code&gt; に記載した。&lt;/p&gt;&lt;p&gt;F# のプロジェクトだったら &lt;a href="https://github.com/fsprojects/FAKE"&gt;FAKE&lt;/a&gt; を使った方がいいのかなーと考えていた。となると、依存する &lt;a href="https://fsprojects.github.io/Paket/"&gt;Paket&lt;/a&gt; も入れないといけない。いま &lt;code&gt;dotnet&lt;/code&gt; CLI で管理してたのでいらないかなーと思った。
+また、今回作りたいのは PowerShell のコマンドレットなので、 周辺のツールも PowerShell だ。これをいちいち &lt;code&gt;fake.cmd&lt;/code&gt; や &lt;code&gt;dotnet fake build&lt;/code&gt;を介して実行するのなんかダルいな...と億劫だったので、 FAKE の導入は見送ることにした。&lt;/p&gt;&lt;h3 id="ドキュメントを生成する"&gt;ドキュメントを生成する&lt;/h3&gt;&lt;p&gt;記事では &lt;a href="https://github.com/PowerShell/platyPS"&gt;platyPS&lt;/a&gt; を使っているのでそれに従う。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# 事前にビルドしたモジュールを Import-Module しておく。
+New-MarkdownHelp -Module pocof -OutputFolder ./docs -ErrorAction SilentlyContinue
+# dll-Help.xml を作るときに実行する。
+New-ExternalHelp docs -OutputPath (Resolve-Path ./src/*/) -Force
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;コメントに記した通り、他のタスクと依存関係にある。こういうのは &lt;code&gt;psakefile.ps1&lt;/code&gt; にまとめる。&lt;/p&gt;&lt;p&gt;ヘルプの作成元は Markdown をオリジナルとする方針。&lt;/p&gt;&lt;h3 id="powershell-gallery-へのリリース"&gt;PowerShell Gallery へのリリース&lt;/h3&gt;&lt;p&gt;まだやらないけど手順だけ確立しておく。&lt;/p&gt;&lt;p&gt;記事に記載のものだと、ビルドコンフィグレーションを Release にして Import、その後 Import したモジュールを公開、という手順になっている。&lt;/p&gt;&lt;p&gt;個人的にやったことがあるのはフォルダを指定して公開する方だけなので、どっちにするかなーと悩んでいる。間違って古い Import 済みモジュールを公開するミスとかないのかな、というのが疑問。&lt;/p&gt;&lt;p&gt;ま、勉強のためのものであるし、やったことない方を接客的に選んでみるのも一興か。コマンドレットが正しくエクスポートできているか、リリース前にテストするにもこの方法を取るのが良さそうだし。&lt;/p&gt;&lt;p&gt;とはいえ記事に記載の通りやると、自分が普段利用している PowerShell Module のパスに直でリリース前のモジュールを打ち込んでしまう。
+これはちょっと実用始めたら困りそうなので、ディレクトリを変える必要がある。
+となると結局いつものパス指定でのリリース方式でええんちゃうか...&lt;/p&gt;&lt;p&gt;いずれを選択するかはまた検討したい。&lt;/p&gt;&lt;p&gt;また、これらのリリースタスクも &lt;code&gt;psakefile.ps1&lt;/code&gt; に定義するものとする。&lt;/p&gt;&lt;h3 id="おわりに"&gt;おわりに&lt;/h3&gt;&lt;p&gt;これでひとまず準備完了。
+ほぼ記事に記載のとおりやってきたけど、ちょいちょい自分用に変えたり、新しい要素については色々調べながらやってるので、進捗は亀のスピードだった。
+動くものをこしらえれたら public repo にしよう。&lt;/p&gt;&lt;p&gt;現時点で不足しているとわかっている点もある。
+今回書きたいコマンドレットはインタラクティブなものなので、きっと Pester でテストできない点が出てくる。
+それらは &lt;a href="https://fsprojects.github.io/FsUnit/"&gt;FsUnit&lt;/a&gt; を使って可能な限りテストを書きたい所存。&lt;/p&gt;&lt;p&gt;あと困っているのが、参考にしている記事にも記載があったが、 DLL への参照が切れなくてファイルを消したりできなくなる(&lt;code&gt;Remove-Module&lt;/code&gt; 忘れとかでなく)。いまは都度 PowerShell のセッションを作り直してるけど相当に面倒なので、原因を突き止めてどうにかしたいな。&lt;/p&gt;&lt;p&gt;未経験のものに触れるのは普段得られない刺激があって良い。&lt;/p&gt;</description><pubDate>Sat, 07 May 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-04-29-good-bye-omp-module</guid><link>https://krymtkts.github.io/posts/2022-04-29-good-bye-omp-module</link><title>さよなら oh-my-posh モジュール</title><description>&lt;p&gt;いつものように PowerShell Module を更新して PowerShell を立ち上げると次のようなメッセージが表示された。&lt;/p&gt;&lt;pre&gt;&lt;code class="txt"&gt;Hey friend
 
 In an effort to grow oh-my-posh, the decision was made to no
 longer support the PowerShell module. Over the past year, the
