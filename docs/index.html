@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-05-14-think-about-alignment-of-full-width-chars">East Asian な全角文字をキーに使った場合のアラインメントについて考える</a></li>
+                        
                         <li><a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">F#で PowerShell コマンドレットを書き始めた</a></li>
                         
                         <li><a href="/posts/2022-04-29-good-bye-omp-module">さよなら oh-my-posh モジュール</a></li>
-                        
-                        <li><a href="/posts/2022-04-23-aws-rehabilitation">AWS リハビリのハマり集</a></li>
                         
                         
 
@@ -185,74 +185,118 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-05-07</div>
+        <div class="col-lg-6">2022-05-14</div>
         
     </div>
-    <h2>F#で PowerShell コマンドレットを書き始めた</h2>
+    <h2>East Asian な全角文字をキーに使った場合のアラインメントについて考える</h2>
 </div>
 <div>
     
-    <p>勉強がてら、F# で PowerShell のコマンドレットを書きはじめる。
-↓ を参考にやる。ただし .NET 6.0 を対象にする。</p><p><a href="https://webcoder.info/fspsmodule.html">Writing a PowerShell Core Module With F#, A Complete Guide | Brianary</a></p><p>初めての要素が多いので、ゆっくり進める。</p><ul><li>F# でアプリ書くのが初</li><li>コマンドレットを書くのが初</li><li>dotnet CLI を使った開発が初</li><li>その他 PowerShell 系のツール(<a href="https://github.com/pester/Pester">Pester</a>,<a href="https://github.com/PowerShell/platyPS">platyPS</a>)をちゃんと使うのが初
-<ul><li>参考にする記事にはないが、ビルドスクリプトも <a href="https://github.com/psake/psake">psake</a> で書く</li></ul></li></ul><p>題材としては、<a href="https://github.com/jasonmarcher/poco">poco</a> の再実装をしてみるつもり。</p><p>諸々のツールが出てくるので一覧しておく。</p><ul><li>GitHub の Repo の作成に <a href="https://github.com/microsoft/PowerShellForGitHub">PowerShellForGitHub</a></li><li>remote repo の管理に <a href="https://github.com/x-motemen/ghq">ghq</a></li><li>コミット署名のために <a href="https://community.chocolatey.org/packages/Gpg4win">Gpg4win</a></li></ul><h3 id="repo-とプロジェクトを作成する">repo とプロジェクトを作成する</h3><p>動くものになるまでは private repo で運用する。動かないなら公開しても意味がないからね。</p><pre><code class="powershell"># private repo を作成する。
-$owner = 'krymtkts'
-$module = 'pocof'
-New-GitHubRepository -RepositoryName 'pocof' -Private
+    <p>掲題のとおりである。
+ここでいうアラインメントはメモリの話じゃなくて、字面上の整列のことを指す。</p><p>自分の中でもどうあるべきかまだ結論が出せてないので、考えをまとめるために書く。</p><h3 id="問題">問題</h3><p>いま、 <a href="https://github.com/PowerShell/PSScriptAnalyzer">PSScriptAnalyzer</a> で全角文字をキーに持つ hashtable を整形したとき期待どおりにならなのだけど、どう解決するのがいいのだろう？と悩んでる。</p><p>一応弁解しておくと、わたしの気持ちとしては「そんなところに全角文字使うとか危なげなことやめようや」だ。</p><p>ところが、今やってる仕事でスプレッドシートのデータをシステムに取り込むにあたり、それらをいくつかの CSV に分解・再構築する必要があって、その中でこのテーマに直面した。 PSCustomObject を CSV に変換する形でスクリプトを作ってるので、全角文字が識別子になるのだ。</p><p>普通に自分が書く範囲だとこんなの書かないので、最近まで気づかなかった。</p><p>VS Code で PowerShell を書くと、自動整形には <a href="https://github.com/PowerShell/PSScriptAnalyzer">PSScriptAnalyzer</a> の <code>Invoke-Formatter</code> が使われる。この戻り値が整形後のコードになるのだけど、ここで今回のテーマに直面する。</p><p>問題は以下のコードで再現できる。</p><pre><code class="powershell">$settings = @{
+    IncludeRules = @(
+        'PSAlignAssignmentStatement'
+    )
 
-# remote repo を clone する。
-ghq get -p (Get-GitHubRepository -OwnerName $owner -RepositoryName $module | Select-Object -ExpandProperty ssh_url)
-cd "$(ghq root)/$(ghq list $module)"
-
-# initial commit を刻む。
-gpg-connect-agent reloadagent /bye # &lt;- gpg-agent が立ち上がってこないので先に起こす。
-git commit --allow-empty -m 'Initial commit.'
-dotnet new sln
-
-# 空のプロジェクトを作成。
-dotnet new classlib --language 'F#' --framework net6.0 -o src/$module
-dotnet sln add src/$module/$module.fsproj
-cd src/$module
-# PowerShell 開発の依存関係を追加。
-dotnet add package PowerShellStandard.Library
-New-ModuleManifest "$module.psd1"
-'&lt;helpItems schema="maml" xmlns="http://msh" /&gt;' | Set-Content "$module.dll-Help.xml" -Encoding utf8
-</code></pre><p>これで repo と空の F# プロジェクト <code>pocof.fsproj</code> ができた。
-次に、記事に記載の通り、 <code>pocof.fsproj</code> に必要な情報を加筆する。</p><ul><li><code>PropertyGroup</code> に <code>Version</code> 属性を追加</li><li><code>ItemGroup</code> 属性を追加して、コピーするファイルを記載する</li></ul><p>また PowerShell のモジュール情報を <code>pocof.psd1</code> 書き込む。
-コマンドレットなので、 <code>RootModule</code> を書き忘れるとコマンドがインポートできないのでご注意(書き忘れてて <code>Import-Module</code> しても使えない！となった)。</p><p>あと作成後に気づいたのだが、 作成された <code>*.sln</code> 等のエンコーディングが UTF8 with BOM だったり改行が CRLF だったりするので、それらを UTF8 と LF に手で補正した。</p><p>最後に 空の XML-based help file を作成しているが、これは <code>Get-Help</code> で使うヘルプファイルで、後で PlatyPS で上書きされるやつ。
-<a href="https://docs.microsoft.com/en-us/powershell/scripting/developer/help/naming-help-files?view=powershell-7.2">Naming Help Files - PowerShell | Microsoft Docs</a></p><h3 id="f-開発環境を準備する">F# 開発環境を準備する</h3><p>わたしは VS Code を使っているので、F# 用の拡張機能を入れる。</p><ul><li><a href="https://marketplace.visualstudio.com/items?itemName=Ionide.Ionide-fsharp">Ionide for F# - Visual Studio Marketplace</a></li></ul><p>F# でフォーマッタといえば <code>fantomas</code> のようなのだけど、個別に入れなくても Ionide がうまく拾えるらしい。 <a href="https://github.com/ionide/ionide-vscode-fsharp/issues/1346">Formatting Settings · Issue #1346 · ionide/ionide-vscode-fsharp</a></p><h3 id="コードを編集する">コードを編集する</h3><p>自動生成されたコードを編集する。
-記事に記載のものだとパラメータに <code>Position</code> がなくて Pester こけそうなのと、自分のやりたいことに合わせた引数を書くなど諸々の調整をする。</p><p>Pester のテストコードも作成する。テストコードは <code>tests</code> ディレクトリ配下に配置した。</p><h3 id="ビルドテスト実行">ビルド＆テスト実行</h3><p>記事に記載の通りだと typo があったり <code>Import-Module</code> 前に削除があって消えてしまう等ある。
-編集して実行した。</p><pre><code class="powershell">$ModuleName = Resolve-Path ./src/* | Split-Path -Leaf
-Import-LocalizedData -BindingVariable module -BaseDirectory (Resolve-Path ./src/*) -FileName "$ModuleName.psd1"
-if ($module.ModuleVersion -ne (Resolve-Path ./src/*/*.fsproj | Select-Xml '//Version/text()').Node.Value) {
-    throw 'Module manifest (.psd1) version does not match project (.fsproj) version.'
+    Rules = @{
+        PSAlignAssignmentStatement = @{
+            Enable = $true
+            # PSAlignAssignmentStatement.CheckHashtable が真だと、
+            # hashtable の要素の並びを整形してくれる。
+            CheckHashtable = $true
+        }
+    }
 }
-dotnet publish
-cp (Resolve-Path ./src/*/bin/Debug/*/publish/FSharp.Core.dll) (Resolve-Path ./src/*/bin/Debug/*/) -Verbose
 
-# import して Pester 実行。
-# モジュールのバージョンであったり export される Cmdlet が正しいかなど見る。
-Import-Module (Resolve-Path ./src/*/bin/Debug/*/publish/*.psd1) -Force
-Invoke-Pester
-</code></pre><p>あとこれらを <code>psake</code> で実行できるように <code>psakefile.ps1</code> に記載した。</p><p>F# のプロジェクトだったら <a href="https://github.com/fsprojects/FAKE">FAKE</a> を使った方がいいのかなーと考えていた。となると、依存する <a href="https://fsprojects.github.io/Paket/">Paket</a> も入れないといけない。いま <code>dotnet</code> CLI で管理してたのでいらないかなーと思った。
-また、今回作りたいのは PowerShell のコマンドレットなので、 周辺のツールも PowerShell だ。これをいちいち <code>fake.cmd</code> や <code>dotnet fake build</code>を介して実行するのなんかダルいな...と億劫だったので、 FAKE の導入は見送ることにした。</p><h3 id="ドキュメントを生成する">ドキュメントを生成する</h3><p>記事では <a href="https://github.com/PowerShell/platyPS">platyPS</a> を使っているのでそれに従う。</p><pre><code class="powershell"># 事前にビルドしたモジュールを Import-Module しておく。
-New-MarkdownHelp -Module pocof -OutputFolder ./docs -ErrorAction SilentlyContinue
-# dll-Help.xml を作るときに実行する。
-New-ExternalHelp docs -OutputPath (Resolve-Path ./src/*/) -Force
-</code></pre><p>コメントに記した通り、他のタスクと依存関係にある。こういうのは <code>psakefile.ps1</code> にまとめる。</p><p>ヘルプの作成元は Markdown をオリジナルとする方針。</p><h3 id="powershell-gallery-へのリリース">PowerShell Gallery へのリリース</h3><p>まだやらないけど手順だけ確立しておく。</p><p>記事に記載のものだと、ビルドコンフィグレーションを Release にして Import、その後 Import したモジュールを公開、という手順になっている。</p><p>個人的にやったことがあるのはフォルダを指定して公開する方だけなので、どっちにするかなーと悩んでいる。間違って古い Import 済みモジュールを公開するミスとかないのかな、というのが疑問。</p><p>ま、勉強のためのものであるし、やったことない方を接客的に選んでみるのも一興か。コマンドレットが正しくエクスポートできているか、リリース前にテストするにもこの方法を取るのが良さそうだし。</p><p>とはいえ記事に記載の通りやると、自分が普段利用している PowerShell Module のパスに直でリリース前のモジュールを打ち込んでしまう。
-これはちょっと実用始めたら困りそうなので、ディレクトリを変える必要がある。
-となると結局いつものパス指定でのリリース方式でええんちゃうか...</p><p>いずれを選択するかはまた検討したい。</p><p>また、これらのリリースタスクも <code>psakefile.ps1</code> に定義するものとする。</p><h3 id="おわりに">おわりに</h3><p>これでひとまず準備完了。
-ほぼ記事に記載のとおりやってきたけど、ちょいちょい自分用に変えたり、新しい要素については色々調べながらやってるので、進捗は亀のスピードだった。
-動くものをこしらえれたら public repo にしよう。</p><p>現時点で不足しているとわかっている点もある。
-今回書きたいコマンドレットはインタラクティブなものなので、きっと Pester でテストできない点が出てくる。
-それらは <a href="https://fsprojects.github.io/FsUnit/">FsUnit</a> を使って可能な限りテストを書きたい所存。</p><p>あと困っているのが、参考にしている記事にも記載があったが、 DLL への参照が切れなくてファイルを消したりできなくなる(<code>Remove-Module</code> 忘れとかでなく)。いまは都度 PowerShell のセッションを作り直してるけど相当に面倒なので、原因を突き止めてどうにかしたいな。</p><p>未経験のものに触れるのは普段得られない刺激があって良い。</p>
+$script = @'
+$test = @{
+    A = 0
+    ABC = 0
+    ABCDE = 0
+    Ａ = 0
+    ＡＢＣ = 0
+    ＡＢＣＤＥ = 0
+}
+'@
+Invoke-Formatter -ScriptDefinition $script -Settings $settings
+</code></pre><p>出力はこうなる。これは期待のとおりではない。</p><pre><code class="powershell">$test = @{
+    A     = 0
+    ABC   = 0
+    ABCDE = 0
+    Ａ     = 0
+    ＡＢＣ   = 0
+    ＡＢＣＤＥ = 0
+}
+</code></pre><p>わたしはこうなってほしいと考える。</p><pre><code class="powershell">$test = @{
+    A          = 0
+    ABC        = 0
+    ABCDE      = 0
+    Ａ         = 0
+    ＡＢＣ     = 0
+    ＡＢＣＤＥ = 0
+}
+</code></pre><p>PSScriptAnalyzer のコードを調べて、 PSScriptAnalyzer 的には PowerShell のパーサが返した列番号(<code>EndColumnNumber</code>)の通りに整形してるのがわかった。
+<a href="https://github.com/PowerShell/PSScriptAnalyzer/blob/58c44234d44dfd0db35bb532906963e08fde8621/Rules/AlignAssignmentStatement.cs#L194">PSScriptAnalyzer/AlignAssignmentStatement.cs GetHashtableCorrections の L194</a></p><p>次に PowerShell のパーサを直接調べる。</p><pre><code class="powershell">$script = @'
+$test = @{
+    A = 0
+    ABC = 0
+    ABCDE = 0
+    Ａ = 0
+    ＡＢＣ = 0
+    ＡＢＣＤＥ = 0
+}
+'@
+
+function getColumnNumberString {
+    param (
+        $Extent
+    )
+    "start $($Extent.StartColumnNumber.ToString().PadLeft(2)) end $($Extent.EndColumnNumber.ToString().PadLeft(2))"
+}
+
+$ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$null)
+$hashAst = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.HashtableAst] }, $true)
+$hashAst.KeyValuePairs | ForEach-Object {
+    # Item1 がキーの情報、 Item2 は '=' の情報
+    $e1, $e2 = $_.Item1.Extent, $_.Item2.Extent
+    "key $(getColumnNumberString($e1)) | '=' $(getColumnNumberString($e2))"
+}
+</code></pre><p>出力はこうなって、全角文字の表示幅は考慮されてないのがわかる。</p><pre><code class="txt">key start  5 end  6 | '=' start  9 end 10
+key start  5 end  8 | '=' start 11 end 12
+key start  5 end 10 | '=' start 13 end 14
+key start  5 end  6 | '=' start  9 end 10
+key start  5 end  8 | '=' start 11 end 12
+key start  5 end 10 | '=' start 13 end 14
+</code></pre><p>じゃあこれは PowerShell のバグなのか？とまで考えを至らせると、いやパーサは表示する文字の幅を意識する必要あるか？と思えるので、これは誰が解決する問題なんや...と思っているのが、今の状況。</p><h3 id="他の言語を調べる">他の言語を調べる</h3><p>他の事例を調べて、全角文字を含むキーや識別子をアラインメントするとどうなるか比べてみる。</p><p>とはいえ、他の言語でアラインメントするようなフォーマットかける言語何があったっけ？
+少なくとも Python は違ったし、思いついたのは Go だけ。
+Go 以外にも思いついたら追加したい。</p><h4 id="go">Go</h4><p>こんな中身の <code>test.go</code> があるとする。</p><pre><code class="go">package main
+
+type person struct {
+	A int
+	ABC int
+	ABCDE int
+	Ａ int
+	ＡＢＣ int
+	ＡＢＣＤＥ int
+}
+</code></pre><p>これに <code>gofmt ./test.go</code> すると次の通り。</p><pre><code class="go">package main
+
+type person struct {
+        A     int
+        ABC   int
+        ABCDE int
+        Ａ     int
+        ＡＢＣ   int
+        ＡＢＣＤＥ int
+}
+</code></pre><p>やっぱり！ PowerShell の結果と同じ。</p><h3 id="現時点の理解">現時点の理解</h3><p>現実的には、パーサやフォーマッタがフォントの文字幅を考慮しないし、アラインメントしないのが妥当な落とし所なのかな。
+気持ちとしては、全角文字を含んだとしても綺麗にアラインメントしてほしいが、それもエッジケースなのでそんなに困ることがない。</p><p>とはいえ Unicode 文字の演算子とかポツポツあるし、幅の規定が厳格であればフォーマッタあたりで解消したいテーマではある気がする。</p><p>なんか締まらない締めになった。</p><p>とりあえず自分用の覚書としては、 PSScriptAnalyzer は <code>PSAlignAssignmentStatement.CheckHashtable=$false</code> で利用すればこの問題に悩まされることもないので、オススメする。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
     <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -262,7 +306,7 @@ New-ExternalHelp docs -OutputPath (Resolve-Path ./src/*/) -Force
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-04-29-good-bye-omp-module">2022-04-29 さよなら oh-my-posh モジュール &raquo;</a>
+        <a class="right" href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">2022-05-07 F#で PowerShell コマンドレットを書き始めた &raquo;</a>
         
     </div>
 </div>
