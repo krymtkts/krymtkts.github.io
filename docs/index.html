@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-05-22-customize-my-worn-out-705">使い古しの Logicool M 705 をカスタマイズする</a></li>
+                        
                         <li><a href="/posts/2022-05-14-think-about-alignment-of-full-width-chars">East Asian な全角文字をキーに使った場合のアラインメントについて考える</a></li>
                         
                         <li><a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">F#で PowerShell コマンドレットを書き始めた</a></li>
-                        
-                        <li><a href="/posts/2022-04-29-good-bye-omp-module">さよなら oh-my-posh モジュール</a></li>
                         
                         
 
@@ -75,6 +75,8 @@
                         <li><a href="/tags/qunit">qunit</a></li>
                         
                         <li><a href="/tags/cryogen">cryogen</a></li>
+                        
+                        <li><a href="/tags/mouse">mouse</a></li>
                         
                         <li><a href="/tags/nyc">nyc</a></li>
                         
@@ -185,118 +187,26 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-05-14</div>
+        <div class="col-lg-6">2022-05-22</div>
         
     </div>
-    <h2>East Asian な全角文字をキーに使った場合のアラインメントについて考える</h2>
+    <h2>使い古しの Logicool M 705 をカスタマイズする</h2>
 </div>
 <div>
     
-    <p>掲題のとおりである。
-ここでいうアラインメントはメモリの話じゃなくて、字面上の整列のことを指す。</p><p>自分の中でもどうあるべきかまだ結論が出せてないので、考えをまとめるために書く。</p><h3 id="問題">問題</h3><p>いま、 <a href="https://github.com/PowerShell/PSScriptAnalyzer">PSScriptAnalyzer</a> で全角文字をキーに持つ hashtable を整形したとき期待どおりにならなのだけど、どう解決するのがいいのだろう？と悩んでる。</p><p>一応弁解しておくと、わたしの気持ちとしては「そんなところに全角文字使うとか危なげなことやめようや」だ。</p><p>ところが、今やってる仕事でスプレッドシートのデータをシステムに取り込むにあたり、それらをいくつかの CSV に分解・再構築する必要があって、その中でこのテーマに直面した。 PSCustomObject を CSV に変換する形でスクリプトを作ってるので、全角文字が識別子になるのだ。</p><p>普通に自分が書く範囲だとこんなの書かないので、最近まで気づかなかった。</p><p>VS Code で PowerShell を書くと、自動整形には <a href="https://github.com/PowerShell/PSScriptAnalyzer">PSScriptAnalyzer</a> の <code>Invoke-Formatter</code> が使われる。この戻り値が整形後のコードになるのだけど、ここで今回のテーマに直面する。</p><p>問題は以下のコードで再現できる。</p><pre><code class="powershell">$settings = @{
-    IncludeRules = @(
-        'PSAlignAssignmentStatement'
-    )
-
-    Rules = @{
-        PSAlignAssignmentStatement = @{
-            Enable = $true
-            # PSAlignAssignmentStatement.CheckHashtable が真だと、
-            # hashtable の要素の並びを整形してくれる。
-            CheckHashtable = $true
-        }
-    }
-}
-
-$script = @'
-$test = @{
-    A = 0
-    ABC = 0
-    ABCDE = 0
-    Ａ = 0
-    ＡＢＣ = 0
-    ＡＢＣＤＥ = 0
-}
-'@
-Invoke-Formatter -ScriptDefinition $script -Settings $settings
-</code></pre><p>出力はこうなる。これは期待のとおりではない。</p><pre><code class="powershell">$test = @{
-    A     = 0
-    ABC   = 0
-    ABCDE = 0
-    Ａ     = 0
-    ＡＢＣ   = 0
-    ＡＢＣＤＥ = 0
-}
-</code></pre><p>わたしはこうなってほしいと考える。</p><pre><code class="powershell">$test = @{
-    A          = 0
-    ABC        = 0
-    ABCDE      = 0
-    Ａ         = 0
-    ＡＢＣ     = 0
-    ＡＢＣＤＥ = 0
-}
-</code></pre><p>PSScriptAnalyzer のコードを調べて、 PSScriptAnalyzer 的には PowerShell のパーサが返した列番号(<code>EndColumnNumber</code>)の通りに整形してるのがわかった。
-<a href="https://github.com/PowerShell/PSScriptAnalyzer/blob/58c44234d44dfd0db35bb532906963e08fde8621/Rules/AlignAssignmentStatement.cs#L194">PSScriptAnalyzer/AlignAssignmentStatement.cs GetHashtableCorrections の L194</a></p><p>次に PowerShell のパーサを直接調べる。</p><pre><code class="powershell">$script = @'
-$test = @{
-    A = 0
-    ABC = 0
-    ABCDE = 0
-    Ａ = 0
-    ＡＢＣ = 0
-    ＡＢＣＤＥ = 0
-}
-'@
-
-function getColumnNumberString {
-    param (
-        $Extent
-    )
-    "start $($Extent.StartColumnNumber.ToString().PadLeft(2)) end $($Extent.EndColumnNumber.ToString().PadLeft(2))"
-}
-
-$ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$null)
-$hashAst = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.HashtableAst] }, $true)
-$hashAst.KeyValuePairs | ForEach-Object {
-    # Item1 がキーの情報、 Item2 は '=' の情報
-    $e1, $e2 = $_.Item1.Extent, $_.Item2.Extent
-    "key $(getColumnNumberString($e1)) | '=' $(getColumnNumberString($e2))"
-}
-</code></pre><p>出力はこうなって、全角文字の表示幅は考慮されてないのがわかる。</p><pre><code class="txt">key start  5 end  6 | '=' start  9 end 10
-key start  5 end  8 | '=' start 11 end 12
-key start  5 end 10 | '=' start 13 end 14
-key start  5 end  6 | '=' start  9 end 10
-key start  5 end  8 | '=' start 11 end 12
-key start  5 end 10 | '=' start 13 end 14
-</code></pre><p>じゃあこれは PowerShell のバグなのか？とまで考えを至らせると、いやパーサは表示する文字の幅を意識する必要あるか？と思えるので、これは誰が解決する問題なんや...と思っているのが、今の状況。</p><h3 id="他の言語を調べる">他の言語を調べる</h3><p>他の事例を調べて、全角文字を含むキーや識別子をアラインメントするとどうなるか比べてみる。</p><p>とはいえ、他の言語でアラインメントするようなフォーマットかける言語何があったっけ？
-少なくとも Python は違ったし、思いついたのは Go だけ。
-Go 以外にも思いついたら追加したい。</p><h4 id="go">Go</h4><p>こんな中身の <code>test.go</code> があるとする。</p><pre><code class="go">package main
-
-type person struct {
-	A int
-	ABC int
-	ABCDE int
-	Ａ int
-	ＡＢＣ int
-	ＡＢＣＤＥ int
-}
-</code></pre><p>これに <code>gofmt ./test.go</code> すると次の通り。</p><pre><code class="go">package main
-
-type person struct {
-        A     int
-        ABC   int
-        ABCDE int
-        Ａ     int
-        ＡＢＣ   int
-        ＡＢＣＤＥ int
-}
-</code></pre><p>やっぱり！ PowerShell の結果と同じ。</p><h3 id="現時点の理解">現時点の理解</h3><p>現実的には、パーサやフォーマッタがフォントの文字幅を考慮しないし、アラインメントしないのが妥当な落とし所なのかな。
-気持ちとしては、全角文字を含んだとしても綺麗にアラインメントしてほしいが、それもエッジケースなのでそんなに困ることがない。</p><p>とはいえ Unicode 文字の演算子とかポツポツあるし、幅の規定が厳格であればフォーマッタあたりで解消したいテーマではある気がする。</p><p>なんか締まらない締めになった。</p><p>とりあえず自分用の覚書としては、 PSScriptAnalyzer は <code>PSAlignAssignmentStatement.CheckHashtable=$false</code> で利用すればこの問題に悩まされることもないので、オススメする。</p>
+    <p>もう 15 年くらい使っている Logicool の M705 がある。</p><h3 id="この-m705-について">この M705 について</h3><p>この M705 は、昔ロジクールに勤めていた友人からもらったものだ。
+現行モデルは多分これ → <a href="https://www.logicool.co.jp/ja-jp/products/mice/m705m-wireless-mouse.910-005303.html">3 年の電池寿命を提供するロジクール M705m マラソン ワイヤレスマウス</a></p><p>もらってから数年の間はそんなに使ってなかったが、尋常でない電池寿命とハードデューティさに気づき、以降メインとして使っている。</p><p>わたしはマウスを「つまみ持ち」する。この M705 はわたしの持ち方に、クリックの押し込みの深さとか、軽く指を曲げた状態での親指と小指の間隔がバッチリハマっていて、同じマウスをずっと使っている。</p><p>トラッキングの位置が他のマウスとは結構違っていて、若干操作に癖を感じていたが、そこは慣れだったような記憶がある。</p><p>一時期左クリックがチャタリングを起こしたことがあって、数週間別のマウスに乗り換えて使わない時期があったのだが、放置中に直って以降はチャタリングも起こらなくなった(何故)。</p><h3 id="異変">異変</h3><p>この M705 だが、グリップ力強化かなんかの理由で、マウスの両サイドがラバーというかやわらかい合成樹脂でできている。
+これが利用から 10 年も経った頃から異変を感じるようになった。ボコボコしてきたり擦れるだけでラバーが削れたり。</p><p>最近知ったが、これは合成樹脂のブリーディングとかブリードアウトという現象のようだ。合成樹脂の成分自体が分離しだしてるから、拭き取ったりしてどうにかなるものでないということだった。</p><p>ここ数年は症状の進行も激しく、指で押すだけで指紋がつくくらいにラバーが劣化していた。</p><p>マウスを買い替えることも検討したが、まだメカニカルな部分は動くし、新しいマウスを選ぶのも結構労力がかかるよなーというのが悩みだった。
+そこで思い切って、このベタベタボロボロラバーを取り除こうと考えた。</p><h3 id="カスタマイズする">カスタマイズする</h3><p>M705 のベタベタボロボロラバーを取り除き、手元にあった黒のテーピングを重ねて貼ることにした。テーピングならラバー部分の形状に合わせることも簡単だし、親指＆小指の接触部分が汚れたとしてもまた貼り直せばいいだけなので、我ながら良いアイデアだ。</p><p>ベタボロラバーを取り除くのには、大型刃のカッターナイフと、細かい部分にはデザインナイフを利用した。いずれもオルファだ。</p><p>分解してみてわかったが、ラバーのボコボコしていた部分には溶け出した液状の謎成分が溜まっており、中々グロテスクだった。
+このマウスはプラスチックの骨格みたいなところにラバーをはめ込み＆貼り付けしてるような構造をしていて、プラスチック部分を極力傷つけないようにした。</p><p>小指側のラバーを取り除くのは非常に簡単だった。単にプラウチック部分の弧に合わせてカッターをすべらせるだけでスイスイ剥がせた。</p><p>親指側は形状的に窪んでいるので結構難しく、デザインナイフを使ってできるだけ細やかに処理した。特に親指部分のスイッチ(旧モデルにのみあるやつ。進む・戻るボタンじゃなく親指の位置にある)は可動部のラバーを取り除くと空洞になる。配線にカッターのはが届くので慎重に作業する必要があった。</p><p>分解を進めると、樹脂の劣化の進行具合が、指に触れる箇所とそうでない箇所で大きく異なるのが見て取れた。
+劣化が進んだ箇所はグズグズで、刃を滑らせるのも簡単だったが、親指側の指が触れない部分等は結構元のママの硬度のようで、ちょっと力が必要だった。</p><p>ベタボロラバーを取り除いたあとにはテーピングを施す。</p><p>曲面へ一枚で貼り付けるのは面倒なので、いくつかの面でテーピングを区切りそれを組み合わせて貼り付けた。
+やはり強度面で元のベタボロラバーに大きく劣るので、少なくても二重、親指ん可動部は三重にテーピングすることで強度を持たせてみた。</p><h3 id="感想">感想</h3><p>アイデアができてからは、作業に対した時間もかからなかったし、中々やってみてよかった。</p><p>結構長い期間をベタボロラバーの状態で触ってきたので、テーピングのサラサラした手触りになって中々新鮮味がある。</p><p>まだ使ってみて一週間程度なので、この後どの程度テーピング部分に汚れが蓄積していくかは見えていないが、まあ半年とかのスパンで交換できれば良いか。</p><p>お気に入りのマウスをより良い状態に改善し、継続して使い続ける術を新たに身に着けた。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/mouse">mouse</a>
     
 </div>
 
@@ -306,7 +216,7 @@ type person struct {
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">2022-05-07 F#で PowerShell コマンドレットを書き始めた &raquo;</a>
+        <a class="right" href="/posts/2022-05-14-think-about-alignment-of-full-width-chars">2022-05-14 East Asian な全角文字をキーに使った場合のアラインメントについて考える &raquo;</a>
         
     </div>
 </div>
