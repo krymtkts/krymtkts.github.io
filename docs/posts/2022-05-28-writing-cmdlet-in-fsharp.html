@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;tortoisegit&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/tortoisegit">
+    <title>krymtkts: F#でコマンドレットを書いてる</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-05-28-writing-cmdlet-in-fsharp">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;tortoisegit&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/tortoisegit" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-05-28-writing-cmdlet-in-fsharp" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -184,17 +184,45 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;tortoisegit&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-05-28</div>
+        
     </div>
-    <ul>
+    <h2>F#でコマンドレットを書いてる</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2022-02-19-i-cant-graduate-from-tortoise-git">2022-02-19 Tortoise Git から卒業できない</a>
-        </li>
+    <p><a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">以前 F# で PowerShell コマンドレットを書き始めた</a>と書いた。</p><p>ひと月くらいかけて主に休みの日にちょいちょい書き進めてきて、最近最低限動くようになったので public repo にした。
+<a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a></p><p>まだ激ショボな機能しかない。
+プロパティを指定してフィルタリングするとか、フィルタリングした見た目をこれまたテーブルフォーマットにするとか、 PowerShell ならではの良さをまだ全然作り込めてない。</p><p>さっぱり作り方がわからん <code>Format-Table</code> とか <code>-like</code> とか PowerShell のクラスをそのまま使いたい気分。無理やったら組むねんけど。</p><p><code>ls | pocof</code> したら Terminal Icons で鮮やかになったままフィルタリングされてほしいのよなー。
+この辺が組み込めたら、 PowerShell Gallery で公開したい。</p><p>現状正規表現でのフィルタリングくらいしかまともに使えるものがなく亀速な進捗だけど、Cmdlet を書いたり F# で書いたのも初めてだったから、楽しく取り組めた。</p><p>前にも書いた通り、これは poco の多言語フォークなんやけど、その動機としては poco の未実装だったり使いにくいところが起因してツール自体をあまり使いこなせてなかったところがある。
+自分自身あまりツールの使い込みは得意じゃなくて、なんなら自分流にアレンジできるタイプのツールしか使いこなせない。</p><p>DIY キーボードとかまさにその典型例なんやけど、キーバインディングが自分の制御下に置かれた途端ブラインドタッチができるようになったりしたので、何かと自分用に手を加えないといけないんだろう。</p><p>でもこれで poco というか pocof は自分の制御下に置いたのでなんか色々試してみたいお気持ち。</p><p>F# の書き心地に関しては、まだ慣れない点もあれど結構気に入ってる。 <code>else</code> は矯正してほしいところやけど。</p><p>着手前は試しにコンピュート式書いてみたいなーとか考えてたが、いまんとこ使おうと思えば使えるけど敢えて使うほどでもない感じで、使い所ない。
+大したことやってないからパターンマッチや高階関数使ってるだけでもサクサクできる。
+.NET 自体かなり久しぶりなこと(PowerShell つかってるけど全然 .NET に踏み込んでない...)と、 .NET と F# の世界の境界がまだ自分の中で曖昧で、そのへんは書きながら学んでいきたいなーという感じ。</p><p>何にせよ趣味プロのちょうどいいネタを見つけた。当分はこれで遊ぶ。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-    </ul>
+    <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
+    
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-05-22-customize-my-worn-out-705">2022-05-22 使い古しの Logicool M 705 をカスタマイズする &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>
