@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-06-05-whitespace-comparison-in-pwsh">PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる</a></li>
+                        
                         <li><a href="/posts/2022-05-28-writing-cmdlet-in-fsharp">F#でコマンドレットを書いてる</a></li>
                         
                         <li><a href="/posts/2022-05-22-customize-my-worn-out-705">使い古しの Logicool M 705 をカスタマイズする</a></li>
-                        
-                        <li><a href="/posts/2022-05-14-think-about-alignment-of-full-width-chars">East Asian な全角文字をキーに使った場合のアラインメントについて考える</a></li>
                         
                         
 
@@ -187,28 +187,115 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-05-28</div>
+        <div class="col-lg-6">2022-06-05</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる</h2>
+    <h2>PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる</h2>
 </div>
 <div>
     
-    <p><a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">以前 F# で PowerShell コマンドレットを書き始めた</a>と書いた。</p><p>ひと月くらいかけて主に休みの日にちょいちょい書き進めてきて、最近最低限動くようになったので public repo にした。
-<a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a></p><p>まだ激ショボな機能しかない。
-プロパティを指定してフィルタリングするとか、フィルタリングした見た目をこれまたテーブルフォーマットにするとか、 PowerShell ならではの良さをまだ全然作り込めてない。</p><p>さっぱり作り方がわからん <code>Format-Table</code> とか <code>-like</code> とか PowerShell のクラスをそのまま使いたい気分。無理やったら組むねんけど。</p><p><code>ls | pocof</code> したら Terminal Icons で鮮やかになったままフィルタリングされてほしいのよなー。
-この辺が組み込めたら、 PowerShell Gallery で公開したい。</p><p>現状正規表現でのフィルタリングくらいしかまともに使えるものがなく亀速な進捗だけど、Cmdlet を書いたり F# で書いたのも初めてだったから、楽しく取り組めた。</p><p>前にも書いた通り、これは poco の多言語フォークなんやけど、その動機としては poco の未実装だったり使いにくいところが起因してツール自体をあまり使いこなせてなかったところがある。
-自分自身あまりツールの使い込みは得意じゃなくて、なんなら自分流にアレンジできるタイプのツールしか使いこなせない。</p><p>DIY キーボードとかまさにその典型例なんやけど、キーバインディングが自分の制御下に置かれた途端ブラインドタッチができるようになったりしたので、何かと自分用に手を加えないといけないんだろう。</p><p>でもこれで poco というか pocof は自分の制御下に置いたのでなんか色々試してみたいお気持ち。</p><p>F# の書き心地に関しては、まだ慣れない点もあれど結構気に入ってる。 <code>else</code> は矯正してほしいところやけど。</p><p>着手前は試しにコンピュート式書いてみたいなーとか考えてたが、いまんとこ使おうと思えば使えるけど敢えて使うほどでもない感じで、使い所ない。
-大したことやってないからパターンマッチや高階関数使ってるだけでもサクサクできる。
-.NET 自体かなり久しぶりなこと(PowerShell つかってるけど全然 .NET に踏み込んでない...)と、 .NET と F# の世界の境界がまだ自分の中で曖昧で、そのへんは書きながら学んでいきたいなーという感じ。</p><p>何にせよ趣味プロのちょうどいいネタを見つけた。当分はこれで遊ぶ。</p>
+    <p>転職して 3 ヶ月目を迎えた。
+入社以降は何の因果か CRM の導入をやることになり、既存データ(スプレッドシート)の以降のために PowerShell を駆使している。</p><p>そんな中で今まで知らなかった PowerShell の表情をいくつも知ることができ(例えばコレとか)、なんやかんやで楽しんでいる。</p><p>その中で度肝を抜かれたのが、今日のテーマ。</p><p><code>' '</code>(U+0020) <code>-eq</code> <code>' '</code>(U+3000) が <code>True</code> となる。</p><p>PowerShell 7 と Windows PowerShell 5.1 で試した。</p><pre><code class="plaintext">Name                           Value
+----                           -----
+PSVersion                      7.2.4
+PSEdition                      Core
+GitCommitId                    7.2.4
+OS                             Microsoft Windows 10.0.22000
+Platform                       Win32NT
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0…}
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+WSManStackVersion              3.0
+</code></pre><pre><code class="plaintext">Name                           Value
+----                           -----
+PSVersion                      5.1.22000.653
+PSEdition                      Desktop
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
+BuildVersion                   10.0.22000.653
+CLRVersion                     4.0.30319.42000
+WSManStackVersion              3.0
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+</code></pre><p>7 だと <code>True</code> 、 5.1 だと <code>False</code> だ。
+<code>-ceq</code> だと 7 でも <code>False</code> を返すので <code>-ieq</code> の判定が違うのだけど、 PowerShell Core からこうなんだろうか？
+PowerShell の実装を追ってみたが、追いきれなかった。 めちゃくちゃ<a href="https://github.com/PowerShell/PowerShell/blob/87f621eb1fa94f1d114b0cc4a5fb7aab5d3133c9/src/System.Management.Automation/engine/parser/Compiler.cs#L5804%E3%83%BCL5806">ココ</a>っぽいのだけど、 LINQ に由来するクラス <a href="https://docs.microsoft.com/en-us/dotnet/api/system.linq.expressions.dynamicexpression.dynamic?view=net-6.0#system-linq-expressions-dynamicexpression-dynamic(system-runtime-compilerservices-callsitebinder-system-type-system-linq-expressions-expression-system-linq-expressions-expression)">DynamicExpression</a> とかの知識がないのでまだ調査中。</p><p>どう説明したらいいか悩むのが、いくつか試してみていてわかってきたのは、 <code>String</code> の <code>-ieq</code> でこの事象が見られること。 <code>Char</code> だと起こらない。</p><pre><code class="powershell">' ' -ieq '　' # True
+([char][int]'0x20') -ieq ([char][int]'0x3000')  # Char だと False
+([string][char][int]'0x20') -ieq ([string][char][int]'0x3000') # String だと True
+</code></pre><p>そしてもう 1 つ、 Unicode で General category が Separator, space と定義されているものが等値と判定されること。</p><p><a href="https://en.wikipedia.org/wiki/Whitespace_character#Unicode">Whitespace character - Wikipedia</a> の表が非常にわかりやすい。ここから以下のテストコードを作成し、先述の事実を導いた。</p><pre><code class="powershell">'0x0009', '0x000A', '0x000B', '0x000C', '0x000D', '0x0020', '0x0085', '0x00A0', '0x1680', '0x2000', '0x2001', '0x2002', '0x2003', '0x2004', '0x2005', '0x2006', '0x2007', '0x2008', '0x2009', '0x200A', '0x2028', '0x2029', '0x202F', '0x205F', '0x3000' | % { [PSCustomObject]@{
+    CodePoint = $_
+    isEquals = ([string][char][int]$_) -eq ' '
+}}
+</code></pre><pre><code class="plaintext">CodePoint isEquals
+--------- --------
+0x0009       False
+0x000A       False
+0x000B       False
+0x000C       False
+0x000D       False
+0x0020        True
+0x0085       False
+0x00A0        True
+0x1680        True
+0x2000        True
+0x2001        True
+0x2002        True
+0x2003        True
+0x2004        True
+0x2005        True
+0x2006        True
+0x2007        True
+0x2008        True
+0x2009        True
+0x200A        True
+0x2028       False
+0x2029       False
+0x202F        True
+0x205F        True
+0x3000        True
+</code></pre><p>あーココまで来ると、意図的な挙動 ≒ 仕様というのに当たりがつく。
+なので .NET の String クラスの挙動を見てみると...</p><pre><code class="powershell">' '.Equals('　', [StringComparison]::CurrentCultureIgnoreCase) # True
+
+'0x0009', '0x000A', '0x000B', '0x000C', '0x000D', '0x0020', '0x0085', '0x00A0', '0x1680', '0x2000', '0x2001', '0x2002', '0x2003', '0x2004', '0x2005', '0x2006', '0x2007', '0x2008', '0x2009', '0x200A', '0x2028', '0x2029', '0x202F', '0x205F', '0x3000' | % { [PSCustomObject]@{
+&gt;     CodePoint = $_
+&gt;     isEquals = ([string][char][int]$_).Equals(' ', [StringComparison]::CurrentCultureIgnoreCase)
+&gt; }}
+</code></pre><pre><code class="plaintext">CodePoint isEquals
+--------- --------
+0x0009       False
+0x000A       False
+0x000B       False
+0x000C       False
+0x000D       False
+0x0020        True
+0x0085       False
+0x00A0        True
+0x1680        True
+0x2000        True
+0x2001        True
+0x2002        True
+0x2003        True
+0x2004        True
+0x2005        True
+0x2006        True
+0x2007        True
+0x2008        True
+0x2009        True
+0x200A        True
+0x2028       False
+0x2029       False
+0x202F        True
+0x205F        True
+0x3000        True
+</code></pre><p><code>StringComparison.InvariantCultureIgnoreCase</code> は同じ結果。 <code>StringComparison.OrdinalIgnoreCase</code> は違う結果となった。</p><p><a href="https://docs.microsoft.com/en-us/dotnet/api/system.stringcomparison?view=net-6.0">StringComparison Enum (System) | Microsoft Docs</a></p><p>全然知らんかった...また世の中に恥を晒してしまったと共に、1 つ学んだわ。
+まだ確かな情報源を得たわけじゃないけど、きっと世の中のﾄﾞｯﾄﾈｯﾀｰにとっては常識なんやろなあ。
+手始めに ↓ コレちゃんと読むようにしよう...</p><p><a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/best-practices-strings">Best Practices for Comparing Strings in .NET | Microsoft Docs</a></p><hr /><p>ちなみにこの調査において、 <code>-like</code> には <code>System.Management.Automation.WildcardPattern</code> が使われていて、しかも公開されてるクラスというのがわかった。こんなのがあるの知らなかったわ。</p><p>そのまま <a href="https://github.com/krymtkts/pocof#readme">pocof</a> のワイルドカード検索で利用することにした。↓ こういう使い方。</p><pre><code class="powershell">([System.Management.Automation.WildcardPattern]"*ui*").IsMatch('kouiuno')
+</code></pre>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
     <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -218,7 +305,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-05-22-customize-my-worn-out-705">2022-05-22 使い古しの Logicool M 705 をカスタマイズする &raquo;</a>
+        <a class="right" href="/posts/2022-05-28-writing-cmdlet-in-fsharp">2022-05-28 F#でコマンドレットを書いてる &raquo;</a>
         
     </div>
 </div>

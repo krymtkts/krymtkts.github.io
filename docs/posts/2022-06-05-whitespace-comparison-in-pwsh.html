@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: PowerShell で Docker Toolbox を使う</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell">
+    <title>krymtkts: PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-06-05-whitespace-comparison-in-pwsh">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: PowerShell で Docker Toolbox を使う" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-10-13-docker-toolbox-with-powershell" />
+    <meta property="og:title" content="krymtkts: PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-06-05-whitespace-comparison-in-pwsh" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -187,16 +187,109 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-10-13</div>
+        <div class="col-lg-6">2022-06-05</div>
         
     </div>
-    <h2>PowerShell で Docker Toolbox を使う</h2>
+    <h2>PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる</h2>
 </div>
 <div>
     
-    <p>へーしゃはちょっといけてなくて、秘伝の古い VM をコンテナ化しない<del>できない</del>まま使っている。</p><p>加えて社内は Windows ユーザと Mac ユーザがごちゃまぜなので VM が VirtualBox のため、Windows ユーザであるわたしは Docker on Windows を使えず。</p><p>Docker Toolbox を日常使いしているのだが、<code>docker</code>に<code>docker-compose</code>に<code>docker-machine</code>まで現れたらコマンドやオプションが覚えきれないのが現状である 😭</p><p>これらを PowerShell で楽ちんに使おう。いますぐ以下のモジュールを PSGallery からゲットしよう。これらを発見したときは狂喜乱舞した。</p><ul><li><a href="https://www.powershellgallery.com/packages/DockerCompletion/1.1903.0.190723">PowerShell Gallery | DockerCompletion 1.1903.0.190723</a></li><li><a href="https://www.powershellgallery.com/packages/DockerComposeCompletion/1.24.0.190329">PowerShell Gallery | DockerComposeCompletion 1.24.0.190329</a></li><li><a href="https://www.powershellgallery.com/packages/DockerMachineCompletion/0.16.2.190903">PowerShell Gallery | DockerMachineCompletion 0.16.2.190903</a></li></ul><p>以下、雑なインストール例。もちろん PowerShell Guys(勝手にそう呼んでいる)なら自前の Profile に追記しよう。</p><pre><code class="powershell">Install-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
-Import-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineCompletion
-</code></pre><p>これで<code>docker-machine start</code>に始まり<code>docker</code>やら<code>docker-compose</code>でのイメージ・コンテナの名前補完とか諸々できるようになる。世の中、すごいモジュールを作る方がいるもんやねえ 🤔</p>
+    <p>転職して 3 ヶ月目を迎えた。
+入社以降は何の因果か CRM の導入をやることになり、既存データ(スプレッドシート)の以降のために PowerShell を駆使している。</p><p>そんな中で今まで知らなかった PowerShell の表情をいくつも知ることができ(例えばコレとか)、なんやかんやで楽しんでいる。</p><p>その中で度肝を抜かれたのが、今日のテーマ。</p><p><code>' '</code>(U+0020) <code>-eq</code> <code>' '</code>(U+3000) が <code>True</code> となる。</p><p>PowerShell 7 と Windows PowerShell 5.1 で試した。</p><pre><code class="plaintext">Name                           Value
+----                           -----
+PSVersion                      7.2.4
+PSEdition                      Core
+GitCommitId                    7.2.4
+OS                             Microsoft Windows 10.0.22000
+Platform                       Win32NT
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0…}
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+WSManStackVersion              3.0
+</code></pre><pre><code class="plaintext">Name                           Value
+----                           -----
+PSVersion                      5.1.22000.653
+PSEdition                      Desktop
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
+BuildVersion                   10.0.22000.653
+CLRVersion                     4.0.30319.42000
+WSManStackVersion              3.0
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+</code></pre><p>7 だと <code>True</code> 、 5.1 だと <code>False</code> だ。
+<code>-ceq</code> だと 7 でも <code>False</code> を返すので <code>-ieq</code> の判定が違うのだけど、 PowerShell Core からこうなんだろうか？
+PowerShell の実装を追ってみたが、追いきれなかった。 めちゃくちゃ<a href="https://github.com/PowerShell/PowerShell/blob/87f621eb1fa94f1d114b0cc4a5fb7aab5d3133c9/src/System.Management.Automation/engine/parser/Compiler.cs#L5804%E3%83%BCL5806">ココ</a>っぽいのだけど、 LINQ に由来するクラス <a href="https://docs.microsoft.com/en-us/dotnet/api/system.linq.expressions.dynamicexpression.dynamic?view=net-6.0#system-linq-expressions-dynamicexpression-dynamic(system-runtime-compilerservices-callsitebinder-system-type-system-linq-expressions-expression-system-linq-expressions-expression)">DynamicExpression</a> とかの知識がないのでまだ調査中。</p><p>どう説明したらいいか悩むのが、いくつか試してみていてわかってきたのは、 <code>String</code> の <code>-ieq</code> でこの事象が見られること。 <code>Char</code> だと起こらない。</p><pre><code class="powershell">' ' -ieq '　' # True
+([char][int]'0x20') -ieq ([char][int]'0x3000')  # Char だと False
+([string][char][int]'0x20') -ieq ([string][char][int]'0x3000') # String だと True
+</code></pre><p>そしてもう 1 つ、 Unicode で General category が Separator, space と定義されているものが等値と判定されること。</p><p><a href="https://en.wikipedia.org/wiki/Whitespace_character#Unicode">Whitespace character - Wikipedia</a> の表が非常にわかりやすい。ここから以下のテストコードを作成し、先述の事実を導いた。</p><pre><code class="powershell">'0x0009', '0x000A', '0x000B', '0x000C', '0x000D', '0x0020', '0x0085', '0x00A0', '0x1680', '0x2000', '0x2001', '0x2002', '0x2003', '0x2004', '0x2005', '0x2006', '0x2007', '0x2008', '0x2009', '0x200A', '0x2028', '0x2029', '0x202F', '0x205F', '0x3000' | % { [PSCustomObject]@{
+    CodePoint = $_
+    isEquals = ([string][char][int]$_) -eq ' '
+}}
+</code></pre><pre><code class="plaintext">CodePoint isEquals
+--------- --------
+0x0009       False
+0x000A       False
+0x000B       False
+0x000C       False
+0x000D       False
+0x0020        True
+0x0085       False
+0x00A0        True
+0x1680        True
+0x2000        True
+0x2001        True
+0x2002        True
+0x2003        True
+0x2004        True
+0x2005        True
+0x2006        True
+0x2007        True
+0x2008        True
+0x2009        True
+0x200A        True
+0x2028       False
+0x2029       False
+0x202F        True
+0x205F        True
+0x3000        True
+</code></pre><p>あーココまで来ると、意図的な挙動 ≒ 仕様というのに当たりがつく。
+なので .NET の String クラスの挙動を見てみると...</p><pre><code class="powershell">' '.Equals('　', [StringComparison]::CurrentCultureIgnoreCase) # True
+
+'0x0009', '0x000A', '0x000B', '0x000C', '0x000D', '0x0020', '0x0085', '0x00A0', '0x1680', '0x2000', '0x2001', '0x2002', '0x2003', '0x2004', '0x2005', '0x2006', '0x2007', '0x2008', '0x2009', '0x200A', '0x2028', '0x2029', '0x202F', '0x205F', '0x3000' | % { [PSCustomObject]@{
+&gt;     CodePoint = $_
+&gt;     isEquals = ([string][char][int]$_).Equals(' ', [StringComparison]::CurrentCultureIgnoreCase)
+&gt; }}
+</code></pre><pre><code class="plaintext">CodePoint isEquals
+--------- --------
+0x0009       False
+0x000A       False
+0x000B       False
+0x000C       False
+0x000D       False
+0x0020        True
+0x0085       False
+0x00A0        True
+0x1680        True
+0x2000        True
+0x2001        True
+0x2002        True
+0x2003        True
+0x2004        True
+0x2005        True
+0x2006        True
+0x2007        True
+0x2008        True
+0x2009        True
+0x200A        True
+0x2028       False
+0x2029       False
+0x202F        True
+0x205F        True
+0x3000        True
+</code></pre><p><code>StringComparison.InvariantCultureIgnoreCase</code> は同じ結果。 <code>StringComparison.OrdinalIgnoreCase</code> は違う結果となった。</p><p><a href="https://docs.microsoft.com/en-us/dotnet/api/system.stringcomparison?view=net-6.0">StringComparison Enum (System) | Microsoft Docs</a></p><p>全然知らんかった...また世の中に恥を晒してしまったと共に、1 つ学んだわ。
+まだ確かな情報源を得たわけじゃないけど、きっと世の中のﾄﾞｯﾄﾈｯﾀｰにとっては常識なんやろなあ。
+手始めに ↓ コレちゃんと読むようにしよう...</p><p><a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/best-practices-strings">Best Practices for Comparing Strings in .NET | Microsoft Docs</a></p><hr /><p>ちなみにこの調査において、 <code>-like</code> には <code>System.Management.Automation.WildcardPattern</code> が使われていて、しかも公開されてるクラスというのがわかった。こんなのがあるの知らなかったわ。</p><p>そのまま <a href="https://github.com/krymtkts/pocof#readme">pocof</a> のワイルドカード検索で利用することにした。↓ こういう使い方。</p><pre><code class="powershell">([System.Management.Automation.WildcardPattern]"*ui*").IsMatch('kouiuno')
+</code></pre>
 </div>
 
 <div id="post-tags">
@@ -204,19 +297,13 @@ Import-Module -Name DockerCompletion,DockerComposeCompletion,DockerMachineComple
     
     <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/docker">docker</a>
-    
-    <a href="/tags/docker-toolbox">docker-toolbox</a>
-    
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-10-14-how-to-handle-waiter-of-boto3">&laquo; 2019-10-14 boto3 の Waiter さんとの戯れ</a>
         
-        
-        <a class="right" href="/posts/2019-09-22-limitaion-of-remove-certificates">2019-09-22 ALBのListenerから証明書を削除するときの制限 &raquo;</a>
+        <a class="right" href="/posts/2022-05-28-writing-cmdlet-in-fsharp">2022-05-28 F#でコマンドレットを書いてる &raquo;</a>
         
     </div>
 

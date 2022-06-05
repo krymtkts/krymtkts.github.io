@@ -1,4 +1,99 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 28 May 2022 16:38:26 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-05-28-writing-cmdlet-in-fsharp</guid><link>https://krymtkts.github.io/posts/2022-05-28-writing-cmdlet-in-fsharp</link><title>F#でコマンドレットを書いてる</title><description>&lt;p&gt;&lt;a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp"&gt;以前 F# で PowerShell コマンドレットを書き始めた&lt;/a&gt;と書いた。&lt;/p&gt;&lt;p&gt;ひと月くらいかけて主に休みの日にちょいちょい書き進めてきて、最近最低限動くようになったので public repo にした。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 05 Jun 2022 17:20:31 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-06-05-whitespace-comparison-in-pwsh</guid><link>https://krymtkts.github.io/posts/2022-06-05-whitespace-comparison-in-pwsh</link><title>PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる</title><description>&lt;p&gt;転職して 3 ヶ月目を迎えた。
+入社以降は何の因果か CRM の導入をやることになり、既存データ(スプレッドシート)の以降のために PowerShell を駆使している。&lt;/p&gt;&lt;p&gt;そんな中で今まで知らなかった PowerShell の表情をいくつも知ることができ(例えばコレとか)、なんやかんやで楽しんでいる。&lt;/p&gt;&lt;p&gt;その中で度肝を抜かれたのが、今日のテーマ。&lt;/p&gt;&lt;p&gt;&lt;code&gt;' '&lt;/code&gt;(U+0020) &lt;code&gt;-eq&lt;/code&gt; &lt;code&gt;' '&lt;/code&gt;(U+3000) が &lt;code&gt;True&lt;/code&gt; となる。&lt;/p&gt;&lt;p&gt;PowerShell 7 と Windows PowerShell 5.1 で試した。&lt;/p&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;Name                           Value
+----                           -----
+PSVersion                      7.2.4
+PSEdition                      Core
+GitCommitId                    7.2.4
+OS                             Microsoft Windows 10.0.22000
+Platform                       Win32NT
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0…}
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+WSManStackVersion              3.0
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;Name                           Value
+----                           -----
+PSVersion                      5.1.22000.653
+PSEdition                      Desktop
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
+BuildVersion                   10.0.22000.653
+CLRVersion                     4.0.30319.42000
+WSManStackVersion              3.0
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;7 だと &lt;code&gt;True&lt;/code&gt; 、 5.1 だと &lt;code&gt;False&lt;/code&gt; だ。
+&lt;code&gt;-ceq&lt;/code&gt; だと 7 でも &lt;code&gt;False&lt;/code&gt; を返すので &lt;code&gt;-ieq&lt;/code&gt; の判定が違うのだけど、 PowerShell Core からこうなんだろうか？
+PowerShell の実装を追ってみたが、追いきれなかった。 めちゃくちゃ&lt;a href="https://github.com/PowerShell/PowerShell/blob/87f621eb1fa94f1d114b0cc4a5fb7aab5d3133c9/src/System.Management.Automation/engine/parser/Compiler.cs#L5804%E3%83%BCL5806"&gt;ココ&lt;/a&gt;っぽいのだけど、 LINQ に由来するクラス &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.linq.expressions.dynamicexpression.dynamic?view=net-6.0#system-linq-expressions-dynamicexpression-dynamic(system-runtime-compilerservices-callsitebinder-system-type-system-linq-expressions-expression-system-linq-expressions-expression)"&gt;DynamicExpression&lt;/a&gt; とかの知識がないのでまだ調査中。&lt;/p&gt;&lt;p&gt;どう説明したらいいか悩むのが、いくつか試してみていてわかってきたのは、 &lt;code&gt;String&lt;/code&gt; の &lt;code&gt;-ieq&lt;/code&gt; でこの事象が見られること。 &lt;code&gt;Char&lt;/code&gt; だと起こらない。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;' ' -ieq '　' # True
+([char][int]'0x20') -ieq ([char][int]'0x3000')  # Char だと False
+([string][char][int]'0x20') -ieq ([string][char][int]'0x3000') # String だと True
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;そしてもう 1 つ、 Unicode で General category が Separator, space と定義されているものが等値と判定されること。&lt;/p&gt;&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/Whitespace_character#Unicode"&gt;Whitespace character - Wikipedia&lt;/a&gt; の表が非常にわかりやすい。ここから以下のテストコードを作成し、先述の事実を導いた。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;'0x0009', '0x000A', '0x000B', '0x000C', '0x000D', '0x0020', '0x0085', '0x00A0', '0x1680', '0x2000', '0x2001', '0x2002', '0x2003', '0x2004', '0x2005', '0x2006', '0x2007', '0x2008', '0x2009', '0x200A', '0x2028', '0x2029', '0x202F', '0x205F', '0x3000' | % { [PSCustomObject]@{
+    CodePoint = $_
+    isEquals = ([string][char][int]$_) -eq ' '
+}}
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;CodePoint isEquals
+--------- --------
+0x0009       False
+0x000A       False
+0x000B       False
+0x000C       False
+0x000D       False
+0x0020        True
+0x0085       False
+0x00A0        True
+0x1680        True
+0x2000        True
+0x2001        True
+0x2002        True
+0x2003        True
+0x2004        True
+0x2005        True
+0x2006        True
+0x2007        True
+0x2008        True
+0x2009        True
+0x200A        True
+0x2028       False
+0x2029       False
+0x202F        True
+0x205F        True
+0x3000        True
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;あーココまで来ると、意図的な挙動 ≒ 仕様というのに当たりがつく。
+なので .NET の String クラスの挙動を見てみると...&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;' '.Equals('　', [StringComparison]::CurrentCultureIgnoreCase) # True
+
+'0x0009', '0x000A', '0x000B', '0x000C', '0x000D', '0x0020', '0x0085', '0x00A0', '0x1680', '0x2000', '0x2001', '0x2002', '0x2003', '0x2004', '0x2005', '0x2006', '0x2007', '0x2008', '0x2009', '0x200A', '0x2028', '0x2029', '0x202F', '0x205F', '0x3000' | % { [PSCustomObject]@{
+&amp;gt;     CodePoint = $_
+&amp;gt;     isEquals = ([string][char][int]$_).Equals(' ', [StringComparison]::CurrentCultureIgnoreCase)
+&amp;gt; }}
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;CodePoint isEquals
+--------- --------
+0x0009       False
+0x000A       False
+0x000B       False
+0x000C       False
+0x000D       False
+0x0020        True
+0x0085       False
+0x00A0        True
+0x1680        True
+0x2000        True
+0x2001        True
+0x2002        True
+0x2003        True
+0x2004        True
+0x2005        True
+0x2006        True
+0x2007        True
+0x2008        True
+0x2009        True
+0x200A        True
+0x2028       False
+0x2029       False
+0x202F        True
+0x205F        True
+0x3000        True
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;StringComparison.InvariantCultureIgnoreCase&lt;/code&gt; は同じ結果。 &lt;code&gt;StringComparison.OrdinalIgnoreCase&lt;/code&gt; は違う結果となった。&lt;/p&gt;&lt;p&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.stringcomparison?view=net-6.0"&gt;StringComparison Enum (System) | Microsoft Docs&lt;/a&gt;&lt;/p&gt;&lt;p&gt;全然知らんかった...また世の中に恥を晒してしまったと共に、1 つ学んだわ。
+まだ確かな情報源を得たわけじゃないけど、きっと世の中のﾄﾞｯﾄﾈｯﾀｰにとっては常識なんやろなあ。
+手始めに ↓ コレちゃんと読むようにしよう...&lt;/p&gt;&lt;p&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/best-practices-strings"&gt;Best Practices for Comparing Strings in .NET | Microsoft Docs&lt;/a&gt;&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;ちなみにこの調査において、 &lt;code&gt;-like&lt;/code&gt; には &lt;code&gt;System.Management.Automation.WildcardPattern&lt;/code&gt; が使われていて、しかも公開されてるクラスというのがわかった。こんなのがあるの知らなかったわ。&lt;/p&gt;&lt;p&gt;そのまま &lt;a href="https://github.com/krymtkts/pocof#readme"&gt;pocof&lt;/a&gt; のワイルドカード検索で利用することにした。↓ こういう使い方。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;([System.Management.Automation.WildcardPattern]"*ui*").IsMatch('kouiuno')
+&lt;/code&gt;&lt;/pre&gt;</description><pubDate>Sun, 05 Jun 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-05-28-writing-cmdlet-in-fsharp</guid><link>https://krymtkts.github.io/posts/2022-05-28-writing-cmdlet-in-fsharp</link><title>F#でコマンドレットを書いてる</title><description>&lt;p&gt;&lt;a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp"&gt;以前 F# で PowerShell コマンドレットを書き始めた&lt;/a&gt;と書いた。&lt;/p&gt;&lt;p&gt;ひと月くらいかけて主に休みの日にちょいちょい書き進めてきて、最近最低限動くようになったので public repo にした。
 &lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt;&lt;/p&gt;&lt;p&gt;まだ激ショボな機能しかない。
 プロパティを指定してフィルタリングするとか、フィルタリングした見た目をこれまたテーブルフォーマットにするとか、 PowerShell ならではの良さをまだ全然作り込めてない。&lt;/p&gt;&lt;p&gt;さっぱり作り方がわからん &lt;code&gt;Format-Table&lt;/code&gt; とか &lt;code&gt;-like&lt;/code&gt; とか PowerShell のクラスをそのまま使いたい気分。無理やったら組むねんけど。&lt;/p&gt;&lt;p&gt;&lt;code&gt;ls | pocof&lt;/code&gt; したら Terminal Icons で鮮やかになったままフィルタリングされてほしいのよなー。
 この辺が組み込めたら、 PowerShell Gallery で公開したい。&lt;/p&gt;&lt;p&gt;現状正規表現でのフィルタリングくらいしかまともに使えるものがなく亀速な進捗だけど、Cmdlet を書いたり F# で書いたのも初めてだったから、楽しく取り組めた。&lt;/p&gt;&lt;p&gt;前にも書いた通り、これは poco の多言語フォークなんやけど、その動機としては poco の未実装だったり使いにくいところが起因してツール自体をあまり使いこなせてなかったところがある。
