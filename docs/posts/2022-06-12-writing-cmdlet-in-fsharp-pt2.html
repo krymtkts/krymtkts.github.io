@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;mechanicalkeyboard&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/mechanicalkeyboard">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.2</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-06-12-writing-cmdlet-in-fsharp-pt2">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;mechanicalkeyboard&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/mechanicalkeyboard" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.2" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-06-12-writing-cmdlet-in-fsharp-pt2" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -184,21 +184,58 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;mechanicalkeyboard&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-06-12</div>
+        
     </div>
-    <ul>
+    <h2>F#でコマンドレットを書いてる pt.2</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2019-01-17-build-qmk-firmware-of-planck">2019-01-17 Planckのキーマップをビルドする</a>
-        </li>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>平日仕事の方ばっかりやってるので亀な進捗だ。
+ひとまず<a href="/posts/2022-06-05-whitespace-comparison-in-pwsh"><code>System.Management.Automation.WildcardPattern</code> の使い方がわかった</a> のを皮切りに、 <code>-like</code>,<code>-match</code>,<code>-eq</code> あたりのフィルタを実装した。</p><p>あとプロパティを指定しての絞り込みとかを実装してないが、これは <code>PSObject</code> から目当てのプロパティを拾ってマッチするだけなので、多分むずくないだろう。</p><p>いま一番頭を悩ませている課題は、絞り込みを確定するまでの間印字する内容についてだ。
+やはり PowerShell でインタラクティブなフィルタリングをするのであれば、印字する内容も PowerShell の <code>Format-Table</code> ライクな印字をしたい。
+例えば <a href="https://github.com/devblackops/Terminal-Icons">Terminal-Icons</a> を使っていたら、カラフルな <code>Get-ChildItem</code> の結果のママ絞り込みしたい。ただそのやり方がさっぱり分からない。</p><p>全くわからんなりに、とりあえず F# 内から PowerShell を実行する練習として、 <code>PowerShell.Create</code> でコマンドレットを動かしてみただけというコードは動かしてみた。</p><pre><code class="fsharp">[&lt;Cmdlet(VerbsDiagnostic.Test, "Pocof")&gt;]
+[&lt;OutputType(typeof&lt;PSObject&gt;)&gt;]
+type TestPocofCommand() =
+    inherit PSCmdlet()
+
+    override __.EndProcessing() =
+        __.WriteObject
+        &lt;| PowerShell
+            .Create()
+            .AddCommand("Get-ChildItem")
+            .AddCommand("Format-Table")
+            .Invoke() // まじで意味ない
+</code></pre><p>このへんまだ調査不足のため、以下に記すのはメモ書きレベル。つか <a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell?view=powershellsdk-7.0.0">PowerShell Class</a> だけでなく PowerShell SDK のドキュメントむずくない？
+全体的に読んでてもよくわからん(愚痴)。</p><ul><li>これをやろうとしたら <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_format.ps1xml?view=powershell-7.2">Format.ps1xml</a> が反映された状態の文字列を F# 内で作らないといけないが、 F# 内で <code>PowerShell.Create</code> したとてセッションの引き継ぎができるのかがわからん
+<ul><li><a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell.create?view=powershellsdk-7.0.0#system-management-automation-powershell-create(system-management-automation-runspacemode)">PowerShell.Create</a> あたりでどうにかなりそうに見えるけど試せてない</li></ul></li><li>PowerShell SDK の中には <code>FormatTableCommand</code> という名のまさに <code>Format-Table</code> そのものがあるが、こいつの Input に <code>SelectPocofCommand</code> からデータを食わす方法がわからん
+<ul><li>これも多分実行時に引数で渡せるようにみえるけど(略) <a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell.invoke?view=powershellsdk-7.0.0#system-management-automation-powershell-invoke-1(system-collections-ienumerable)">PowerShell.Invoke Method</a></li></ul></li><li>これらが想定通りで期待の Output が得られたとて、正直な気持ちは F# 内で PowerShell の実行エンジン作ってまでやりたくないなー(なんか重そう)、もっと簡単に <code>Format-Table</code> の出力を得る方法はないんかいな、というお気持ち</li></ul><p><code>System.Management.Automation.WildcardPattern</code> みたいな外部から見える場所に PowerShell 内部で使ってる機能がいい感じに提供されてたらいいのだけど、そんな感じではなさそう。</p><p>見た目に動きのある機能実装ができたときの嬉しさはやっぱひとしおなので、取り組みたい、けどまだ情報＆能力的に不足してるなーというところ。何やるにしても手を動かせるまでに異様に時間がかかる。
+ひとまずは調査継続しつつ他の課題潰していくか。</p><p>ほんま仕事とは一切接点無くて趣味プロとして最高のテーマになってる。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2019-01-14-ortho-linear-keyboard-planck">2019-01-14 Ortho-Linear Keyboard &quot;Planck&quot;</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-    </ul>
+    <a href="/tags/fsharp">fsharp</a>
+    
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-06-05-whitespace-comparison-in-pwsh">2022-06-05 PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>
