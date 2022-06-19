@@ -1,4 +1,91 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 12 Jun 2022 16:13:23 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-06-12-writing-cmdlet-in-fsharp-pt2</guid><link>https://krymtkts.github.io/posts/2022-06-12-writing-cmdlet-in-fsharp-pt2</link><title>F#でコマンドレットを書いてる pt.2</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;平日仕事の方ばっかりやってるので亀な進捗だ。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 19 Jun 2022 16:50:49 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-06-19-belatedly-parallel-foreach-object</guid><link>https://krymtkts.github.io/posts/2022-06-19-belatedly-parallel-foreach-object</link><title>今更 ForEach-Object -Parallel</title><description>&lt;p&gt;今更だが、直列だと長時間かかる処理を分散させるために &lt;code&gt;ForEach-Object -Parallel&lt;/code&gt; を使う必要があった。
+困ったというほどでもないけど、真面目に使ったことなかったので、今回学んだ気をつけポイントをまとめる。
+(毎度の如く PowerShell でそれをやる必要は全くなかったが、ぱっと手を動かしたくてついやってしまった)&lt;/p&gt;&lt;ul&gt;&lt;li&gt;参照
+&lt;ul&gt;&lt;li&gt;&lt;a href="https://devblogs.microsoft.com/powershell/powershell-foreach-object-parallel-feature/"&gt;PowerShell ForEach-Object Parallel Feature - PowerShell Team&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/powershell/module/psworkflow/about/about_foreach-parallel?view=powershell-5.1"&gt;about Foreach-Parallel - PowerShell | Microsoft Docs&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://stackoverflow.com/questions/61273189/how-to-pass-a-custom-function-inside-a-foreach-object-parallel/61273544#61273544"&gt;powershell - How to pass a custom function inside a ForEach-Object -Parallel - Stack Overflow&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;hr /&gt;&lt;h3 id="並列数の制御"&gt;並列数の制御&lt;/h3&gt;&lt;p&gt;&lt;code&gt;-Parallel&lt;/code&gt; はとにかく遅い。異なる runspace が作成されそこで実行されるからだ。
+なのでとにかく計算時間がかかるんやというような処理だけ渡すようにした方がいい。&lt;/p&gt;&lt;p&gt;今回は、あらかじめ &lt;code&gt;ThrottleLimit&lt;/code&gt; と同じ数の &lt;code&gt;InputObject&lt;/code&gt; に調整して重いコマンドを打つ方針を使った。
+消えては立ち上がり x2 するような書き方をした方ではやはり runspace 作成のオーバーヘッドが、処理時間という形で顕著に見られた。
+スクリプトブロックが消えては立ち上がり x2 しないように、スクリプトブロック内で重い 1 処理を実行する方が良かった(AWS のリソースを一括操作するやつだからできたことだけど)。&lt;/p&gt;&lt;p&gt;1 ヵ月分のデータを加工する必要があって、対象日毎に 1 処理にすることができたので、それを約 30 並列でやった。
+イメージ ↓&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;$begin = (Get-Date -Day 1 -Hour 0 -Minute 0 -Second 0 -Millisecond 0)
+$end = $begin.AddMonths(1).AddDays(-1)
+$dateRange = @()
+while ($begin -le $end) {
+    $dateRange += $begin
+    $begin = $begin.AddDays(1)
+}
+$dateRange | ForEach-Object -ThrottleLimit $dateRange.Length -Parallel {
+    # 長時間かかる処理.
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="スクリプトブロック外のリソース参照"&gt;スクリプトブロック外のリソース参照&lt;/h3&gt;&lt;p&gt;&lt;code&gt;$using:&lt;/code&gt; 修飾子をつけたら変数を参照できる。
+ただしスクリプトブロックや関数には使えない。&lt;/p&gt;&lt;p&gt;関数をどうしても使いまわしたいときは、文字列に変換した上で取り込む技もある。 &lt;a href="https://stackoverflow.com/questions/61273189/how-to-pass-a-custom-function-inside-a-foreach-object-parallel/61273544#61273544"&gt;powershell - How to pass a custom function inside a ForEach-Object -Parallel - Stack Overflow&lt;/a&gt;&lt;/p&gt;&lt;p&gt;が、スクリプトブロック内でしか使わないのであればその中に関数を定義してしまったほうが楽か。
+&lt;a href="https://devblogs.microsoft.com/powershell/powershell-foreach-object-parallel-feature/#comment-171"&gt;最もクリーンな方法でオススメらしいし&lt;/a&gt;、実際にそうした。&lt;/p&gt;&lt;p&gt;(&lt;code&gt;Import-Module&lt;/code&gt; すればいいのだけどいちいちモジュールを作らないこともあろう)&lt;/p&gt;&lt;p&gt;技を使うとこうなる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function Get-Identity {
+    param (
+        [Parameter(Mandatory,
+            Position = 0,
+            ValueFromPipeline
+        )]
+        [PSObject]
+        $Value
+    )
+    process {
+        $Value
+    }
+}
+
+$funcDef = ${function:Get-Identity}.ToString()
+
+function Test-UsingFuncInParallel {
+    [CmdletBinding()]
+    param ()
+
+    1..30 | ForEach-Object -Parallel {
+        ${function:Get-Identity} = $using:funcDef
+        $_ | Get-Identity | Write-Host
+    } -ThrottleLimit 30
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;技を使わない版。当然ながらスクリプトブロックは間延びする。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function Test-UsingFuncInParallel {
+    [CmdletBinding()]
+    param ()
+
+    1..30 | ForEach-Object -Parallel {
+        function Get-Identity {
+            param (
+                [Parameter(Mandatory,
+                    Position = 0,
+                    ValueFromPipeline
+                )]
+                [PSObject]
+                $Value
+            )
+            process {
+                $Value
+            }
+        }
+
+        $_ | Get-Identity | Write-Host
+    } -ThrottleLimit 30
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;使う関数が多いとスクリプトブロックも伸びがちなので、使い分けを検討した方が良かろう。
+用途次第だが、わたしの場合は先述の通り並列数 MAX ピッタリに調整した &lt;code&gt;InputObject&lt;/code&gt; を使て長時間の処理を流すだろうから、 runspace の作成のコストはそれほど気にならない。スクリプトブロックの中がごちゃごちゃしないことのメリットがあるかも知れん。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;あと微妙にハマったのが &lt;code&gt;$PSCmdlet&lt;/code&gt; の参照。&lt;/p&gt;&lt;p&gt;&lt;code&gt;$using:&lt;/code&gt; つけ忘れてると単に &lt;code&gt;$null&lt;/code&gt; なだけなのでエラーメッセージ見てもピンときにくい。&lt;/p&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;Line |
+   2 |          if ($PSCmdlet.ShouldProcess($_, 'Write-Host')) {
+     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | You cannot call a method on a null-valued expression.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;さらに関数の呼び出し時はカッコで囲む必要がある。カッコがないと Parse Error。&lt;/p&gt;&lt;pre&gt;&lt;code class="diff"&gt; function Test-ShouldProcessInParallel {
+     [CmdletBinding(SupportsShouldProcess)]
+     param ()
+
+     1..30 | ForEach-Object -Parallel {
+-        if ($using:PSCmdlet.ShouldProcess($_, 'Write-Host')) {
++        if (($using:PSCmdlet).ShouldProcess($_, 'Write-Host')) {
+             $_ | Write-Host
+         }
+     } -ThrottleLimit 30
+ }
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;ParserError:
+Line |
+   6 |          if ($using:PSCmdlet.ShouldProcess($_, 'Write-Host')) {
+     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Expression is not allowed in a Using expression.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;あとなんか見慣れぬエラーになる時があったが忘れた。再現できたら追記したい。&lt;/p&gt;</description><pubDate>Sun, 19 Jun 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-06-12-writing-cmdlet-in-fsharp-pt2</guid><link>https://krymtkts.github.io/posts/2022-06-12-writing-cmdlet-in-fsharp-pt2</link><title>F#でコマンドレットを書いてる pt.2</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;平日仕事の方ばっかりやってるので亀な進捗だ。
 ひとまず&lt;a href="/posts/2022-06-05-whitespace-comparison-in-pwsh"&gt;&lt;code&gt;System.Management.Automation.WildcardPattern&lt;/code&gt; の使い方がわかった&lt;/a&gt; のを皮切りに、 &lt;code&gt;-like&lt;/code&gt;,&lt;code&gt;-match&lt;/code&gt;,&lt;code&gt;-eq&lt;/code&gt; あたりのフィルタを実装した。&lt;/p&gt;&lt;p&gt;あとプロパティを指定しての絞り込みとかを実装してないが、これは &lt;code&gt;PSObject&lt;/code&gt; から目当てのプロパティを拾ってマッチするだけなので、多分むずくないだろう。&lt;/p&gt;&lt;p&gt;いま一番頭を悩ませている課題は、絞り込みを確定するまでの間印字する内容についてだ。
 やはり PowerShell でインタラクティブなフィルタリングをするのであれば、印字する内容も PowerShell の &lt;code&gt;Format-Table&lt;/code&gt; ライクな印字をしたい。
 例えば &lt;a href="https://github.com/devblackops/Terminal-Icons"&gt;Terminal-Icons&lt;/a&gt; を使っていたら、カラフルな &lt;code&gt;Get-ChildItem&lt;/code&gt; の結果のママ絞り込みしたい。ただそのやり方がさっぱり分からない。&lt;/p&gt;&lt;p&gt;全くわからんなりに、とりあえず F# 内から PowerShell を実行する練習として、 &lt;code&gt;PowerShell.Create&lt;/code&gt; でコマンドレットを動かしてみただけというコードは動かしてみた。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;[&amp;lt;Cmdlet(VerbsDiagnostic.Test, "Pocof")&amp;gt;]
