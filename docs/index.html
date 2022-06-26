@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3">F#でコマンドレットを書いてる pt.3</a></li>
+                        
                         <li><a href="/posts/2022-06-19-belatedly-parallel-foreach-object">今更 ForEach-Object -Parallel</a></li>
                         
                         <li><a href="/posts/2022-06-12-writing-cmdlet-in-fsharp-pt2">F#でコマンドレットを書いてる pt.2</a></li>
-                        
-                        <li><a href="/posts/2022-06-05-whitespace-comparison-in-pwsh">PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる</a></li>
                         
                         
 
@@ -187,107 +187,26 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-06-19</div>
+        <div class="col-lg-6">2022-06-26</div>
         
     </div>
-    <h2>今更 ForEach-Object -Parallel</h2>
+    <h2>F#でコマンドレットを書いてる pt.3</h2>
 </div>
 <div>
     
-    <p>今更だが、直列だと長時間かかる処理を分散させるために <code>ForEach-Object -Parallel</code> を使う必要があった。
-困ったというほどでもないけど、真面目に使ったことなかったので、今回学んだ気をつけポイントをまとめる。
-(毎度の如く PowerShell でそれをやる必要は全くなかったが、ぱっと手を動かしたくてついやってしまった)</p><ul><li>参照
-<ul><li><a href="https://devblogs.microsoft.com/powershell/powershell-foreach-object-parallel-feature/">PowerShell ForEach-Object Parallel Feature - PowerShell Team</a></li><li><a href="https://docs.microsoft.com/en-us/powershell/module/psworkflow/about/about_foreach-parallel?view=powershell-5.1">about Foreach-Parallel - PowerShell | Microsoft Docs</a></li><li><a href="https://stackoverflow.com/questions/61273189/how-to-pass-a-custom-function-inside-a-foreach-object-parallel/61273544#61273544">powershell - How to pass a custom function inside a ForEach-Object -Parallel - Stack Overflow</a></li></ul></li></ul><hr /><h3 id="並列数の制御">並列数の制御</h3><p><code>-Parallel</code> はとにかく遅い。異なる runspace が作成されそこで実行されるからだ。
-なのでとにかく計算時間がかかるんやというような処理だけ渡すようにした方がいい。</p><p>今回は、あらかじめ <code>ThrottleLimit</code> と同じ数の <code>InputObject</code> に調整して重いコマンドを打つ方針を使った。
-消えては立ち上がり x2 するような書き方をした方ではやはり runspace 作成のオーバーヘッドが、処理時間という形で顕著に見られた。
-スクリプトブロックが消えては立ち上がり x2 しないように、スクリプトブロック内で重い 1 処理を実行する方が良かった(AWS のリソースを一括操作するやつだからできたことだけど)。</p><p>1 ヵ月分のデータを加工する必要があって、対象日毎に 1 処理にすることができたので、それを約 30 並列でやった。
-イメージ ↓</p><pre><code class="powershell">$begin = (Get-Date -Day 1 -Hour 0 -Minute 0 -Second 0 -Millisecond 0)
-$end = $begin.AddMonths(1).AddDays(-1)
-$dateRange = @()
-while ($begin -le $end) {
-    $dateRange += $begin
-    $begin = $begin.AddDays(1)
-}
-$dateRange | ForEach-Object -ThrottleLimit $dateRange.Length -Parallel {
-    # 長時間かかる処理.
-}
-</code></pre><h3 id="スクリプトブロック外のリソース参照">スクリプトブロック外のリソース参照</h3><p><code>$using:</code> 修飾子をつけたら変数を参照できる。
-ただしスクリプトブロックや関数には使えない。</p><p>関数をどうしても使いまわしたいときは、文字列に変換した上で取り込む技もある。 <a href="https://stackoverflow.com/questions/61273189/how-to-pass-a-custom-function-inside-a-foreach-object-parallel/61273544#61273544">powershell - How to pass a custom function inside a ForEach-Object -Parallel - Stack Overflow</a></p><p>が、スクリプトブロック内でしか使わないのであればその中に関数を定義してしまったほうが楽か。
-<a href="https://devblogs.microsoft.com/powershell/powershell-foreach-object-parallel-feature/#comment-171">最もクリーンな方法でオススメらしいし</a>、実際にそうした。</p><p>(<code>Import-Module</code> すればいいのだけどいちいちモジュールを作らないこともあろう)</p><p>技を使うとこうなる。</p><pre><code class="powershell">function Get-Identity {
-    param (
-        [Parameter(Mandatory,
-            Position = 0,
-            ValueFromPipeline
-        )]
-        [PSObject]
-        $Value
-    )
-    process {
-        $Value
-    }
-}
-
-$funcDef = ${function:Get-Identity}.ToString()
-
-function Test-UsingFuncInParallel {
-    [CmdletBinding()]
-    param ()
-
-    1..30 | ForEach-Object -Parallel {
-        ${function:Get-Identity} = $using:funcDef
-        $_ | Get-Identity | Write-Host
-    } -ThrottleLimit 30
-}
-</code></pre><p>技を使わない版。当然ながらスクリプトブロックは間延びする。</p><pre><code class="powershell">function Test-UsingFuncInParallel {
-    [CmdletBinding()]
-    param ()
-
-    1..30 | ForEach-Object -Parallel {
-        function Get-Identity {
-            param (
-                [Parameter(Mandatory,
-                    Position = 0,
-                    ValueFromPipeline
-                )]
-                [PSObject]
-                $Value
-            )
-            process {
-                $Value
-            }
-        }
-
-        $_ | Get-Identity | Write-Host
-    } -ThrottleLimit 30
-}
-</code></pre><p>使う関数が多いとスクリプトブロックも伸びがちなので、使い分けを検討した方が良かろう。
-用途次第だが、わたしの場合は先述の通り並列数 MAX ピッタリに調整した <code>InputObject</code> を使て長時間の処理を流すだろうから、 runspace の作成のコストはそれほど気にならない。スクリプトブロックの中がごちゃごちゃしないことのメリットがあるかも知れん。</p><hr /><p>あと微妙にハマったのが <code>$PSCmdlet</code> の参照。</p><p><code>$using:</code> つけ忘れてると単に <code>$null</code> なだけなのでエラーメッセージ見てもピンときにくい。</p><pre><code class="plaintext">Line |
-   2 |          if ($PSCmdlet.ShouldProcess($_, 'Write-Host')) {
-     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     | You cannot call a method on a null-valued expression.
-</code></pre><p>さらに関数の呼び出し時はカッコで囲む必要がある。カッコがないと Parse Error。</p><pre><code class="diff"> function Test-ShouldProcessInParallel {
-     [CmdletBinding(SupportsShouldProcess)]
-     param ()
-
-     1..30 | ForEach-Object -Parallel {
--        if ($using:PSCmdlet.ShouldProcess($_, 'Write-Host')) {
-+        if (($using:PSCmdlet).ShouldProcess($_, 'Write-Host')) {
-             $_ | Write-Host
-         }
-     } -ThrottleLimit 30
- }
-</code></pre><pre><code class="plaintext">ParserError:
-Line |
-   6 |          if ($using:PSCmdlet.ShouldProcess($_, 'Write-Host')) {
-     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     | Expression is not allowed in a Using expression.
-</code></pre><p>あとなんか見慣れぬエラーになる時があったが忘れた。再現できたら追記したい。</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p><a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell?view=powershellsdk-7.0.0">PowerShell Class</a> を使って、現在の runspace を引き継がせるとかはちょっとわかりまして、 (F# というか .NET)の世界で PowerShell の表示文字列を取り回すには PowerShell Class を使い最後に <code>Out-String</code> した結果を取り回すのが典型っぽいのはわかった。</p><p>ただやっぱり PowerShell の力を借りない方法を諦めきれずにいた。
+また今後プロパティ指定での検索を実装していったときに、指定したプロパティはなんか色付けするとかしようとしたらこっちの方が絶対やりやすいだろうというのを感じてたので、<a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting">Composite formatting</a> を使ってどうにかできないものか考えていた。</p><p>が、結論としては PowerShell の力を借りるのが良いのでは～...というところまできた。</p><p>結局のところ <code>format.ps1xml</code> に従って PowerShell で表示が制御されるので、 F# の中で <code>PSObject.Properties</code> を見たとてどいつを優先表示したらいいかわからん。またこの <code>Properties</code> から表示するテーブルを作るのは <code>hashtable</code> や <code>array</code> が引数の場合には適応したくないし、となると型でパターンマッチして～となる。
+考えるとここにこだわるのはもっとプロパティでの絞り込みとかの他の機能を実装したあとでいいかなーという気になってきた。</p><p><code>format.ps1xml</code> もそうだけど PowerShell 内部実装に対する基礎知識(<code>PSPropertyInfo</code>とかまじで情報ない)がやっぱ圧倒的に不足してるから、蓄積されるまでは黙って PowerShell に従うが良いかと考えを改めた。
+であれば、もう PowerShell Class を使う方向に倒して、検索中のプロパティを <code>Format-Table</code> の <code>-Properties</code> で表示するようにしようかな、という選択肢もありかなと。</p><p>いったんこの形で検索中の表示を進めれば、他に組み込んでおきたい機能、例えばプロパティ指定の検索とかに取りかかれる。
+週末の 1,2 時間が主な開発時間なので、亀な進捗の中でも実装を進められる判断が必要かなー。それもまた一興。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -297,7 +216,7 @@ Line |
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-06-12-writing-cmdlet-in-fsharp-pt2">2022-06-12 F#でコマンドレットを書いてる pt.2 &raquo;</a>
+        <a class="right" href="/posts/2022-06-19-belatedly-parallel-foreach-object">2022-06-19 今更 ForEach-Object -Parallel &raquo;</a>
         
     </div>
 </div>
