@@ -1,4 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 26 Jun 2022 18:04:39 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3</guid><link>https://krymtkts.github.io/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3</link><title>F#でコマンドレットを書いてる pt.3</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell?view=powershellsdk-7.0.0"&gt;PowerShell Class&lt;/a&gt; を使って、現在の runspace を引き継がせるとかはちょっとわかりまして、 (F# というか .NET)の世界で PowerShell の表示文字列を取り回すには PowerShell Class を使い最後に &lt;code&gt;Out-String&lt;/code&gt; した結果を取り回すのが典型っぽいのはわかった。&lt;/p&gt;&lt;p&gt;ただやっぱり PowerShell の力を借りない方法を諦めきれずにいた。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 03 Jul 2022 18:06:40 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-07-03-aws-cdk-with-fsharp</guid><link>https://krymtkts.github.io/posts/2022-07-03-aws-cdk-with-fsharp</link><title>F# で AWS CDK して躓いてる</title><description>&lt;p&gt;最近仕事で AWS CDK を使ってみたが、非常に良い感触だった。
+仕事では TypeScript を採用したが、テンプレートが提供されている言語を見るとなんと F# がいるではないか。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; cdk init --list
+Available templates:
+* app: Template for a CDK Application
+   └─ cdk init app --language=[csharp|fsharp|go|java|javascript|python|typescript]
+* lib: Template for a CDK Construct Library
+   └─ cdk init lib --language=typescript
+* sample-app: Example CDK Application with some constructs
+   └─ cdk init sample-app --language=[csharp|fsharp|go|java|javascript|python|typescript]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;単に「C# のクラス用意したから継承して使ってや～」的なもので F# 向けに調整されてないだろうが、コレ誰が使うねんという気がしたので、試してみた。&lt;/p&gt;&lt;p&gt;参考にした前例たち。非常に参考にさせてもらった。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="https://awsmaniac.com/functional-programming-with-aws-cdk/"&gt;Functional Programming with AWS CDK | AWS Maniac&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://cloudgnosis.org/fsharp/fsharp-for-the-cloud-worker/part5.html"&gt;Part 5 - AWS Cloud Development Kit (CDK) — Cloudgnosis collection 0.1 documentation&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;hr /&gt;&lt;p&gt;まずテンプレからプロジェクトを生成した素の状態で CFn を作成してみる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;cdk init sample-app --language=fsharp
+cdk synth
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;ちゃんと CFn をビルドできた。 どんなコードが出るか知りたかったので &lt;code&gt;sample-app&lt;/code&gt; を使ったが、ここで &lt;code&gt;app&lt;/code&gt; テンプレを使うと、利用されない &lt;code&gt;this&lt;/code&gt; が残ってるので警告が出る。でも勿論 CFn をビルドできる。&lt;/p&gt;&lt;p&gt;記述に関しては TypeScript など他の言語と大差なさそう。ただ予想通り C# との相互運用は前提になってる。
+宣言的に記述する箇所については &lt;code&gt;let&lt;/code&gt; バインディングして、 リソースに手続き的に何かすると &lt;code&gt;do&lt;/code&gt; バインディングみたい。&lt;/p&gt;&lt;p&gt;試しに S3 と Lambda を EventBridge で繋いでみたい。&lt;/p&gt;&lt;p&gt;F# の CDK では &lt;code&gt;Amazon.CDK&lt;/code&gt; に必要な Construct が全部入りしてるみたい。なので &lt;code&gt;Amazon.CDK.xxx&lt;/code&gt; みたいな感じでポチポチ &lt;code&gt;.&lt;/code&gt; を刻んでいけば、ドキュメントがなくてもそれなりに探せる。&lt;/p&gt;&lt;p&gt;F# は言語固有モジュールが無いので、ここに例えば Lambda を足すとすると、個別にビルドする感じになる。あれめちゃくちゃ楽で好きなんやけど、 .Net 向けにはない。
+プロジェクトを別途足す方向で作るらしい。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# テンプレなかったので探してインストール
+dotnet new lambda.EmptyFunction --search
+dotnet new --install Amazon.Lambda.Templates
+
+dotnet new lambda.S3 --output . --name api --language "F#"
+
+cd src
+dotnet sln add api
+&lt;/code&gt;&lt;/pre&gt;&lt;hr /&gt;&lt;p&gt;stack をザーッと書いてみたが、めちゃくちゃつまづきどころがある。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;open System.Collections&lt;/code&gt; したら &lt;code&gt;Stack&lt;/code&gt; が競合するので注意&lt;/li&gt;&lt;li&gt;&lt;code&gt;MemorySize&lt;/code&gt;に&lt;code&gt;128&lt;/code&gt; を渡してたら Ionide や &lt;code&gt;dotnet build&lt;/code&gt; ではエラー検知できなかったが、 &lt;code&gt;cdk synth&lt;/code&gt; でエラー(めんどくせ)
+&lt;ul&gt;&lt;li&gt;&lt;code&gt;MemorySize&lt;/code&gt;を&lt;code&gt;128&lt;/code&gt;から&lt;code&gt;(Some 128.0 |&amp;gt; Option.toNullable)&lt;/code&gt;に&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;必須プロパティがビルドまでわからないのつらい&lt;/li&gt;&lt;li&gt;&lt;code&gt;EventPattern&lt;/code&gt; の &lt;code&gt;IDictionary&amp;lt;string,obj&amp;gt;&lt;/code&gt;を一息で書くのかなりキツイ(まじでめんどい)
+&lt;ul&gt;&lt;li&gt;&lt;code&gt;Value&lt;/code&gt; の型が揃わないところは個別に &lt;code&gt;let&lt;/code&gt; してあとで組み合わせたり&lt;/li&gt;&lt;li&gt;&lt;code&gt;dict&lt;/code&gt; に食わせる &lt;code&gt;tuple&lt;/code&gt; はきっちりカッコで囲むと先述の &lt;code&gt;let&lt;/code&gt; が不要になった&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;EventPattern&lt;/code&gt; の &lt;code&gt;Detail&lt;/code&gt; が &lt;code&gt;cdk synth&lt;/code&gt; でエラーになる&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Prefix のパターンをやりたいのだけど、 &lt;a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns-content-based-filtering.html#eb-filtering-prefix-matching"&gt;Content filtering in Amazon EventBridge event patterns - Amazon EventBridge&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class="yaml"&gt;EventPattern:
+  source:
+    - aws.s3
+  detail-type:
+    - Object Created
+  detail:
+    bucket:
+      name:
+        - Ref: バケツ
+    object:
+      key:
+        - prefix: test/
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;以下の記述だとエラーになる。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;EventPattern =
+    EventPattern(
+        Source = [| "aws.s3" |],
+        DetailType = [| "Object Created" |],
+        Detail =
+            dict [ ("bucket", dict [ ("name", [| bucket.BucketName |]) ])
+                    ("object", dict [ ("key", [| dict [ ("prefix", "test/") ] |]) ]) ]
+    )
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class="plaintext"&gt;Unhandled exception. System.ArgumentException: Could not infer JSII type for .NET type 'IDictionary`2' (Parameter 'type')
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;dict [ ("prefix", "test/") ]&lt;/code&gt; の代わりに文字列を渡してると問題なくなるけど、それってスキーマ違反なんですけど。
+この辺 TypeScript は困った記憶ないので、参ったなという感じ。&lt;/p&gt;&lt;p&gt;この辺の回答が出たら割りと参考になるかもなーと思って見ている。&lt;a href="https://github.com/aws/aws-cdk/discussions/20894"&gt;How to set detail on an eventpattern in java · Discussion #20894 · aws/aws-cdk&lt;/a&gt;
+単純に F# 力の低さに起因して記述できないだけだといいけど。&lt;/p&gt;&lt;p&gt;もうちょっと深掘したいが今週はここまで。
+とりあえず repo は作った。 &lt;a href="https://github.com/krymtkts/aws-cdk-fsharp-trial"&gt;krymtkts/aws-cdk-fsharp-trial&lt;/a&gt;&lt;/p&gt;</description><pubDate>Sun, 03 Jul 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3</guid><link>https://krymtkts.github.io/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3</link><title>F#でコマンドレットを書いてる pt.3</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell?view=powershellsdk-7.0.0"&gt;PowerShell Class&lt;/a&gt; を使って、現在の runspace を引き継がせるとかはちょっとわかりまして、 (F# というか .NET)の世界で PowerShell の表示文字列を取り回すには PowerShell Class を使い最後に &lt;code&gt;Out-String&lt;/code&gt; した結果を取り回すのが典型っぽいのはわかった。&lt;/p&gt;&lt;p&gt;ただやっぱり PowerShell の力を借りない方法を諦めきれずにいた。
 また今後プロパティ指定での検索を実装していったときに、指定したプロパティはなんか色付けするとかしようとしたらこっちの方が絶対やりやすいだろうというのを感じてたので、&lt;a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting"&gt;Composite formatting&lt;/a&gt; を使ってどうにかできないものか考えていた。&lt;/p&gt;&lt;p&gt;が、結論としては PowerShell の力を借りるのが良いのでは～...というところまできた。&lt;/p&gt;&lt;p&gt;結局のところ &lt;code&gt;format.ps1xml&lt;/code&gt; に従って PowerShell で表示が制御されるので、 F# の中で &lt;code&gt;PSObject.Properties&lt;/code&gt; を見たとてどいつを優先表示したらいいかわからん。またこの &lt;code&gt;Properties&lt;/code&gt; から表示するテーブルを作るのは &lt;code&gt;hashtable&lt;/code&gt; や &lt;code&gt;array&lt;/code&gt; が引数の場合には適応したくないし、となると型でパターンマッチして～となる。
 考えるとここにこだわるのはもっとプロパティでの絞り込みとかの他の機能を実装したあとでいいかなーという気になってきた。&lt;/p&gt;&lt;p&gt;&lt;code&gt;format.ps1xml&lt;/code&gt; もそうだけど PowerShell 内部実装に対する基礎知識(&lt;code&gt;PSPropertyInfo&lt;/code&gt;とかまじで情報ない)がやっぱ圧倒的に不足してるから、蓄積されるまでは黙って PowerShell に従うが良いかと考えを改めた。
 であれば、もう PowerShell Class を使う方向に倒して、検索中のプロパティを &lt;code&gt;Format-Table&lt;/code&gt; の &lt;code&gt;-Properties&lt;/code&gt; で表示するようにしようかな、という選択肢もありかなと。&lt;/p&gt;&lt;p&gt;いったんこの形で検索中の表示を進めれば、他に組み込んでおきたい機能、例えばプロパティ指定の検索とかに取りかかれる。

@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: go の map のキーの Tips</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-02-01-go-map-key-tips">
+    <title>krymtkts: F# で AWS CDK して躓いてる</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-07-03-aws-cdk-with-fsharp">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: go の map のキーの Tips" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-02-01-go-map-key-tips" />
+    <meta property="og:title" content="krymtkts: F# で AWS CDK して躓いてる" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-07-03-aws-cdk-with-fsharp" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -187,123 +187,77 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-02-01</div>
+        <div class="col-lg-6">2022-07-03</div>
         
     </div>
-    <h2>go の map のキーの Tips</h2>
+    <h2>F# で AWS CDK して躓いてる</h2>
 </div>
 <div>
     
-    <ul><li>知ってた
-<ul><li><code>map</code>のキーには<code>struct</code>が使える</li><li>キーがポインタやポインタを含む<code>struct</code>の場合、ポインタの指す値が同じでもポインタ値自体が比較されるため異なるキーとなる</li></ul></li><li>知らなかった
-<ul><li><code>interface</code>もキーにできる
-<ul><li>キーを追加するときにポインタを使ってないこと</li></ul></li><li><code>time.Time</code>はキーにつこたらあかん
-<ul><li><a href="https://go.googlesource.com/go/+/go1.15.6/src/time/time.go#147">src/time/time.go - go - Git at Google</a></li><li><a href="https://pkg.go.dev/time#Time">time · pkg.go.dev</a><ul><li><blockquote><p>Note that the Go == operator compares not just the time instant but also the Location and the monotonic clock reading. Therefore, Time values should not be used as map or database keys without first guaranteeing that the identical Location has been set for all values, which can be achieved through use of the UTC or Local method, and that the monotonic clock reading has been stripped by setting t = t.Round(0). In general, prefer t.Equal(u) to t == u, since t.Equal uses the most accurate comparison available and correctly handles the case when only one of its arguments has a monotonic clock reading.</p></blockquote></li></ul></li><li>UT では一致しちゃいバグを見つけられなかった...😥</li><li>まだわかってないのが、<code>Location</code>が必ず同じになるようにしてた＆年月日だけの情報しか持ってなかったのにずれとんのかい！？というところ</li></ul></li></ul></li></ul><p><a href="https://play.golang.org/p/Rd5OJ2S37AT">コード</a>。このコードでは<code>time.Time</code>のキーのズレは再現しないけど。</p><pre><code class="go">package main
+    <p>最近仕事で AWS CDK を使ってみたが、非常に良い感触だった。
+仕事では TypeScript を採用したが、テンプレートが提供されている言語を見るとなんと F# がいるではないか。</p><pre><code class="powershell">PS&gt; cdk init --list
+Available templates:
+* app: Template for a CDK Application
+   └─ cdk init app --language=[csharp|fsharp|go|java|javascript|python|typescript]
+* lib: Template for a CDK Construct Library
+   └─ cdk init lib --language=typescript
+* sample-app: Example CDK Application with some constructs
+   └─ cdk init sample-app --language=[csharp|fsharp|go|java|javascript|python|typescript]
+</code></pre><p>単に「C# のクラス用意したから継承して使ってや～」的なもので F# 向けに調整されてないだろうが、コレ誰が使うねんという気がしたので、試してみた。</p><p>参考にした前例たち。非常に参考にさせてもらった。</p><ul><li><a href="https://awsmaniac.com/functional-programming-with-aws-cdk/">Functional Programming with AWS CDK | AWS Maniac</a></li><li><a href="https://cloudgnosis.org/fsharp/fsharp-for-the-cloud-worker/part5.html">Part 5 - AWS Cloud Development Kit (CDK) — Cloudgnosis collection 0.1 documentation</a></li></ul><hr /><p>まずテンプレからプロジェクトを生成した素の状態で CFn を作成してみる。</p><pre><code class="powershell">cdk init sample-app --language=fsharp
+cdk synth
+</code></pre><p>ちゃんと CFn をビルドできた。 どんなコードが出るか知りたかったので <code>sample-app</code> を使ったが、ここで <code>app</code> テンプレを使うと、利用されない <code>this</code> が残ってるので警告が出る。でも勿論 CFn をビルドできる。</p><p>記述に関しては TypeScript など他の言語と大差なさそう。ただ予想通り C# との相互運用は前提になってる。
+宣言的に記述する箇所については <code>let</code> バインディングして、 リソースに手続き的に何かすると <code>do</code> バインディングみたい。</p><p>試しに S3 と Lambda を EventBridge で繋いでみたい。</p><p>F# の CDK では <code>Amazon.CDK</code> に必要な Construct が全部入りしてるみたい。なので <code>Amazon.CDK.xxx</code> みたいな感じでポチポチ <code>.</code> を刻んでいけば、ドキュメントがなくてもそれなりに探せる。</p><p>F# は言語固有モジュールが無いので、ここに例えば Lambda を足すとすると、個別にビルドする感じになる。あれめちゃくちゃ楽で好きなんやけど、 .Net 向けにはない。
+プロジェクトを別途足す方向で作るらしい。</p><pre><code class="powershell"># テンプレなかったので探してインストール
+dotnet new lambda.EmptyFunction --search
+dotnet new --install Amazon.Lambda.Templates
 
-import (
-	"fmt"
-	"time"
-)
+dotnet new lambda.S3 --output . --name api --language "F#"
 
-type Key interface {
-}
-
-type KeyA struct {
-	s string
-}
-
-type KeyB struct {
-	s string
-	i int
-}
-
-type KeyC struct {
-	t time.Time
-}
-
-type KeyD struct {
-	a *KeyA
-}
-
-func checkInterfaceKey() {
-	m := map[Key]int{}
-	m[KeyA{
-		s: "A1",
-	}] = 1
-	m[KeyA{
-		s: "A1",
-	}] = 2
-	m[KeyA{
-		s: "A2",
-	}] = 3
-	m[KeyB{
-		s: "B1",
-		i: 1,
-	}] = 4
-	m[KeyB{
-		s: "B1",
-		i: 1,
-	}] = 5
-	m[KeyB{
-		s: "B1",
-		i: 2,
-	}] = 6
-	fmt.Printf("%v\n", m)
-}
-
-func init() {
-	location := "Asia/Tokyo"
-	loc, err := time.LoadLocation(location)
-	if err != nil {
-		loc = time.FixedZone(location, 9*60*60)
-	}
-	time.Local = loc
-	fmt.Printf("%v\n", loc)
-}
-
-func checkPointerIncludedKey() {
-	m := map[Key]int{}
-	m[KeyC{
-		t: time.Date(2021, 2, 1, 0, 0, 0, 0, time.Local),
-	}] = 1
-	m[KeyC{
-		t: time.Date(2021, 2, 1, 0, 0, 0, 0, time.Local),
-	}] = 2
-	m[KeyD{
-		a: &amp;KeyA{
-			s: "D1",
-		},
-	}] = 3
-	m[KeyD{
-		a: &amp;KeyA{
-			s: "D1",
-		},
-	}] = 4
-	fmt.Printf("%v\n", m)
-}
-
-func main() {
-	checkInterfaceKey()
-	checkPointerIncludedKey()
-}
-
-</code></pre>
+cd src
+dotnet sln add api
+</code></pre><hr /><p>stack をザーッと書いてみたが、めちゃくちゃつまづきどころがある。</p><ul><li><code>open System.Collections</code> したら <code>Stack</code> が競合するので注意</li><li><code>MemorySize</code>に<code>128</code> を渡してたら Ionide や <code>dotnet build</code> ではエラー検知できなかったが、 <code>cdk synth</code> でエラー(めんどくせ)
+<ul><li><code>MemorySize</code>を<code>128</code>から<code>(Some 128.0 |&gt; Option.toNullable)</code>に</li></ul></li><li>必須プロパティがビルドまでわからないのつらい</li><li><code>EventPattern</code> の <code>IDictionary&lt;string,obj&gt;</code>を一息で書くのかなりキツイ(まじでめんどい)
+<ul><li><code>Value</code> の型が揃わないところは個別に <code>let</code> してあとで組み合わせたり</li><li><code>dict</code> に食わせる <code>tuple</code> はきっちりカッコで囲むと先述の <code>let</code> が不要になった</li></ul></li><li><code>EventPattern</code> の <code>Detail</code> が <code>cdk synth</code> でエラーになる</li></ul><p>Prefix のパターンをやりたいのだけど、 <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns-content-based-filtering.html#eb-filtering-prefix-matching">Content filtering in Amazon EventBridge event patterns - Amazon EventBridge</a></p><pre><code class="yaml">EventPattern:
+  source:
+    - aws.s3
+  detail-type:
+    - Object Created
+  detail:
+    bucket:
+      name:
+        - Ref: バケツ
+    object:
+      key:
+        - prefix: test/
+</code></pre><p>以下の記述だとエラーになる。</p><pre><code class="fsharp">EventPattern =
+    EventPattern(
+        Source = [| "aws.s3" |],
+        DetailType = [| "Object Created" |],
+        Detail =
+            dict [ ("bucket", dict [ ("name", [| bucket.BucketName |]) ])
+                    ("object", dict [ ("key", [| dict [ ("prefix", "test/") ] |]) ]) ]
+    )
+</code></pre><pre><code class="plaintext">Unhandled exception. System.ArgumentException: Could not infer JSII type for .NET type 'IDictionary`2' (Parameter 'type')
+</code></pre><p><code>dict [ ("prefix", "test/") ]</code> の代わりに文字列を渡してると問題なくなるけど、それってスキーマ違反なんですけど。
+この辺 TypeScript は困った記憶ないので、参ったなという感じ。</p><p>この辺の回答が出たら割りと参考になるかもなーと思って見ている。<a href="https://github.com/aws/aws-cdk/discussions/20894">How to set detail on an eventpattern in java · Discussion #20894 · aws/aws-cdk</a>
+単純に F# 力の低さに起因して記述できないだけだといいけど。</p><p>もうちょっと深掘したいが今週はここまで。
+とりあえず repo は作った。 <a href="https://github.com/krymtkts/aws-cdk-fsharp-trial">krymtkts/aws-cdk-fsharp-trial</a></p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/go">go</a>
+    <a href="/tags/aws">aws</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2021-02-12-various-stories-about-starting-to-use-nodist">&laquo; 2021-02-12 色々あって Nodist を使い始めた話</a>
         
-        
-        <a class="right" href="/posts/2021-01-30-beware-to-update-aws-tools">2021-01-30 AWS.Tools.Installer で入れたモジュールの更新は気をつけろよ &raquo;</a>
+        <a class="right" href="/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3">2022-06-26 F#でコマンドレットを書いてる pt.3 &raquo;</a>
         
     </div>
 

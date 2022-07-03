@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-07-03-aws-cdk-with-fsharp">F# で AWS CDK して躓いてる</a></li>
+                        
                         <li><a href="/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3">F#でコマンドレットを書いてる pt.3</a></li>
                         
                         <li><a href="/posts/2022-06-19-belatedly-parallel-foreach-object">今更 ForEach-Object -Parallel</a></li>
-                        
-                        <li><a href="/posts/2022-06-12-writing-cmdlet-in-fsharp-pt2">F#でコマンドレットを書いてる pt.2</a></li>
                         
                         
 
@@ -187,24 +187,67 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-06-26</div>
+        <div class="col-lg-6">2022-07-03</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.3</h2>
+    <h2>F# で AWS CDK して躓いてる</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p><a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell?view=powershellsdk-7.0.0">PowerShell Class</a> を使って、現在の runspace を引き継がせるとかはちょっとわかりまして、 (F# というか .NET)の世界で PowerShell の表示文字列を取り回すには PowerShell Class を使い最後に <code>Out-String</code> した結果を取り回すのが典型っぽいのはわかった。</p><p>ただやっぱり PowerShell の力を借りない方法を諦めきれずにいた。
-また今後プロパティ指定での検索を実装していったときに、指定したプロパティはなんか色付けするとかしようとしたらこっちの方が絶対やりやすいだろうというのを感じてたので、<a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting">Composite formatting</a> を使ってどうにかできないものか考えていた。</p><p>が、結論としては PowerShell の力を借りるのが良いのでは～...というところまできた。</p><p>結局のところ <code>format.ps1xml</code> に従って PowerShell で表示が制御されるので、 F# の中で <code>PSObject.Properties</code> を見たとてどいつを優先表示したらいいかわからん。またこの <code>Properties</code> から表示するテーブルを作るのは <code>hashtable</code> や <code>array</code> が引数の場合には適応したくないし、となると型でパターンマッチして～となる。
-考えるとここにこだわるのはもっとプロパティでの絞り込みとかの他の機能を実装したあとでいいかなーという気になってきた。</p><p><code>format.ps1xml</code> もそうだけど PowerShell 内部実装に対する基礎知識(<code>PSPropertyInfo</code>とかまじで情報ない)がやっぱ圧倒的に不足してるから、蓄積されるまでは黙って PowerShell に従うが良いかと考えを改めた。
-であれば、もう PowerShell Class を使う方向に倒して、検索中のプロパティを <code>Format-Table</code> の <code>-Properties</code> で表示するようにしようかな、という選択肢もありかなと。</p><p>いったんこの形で検索中の表示を進めれば、他に組み込んでおきたい機能、例えばプロパティ指定の検索とかに取りかかれる。
-週末の 1,2 時間が主な開発時間なので、亀な進捗の中でも実装を進められる判断が必要かなー。それもまた一興。</p>
+    <p>最近仕事で AWS CDK を使ってみたが、非常に良い感触だった。
+仕事では TypeScript を採用したが、テンプレートが提供されている言語を見るとなんと F# がいるではないか。</p><pre><code class="powershell">PS&gt; cdk init --list
+Available templates:
+* app: Template for a CDK Application
+   └─ cdk init app --language=[csharp|fsharp|go|java|javascript|python|typescript]
+* lib: Template for a CDK Construct Library
+   └─ cdk init lib --language=typescript
+* sample-app: Example CDK Application with some constructs
+   └─ cdk init sample-app --language=[csharp|fsharp|go|java|javascript|python|typescript]
+</code></pre><p>単に「C# のクラス用意したから継承して使ってや～」的なもので F# 向けに調整されてないだろうが、コレ誰が使うねんという気がしたので、試してみた。</p><p>参考にした前例たち。非常に参考にさせてもらった。</p><ul><li><a href="https://awsmaniac.com/functional-programming-with-aws-cdk/">Functional Programming with AWS CDK | AWS Maniac</a></li><li><a href="https://cloudgnosis.org/fsharp/fsharp-for-the-cloud-worker/part5.html">Part 5 - AWS Cloud Development Kit (CDK) — Cloudgnosis collection 0.1 documentation</a></li></ul><hr /><p>まずテンプレからプロジェクトを生成した素の状態で CFn を作成してみる。</p><pre><code class="powershell">cdk init sample-app --language=fsharp
+cdk synth
+</code></pre><p>ちゃんと CFn をビルドできた。 どんなコードが出るか知りたかったので <code>sample-app</code> を使ったが、ここで <code>app</code> テンプレを使うと、利用されない <code>this</code> が残ってるので警告が出る。でも勿論 CFn をビルドできる。</p><p>記述に関しては TypeScript など他の言語と大差なさそう。ただ予想通り C# との相互運用は前提になってる。
+宣言的に記述する箇所については <code>let</code> バインディングして、 リソースに手続き的に何かすると <code>do</code> バインディングみたい。</p><p>試しに S3 と Lambda を EventBridge で繋いでみたい。</p><p>F# の CDK では <code>Amazon.CDK</code> に必要な Construct が全部入りしてるみたい。なので <code>Amazon.CDK.xxx</code> みたいな感じでポチポチ <code>.</code> を刻んでいけば、ドキュメントがなくてもそれなりに探せる。</p><p>F# は言語固有モジュールが無いので、ここに例えば Lambda を足すとすると、個別にビルドする感じになる。あれめちゃくちゃ楽で好きなんやけど、 .Net 向けにはない。
+プロジェクトを別途足す方向で作るらしい。</p><pre><code class="powershell"># テンプレなかったので探してインストール
+dotnet new lambda.EmptyFunction --search
+dotnet new --install Amazon.Lambda.Templates
+
+dotnet new lambda.S3 --output . --name api --language "F#"
+
+cd src
+dotnet sln add api
+</code></pre><hr /><p>stack をザーッと書いてみたが、めちゃくちゃつまづきどころがある。</p><ul><li><code>open System.Collections</code> したら <code>Stack</code> が競合するので注意</li><li><code>MemorySize</code>に<code>128</code> を渡してたら Ionide や <code>dotnet build</code> ではエラー検知できなかったが、 <code>cdk synth</code> でエラー(めんどくせ)
+<ul><li><code>MemorySize</code>を<code>128</code>から<code>(Some 128.0 |&gt; Option.toNullable)</code>に</li></ul></li><li>必須プロパティがビルドまでわからないのつらい</li><li><code>EventPattern</code> の <code>IDictionary&lt;string,obj&gt;</code>を一息で書くのかなりキツイ(まじでめんどい)
+<ul><li><code>Value</code> の型が揃わないところは個別に <code>let</code> してあとで組み合わせたり</li><li><code>dict</code> に食わせる <code>tuple</code> はきっちりカッコで囲むと先述の <code>let</code> が不要になった</li></ul></li><li><code>EventPattern</code> の <code>Detail</code> が <code>cdk synth</code> でエラーになる</li></ul><p>Prefix のパターンをやりたいのだけど、 <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns-content-based-filtering.html#eb-filtering-prefix-matching">Content filtering in Amazon EventBridge event patterns - Amazon EventBridge</a></p><pre><code class="yaml">EventPattern:
+  source:
+    - aws.s3
+  detail-type:
+    - Object Created
+  detail:
+    bucket:
+      name:
+        - Ref: バケツ
+    object:
+      key:
+        - prefix: test/
+</code></pre><p>以下の記述だとエラーになる。</p><pre><code class="fsharp">EventPattern =
+    EventPattern(
+        Source = [| "aws.s3" |],
+        DetailType = [| "Object Created" |],
+        Detail =
+            dict [ ("bucket", dict [ ("name", [| bucket.BucketName |]) ])
+                    ("object", dict [ ("key", [| dict [ ("prefix", "test/") ] |]) ]) ]
+    )
+</code></pre><pre><code class="plaintext">Unhandled exception. System.ArgumentException: Could not infer JSII type for .NET type 'IDictionary`2' (Parameter 'type')
+</code></pre><p><code>dict [ ("prefix", "test/") ]</code> の代わりに文字列を渡してると問題なくなるけど、それってスキーマ違反なんですけど。
+この辺 TypeScript は困った記憶ないので、参ったなという感じ。</p><p>この辺の回答が出たら割りと参考になるかもなーと思って見ている。<a href="https://github.com/aws/aws-cdk/discussions/20894">How to set detail on an eventpattern in java · Discussion #20894 · aws/aws-cdk</a>
+単純に F# 力の低さに起因して記述できないだけだといいけど。</p><p>もうちょっと深掘したいが今週はここまで。
+とりあえず repo は作った。 <a href="https://github.com/krymtkts/aws-cdk-fsharp-trial">krymtkts/aws-cdk-fsharp-trial</a></p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/aws">aws</a>
     
     <a href="/tags/fsharp">fsharp</a>
     
@@ -216,7 +259,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-06-19-belatedly-parallel-foreach-object">2022-06-19 今更 ForEach-Object -Parallel &raquo;</a>
+        <a class="right" href="/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3">2022-06-26 F#でコマンドレットを書いてる pt.3 &raquo;</a>
         
     </div>
 </div>
