@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-07-09-tips-for-sending-http-requests-pwsh">PowerShell で大量の HTTP リクエストを送る場合の Tips</a></li>
+                        
                         <li><a href="/posts/2022-07-03-aws-cdk-with-fsharp">F# で AWS CDK して躓いてる</a></li>
                         
                         <li><a href="/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3">F#でコマンドレットを書いてる pt.3</a></li>
-                        
-                        <li><a href="/posts/2022-06-19-belatedly-parallel-foreach-object">今更 ForEach-Object -Parallel</a></li>
                         
                         
 
@@ -187,69 +187,34 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-07-03</div>
+        <div class="col-lg-6">2022-07-09</div>
         
     </div>
-    <h2>F# で AWS CDK して躓いてる</h2>
+    <h2>PowerShell で大量の HTTP リクエストを送る場合の Tips</h2>
 </div>
 <div>
     
-    <p>最近仕事で AWS CDK を使ってみたが、非常に良い感触だった。
-仕事では TypeScript を採用したが、テンプレートが提供されている言語を見るとなんと F# がいるではないか。</p><pre><code class="powershell">PS&gt; cdk init --list
-Available templates:
-* app: Template for a CDK Application
-   └─ cdk init app --language=[csharp|fsharp|go|java|javascript|python|typescript]
-* lib: Template for a CDK Construct Library
-   └─ cdk init lib --language=typescript
-* sample-app: Example CDK Application with some constructs
-   └─ cdk init sample-app --language=[csharp|fsharp|go|java|javascript|python|typescript]
-</code></pre><p>単に「C# のクラス用意したから継承して使ってや～」的なもので F# 向けに調整されてないだろうが、コレ誰が使うねんという気がしたので、試してみた。</p><p>参考にした前例たち。非常に参考にさせてもらった。</p><ul><li><a href="https://awsmaniac.com/functional-programming-with-aws-cdk/">Functional Programming with AWS CDK | AWS Maniac</a></li><li><a href="https://cloudgnosis.org/fsharp/fsharp-for-the-cloud-worker/part5.html">Part 5 - AWS Cloud Development Kit (CDK) — Cloudgnosis collection 0.1 documentation</a></li></ul><hr /><p>まずテンプレからプロジェクトを生成した素の状態で CFn を作成してみる。</p><pre><code class="powershell">cdk init sample-app --language=fsharp
-cdk synth
-</code></pre><p>ちゃんと CFn をビルドできた。 どんなコードが出るか知りたかったので <code>sample-app</code> を使ったが、ここで <code>app</code> テンプレを使うと、利用されない <code>this</code> が残ってるので警告が出る。でも勿論 CFn をビルドできる。</p><p>記述に関しては TypeScript など他の言語と大差なさそう。ただ予想通り C# との相互運用は前提になってる。
-宣言的に記述する箇所については <code>let</code> バインディングして、 リソースに手続き的に何かすると <code>do</code> バインディングみたい。</p><p>試しに S3 と Lambda を EventBridge で繋いでみたい。</p><p>F# の CDK では <code>Amazon.CDK</code> に必要な Construct が全部入りしてるみたい。なので <code>Amazon.CDK.xxx</code> みたいな感じでポチポチ <code>.</code> を刻んでいけば、ドキュメントがなくてもそれなりに探せる。</p><p>F# は言語固有モジュールが無いので、ここに例えば Lambda を足すとすると、個別にビルドする感じになる。あれめちゃくちゃ楽で好きなんやけど、 .Net 向けにはない。
-プロジェクトを別途足す方向で作るらしい。</p><pre><code class="powershell"># テンプレなかったので探してインストール
-dotnet new lambda.EmptyFunction --search
-dotnet new --install Amazon.Lambda.Templates
-
-dotnet new lambda.S3 --output . --name api --language "F#"
-
-cd src
-dotnet sln add api
-</code></pre><hr /><p>stack をザーッと書いてみたが、めちゃくちゃつまづきどころがある。</p><ul><li><code>open System.Collections</code> したら <code>Stack</code> が競合するので注意</li><li><code>MemorySize</code>に<code>128</code> を渡してたら Ionide や <code>dotnet build</code> ではエラー検知できなかったが、 <code>cdk synth</code> でエラー(めんどくせ)
-<ul><li><code>MemorySize</code>を<code>128</code>から<code>(Some 128.0 |&gt; Option.toNullable)</code>に</li></ul></li><li>必須プロパティがビルドまでわからないのつらい</li><li><code>EventPattern</code> の <code>IDictionary&lt;string,obj&gt;</code>を一息で書くのかなりキツイ(まじでめんどい)
-<ul><li><code>Value</code> の型が揃わないところは個別に <code>let</code> してあとで組み合わせたり</li><li><code>dict</code> に食わせる <code>tuple</code> はきっちりカッコで囲むと先述の <code>let</code> が不要になった</li></ul></li><li><code>EventPattern</code> の <code>Detail</code> が <code>cdk synth</code> でエラーになる</li></ul><p>Prefix のパターンをやりたいのだけど、 <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns-content-based-filtering.html#eb-filtering-prefix-matching">Content filtering in Amazon EventBridge event patterns - Amazon EventBridge</a></p><pre><code class="yaml">EventPattern:
-  source:
-    - aws.s3
-  detail-type:
-    - Object Created
-  detail:
-    bucket:
-      name:
-        - Ref: バケツ
-    object:
-      key:
-        - prefix: test/
-</code></pre><p>以下の記述だとエラーになる。</p><pre><code class="fsharp">EventPattern =
-    EventPattern(
-        Source = [| "aws.s3" |],
-        DetailType = [| "Object Created" |],
-        Detail =
-            dict [ ("bucket", dict [ ("name", [| bucket.BucketName |]) ])
-                    ("object", dict [ ("key", [| dict [ ("prefix", "test/") ] |]) ]) ]
-    )
-</code></pre><pre><code class="plaintext">Unhandled exception. System.ArgumentException: Could not infer JSII type for .NET type 'IDictionary`2' (Parameter 'type')
-</code></pre><p><code>dict [ ("prefix", "test/") ]</code> の代わりに文字列を渡してると問題なくなるけど、それってスキーマ違反なんですけど。
-この辺 TypeScript は困った記憶ないので、参ったなという感じ。</p><p>この辺の回答が出たら割りと参考になるかもなーと思って見ている。<a href="https://github.com/aws/aws-cdk/discussions/20894">How to set detail on an eventpattern in java · Discussion #20894 · aws/aws-cdk</a>
-単純に F# 力の低さに起因して記述できないだけだといいけど。</p><p>もうちょっと深掘したいが今週はここまで。
-とりあえず repo は作った。 <a href="https://github.com/krymtkts/aws-cdk-fsharp-trial">krymtkts/aws-cdk-fsharp-trial</a></p>
+    <p>大量のアクセスログがほしい事情で、テスト環境に大量のリクエストを送りつける必要があった。</p><p>JMeter とか Gatling 使えば済む話なのだけど、すぐに使い回せるものがなかったし、パパっとやってしまいたかったので PowerShell を使ってみたら、エラーになった。</p><pre><code class="powershell">$requests = 'aaa=10&amp;bbb=20', 'aaa=11&amp;bbb=21', 'aaa=12&amp;bbb=22'
+$requests * 100000 | ForEach-Object -Parallel {
+    Invoke-WebRequest -Method Get -Uri "https://$using:testDomaain?$_"
+    $jitter = Get-Random -Minimum 3 -Maximum 23
+    Start-Sleep -Milliseconds (95 + $jitter) # 待ち
+} -ThrottleLimit 100 | ConvertTo-Json | Set-Content ./responses.json
+</code></pre><p>こういうのでタコ殴りにすると...</p><p><code>Only one usage of each socket address (protocol/network address/port) is normally permitted</code></p><p>15000 件を超えた辺りでこうなった。なんだ？ググる。</p><ul><li><a href="https://social.msdn.microsoft.com/Forums/aspnet/en-US/ab5e4f6d-e96a-4bef-bba2-870eda412ea3/systemnetsocketssocketexception-only-one-usage-of-each-socket-address-protocolnetwork?forum=AzureFunctions">System.Net.Sockets.SocketException: Only one usage of each socket address (protocol/network address/port) is normally permitted</a></li></ul><p>ポートが枯渇するんだと。 PowerShell の実装を見た訳じゃないけど、 大量に実行された <code>Invoke-WebRequest</code> で <code>HttpClient</code> を大量作成したのであろうことは、想像するに易い。</p><p>同じ <code>HttpClient</code> を使い回せば良いらしいので、そうした。</p><pre><code class="powershell">$requests = 'aaa=10&amp;bbb=20', 'aaa=11&amp;bbb=21', 'aaa=12&amp;bbb=22'
+$h = New-Object System.Net.Http.HttpClient
+$requests * 100000 | ForEach-Object -Parallel {
+    ($using:h).GetAsync("https://$using:testDomaain?$_").GetAwaiter()
+    $jitter = Get-Random -Minimum 3 -Maximum 23
+    Start-Sleep -Milliseconds (95 + $jitter) # 待ち
+} -ThrottleLimit 100 | ForEach-Object {$_.GetResult()} | ConvertTo-Json | Set-Content ./responses.json
+</code></pre><p>そんだけ。</p><ul><li>参照
+<ul><li><a href="https://github.com/Azure/azure-functions-host/issues/1806">Need Official Guidance On using HttpClient in Functions · Issue #1806 · Azure/azure-functions-host</a></li><li><a href="https://blog.ironmansoftware.com/powershell-async-method/">Calling Async .NET Methods from PowerShell</a></li></ul></li></ul>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
-    <a href="/tags/fsharp">fsharp</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -259,7 +224,7 @@ dotnet sln add api
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-06-26-writing-cmdlet-in-fsharp-pt3">2022-06-26 F#でコマンドレットを書いてる pt.3 &raquo;</a>
+        <a class="right" href="/posts/2022-07-03-aws-cdk-with-fsharp">2022-07-03 F# で AWS CDK して躓いてる &raquo;</a>
         
     </div>
 </div>
