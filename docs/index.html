@@ -206,7 +206,7 @@ $Tag = @{
 }
 Get-GLUECrawlerList | ForEach-Object {
     # Glue Crawler の ARN が `Get-GLUECrawler` から持ってこれなくて、みすぼらしく手で組んでる。
-    Add-GLUEResourceTag -ResourceArn "arn:aws:glue:${Region}:${AccountId}:crawler/$($_.Name)" -TagsToAdd $Tag -WhatIf
+    Add-GLUEResourceTag -ResourceArn "arn:aws:glue:${Region}:${AccountId}:crawler/$($_.Name)" -TagsToAdd $Tag
 }
 </code></pre><p><a href="https://aws.amazon.com/jp/about-aws/whats-new/2019/03/aws-glue-now-supports-resource-tagging/">AWS Glue でリソースタグがサポートされて 3 年ばかり経ってる</a>けどみんな使ってないのかなーとか、他にも使われてない Cmdlet があるんやろなーと、思いを馳せた。</p><p>AWS CLI の方はというと <code>"aws glue tag-resource"</code> で 3 件しかヒットしなかった。</p><p><img src="/img/2022-07-23-capture/aws-cli.png" alt="3 件しかヒットしない &quot;aws glue tag-resource&quot;" /></p><p>しかしながらヒットした記事は実行例が分かるものになってて、こう...なんか AWS Tools for PowerShell の人気の無さが際立つなーと感じた。</p><h3 id="他を見る">他を見る</h3><p>雑だが、 AWS Tools for PowerShell のリソースタグ関連の Cmdlet で、タグのパラメータの型が何か調べるスクリプトを書いた。 CRUD 全部の Cmdlet が含まれるのであまり正確ではない。</p><p>わたしは AWS Tools for PowerShell の特定のモジュールしか入れてないから全体はわからんけど、傾向は見られる。</p><pre><code class="powershell"># AWS.Tools.* modules must be imported first to get all property information.
 Get-Module -Name *AWS* | Import-Module

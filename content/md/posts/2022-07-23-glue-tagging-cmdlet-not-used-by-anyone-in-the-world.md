@@ -29,7 +29,7 @@ $Tag = @{
 }
 Get-GLUECrawlerList | ForEach-Object {
     # Glue Crawler の ARN が `Get-GLUECrawler` から持ってこれなくて、みすぼらしく手で組んでる。
-    Add-GLUEResourceTag -ResourceArn "arn:aws:glue:${Region}:${AccountId}:crawler/$($_.Name)" -TagsToAdd $Tag -WhatIf
+    Add-GLUEResourceTag -ResourceArn "arn:aws:glue:${Region}:${AccountId}:crawler/$($_.Name)" -TagsToAdd $Tag
 }
 ```
 
