@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-07-23-glue-tagging-cmdlet-not-used-by-anyone-in-the-world">世界中の誰にも使われていない？ Glue のタグ付け Cmdlet</a></li>
+                        
                         <li><a href="/posts/2022-07-16-aws-cdk-with-fsharp-pt2">F# の AWS CDK で EventPattern の記述を無理やり通す</a></li>
                         
                         <li><a href="/posts/2022-07-09-tips-for-sending-http-requests-pwsh">PowerShell で大量の HTTP リクエストを送る場合の Tips</a></li>
-                        
-                        <li><a href="/posts/2022-07-03-aws-cdk-with-fsharp">F# で AWS CDK して躓いてる</a></li>
                         
                         
 
@@ -187,92 +187,67 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-07-16</div>
+        <div class="col-lg-6">2022-07-23</div>
         
     </div>
-    <h2>F# の AWS CDK で EventPattern の記述を無理やり通す</h2>
+    <h2>世界中の誰にも使われていない？ Glue のタグ付け Cmdlet</h2>
 </div>
 <div>
     
-    <p><a href="/posts/2022-07-03-aws-cdk-with-fsharp">前</a>に書いた、 F# の AWS CDK で EventRule のパターンが正しいのにエラーとなるやつ。</p><p>こういうのをしたいところ、</p><pre><code class="yaml">EventPattern:
-  source:
-    - aws.s3
-  detail-type:
-    - Object Created
-  detail:
-    bucket:
-      name:
-        - Ref: バケツ
-    object:
-      key:
-        - prefix: test/
-</code></pre><p>以下の記述だとエラーになる。</p><pre><code class="fsharp">EventPattern =
-    EventPattern(
-        Source = [| "aws.s3" |],
-        DetailType = [| "Object Created" |],
-        Detail =
-            dict [ ("bucket", dict [ ("name", [| bucket.BucketName |]) ])
-                    ("object", dict [ ("key", [| dict [ ("prefix", "test/") ] |]) ]) ]
-    )
-</code></pre><pre><code class="plaintext">Unhandled exception. System.ArgumentException: Could not infer JSII type for .NET type 'IDictionary`2' (Parameter 'type')
-</code></pre><p>この Issue っぽい。
-<a href="https://github.com/aws/jsii/issues/1044">DotNet: Unable to pass interface instance through in a Dictionary&lt;string, object&gt; · Issue #1044 · aws/jsii</a></p><p>けど、 <code>IDictionary&lt;string,obj&gt;</code> は使えてる部分もあって微妙に違うしなー。
-より詳細な型がここ(<code>EventPattern</code>)にはないし、どないすりゃいいんじゃ。</p><p>色々とこねくり回した末に、 CFn のリソースを直接上書きすることで回避できるのがわかった。
-<a href="https://docs.aws.amazon.com/cdk/v2/guide/cfn_layer.html#cfn_layer_raw">Escape hatches - AWS Cloud Development Kit (CDK) v2</a></p><p><a href="https://github.com/krymtkts/aws-cdk-fsharp-trial">krymtkts/aws-cdk-fsharp-trial</a> からコードを抜粋する。</p><p>配列内に <code>IDictionary&lt;string,obj&gt;</code> がいると型が解決できなようだったので、空の配列で定義しておき、後でから <code>IDictionary&lt;string,obj&gt;</code> 要素を差し込む！野蛮過ぎる...</p><pre><code class="fsharp">    let rule =
-        Rule(
-            this,
-            "bucket-event",
-            RuleProps(
-                RuleName = "buckt-event",
-                Description = "bucket event.",
-                EventPattern =
-                    EventPattern(
-                        Source = [| "aws.s3" |],
-                        DetailType = [| "Object Created" |],
-                        // NOTE: cannot write like below because JSII is unable to use `IDictionary&lt;string, object&gt;` inside the array.
-                        // Detail =
-                        //     dict [ ("bucket", dict [ ("name", [| bucket.BucketName |]) ])
-                        //            ("object", dict [ ("key", [| dict [ ("prefix", "test/") ] |]) ]) ]
-                        Detail =
-                            dict [ ("bucket", dict [ ("name", [| bucket.BucketName |]) ])
-                                   ("object", dict [ ("key", [||]) ]) ]
-                    )
-            )
-        )
+    <p>現職にて AWS のコストを可視化すべく、既存の AWS リソースにひたすらコスト配分タグを付与していく作業をしている(勝手に)。
+Cost Explorer を眺めてコストのかかり具合を見るのは、 AWS の醍醐味というか楽しみだと思ってるのだけど、あんまり共感を得られたことがない。</p><p>タグ付けには<a href="https://docs.aws.amazon.com/ARG/latest/userguide/tag-editor.html">タグエディタ</a>を使ってしまっても良いのだけど、折角なので、何を実行したかを形に残せしたい。
+そこで <a href="https://aws.amazon.com/powershell/">AWS Tools for PowerShell</a> でやってる<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>のだけど、とあるサービスだけなんか他のサービスのタグ付け Cmdlet は作法が違ってた。</p><p>Glue 君のことね。 <a href="https://docs.aws.amazon.com/powershell/latest/reference/items/Add-GLUEResourceTag.html">Glue: Add-GLUEResourceTag Cmdlet | AWS Tools for PowerShell</a></p><p>この御方なんか知らんけど <code>Tag[]</code> じゃなくて <code>hashtable</code> を受けつける。コレまた当然のごとく Reference にはサンプルコード載ってないので、念のためググるかーと思いググったところ...</p><p><img src="/img/2022-07-23-capture/aws-tools-for-pwsh.png" alt="9 件しかヒットしない Add-GLUEResourceTag" /></p><p>9 件しかヒットしなかった(2022-07-22 時点)。マジで？
+世界中で誰も使ってないのか、はたまたショボ過ぎて誰も記事にしないのか。</p><p>因みに使い方には困ることもなく、実行した結果も期待通り、ちゃんとタグが付いてた。</p><pre><code class="powershell">$AccountId = Get-STSCallerIdentity | Select-Object -ExpandProperty Account
+$Region = Get-DefaultAWSRegion | Select-Object -ExpandProperty Region
+$Tag = @{
+    'service' = 'my-service'
+    'stage' = 'dev'
+    'cost' = 'my-service-dev'
+}
+Get-GLUECrawlerList | ForEach-Object {
+    # Glue Crawler の ARN が `Get-GLUECrawler` から持ってこれなくて、みすぼらしく手で組んでる。
+    Add-GLUEResourceTag -ResourceArn "arn:aws:glue:${Region}:${AccountId}:crawler/$($_.Name)" -TagsToAdd $Tag -WhatIf
+}
+</code></pre><p><a href="https://aws.amazon.com/jp/about-aws/whats-new/2019/03/aws-glue-now-supports-resource-tagging/">AWS Glue でリソースタグがサポートされて 3 年ばかり経ってる</a>けどみんな使ってないのかなーとか、他にも使われてない Cmdlet があるんやろなーと、思いを馳せた。</p><p>AWS CLI の方はというと <code>"aws glue tag-resource"</code> で 3 件しかヒットしなかった。</p><p><img src="/img/2022-07-23-capture/aws-cli.png" alt="3 件しかヒットしない &quot;aws glue tag-resource&quot;" /></p><p>しかしながらヒットした記事は実行例が分かるものになってて、こう...なんか AWS Tools for PowerShell の人気の無さが際立つなーと感じた。</p><h3 id="他を見る">他を見る</h3><p>雑だが、 AWS Tools for PowerShell のリソースタグ関連の Cmdlet で、タグのパラメータの型が何か調べるスクリプトを書いた。 CRUD 全部の Cmdlet が含まれるのであまり正確ではない。</p><p>わたしは AWS Tools for PowerShell の特定のモジュールしか入れてないから全体はわからんけど、傾向は見られる。</p><pre><code class="powershell"># AWS.Tools.* modules must be imported first to get all property information.
+Get-Module -Name *AWS* | Import-Module
+Get-Command *Tag* | Where-Object -Property Source -Like '*aws*' | ForEach-Object {
+    [pscustomobject]@{
+        Name = $_.Name
+        TagParameterType = $_.Parameters.Values | Where-Object -Property Name -Like '*tag*' | Select-Object -ExpandProperty ParameterType
+    }
+} | Where-Object -Property TagParameterType -NE $Null | Group-Object TagParameterType
 
-    // NOTE: the escape hatch for IDictionary&lt;string, object&gt;` inside the array is raw overrides.
-    do
-        match rule.Node.DefaultChild with
-        | :? CfnRule as ep -&gt; ep.AddPropertyOverride("EventPattern.detail.object.key.0", dict [ "prefix", "test/" ])
-        | _ -&gt; failwith "You passed a wrong variable that is not of type CfnRule!"
-
-</code></pre><p><code>cdk synth</code> でエラーせずに、以下の出力が得られるようになった。</p><pre><code class="yaml">bucketeventF2FCD38A:
-  Type: AWS::Events::Rule
-  Properties:
-    Description: bucket event.
-    EventPattern:
-      detail:
-        bucket:
-          name:
-            - Ref: sourcebucketE323AAE3
-        object:
-          key:
-            - prefix: test/
-      detail-type:
-        - Object Created
-      source:
-        - aws.s3
-    Name: buckt-event
-    State: ENABLED
-    Targets:
-      - Arn:
-          Fn::GetAtt:
-            - samplefunctionAA39FD5B
-            - Arn
-        Id: Target0
-  Metadata:
-    aws:cdk:path: AwsCdkFsharpStack/bucket-event/Resource
-</code></pre><p>宣言的に書きたいのにこんなツギハギが要るとか、めちゃくちゃ不便極まりない。</p><p>これは F# のせいじゃないけど、この .NET の不便な側面を許容してまで F# で CDK したいかというと、まずないな...と思った。これに関連して AWS CDK の Issue をちょいちょい調べたが、 .NET や Java で CDK するの辛そうやな..とうっすら思えた。茨の道を突き進むなりの良さがあるのだろうか。</p><p>改めて、仕事は素直に TypeScript を採用して良かったと実感した。</p>
+# Count Name
+# ----- ----
+#    31 System.String[]
+#     8 Amazon.IdentityManagement.Model.Tag[]
+#     4 System.Collections.Hashtable
+#     3 {System.String[], System.String[]}
+#     3 Amazon.CodeDeploy.Model.Tag[]
+#     3 System.String
+#     2 Amazon.OpenSearchService.Model.Tag[]
+#     2 Amazon.AutoScaling.Model.Tag[]
+#     2 Amazon.EC2.Model.Tag[]
+#     2 Amazon.S3.Model.Tag[]
+#     2 Amazon.Redshift.Model.Tag[]
+#     2 Amazon.CertificateManager.Model.Tag[]
+#     1 Amazon.ECS.Model.Tag[]
+#     1 Amazon.CloudWatch.Model.Tag[]
+#     1 Amazon.SimpleNotificationService.Model.Tag[]
+#     1 Amazon.StepFunctions.Model.Tag[]
+#     1 Amazon.SecretsManager.Model.Tag[]
+#     1 Amazon.ECR.Model.Tag[]
+#     1 Amazon.RDS.Model.Tag[]
+#     1 Amazon.KeyManagementService.Model.Tag[]
+#     1 Amazon.KinesisFirehose.Model.Tag[]
+#     1 Amazon.DynamoDBv2.Model.Tag[]
+#     1 Amazon.ECR.ImageTagMutability
+#     1 Amazon.ElasticLoadBalancingV2.Model.Tag[]
+#     1 Amazon.ElastiCache.Model.Tag[]
+#     1 Amazon.QuickSight.Model.Tag[]
+#     1 Amazon.EventBridge.Model.Tag[]
+</code></pre><p><code>*.Tag[]</code> が多数派かなーと。 <code>31 System.String[]</code> これは多分削除とか取得かな。
+ただしこいつら <code>*.Tag[]</code> グループの中でも、 プロパティが <code>Key</code> だったり <code>TagKey</code> だったりの派閥があるので、ほんま「みんな違ってみんないい」的状態。</p><p>おわり。</p><div class="footnotes"><hr /><ol><li id="fn-1"><p>既存リソースは IaC じゃないので、コマンドでタグ付けするため。</p><a href="#fnref-1" class="footnote-backref">↩</a></li></ol></div>
 </div>
 
 <div id="post-tags">
@@ -280,7 +255,7 @@
     
     <a href="/tags/aws">aws</a>
     
-    <a href="/tags/fsharp">fsharp</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -290,7 +265,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-07-09-tips-for-sending-http-requests-pwsh">2022-07-09 PowerShell で大量の HTTP リクエストを送る場合の Tips &raquo;</a>
+        <a class="right" href="/posts/2022-07-16-aws-cdk-with-fsharp-pt2">2022-07-16 F# の AWS CDK で EventPattern の記述を無理やり通す &raquo;</a>
         
     </div>
 </div>

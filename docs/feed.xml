@@ -1,4 +1,57 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 16 Jul 2022 17:03:21 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-07-16-aws-cdk-with-fsharp-pt2</guid><link>https://krymtkts.github.io/posts/2022-07-16-aws-cdk-with-fsharp-pt2</link><title>F# の AWS CDK で EventPattern の記述を無理やり通す</title><description>&lt;p&gt;&lt;a href="/posts/2022-07-03-aws-cdk-with-fsharp"&gt;前&lt;/a&gt;に書いた、 F# の AWS CDK で EventRule のパターンが正しいのにエラーとなるやつ。&lt;/p&gt;&lt;p&gt;こういうのをしたいところ、&lt;/p&gt;&lt;pre&gt;&lt;code class="yaml"&gt;EventPattern:
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 23 Jul 2022 16:02:51 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-07-23-glue-tagging-cmdlet-not-used-by-anyone-in-the-world</guid><link>https://krymtkts.github.io/posts/2022-07-23-glue-tagging-cmdlet-not-used-by-anyone-in-the-world</link><title>世界中の誰にも使われていない？ Glue のタグ付け Cmdlet</title><description>&lt;p&gt;現職にて AWS のコストを可視化すべく、既存の AWS リソースにひたすらコスト配分タグを付与していく作業をしている(勝手に)。
+Cost Explorer を眺めてコストのかかり具合を見るのは、 AWS の醍醐味というか楽しみだと思ってるのだけど、あんまり共感を得られたことがない。&lt;/p&gt;&lt;p&gt;タグ付けには&lt;a href="https://docs.aws.amazon.com/ARG/latest/userguide/tag-editor.html"&gt;タグエディタ&lt;/a&gt;を使ってしまっても良いのだけど、折角なので、何を実行したかを形に残せしたい。
+そこで &lt;a href="https://aws.amazon.com/powershell/"&gt;AWS Tools for PowerShell&lt;/a&gt; でやってる&lt;sup id="fnref-1"&gt;&lt;a class="footnote-ref" href="#fn-1"&gt;1&lt;/a&gt;&lt;/sup&gt;のだけど、とあるサービスだけなんか他のサービスのタグ付け Cmdlet は作法が違ってた。&lt;/p&gt;&lt;p&gt;Glue 君のことね。 &lt;a href="https://docs.aws.amazon.com/powershell/latest/reference/items/Add-GLUEResourceTag.html"&gt;Glue: Add-GLUEResourceTag Cmdlet | AWS Tools for PowerShell&lt;/a&gt;&lt;/p&gt;&lt;p&gt;この御方なんか知らんけど &lt;code&gt;Tag[]&lt;/code&gt; じゃなくて &lt;code&gt;hashtable&lt;/code&gt; を受けつける。コレまた当然のごとく Reference にはサンプルコード載ってないので、念のためググるかーと思いググったところ...&lt;/p&gt;&lt;p&gt;&lt;img src="/img/2022-07-23-capture/aws-tools-for-pwsh.png" alt="9 件しかヒットしない Add-GLUEResourceTag" /&gt;&lt;/p&gt;&lt;p&gt;9 件しかヒットしなかった(2022-07-22 時点)。マジで？
+世界中で誰も使ってないのか、はたまたショボ過ぎて誰も記事にしないのか。&lt;/p&gt;&lt;p&gt;因みに使い方には困ることもなく、実行した結果も期待通り、ちゃんとタグが付いてた。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;$AccountId = Get-STSCallerIdentity | Select-Object -ExpandProperty Account
+$Region = Get-DefaultAWSRegion | Select-Object -ExpandProperty Region
+$Tag = @{
+    'service' = 'my-service'
+    'stage' = 'dev'
+    'cost' = 'my-service-dev'
+}
+Get-GLUECrawlerList | ForEach-Object {
+    # Glue Crawler の ARN が `Get-GLUECrawler` から持ってこれなくて、みすぼらしく手で組んでる。
+    Add-GLUEResourceTag -ResourceArn "arn:aws:glue:${Region}:${AccountId}:crawler/$($_.Name)" -TagsToAdd $Tag -WhatIf
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href="https://aws.amazon.com/jp/about-aws/whats-new/2019/03/aws-glue-now-supports-resource-tagging/"&gt;AWS Glue でリソースタグがサポートされて 3 年ばかり経ってる&lt;/a&gt;けどみんな使ってないのかなーとか、他にも使われてない Cmdlet があるんやろなーと、思いを馳せた。&lt;/p&gt;&lt;p&gt;AWS CLI の方はというと &lt;code&gt;"aws glue tag-resource"&lt;/code&gt; で 3 件しかヒットしなかった。&lt;/p&gt;&lt;p&gt;&lt;img src="/img/2022-07-23-capture/aws-cli.png" alt="3 件しかヒットしない &amp;quot;aws glue tag-resource&amp;quot;" /&gt;&lt;/p&gt;&lt;p&gt;しかしながらヒットした記事は実行例が分かるものになってて、こう...なんか AWS Tools for PowerShell の人気の無さが際立つなーと感じた。&lt;/p&gt;&lt;h3 id="他を見る"&gt;他を見る&lt;/h3&gt;&lt;p&gt;雑だが、 AWS Tools for PowerShell のリソースタグ関連の Cmdlet で、タグのパラメータの型が何か調べるスクリプトを書いた。 CRUD 全部の Cmdlet が含まれるのであまり正確ではない。&lt;/p&gt;&lt;p&gt;わたしは AWS Tools for PowerShell の特定のモジュールしか入れてないから全体はわからんけど、傾向は見られる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# AWS.Tools.* modules must be imported first to get all property information.
+Get-Module -Name *AWS* | Import-Module
+Get-Command *Tag* | Where-Object -Property Source -Like '*aws*' | ForEach-Object {
+    [pscustomobject]@{
+        Name = $_.Name
+        TagParameterType = $_.Parameters.Values | Where-Object -Property Name -Like '*tag*' | Select-Object -ExpandProperty ParameterType
+    }
+} | Where-Object -Property TagParameterType -NE $Null | Group-Object TagParameterType
+
+# Count Name
+# ----- ----
+#    31 System.String[]
+#     8 Amazon.IdentityManagement.Model.Tag[]
+#     4 System.Collections.Hashtable
+#     3 {System.String[], System.String[]}
+#     3 Amazon.CodeDeploy.Model.Tag[]
+#     3 System.String
+#     2 Amazon.OpenSearchService.Model.Tag[]
+#     2 Amazon.AutoScaling.Model.Tag[]
+#     2 Amazon.EC2.Model.Tag[]
+#     2 Amazon.S3.Model.Tag[]
+#     2 Amazon.Redshift.Model.Tag[]
+#     2 Amazon.CertificateManager.Model.Tag[]
+#     1 Amazon.ECS.Model.Tag[]
+#     1 Amazon.CloudWatch.Model.Tag[]
+#     1 Amazon.SimpleNotificationService.Model.Tag[]
+#     1 Amazon.StepFunctions.Model.Tag[]
+#     1 Amazon.SecretsManager.Model.Tag[]
+#     1 Amazon.ECR.Model.Tag[]
+#     1 Amazon.RDS.Model.Tag[]
+#     1 Amazon.KeyManagementService.Model.Tag[]
+#     1 Amazon.KinesisFirehose.Model.Tag[]
+#     1 Amazon.DynamoDBv2.Model.Tag[]
+#     1 Amazon.ECR.ImageTagMutability
+#     1 Amazon.ElasticLoadBalancingV2.Model.Tag[]
+#     1 Amazon.ElastiCache.Model.Tag[]
+#     1 Amazon.QuickSight.Model.Tag[]
+#     1 Amazon.EventBridge.Model.Tag[]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;*.Tag[]&lt;/code&gt; が多数派かなーと。 &lt;code&gt;31 System.String[]&lt;/code&gt; これは多分削除とか取得かな。
+ただしこいつら &lt;code&gt;*.Tag[]&lt;/code&gt; グループの中でも、 プロパティが &lt;code&gt;Key&lt;/code&gt; だったり &lt;code&gt;TagKey&lt;/code&gt; だったりの派閥があるので、ほんま「みんな違ってみんないい」的状態。&lt;/p&gt;&lt;p&gt;おわり。&lt;/p&gt;&lt;div class="footnotes"&gt;&lt;hr /&gt;&lt;ol&gt;&lt;li id="fn-1"&gt;&lt;p&gt;既存リソースは IaC じゃないので、コマンドでタグ付けするため。&lt;/p&gt;&lt;a href="#fnref-1" class="footnote-backref"&gt;↩&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;</description><pubDate>Sat, 23 Jul 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-07-16-aws-cdk-with-fsharp-pt2</guid><link>https://krymtkts.github.io/posts/2022-07-16-aws-cdk-with-fsharp-pt2</link><title>F# の AWS CDK で EventPattern の記述を無理やり通す</title><description>&lt;p&gt;&lt;a href="/posts/2022-07-03-aws-cdk-with-fsharp"&gt;前&lt;/a&gt;に書いた、 F# の AWS CDK で EventRule のパターンが正しいのにエラーとなるやつ。&lt;/p&gt;&lt;p&gt;こういうのをしたいところ、&lt;/p&gt;&lt;pre&gt;&lt;code class="yaml"&gt;EventPattern:
   source:
     - aws.s3
   detail-type:
