@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: 振り返り 2019 年</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-12-29-retrospective2019">
+    <title>krymtkts: AWS Tools for PowerShell のビルド素振り</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-07-30-practice-build-aws-tools-for-powrshell">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: 振り返り 2019 年" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-12-29-retrospective2019" />
+    <meta property="og:title" content="krymtkts: AWS Tools for PowerShell のビルド素振り" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-07-30-practice-build-aws-tools-for-powrshell" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -187,44 +187,48 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-12-29</div>
+        <div class="col-lg-6">2022-07-30</div>
         
     </div>
-    <h2>振り返り 2019 年</h2>
+    <h2>AWS Tools for PowerShell のビルド素振り</h2>
 </div>
 <div>
     
-    <p>ことし 2019 年も残すところあと僅か。2019 年の自身の成長などを振り返ろう。</p><p>短くまとめると、2019 年は新しいことを始めた年になった。</p><p>転職し、未体験の事業領域の企業で働き始めた。
-会社の後押しもあって積極的に未経験の技術を取り入れ、部分的ではあるが在宅ワークもしてみた。</p><hr /><p>前職は、実にチョロいかいしゃだったので、6 年ほどの在職中に入社前の 8 割ほど昇給できたのはこの会社のおかげ(前々職がリーマンのあおりもあって給料安すぎたのだけど)。
-しかしながら、従業員に対する評価や報酬については不誠実極まりなかったし、自分の思い描くエンジニア像に必要な経験を積めなくなったのは一番痛かった。
-やる気と実力を以て希望さえすれば挑戦させてくれる、入社時にあったような腕を磨ける環境が失われていくのは、1 度ならずこの会社を最後の会社にできそうだと心に思った自分には辛いものがあった。これは過去の話だけど。</p><p>転職して今の会社に入れたのもよかった。適切な判断を下すのにインフラ、クラウドの知識を求められ、わたしの技術スタックのうすーいところを絶妙に攻め立ててくれる。
-おかげで徐々にではあるが弱いところを克服できている。
-また強みである積極性と吸収スピードの高さが上手く活かせて、CI/CD の補填、未体験だったのにサーバーレスアーキテクチャや Python を選ばせてくれたり。
-カンファレンスに積極的に参加して、社内に情報を持ち帰ったり、やりたかったことが色々でき始めた。
-会社での評価も今のところは順調で、現場での自身の成長スピードを増幅できていると感じる。</p><p>心配事があるとしたら、前職の 1 年目年末もこんなのだったので、同じ轍を踏みたくないなというところか 😅</p><hr /><p>自分でも御しきれていなかったのは、在宅ワークの部分。
-今は子供の面倒を見る機会を平日は週に 1 回設けて、その日を早く帰って在宅ワークの日としている。
-在宅中の仕事の進め方と家族との関わり方の両立が難しくて、まだ納得の行く形になっていない。そりゃ家族からしたら、家にいるのだから色々やってほしいことができてしまうし、このままだと単純に自身の過重労働だなあと思っている。
-こういった我が家のパターンだと、在宅ワークよりもちょっとカフェとかで仕事するとかがよいのか。
-通勤時間を削る＆家族とも連絡を断つ、という手段がいるのかも、ただしそれは元々わたしの考えていた在宅ワークの動機と違うけど。
-この辺は来年 2020 年になってからも、また別の手段を検討していきたい。</p><hr /><p>最後に今年密かに目標としていた、1 年間毎月投稿を書く、について。
-どこにも宣言してなかったけどブログを継続するという習慣づくりのためにこの目標を据えた。
-結果は未達。11 月が現職の障害対応で気持ちに余裕がなかったため。まあ投稿の数は平均月 2 のペースになってたので、この点は目をつぶろう 🙈</p><p>来年も目標をゆるくだが設定して邁進したく。もっと情報に触れて、コードを書いて、という生活に昇華しよう。</p><p>(きょうの投稿には 1 文字もコードがなかったけど、特例日 😆)</p>
+    <p>今年は積極的に？ AWS Tools for PowerShell を使ってることもあって、また Issue 書くことあるかなー、なんなら PR 書いて貢献した方がいいよなと考えるに至り、 <a href="https://github.com/aws/aws-tools-for-powershell">aws/aws-tools-for-powershell</a> のビルドを素振りしてみた。
+残念ながら、 contribution 関連でビルドの方法がレクチュアされてる文書とかなかったので、手探りでやってる。</p><p>まず、サービス毎の膨大なプロジェクトがあるし、試しに単体のプロジェクトをビルドしたかったのだけど、関連付く DLL が無くてビルドできなかった。 <code>Amazon.Runtime</code> とかいうやつ？ この repo 内のどれかのプロジェクトでビルドされるんだろうけど。</p><p><code>buildtools/</code> 配下を見ると、どうも CI が CodeBuild らしい(当然のごとく)。この <code>buildtools/ci.buildspec.yml</code> の中に記載されている全体のビルドで使ってるプロジェクトなら上手くいきそうな雰囲気がしたので、これでフルビルドを試した。</p><pre><code class="powershell">dotnet --version
+# 6.0.302
+dotnet build .\buildtools\build.proj
+# めちゃくちゃ大量のビルドログが出力される...
+</code></pre><p>ところがこのフルビルドしだしたらクッソ重い...ビルドが終わらない。
+わたしの Razer blade stealth 2018 モデルだと CPU 使用率が天井に貼り付いて、過去にない位にヒートアップしてて心配な気持ちにさせてくれた。</p><p>結果、 41 分かかってなんとかビルドに成功した。</p><p>で、出力結果を見たら改行コードが変わってしまったみたいでエグい差分が発生してしまった。
+元コードは全部 <code>LF</code> なのだけど、 Windows でのビルドによって <code>CRLF</code> になってしまったみたい。CodeBuild では .NET Core 3.1 でビルドしてるから .NET の関連ツールを使ってても <code>LF</code> になるんやろが、こちとら Windows 。
+どこで変わったか調査して再発を防ぎたいけど、別の機会にする。</p><p>これで基盤的な DLL は生成されたであろうし、サービス個別のプロジェクトのビルドを試すと、うまくいった。</p><pre><code class="powershell">dotnet build .\modules\AWSPowerShell\Cmdlets\Lambda\AWS.Tools.Lambda.csproj
+# ...中略...
+#
+# Build succeeded.
+#     0 Warning(s)
+#     0 Error(s)
+#
+# Time Elapsed 00:00:01.81
+</code></pre><p>テストは PowerShell で Cmdlet に対して行う Pester のやつがあるのみで、かつこれらの内容を見てると当然のごとく AWS リソースがある前提。なので、多分個人では金がかかってできないやつ。デプロイ用の CFn とかもないし。
+PR のワークフローで対処してんのかなー。</p><p>想定以上に時間がかかったけど、とりあえずなんか修正したいときに手元でビルドするための知識は貯まった。
+フルビルドで改行コードが書き換わってしまう、サービス単体のビルドに必要な最小限の依存関係を理解する、辺りが宿題かな。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/retrospective">retrospective</a>
+    <a href="/tags/aws">aws</a>
+    
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2020-01-29-plannning">&laquo; 2020-01-29 2020</a>
         
-        
-        <a class="right" href="/posts/2019-10-14-how-to-handle-waiter-of-boto3">2019-10-14 boto3 の Waiter さんとの戯れ &raquo;</a>
+        <a class="right" href="/posts/2022-07-23-glue-tagging-cmdlet-not-used-by-anyone-in-the-world">2022-07-23 世界中の誰にも使われていない？ Glue のタグ付け Cmdlet &raquo;</a>
         
     </div>
 
