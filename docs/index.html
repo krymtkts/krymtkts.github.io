@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-08-06-usecase-of-get-gzipcontent">Get-GzipContent のユースケース</a></li>
+                        
                         <li><a href="/posts/2022-07-30-practice-build-aws-tools-for-powrshell">AWS Tools for PowerShell のビルド素振り</a></li>
                         
                         <li><a href="/posts/2022-07-23-glue-tagging-cmdlet-not-used-by-anyone-in-the-world">世界中の誰にも使われていない？ Glue のタグ付け Cmdlet</a></li>
-                        
-                        <li><a href="/posts/2022-07-16-aws-cdk-with-fsharp-pt2">F# の AWS CDK で EventPattern の記述を無理やり通す</a></li>
                         
                         
 
@@ -187,32 +187,39 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-07-30</div>
+        <div class="col-lg-6">2022-08-06</div>
         
     </div>
-    <h2>AWS Tools for PowerShell のビルド素振り</h2>
+    <h2>Get-GzipContent のユースケース</h2>
 </div>
 <div>
     
-    <p>今年は積極的に？ AWS Tools for PowerShell を使ってることもあって、また Issue 書くことあるかなー、なんなら PR 書いて貢献した方がいいよなと考えるに至り、 <a href="https://github.com/aws/aws-tools-for-powershell">aws/aws-tools-for-powershell</a> のビルドを素振りしてみた。
-残念ながら、 contribution 関連でビルドの方法がレクチュアされてる文書とかなかったので、手探りでやってる。</p><p>まず、サービス毎の膨大なプロジェクトがあるし、試しに単体のプロジェクトをビルドしたかったのだけど、関連付く DLL が無くてビルドできなかった。 <code>Amazon.Runtime</code> とかいうやつ？ この repo 内のどれかのプロジェクトでビルドされるんだろうけど。</p><p><code>buildtools/</code> 配下を見ると、どうも CI が CodeBuild らしい(当然のごとく)。この <code>buildtools/ci.buildspec.yml</code> の中に記載されている全体のビルドで使ってるプロジェクトなら上手くいきそうな雰囲気がしたので、これでフルビルドを試した。</p><pre><code class="powershell">dotnet --version
-# 6.0.302
-dotnet build .\buildtools\build.proj
-# めちゃくちゃ大量のビルドログが出力される...
-</code></pre><p>ところがこのフルビルドしだしたらクッソ重い...ビルドが終わらない。
-わたしの Razer blade stealth 2018 モデルだと CPU 使用率が天井に貼り付いて、過去にない位にヒートアップしてて心配な気持ちにさせてくれた。</p><p>結果、 41 分かかってなんとかビルドに成功した。</p><p>で、出力結果を見たら改行コードが変わってしまったみたいでエグい差分が発生してしまった。
-元コードは全部 <code>LF</code> なのだけど、 Windows でのビルドによって <code>CRLF</code> になってしまったみたい。CodeBuild では .NET Core 3.1 でビルドしてるから .NET の関連ツールを使ってても <code>LF</code> になるんやろが、こちとら Windows 。
-どこで変わったか調査して再発を防ぎたいけど、別の機会にする。</p><p>これで基盤的な DLL は生成されたであろうし、サービス個別のプロジェクトのビルドを試すと、うまくいった。</p><pre><code class="powershell">dotnet build .\modules\AWSPowerShell\Cmdlets\Lambda\AWS.Tools.Lambda.csproj
-# ...中略...
-#
-# Build succeeded.
-#     0 Warning(s)
-#     0 Error(s)
-#
-# Time Elapsed 00:00:01.81
-</code></pre><p>テストは PowerShell で Cmdlet に対して行う Pester のやつがあるのみで、かつこれらの内容を見てると当然のごとく AWS リソースがある前提。なので、多分個人では金がかかってできないやつ。デプロイ用の CFn とかもないし。
-PR のワークフローで対処してんのかなー。</p><p>想定以上に時間がかかったけど、とりあえずなんか修正したいときに手元でビルドするための知識は貯まった。
-フルビルドで改行コードが書き換わってしまう、サービス単体のビルドに必要な最小限の依存関係を理解する、辺りが宿題かな。</p>
+    <p>以前 <a href="https://github.com/krymtkts/Get-GzipContent">krymtkts/Get-GzipContent: Get-Content for gzip files.</a> というのを作って <a href="https://www.powershellgallery.com/packages/Get-GzipContent/0.1.2">PowerShell Gallery</a> に公開した。</p><p>当時 gzip された JSON を扱う機会が多かった。
+その時の職場は bash 文化だったのだけど、自分のローカルでは PowerShell を使うし...ということで、モジュールが欲しかった。
+この PowerShell で gzip を展開するコード自体よく知られてるパターンらしかったけど、登録されてるモジュールがなかったので、自分で作った。ちゃんと探したら似たモジュールはあったのだろうけど、周辺モジュールもドカッと入るのは期待するところでないので、単機能のモジュールを作ったんだ確か。</p><p>最近になってまた gzip されたファイルを扱う機会が増えたので、改めて使う機会が来たのだけど...これちょっとイマイチやなーと思っている。</p><p>CloudFront のアクセスログで<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#LogFileFormat">標準ログ</a>というのがあるのだけど、こいつは gzip された TSV で、これを PowerShell で取り扱うのに以下の関数を作った。</p><pre><code class="powershell">function ConvertFrom-CloudFrontAccessLog {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true,
+            Position = 0,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            HelpMessage = 'Path to one or more locations.')]
+        [Alias('PSPath')]
+        [ValidateNotNullOrEmpty()]
+        [string[]]
+        $Path
+    )
+    begin {
+        $header = 'date', 'time', 'x-edge-location', 'sc-bytes', 'c-ip', 'cs-method', 'cs(Host)', 'cs-uri-stem', 'sc-status', 'cs(Referer)', 'cs(User-Agent)', 'cs-uri-query', 'cs(Cookie)', 'x-edge-result-type', 'x-edge-request-id', 'x-host-header', 'cs-protocol', 'cs-bytes', 'time-taken', 'x-forwarded-for', 'ssl-protocol', 'ssl-cipher', 'x-edge-response-result-type', 'cs-protocol-version', 'fle-status', 'fle-encrypted-fields', 'c-port', 'time-to-first-byte', 'x-edge-detailed-result-type', 'sc-content-type', 'sc-content-len', 'sc-range-start', 'sc-range-end'
+    }
+    process {
+        $Path | ForEach-Object { (zcat $_) -split "`n" } | ConvertFrom-Csv -Delimiter "`t" -Header $header
+    }
+}
+</code></pre><p><code>ForEach-Object { (zcat $_) -split "`n" }</code> ここがイケてない。まじで使いにくい。
+改行コードずつ <code>Write-Object</code> するようにしてないから、自分で分割しないといけなくなってしまっている。当時は改行なし JSON ばかり取り扱ってたので、全く気づかなかったのかなと思っている(しらん)。</p><p>↓ こうできたらすごくイイ気がする。</p><pre><code class="powershell">$Path | zcat | ConvertFrom-Csv -Delimiter "`t" -Header $header
+</code></pre><p>breaking change なのもあるしバージョン 1 にするかーとか思っている。後方互換のスイッチ要るかな？とか分割単位を指定できるのが良いのかな？とか考え出すと、やる気が...
+ま、 <code>Get-Content</code> と似た動きにしたいってのがあるので、 <code>-Delimiter</code> かなー。</p><p>でも、とりあえず数年後し？のセルフ使用レビューを経てツールを改善しよ...という気になったので、自分のために書いたモジュールでもあるし自分が必要な範囲で直そ。使ってる人がおこになったらちょっと考える。</p><p>さっさと直したらいいのだけど、動機づけとしてこの記事をしたためた。</p>
 </div>
 
 <div id="post-tags">
@@ -230,7 +237,7 @@ PR のワークフローで対処してんのかなー。</p><p>想定以上に�
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-07-23-glue-tagging-cmdlet-not-used-by-anyone-in-the-world">2022-07-23 世界中の誰にも使われていない？ Glue のタグ付け Cmdlet &raquo;</a>
+        <a class="right" href="/posts/2022-07-30-practice-build-aws-tools-for-powrshell">2022-07-30 AWS Tools for PowerShell のビルド素振り &raquo;</a>
         
     </div>
 </div>
