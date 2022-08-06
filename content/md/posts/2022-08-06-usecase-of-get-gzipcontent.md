@@ -50,3 +50,4 @@ breaking change なのもあるしバージョン 1 にするかーとか思っ�
 でも、とりあえず数年後し？のセルフ使用レビューを経てツールを改善しよ...という気になったので、自分のために書いたモジュールでもあるし自分が必要な範囲で直そ。使ってる人がおこになったらちょっと考える。
 
 さっさと直したらいいのだけど、動機づけとしてこの記事をしたためた。
+あとはやるだけ... [Add the `-Delimiter` option like `Get-Content`. · Issue #3 · krymtkts/Get-GzipContent](https://github.com/krymtkts/Get-GzipContent/issues/3)

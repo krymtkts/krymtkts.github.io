@@ -219,7 +219,8 @@
 </code></pre><p><code>ForEach-Object { (zcat $_) -split "`n" }</code> ここがイケてない。まじで使いにくい。
 改行コードずつ <code>Write-Object</code> するようにしてないから、自分で分割しないといけなくなってしまっている。当時は改行なし JSON ばかり取り扱ってたので、全く気づかなかったのかなと思っている(しらん)。</p><p>↓ こうできたらすごくイイ気がする。</p><pre><code class="powershell">$Path | zcat | ConvertFrom-Csv -Delimiter "`t" -Header $header
 </code></pre><p>breaking change なのもあるしバージョン 1 にするかーとか思っている。後方互換のスイッチ要るかな？とか分割単位を指定できるのが良いのかな？とか考え出すと、やる気が...
-ま、 <code>Get-Content</code> と似た動きにしたいってのがあるので、 <code>-Delimiter</code> かなー。</p><p>でも、とりあえず数年後し？のセルフ使用レビューを経てツールを改善しよ...という気になったので、自分のために書いたモジュールでもあるし自分が必要な範囲で直そ。使ってる人がおこになったらちょっと考える。</p><p>さっさと直したらいいのだけど、動機づけとしてこの記事をしたためた。</p>
+ま、 <code>Get-Content</code> と似た動きにしたいってのがあるので、 <code>-Delimiter</code> かなー。</p><p>でも、とりあえず数年後し？のセルフ使用レビューを経てツールを改善しよ...という気になったので、自分のために書いたモジュールでもあるし自分が必要な範囲で直そ。使ってる人がおこになったらちょっと考える。</p><p>さっさと直したらいいのだけど、動機づけとしてこの記事をしたためた。
+あとはやるだけ... <a href="https://github.com/krymtkts/Get-GzipContent/issues/3">Add the <code>-Delimiter</code> option like <code>Get-Content</code>. · Issue #3 · krymtkts/Get-GzipContent</a></p>
 </div>
 
 <div id="post-tags">
