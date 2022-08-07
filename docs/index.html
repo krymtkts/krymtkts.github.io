@@ -52,11 +52,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a href="/posts/2022-08-07-git-says-the-local-repo-is-not-yours">git で local repo が自分のものじゃないとなったやつ</a></li>
+                        
                         <li><a href="/posts/2022-08-06-usecase-of-get-gzipcontent">Get-GzipContent のユースケース</a></li>
                         
                         <li><a href="/posts/2022-07-30-practice-build-aws-tools-for-powrshell">AWS Tools for PowerShell のビルド素振り</a></li>
-                        
-                        <li><a href="/posts/2022-07-23-glue-tagging-cmdlet-not-used-by-anyone-in-the-world">世界中の誰にも使われていない？ Glue のタグ付け Cmdlet</a></li>
                         
                         
 
@@ -187,48 +187,56 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-08-06</div>
+        <div class="col-lg-6">2022-08-07</div>
         
     </div>
-    <h2>Get-GzipContent のユースケース</h2>
+    <h2>git で local repo が自分のものじゃないとなったやつ</h2>
 </div>
 <div>
     
-    <p>以前 <a href="https://github.com/krymtkts/Get-GzipContent">krymtkts/Get-GzipContent: Get-Content for gzip files.</a> というのを作って <a href="https://www.powershellgallery.com/packages/Get-GzipContent/0.1.2">PowerShell Gallery</a> に公開した。</p><p>当時 gzip された JSON を扱う機会が多かった。
-その時の職場は bash 文化だったのだけど、自分のローカルでは PowerShell を使うし...ということで、モジュールが欲しかった。
-この PowerShell で gzip を展開するコード自体よく知られてるパターンらしかったけど、登録されてるモジュールがなかったので、自分で作った。ちゃんと探したら似たモジュールはあったのだろうけど、周辺モジュールもドカッと入るのは期待するところでないので、単機能のモジュールを作ったんだ確か。</p><p>最近になってまた gzip されたファイルを扱う機会が増えたので、改めて使う機会が来たのだけど...これちょっとイマイチやなーと思っている。</p><p>CloudFront のアクセスログで<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#LogFileFormat">標準ログ</a>というのがあるのだけど、こいつは gzip された TSV で、これを PowerShell で取り扱うのに以下の関数を作った。</p><pre><code class="powershell">function ConvertFrom-CloudFrontAccessLog {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true,
-            HelpMessage = 'Path to one or more locations.')]
-        [Alias('PSPath')]
-        [ValidateNotNullOrEmpty()]
-        [string[]]
-        $Path
-    )
-    begin {
-        $header = 'date', 'time', 'x-edge-location', 'sc-bytes', 'c-ip', 'cs-method', 'cs(Host)', 'cs-uri-stem', 'sc-status', 'cs(Referer)', 'cs(User-Agent)', 'cs-uri-query', 'cs(Cookie)', 'x-edge-result-type', 'x-edge-request-id', 'x-host-header', 'cs-protocol', 'cs-bytes', 'time-taken', 'x-forwarded-for', 'ssl-protocol', 'ssl-cipher', 'x-edge-response-result-type', 'cs-protocol-version', 'fle-status', 'fle-encrypted-fields', 'c-port', 'time-to-first-byte', 'x-edge-detailed-result-type', 'sc-content-type', 'sc-content-len', 'sc-range-start', 'sc-range-end'
-    }
-    process {
-        $Path | ForEach-Object { (zcat $_) -split "`n" } | ConvertFrom-Csv -Delimiter "`t" -Header $header
-    }
-}
-</code></pre><p><code>ForEach-Object { (zcat $_) -split "`n" }</code> ここがイケてない。まじで使いにくい。
-改行コードずつ <code>Write-Object</code> するようにしてないから、自分で分割しないといけなくなってしまっている。当時は改行なし JSON ばかり取り扱ってたので、全く気づかなかったのかなと思っている(しらん)。</p><p>↓ こうできたらすごくイイ気がする。</p><pre><code class="powershell">$Path | zcat | ConvertFrom-Csv -Delimiter "`t" -Header $header
-</code></pre><p>breaking change なのもあるしバージョン 1 にするかーとか思っている。後方互換のスイッチ要るかな？とか分割単位を指定できるのが良いのかな？とか考え出すと、やる気が...
-ま、 <code>Get-Content</code> と似た動きにしたいってのがあるので、 <code>-Delimiter</code> かなー。</p><p>でも、とりあえず数年後し？のセルフ使用レビューを経てツールを改善しよ...という気になったので、自分のために書いたモジュールでもあるし自分が必要な範囲で直そ。使ってる人がおこになったらちょっと考える。</p><p>さっさと直したらいいのだけど、動機づけとしてこの記事をしたためた。
-あとはやるだけ... <a href="https://github.com/krymtkts/Get-GzipContent/issues/3">Add the <code>-Delimiter</code> option like <code>Get-Content</code>. · Issue #3 · krymtkts/Get-GzipContent</a></p>
+    <p>今日はブログ書くつもり無かったけど、これまた起こったらなんかハマりそうやなーと思ったので、したためた。</p><p>何があったかわからんが、 git に local repo の所有権が自分にないと言われてエラーになった。</p><pre><code class="powershell">PS&gt; git status
+fatal: detected dubious ownership in repository at 'C:/Users/takatoshi/dev/github.com/krymtkts/Get-GzipContent'
+To add an exception for this directory, call:
+
+        git config --global --add safe.directory C:\Users\takatoshi\dev\github.com\krymtkts\Get-GzipContent
+Set the environment variable GIT_TEST_DEBUG_UNSAFE_DIRECTORIES=true and run
+again for more information.
+</code></pre><p><code>safe.directory</code> が設定されているパスなのだけど。</p><pre><code class="powershell">PS&gt; git config --list | ? {$_ -like 'safe*'}
+safe.directory=C:/Users/takatoshi/dev/*
+</code></pre><p><code>GIT_TEST_DEBUG_UNSAFE_DIRECTORIES</code> でデバッグメッセージを有効化できるそうなのでしてみたところ、以下の様なのが出た。
+最近使ってた local repo では出なくて、<del>放置してた</del> 最近ご無沙汰だった repo で出ている。</p><pre><code class="powershell">PS&gt; $env:GIT_TEST_DEBUG_UNSAFE_DIRECTORIES=$true
+PS&gt; git status
+warning: 'C:/Users/takatoshi/dev/github.com/krymtkts/Get-GzipContent/.git' is owned by:
+        'S-1-5-32-544'
+but the current user is:
+        'S-1-5-21-3808303910-2770483448-703627078-1001'
+fatal: detected dubious ownership in repository at 'C:/Users/takatoshi/dev/github.com/krymtkts/Get-GzipContent'
+To add an exception for this directory, call:
+
+        git config --global --add safe.directory C:/Users/takatoshi/dev/github.com/krymtkts/Get-GzipContent
+</code></pre><p>owner が違う...なんで owner 変わってしまってたんだろう。ユーザー 1 人しかいないのに。
+あーハイハイ、と想像がついたので試したところ、管理者権限でならエラーが出ない。</p><p>どうも過去に管理者権限で作成した local repo の所有者が Administrator になってた模様。それが最近の Git for Windows の更新で検知されるようになったんだ。</p><p>Windows で所有者を変更する方法を調べてみて、それっぽい手順があったのでそれに倣う。
+Windows のこの辺の昨日全然知らないので、どっかのタイミングで調べないといけないな。
+<a href="https://theitbros.com/using-takeown-exe-command-to-take-ownership-of-file-or-folder/#:~:text=You%20can%20change%20the%20owner,%3E%20Advanced%20%3E%20Owner%20%3E%20Change.">Using Takeown.exe Command to Take Ownership of a File or Folder – TheITBros</a></p><pre><code class="powershell">takeown /F C:\Users\takatoshi\dev\github.com\krymtkts\Get-GzipContent /R
+# SUCCESS: The file (or folder):  ....
+# えげつない量の印字...
+</code></pre><pre><code class="powershell">PS&gt; git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+nothing to commit, working tree clean
+</code></pre><p>イイね。直せた。
+他のディレクトリも所有者を変えた。</p><pre><code class="powershell">takeown.exe /f . /r | Out-Null
+# えげつない量の印字を無に帰す...
+</code></pre><p>終。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
+    <a href="/tags/windows">windows</a>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/git">git</a>
     
 </div>
 
@@ -238,7 +246,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-07-30-practice-build-aws-tools-for-powrshell">2022-07-30 AWS Tools for PowerShell のビルド素振り &raquo;</a>
+        <a class="right" href="/posts/2022-08-06-usecase-of-get-gzipcontent">2022-08-06 Get-GzipContent のユースケース &raquo;</a>
         
     </div>
 </div>

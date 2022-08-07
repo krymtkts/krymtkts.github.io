@@ -1,4 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 06 Aug 2022 16:51:31 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-08-06-usecase-of-get-gzipcontent</guid><link>https://krymtkts.github.io/posts/2022-08-06-usecase-of-get-gzipcontent</link><title>Get-GzipContent のユースケース</title><description>&lt;p&gt;以前 &lt;a href="https://github.com/krymtkts/Get-GzipContent"&gt;krymtkts/Get-GzipContent: Get-Content for gzip files.&lt;/a&gt; というのを作って &lt;a href="https://www.powershellgallery.com/packages/Get-GzipContent/0.1.2"&gt;PowerShell Gallery&lt;/a&gt; に公開した。&lt;/p&gt;&lt;p&gt;当時 gzip された JSON を扱う機会が多かった。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 07 Aug 2022 16:12:46 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-08-07-git-says-the-local-repo-is-not-yours</guid><link>https://krymtkts.github.io/posts/2022-08-07-git-says-the-local-repo-is-not-yours</link><title>git で local repo が自分のものじゃないとなったやつ</title><description>&lt;p&gt;今日はブログ書くつもり無かったけど、これまた起こったらなんかハマりそうやなーと思ったので、したためた。&lt;/p&gt;&lt;p&gt;何があったかわからんが、 git に local repo の所有権が自分にないと言われてエラーになった。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; git status
+fatal: detected dubious ownership in repository at 'C:/Users/takatoshi/dev/github.com/krymtkts/Get-GzipContent'
+To add an exception for this directory, call:
+
+        git config --global --add safe.directory C:\Users\takatoshi\dev\github.com\krymtkts\Get-GzipContent
+Set the environment variable GIT_TEST_DEBUG_UNSAFE_DIRECTORIES=true and run
+again for more information.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;safe.directory&lt;/code&gt; が設定されているパスなのだけど。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; git config --list | ? {$_ -like 'safe*'}
+safe.directory=C:/Users/takatoshi/dev/*
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;GIT_TEST_DEBUG_UNSAFE_DIRECTORIES&lt;/code&gt; でデバッグメッセージを有効化できるそうなのでしてみたところ、以下の様なのが出た。
+最近使ってた local repo では出なくて、&lt;del&gt;放置してた&lt;/del&gt; 最近ご無沙汰だった repo で出ている。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; $env:GIT_TEST_DEBUG_UNSAFE_DIRECTORIES=$true
+PS&amp;gt; git status
+warning: 'C:/Users/takatoshi/dev/github.com/krymtkts/Get-GzipContent/.git' is owned by:
+        'S-1-5-32-544'
+but the current user is:
+        'S-1-5-21-3808303910-2770483448-703627078-1001'
+fatal: detected dubious ownership in repository at 'C:/Users/takatoshi/dev/github.com/krymtkts/Get-GzipContent'
+To add an exception for this directory, call:
+
+        git config --global --add safe.directory C:/Users/takatoshi/dev/github.com/krymtkts/Get-GzipContent
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;owner が違う...なんで owner 変わってしまってたんだろう。ユーザー 1 人しかいないのに。
+あーハイハイ、と想像がついたので試したところ、管理者権限でならエラーが出ない。&lt;/p&gt;&lt;p&gt;どうも過去に管理者権限で作成した local repo の所有者が Administrator になってた模様。それが最近の Git for Windows の更新で検知されるようになったんだ。&lt;/p&gt;&lt;p&gt;Windows で所有者を変更する方法を調べてみて、それっぽい手順があったのでそれに倣う。
+Windows のこの辺の昨日全然知らないので、どっかのタイミングで調べないといけないな。
+&lt;a href="https://theitbros.com/using-takeown-exe-command-to-take-ownership-of-file-or-folder/#:~:text=You%20can%20change%20the%20owner,%3E%20Advanced%20%3E%20Owner%20%3E%20Change."&gt;Using Takeown.exe Command to Take Ownership of a File or Folder – TheITBros&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;takeown /F C:\Users\takatoshi\dev\github.com\krymtkts\Get-GzipContent /R
+# SUCCESS: The file (or folder):  ....
+# えげつない量の印字...
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+nothing to commit, working tree clean
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;イイね。直せた。
+他のディレクトリも所有者を変えた。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;takeown.exe /f . /r | Out-Null
+# えげつない量の印字を無に帰す...
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;終。&lt;/p&gt;</description><pubDate>Sun, 07 Aug 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-08-06-usecase-of-get-gzipcontent</guid><link>https://krymtkts.github.io/posts/2022-08-06-usecase-of-get-gzipcontent</link><title>Get-GzipContent のユースケース</title><description>&lt;p&gt;以前 &lt;a href="https://github.com/krymtkts/Get-GzipContent"&gt;krymtkts/Get-GzipContent: Get-Content for gzip files.&lt;/a&gt; というのを作って &lt;a href="https://www.powershellgallery.com/packages/Get-GzipContent/0.1.2"&gt;PowerShell Gallery&lt;/a&gt; に公開した。&lt;/p&gt;&lt;p&gt;当時 gzip された JSON を扱う機会が多かった。
 その時の職場は bash 文化だったのだけど、自分のローカルでは PowerShell を使うし...ということで、モジュールが欲しかった。
 この PowerShell で gzip を展開するコード自体よく知られてるパターンらしかったけど、登録されてるモジュールがなかったので、自分で作った。ちゃんと探したら似たモジュールはあったのだろうけど、周辺モジュールもドカッと入るのは期待するところでないので、単機能のモジュールを作ったんだ確か。&lt;/p&gt;&lt;p&gt;最近になってまた gzip されたファイルを扱う機会が増えたので、改めて使う機会が来たのだけど...これちょっとイマイチやなーと思っている。&lt;/p&gt;&lt;p&gt;CloudFront のアクセスログで&lt;a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#LogFileFormat"&gt;標準ログ&lt;/a&gt;というのがあるのだけど、こいつは gzip された TSV で、これを PowerShell で取り扱うのに以下の関数を作った。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function ConvertFrom-CloudFrontAccessLog {
     [CmdletBinding()]
