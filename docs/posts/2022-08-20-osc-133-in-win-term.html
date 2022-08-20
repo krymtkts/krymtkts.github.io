@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;openssh&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/openssh">
+    <title>krymtkts: Windows Terminal で OSC133 する</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-08-20-osc-133-in-win-term">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;openssh&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/openssh" />
+    <meta property="og:title" content="krymtkts: Windows Terminal で OSC133 する" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-08-20-osc-133-in-win-term" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -186,21 +186,89 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;openssh&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-08-20</div>
+        
     </div>
-    <ul>
+    <h2>Windows Terminal で OSC133 する</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2019-06-29-season-of-openssh-error">2019-06-29 またOpenSSHが動かなくなる季節がやってきた</a>
-        </li>
+    <p>先週は盆の関係で時間が取れず書くのをサボった。まあその前の日曜に余分に書いてたし相殺したことにしておく。</p><p>きょうは Windows Terminal でもシェル統合みたいなのができるらしいと気づいたので、それを試す。</p><hr /><p>ちょっと古い Windows Terminal Preview のリリースノートを見てて気づいた。</p><p><a href="https://github.com/microsoft/terminal/releases/tag/v1.15.1862.0">Release Windows Terminal Preview v1.15.186 · microsoft/terminal</a></p><p><code>Get-GitHubRelease -OwnerName microsoft -RepositoryName terminal -Tag v1.15.1862.0 | select -ExpandProperty body | % {$_ -split "`n"} | sls -Pattern '\[Experimental\]' -Context 0,10</code> で雑に抽出。</p><blockquote><ul><li>[Experimental] We now support scrollbar marks! (#12948) (#13163) (#13291) (#13414)
+<ul><li>Use the <code>addMark</code> action to add a scrollbar mark
+<ul><li>The <code>color</code> optional parameter can be used to specify a color</li></ul></li><li>Use the <code>scrollToMark</code> action with a specified <code>direction</code> parameter to scroll between the marks</li><li>Use the <code>clearMark</code> action to remove a selected mark</li><li>Use the <code>clearAllMarks</code> action to remove all scrollbar marks</li><li>The <code>experimental.autoMarkPrompts</code> profile setting can be set to <code>true</code> to automatically mark each prompt
+<ul><li>NOTE: This uses the FTCS_PROMPT sequence from FinalTerm, <code>OSC 133 ; A</code>, which we now support! (#13163)</li></ul></li><li>The <code>experimental.showMarksOnScrollbar</code> profile setting can also be set to <code>true</code> to display the marks on your scrollbar</li></ul></li></ul></blockquote><p>ほう？
+プロンプトに自動でマーカーを付けられる様になったらしい。</p><p>この機能使いたかったが、端末乗り換えて profile にシーケンス足して...みたいなのが必要っぽかったのでメンドイなーと思ってけど、端末だけで対応できるのなら非常に楽。</p><p>これはやりたい。試してみる。</p><h3 id="windows-terminal-の設定">Windows Terminal の設定</h3><p>利用している Windows Terminal Preview のバージョンは Version: 1.15.2282.0 だった。</p><p>以下のような感じの設定で試す。実際の <code>settings.json</code> は他の設定でゴチャついているので、要所だけ切り抜いた。</p><pre><code class="json">{
+  "$help": "https://aka.ms/terminal-documentation",
+  "$schema": "https://raw.githubusercontent.com/microsoft/terminal/main/doc/cascadia/profiles.schema.json",
+  "actions": [
+    {
+      "command": {
+        "action": "addMark",
+        "color": "#CB4B16"
+      },
+      "keys": "ctrl+m"
+    },
+    {
+      "command": {
+        "action": "scrollToMark",
+        "direction": "previous"
+      },
+      "keys": "ctrl+up"
+    },
+    {
+      "command": {
+        "action": "scrollToMark",
+        "direction": "next"
+      },
+      "keys": "ctrl+down"
+    },
+    {
+      "command": "clearAllMarks",
+      "keys": "ctrl+d"
+    }
+  ],
+  "profiles": {
+    "defaults": {
+      "experimental.autoMarkPrompts": true,
+      "experimental.showMarksOnScrollbar": true
+    },
+  },
+</code></pre><p>JSON Schema については、<code>https://aka.ms/terminal-profiles-schema</code> の方はバージョンが古いので Preview 使ってると色々不都合がある。ので repo 直で見る。</p><p>試してみて、とりあえずすべて期待通りに動くのがわかった。</p><p>はじめスクロールバーに色がつかなくて、はて？だったけど、これは <code>settings.json</code> の記述が間違ってたからだった。
+<code>experimental.autoMarkPrompts</code>, <code>experimental.showMarksOnScrollbar</code> は <code>profiles</code> 直下じゃない。
+<code>profiles.defaults</code> に書かないとダメ。</p><p>これに気づいたのは <a href="https://github.com/microsoft/terminal/blob/c12987af415c5e0911d7a0a81b8494fbe6307328/doc/cascadia/profiles.schema.json#L2177-L2181"><code>settings.json</code> の JSON Schema のここ</a>見たら、 <code>Profile</code> 毎の property であることがわかったから。</p><p>ドキュメントにもこの機能出てた。あとから気づいたわ。
+<a href="https://docs.microsoft.com/en-us/windows/terminal/customize-settings/profile-advanced#scroll-marks-preview">Scroll marks (Preview)- Windows Terminal Advanced Profile Settings | Microsoft Docs</a></p><p>ドキュメントの方は、タイトルも「Advanced profile settings in Windows Terminal」 やし、こっちならパっと見で気づけたかな...まあよし。</p><hr /><p>今回この件を調べてから、 <a href="https://github.com/microsoft/terminal/issues/11000">megathread: Scrollbar Marks · Issue #11000 · microsoft/terminal</a> という巨大な Issue を見つけた。
+きょう試した experimental な feature もここ由来のもの。</p><p>まだ VS Code のそれに比べると相当しょぼい。
+またコマンドの成功・失敗に対応してマーカーの色分けがつくとかもない。
+けど、この Issue 見るにそれらはそのうちやるっぽい(<code>category</code> というやつかな)。なので、 subscribe しておいて新しいのが来たら是非試したい。</p><p>普段仕事で使う標準出力が長い <code>cdk</code> とか AWS Tools for PowerShell とかの実行結果を飛び回るのに、こんなに有効な機能が来たことは喜ばしい。
+来週の仕事から早速使う。</p><h3 id="余談">余談</h3><p>ついでに <code>useAcrylic = true</code> じゃないとき、 <code>opacity</code> だけで古き良き透過にできるのにも気づいた。
+Windows 11 で ver1.12 から使えたらしい...気づくのに時間がかかったけど、これもやりたかったことのひとつなので、良い。</p><p><a href="https://docs.microsoft.com/en-us/windows/terminal/customize-settings/profile-appearance#transparency">Opacity - Windows Terminal Appearance Profile Settings | Microsoft Docs</a></p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2019-03-31-win-openssh-is-gone">2019-03-31 Windows10の更新でOpenSSHが逝った</a>
-        </li>
+    <a href="/tags/windows-terminal">windows-terminal</a>
     
-    </ul>
+    <a href="/tags/oh-my-posh">oh-my-posh</a>
+    
+    <a href="/tags/powershell">powershell</a>
+    
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-08-07-git-says-the-local-repo-is-not-yours">2022-08-07 git で local repo が自分のものじゃないとなったやつ &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>

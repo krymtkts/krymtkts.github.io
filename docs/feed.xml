@@ -1,4 +1,52 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 07 Aug 2022 16:12:46 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-08-07-git-says-the-local-repo-is-not-yours</guid><link>https://krymtkts.github.io/posts/2022-08-07-git-says-the-local-repo-is-not-yours</link><title>git で local repo が自分のものじゃないとなったやつ</title><description>&lt;p&gt;今日はブログ書くつもり無かったけど、これまた起こったらなんかハマりそうやなーと思ったので、したためた。&lt;/p&gt;&lt;p&gt;何があったかわからんが、 git に local repo の所有権が自分にないと言われてエラーになった。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; git status
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 20 Aug 2022 17:25:10 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-08-20-osc-133-in-win-term</guid><link>https://krymtkts.github.io/posts/2022-08-20-osc-133-in-win-term</link><title>Windows Terminal で OSC133 する</title><description>&lt;p&gt;先週は盆の関係で時間が取れず書くのをサボった。まあその前の日曜に余分に書いてたし相殺したことにしておく。&lt;/p&gt;&lt;p&gt;きょうは Windows Terminal でもシェル統合みたいなのができるらしいと気づいたので、それを試す。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;ちょっと古い Windows Terminal Preview のリリースノートを見てて気づいた。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/microsoft/terminal/releases/tag/v1.15.1862.0"&gt;Release Windows Terminal Preview v1.15.186 · microsoft/terminal&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;code&gt;Get-GitHubRelease -OwnerName microsoft -RepositoryName terminal -Tag v1.15.1862.0 | select -ExpandProperty body | % {$_ -split "`n"} | sls -Pattern '\[Experimental\]' -Context 0,10&lt;/code&gt; で雑に抽出。&lt;/p&gt;&lt;blockquote&gt;&lt;ul&gt;&lt;li&gt;[Experimental] We now support scrollbar marks! (#12948) (#13163) (#13291) (#13414)
+&lt;ul&gt;&lt;li&gt;Use the &lt;code&gt;addMark&lt;/code&gt; action to add a scrollbar mark
+&lt;ul&gt;&lt;li&gt;The &lt;code&gt;color&lt;/code&gt; optional parameter can be used to specify a color&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;Use the &lt;code&gt;scrollToMark&lt;/code&gt; action with a specified &lt;code&gt;direction&lt;/code&gt; parameter to scroll between the marks&lt;/li&gt;&lt;li&gt;Use the &lt;code&gt;clearMark&lt;/code&gt; action to remove a selected mark&lt;/li&gt;&lt;li&gt;Use the &lt;code&gt;clearAllMarks&lt;/code&gt; action to remove all scrollbar marks&lt;/li&gt;&lt;li&gt;The &lt;code&gt;experimental.autoMarkPrompts&lt;/code&gt; profile setting can be set to &lt;code&gt;true&lt;/code&gt; to automatically mark each prompt
+&lt;ul&gt;&lt;li&gt;NOTE: This uses the FTCS_PROMPT sequence from FinalTerm, &lt;code&gt;OSC 133 ; A&lt;/code&gt;, which we now support! (#13163)&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;The &lt;code&gt;experimental.showMarksOnScrollbar&lt;/code&gt; profile setting can also be set to &lt;code&gt;true&lt;/code&gt; to display the marks on your scrollbar&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/blockquote&gt;&lt;p&gt;ほう？
+プロンプトに自動でマーカーを付けられる様になったらしい。&lt;/p&gt;&lt;p&gt;この機能使いたかったが、端末乗り換えて profile にシーケンス足して...みたいなのが必要っぽかったのでメンドイなーと思ってけど、端末だけで対応できるのなら非常に楽。&lt;/p&gt;&lt;p&gt;これはやりたい。試してみる。&lt;/p&gt;&lt;h3 id="windows-terminal-の設定"&gt;Windows Terminal の設定&lt;/h3&gt;&lt;p&gt;利用している Windows Terminal Preview のバージョンは Version: 1.15.2282.0 だった。&lt;/p&gt;&lt;p&gt;以下のような感じの設定で試す。実際の &lt;code&gt;settings.json&lt;/code&gt; は他の設定でゴチャついているので、要所だけ切り抜いた。&lt;/p&gt;&lt;pre&gt;&lt;code class="json"&gt;{
+  "$help": "https://aka.ms/terminal-documentation",
+  "$schema": "https://raw.githubusercontent.com/microsoft/terminal/main/doc/cascadia/profiles.schema.json",
+  "actions": [
+    {
+      "command": {
+        "action": "addMark",
+        "color": "#CB4B16"
+      },
+      "keys": "ctrl+m"
+    },
+    {
+      "command": {
+        "action": "scrollToMark",
+        "direction": "previous"
+      },
+      "keys": "ctrl+up"
+    },
+    {
+      "command": {
+        "action": "scrollToMark",
+        "direction": "next"
+      },
+      "keys": "ctrl+down"
+    },
+    {
+      "command": "clearAllMarks",
+      "keys": "ctrl+d"
+    }
+  ],
+  "profiles": {
+    "defaults": {
+      "experimental.autoMarkPrompts": true,
+      "experimental.showMarksOnScrollbar": true
+    },
+  },
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;JSON Schema については、&lt;code&gt;https://aka.ms/terminal-profiles-schema&lt;/code&gt; の方はバージョンが古いので Preview 使ってると色々不都合がある。ので repo 直で見る。&lt;/p&gt;&lt;p&gt;試してみて、とりあえずすべて期待通りに動くのがわかった。&lt;/p&gt;&lt;p&gt;はじめスクロールバーに色がつかなくて、はて？だったけど、これは &lt;code&gt;settings.json&lt;/code&gt; の記述が間違ってたからだった。
+&lt;code&gt;experimental.autoMarkPrompts&lt;/code&gt;, &lt;code&gt;experimental.showMarksOnScrollbar&lt;/code&gt; は &lt;code&gt;profiles&lt;/code&gt; 直下じゃない。
+&lt;code&gt;profiles.defaults&lt;/code&gt; に書かないとダメ。&lt;/p&gt;&lt;p&gt;これに気づいたのは &lt;a href="https://github.com/microsoft/terminal/blob/c12987af415c5e0911d7a0a81b8494fbe6307328/doc/cascadia/profiles.schema.json#L2177-L2181"&gt;&lt;code&gt;settings.json&lt;/code&gt; の JSON Schema のここ&lt;/a&gt;見たら、 &lt;code&gt;Profile&lt;/code&gt; 毎の property であることがわかったから。&lt;/p&gt;&lt;p&gt;ドキュメントにもこの機能出てた。あとから気づいたわ。
+&lt;a href="https://docs.microsoft.com/en-us/windows/terminal/customize-settings/profile-advanced#scroll-marks-preview"&gt;Scroll marks (Preview)- Windows Terminal Advanced Profile Settings | Microsoft Docs&lt;/a&gt;&lt;/p&gt;&lt;p&gt;ドキュメントの方は、タイトルも「Advanced profile settings in Windows Terminal」 やし、こっちならパっと見で気づけたかな...まあよし。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;今回この件を調べてから、 &lt;a href="https://github.com/microsoft/terminal/issues/11000"&gt;megathread: Scrollbar Marks · Issue #11000 · microsoft/terminal&lt;/a&gt; という巨大な Issue を見つけた。
+きょう試した experimental な feature もここ由来のもの。&lt;/p&gt;&lt;p&gt;まだ VS Code のそれに比べると相当しょぼい。
+またコマンドの成功・失敗に対応してマーカーの色分けがつくとかもない。
+けど、この Issue 見るにそれらはそのうちやるっぽい(&lt;code&gt;category&lt;/code&gt; というやつかな)。なので、 subscribe しておいて新しいのが来たら是非試したい。&lt;/p&gt;&lt;p&gt;普段仕事で使う標準出力が長い &lt;code&gt;cdk&lt;/code&gt; とか AWS Tools for PowerShell とかの実行結果を飛び回るのに、こんなに有効な機能が来たことは喜ばしい。
+来週の仕事から早速使う。&lt;/p&gt;&lt;h3 id="余談"&gt;余談&lt;/h3&gt;&lt;p&gt;ついでに &lt;code&gt;useAcrylic = true&lt;/code&gt; じゃないとき、 &lt;code&gt;opacity&lt;/code&gt; だけで古き良き透過にできるのにも気づいた。
+Windows 11 で ver1.12 から使えたらしい...気づくのに時間がかかったけど、これもやりたかったことのひとつなので、良い。&lt;/p&gt;&lt;p&gt;&lt;a href="https://docs.microsoft.com/en-us/windows/terminal/customize-settings/profile-appearance#transparency"&gt;Opacity - Windows Terminal Appearance Profile Settings | Microsoft Docs&lt;/a&gt;&lt;/p&gt;</description><pubDate>Sat, 20 Aug 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-08-07-git-says-the-local-repo-is-not-yours</guid><link>https://krymtkts.github.io/posts/2022-08-07-git-says-the-local-repo-is-not-yours</link><title>git で local repo が自分のものじゃないとなったやつ</title><description>&lt;p&gt;今日はブログ書くつもり無かったけど、これまた起こったらなんかハマりそうやなーと思ったので、したためた。&lt;/p&gt;&lt;p&gt;何があったかわからんが、 git に local repo の所有権が自分にないと言われてエラーになった。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; git status
 fatal: detected dubious ownership in repository at 'C:/Users/takatoshi/dev/github.com/krymtkts/Get-GzipContent'
 To add an exception for this directory, call:
 
