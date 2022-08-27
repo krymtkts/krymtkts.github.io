@@ -19,14 +19,12 @@
   "Add dev-time configuration overrides here, such as `:hide-future-posts? false`"
   {})
 
-(defn init [& fast?]
+(defn init []
   (load-plugins)
   (compile-assets-timed extra-config-dev)
   (let [ignored-files (-> @resolved-config :ignored-files)]
     (run!
-      #(if fast?
-         (start-watcher-for-changes! % ignored-files compile-assets-timed extra-config-dev)
-         (start-watcher! % ignored-files compile-assets-timed))
+         #(start-watcher! % ignored-files compile-assets-timed)
       ["content" "themes"])))
 
 (defn wrap-subdirectories
@@ -79,7 +77,7 @@
     handler
     (merge
       {:join? (if (some? join?) join? true)
-       :init (partial init fast)
+       :init init
        :open-browser? true
        :auto-refresh? fast ; w/o fast it would often try to reload the page before it has been fully compiled
        :refresh-paths [(:public-dest @resolved-config)]}
