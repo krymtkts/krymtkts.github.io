@@ -171,6 +171,8 @@ code {
     color: #839496;
     font-family: 'Ubuntu Mono';
     font-size: 16px;
+    padding: 0 0.3em;
+    border-radius: 0.2em;
 }
 
 pre, code, .hljs {
