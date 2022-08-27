@@ -12,165 +12,164 @@
     <meta property="og:title" content="krymtkts: 2022" />
     <meta property="og:url" content="https://krymtkts.github.io/posts/2022-01-09-planning" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/solarized-dark.min.css" integrity="sha256-90Y+fvi28WF+3jKH4tHEkoQ9WLeFKJjpvCPNOtU9ZvU=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/base16/solarized-dark.min.css" integrity="sha512-kBHeOXtsKtA97/1O3ebZzWRIwiWEOmdrylPrOo3D2+pGhq1m+1CroSOVErIlsqn1xmYowKfQNVDhsczIzeLpmg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="/css/screen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 
 
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-expand-lg navbar-default">
     <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+        <div class="navbar-header d-flex w-100 justify-content-between">
             <a class="navbar-brand" href="/">krymtkts</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li ><a href="/">Home</a></li>
-                <li
-                ><a href="/archives">Archives</a></li>
-                
-                <li
-                >
-                <a href="/pages/about">About Me</a>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a  class="nav-link "  href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a  class="nav-link "  href="/archives">Archives</a>
                 </li>
                 
-                <li><a href="/feed.xml">RSS</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                <li class="nav-item">
+                    <a  class="nav-link "  href="/pages/about">About Me</a>
+                </li>
+                
+                <li class="nav-item"><a class="nav-link" href="/feed.xml">RSS</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdown-menu-link" data-bs-toggle="dropdown" aria-expanded="false">
                         More <span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-menu-link">
                         
 
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
-                        <li><a href="/posts/2022-08-20-osc-133-in-win-term">Windows Terminal で OSC133 する</a></li>
+                        <li><a class="dropdown-item" href="/posts/2022-08-20-osc-133-in-win-term">Windows Terminal で OSC133 する</a></li>
                         
-                        <li><a href="/posts/2022-08-07-git-says-the-local-repo-is-not-yours">git で local repo が自分のものじゃないとなったやつ</a></li>
+                        <li><a class="dropdown-item" href="/posts/2022-08-07-git-says-the-local-repo-is-not-yours">git で local repo が自分のものじゃないとなったやつ</a></li>
                         
-                        <li><a href="/posts/2022-08-06-usecase-of-get-gzipcontent">Get-GzipContent のユースケース</a></li>
+                        <li><a class="dropdown-item" href="/posts/2022-08-06-usecase-of-get-gzipcontent">Get-GzipContent のユースケース</a></li>
                         
                         
 
                         
-                        <li class="divider"></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li class="dropdown-header">Tags</li>
                         
-                        <li><a href="/tags/biasamp">biasamp</a></li>
+                        <li><a class="dropdown-item" href="/tags/biasamp">biasamp</a></li>
                         
-                        <li><a href="/tags/poco">poco</a></li>
+                        <li><a class="dropdown-item" href="/tags/poco">poco</a></li>
                         
-                        <li><a href="/tags/windows-terminal">windows-terminal</a></li>
+                        <li><a class="dropdown-item" href="/tags/windows-terminal">windows-terminal</a></li>
                         
-                        <li><a href="/tags/tips">tips</a></li>
+                        <li><a class="dropdown-item" href="/tags/tips">tips</a></li>
                         
-                        <li><a href="/tags/evernote">evernote</a></li>
+                        <li><a class="dropdown-item" href="/tags/evernote">evernote</a></li>
                         
-                        <li><a href="/tags/qunit">qunit</a></li>
+                        <li><a class="dropdown-item" href="/tags/qunit">qunit</a></li>
                         
-                        <li><a href="/tags/cryogen">cryogen</a></li>
+                        <li><a class="dropdown-item" href="/tags/cryogen">cryogen</a></li>
                         
-                        <li><a href="/tags/mouse">mouse</a></li>
+                        <li><a class="dropdown-item" href="/tags/mouse">mouse</a></li>
                         
-                        <li><a href="/tags/nyc">nyc</a></li>
+                        <li><a class="dropdown-item" href="/tags/nyc">nyc</a></li>
                         
-                        <li><a href="/tags/diary">diary</a></li>
+                        <li><a class="dropdown-item" href="/tags/diary">diary</a></li>
                         
-                        <li><a href="/tags/github">github</a></li>
+                        <li><a class="dropdown-item" href="/tags/github">github</a></li>
                         
-                        <li><a href="/tags/clojure">clojure</a></li>
+                        <li><a class="dropdown-item" href="/tags/clojure">clojure</a></li>
                         
-                        <li><a href="/tags/vscode">vscode</a></li>
+                        <li><a class="dropdown-item" href="/tags/vscode">vscode</a></li>
                         
-                        <li><a href="/tags/stepfunctions">stepfunctions</a></li>
+                        <li><a class="dropdown-item" href="/tags/stepfunctions">stepfunctions</a></li>
                         
-                        <li><a href="/tags/aws">aws</a></li>
+                        <li><a class="dropdown-item" href="/tags/aws">aws</a></li>
                         
-                        <li><a href="/tags/shieldsio">shieldsio</a></li>
+                        <li><a class="dropdown-item" href="/tags/shieldsio">shieldsio</a></li>
                         
-                        <li><a href="/tags/retrospective">retrospective</a></li>
+                        <li><a class="dropdown-item" href="/tags/retrospective">retrospective</a></li>
                         
-                        <li><a href="/tags/boto3">boto3</a></li>
+                        <li><a class="dropdown-item" href="/tags/boto3">boto3</a></li>
                         
-                        <li><a href="/tags/job">job</a></li>
+                        <li><a class="dropdown-item" href="/tags/job">job</a></li>
                         
-                        <li><a href="/tags/oh-my-posh">oh-my-posh</a></li>
+                        <li><a class="dropdown-item" href="/tags/oh-my-posh">oh-my-posh</a></li>
                         
-                        <li><a href="/tags/elm">elm</a></li>
+                        <li><a class="dropdown-item" href="/tags/elm">elm</a></li>
                         
-                        <li><a href="/tags/elb">elb</a></li>
+                        <li><a class="dropdown-item" href="/tags/elb">elb</a></li>
                         
-                        <li><a href="/tags/openssh">openssh</a></li>
+                        <li><a class="dropdown-item" href="/tags/openssh">openssh</a></li>
                         
-                        <li><a href="/tags/powershell">powershell</a></li>
+                        <li><a class="dropdown-item" href="/tags/powershell">powershell</a></li>
                         
-                        <li><a href="/tags/gist">gist</a></li>
+                        <li><a class="dropdown-item" href="/tags/gist">gist</a></li>
                         
-                        <li><a href="/tags/planck">planck</a></li>
+                        <li><a class="dropdown-item" href="/tags/planck">planck</a></li>
                         
-                        <li><a href="/tags/acm">acm</a></li>
+                        <li><a class="dropdown-item" href="/tags/acm">acm</a></li>
                         
-                        <li><a href="/tags/php">php</a></li>
+                        <li><a class="dropdown-item" href="/tags/php">php</a></li>
                         
-                        <li><a href="/tags/go">go</a></li>
+                        <li><a class="dropdown-item" href="/tags/go">go</a></li>
                         
-                        <li><a href="/tags/mechanicalkeyboard">mechanicalkeyboard</a></li>
+                        <li><a class="dropdown-item" href="/tags/mechanicalkeyboard">mechanicalkeyboard</a></li>
                         
-                        <li><a href="/tags/pandoc">pandoc</a></li>
+                        <li><a class="dropdown-item" href="/tags/pandoc">pandoc</a></li>
                         
-                        <li><a href="/tags/fsharp">fsharp</a></li>
+                        <li><a class="dropdown-item" href="/tags/fsharp">fsharp</a></li>
                         
-                        <li><a href="/tags/windows">windows</a></li>
+                        <li><a class="dropdown-item" href="/tags/windows">windows</a></li>
                         
-                        <li><a href="/tags/maven">maven</a></li>
+                        <li><a class="dropdown-item" href="/tags/maven">maven</a></li>
                         
-                        <li><a href="/tags/font">font</a></li>
+                        <li><a class="dropdown-item" href="/tags/font">font</a></li>
                         
-                        <li><a href="/tags/git">git</a></li>
+                        <li><a class="dropdown-item" href="/tags/git">git</a></li>
                         
-                        <li><a href="/tags/docker">docker</a></li>
+                        <li><a class="dropdown-item" href="/tags/docker">docker</a></li>
                         
-                        <li><a href="/tags/todo">todo</a></li>
+                        <li><a class="dropdown-item" href="/tags/todo">todo</a></li>
                         
-                        <li><a href="/tags/sh">sh</a></li>
+                        <li><a class="dropdown-item" href="/tags/sh">sh</a></li>
                         
-                        <li><a href="/tags/cement">cement</a></li>
+                        <li><a class="dropdown-item" href="/tags/cement">cement</a></li>
                         
-                        <li><a href="/tags/psake">psake</a></li>
+                        <li><a class="dropdown-item" href="/tags/psake">psake</a></li>
                         
-                        <li><a href="/tags/textlin">textlin</a></li>
+                        <li><a class="dropdown-item" href="/tags/textlin">textlin</a></li>
                         
-                        <li><a href="/tags/python">python</a></li>
+                        <li><a class="dropdown-item" href="/tags/python">python</a></li>
                         
-                        <li><a href="/tags/golang">golang</a></li>
+                        <li><a class="dropdown-item" href="/tags/golang">golang</a></li>
                         
-                        <li><a href="/tags/fnm">fnm</a></li>
+                        <li><a class="dropdown-item" href="/tags/fnm">fnm</a></li>
                         
-                        <li><a href="/tags/lambda">lambda</a></li>
+                        <li><a class="dropdown-item" href="/tags/lambda">lambda</a></li>
                         
-                        <li><a href="/tags/tortoisegit">tortoisegit</a></li>
+                        <li><a class="dropdown-item" href="/tags/tortoisegit">tortoisegit</a></li>
                         
-                        <li><a href="/tags/docker-toolbox">docker-toolbox</a></li>
+                        <li><a class="dropdown-item" href="/tags/docker-toolbox">docker-toolbox</a></li>
                         
-                        <li><a href="/tags/serverless">serverless</a></li>
+                        <li><a class="dropdown-item" href="/tags/serverless">serverless</a></li>
                         
-                        <li><a href="/tags/qmkfirmware">qmkfirmware</a></li>
+                        <li><a class="dropdown-item" href="/tags/qmkfirmware">qmkfirmware</a></li>
                         
-                        <li><a href="/tags/nodejs">nodejs</a></li>
+                        <li><a class="dropdown-item" href="/tags/nodejs">nodejs</a></li>
                         
-                        <li><a href="/tags/goal">goal</a></li>
+                        <li><a class="dropdown-item" href="/tags/goal">goal</a></li>
                         
-                        <li><a href="/tags/powershellgallery">powershellgallery</a></li>
+                        <li><a class="dropdown-item" href="/tags/powershellgallery">powershellgallery</a></li>
                         
-                        <li><a href="/tags/puppeteer">puppeteer</a></li>
+                        <li><a class="dropdown-item" href="/tags/puppeteer">puppeteer</a></li>
                         
                         
                     </ul>
@@ -235,8 +234,7 @@ AWS Tools for PowerShell のくだりで実感したが、やるんだったら 
     <footer>Copyright &copy; 2019-2022 krymtkts
         <p style="text-align: center;">Powered by <a href="http://cryogenweb.org">Cryogen</a></p></footer>
 </div>
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/js/bootstrap.bundle.min.js" integrity="sha512-9GacT4119eY3AcosfWtHMsT5JyZudrexyEVzTBWV3viP/YfB9e2pEy3N7WXL3SV6ASXpTU0vzzSxsbfsuUH4sQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="/js/highlight.pack.js" type="application/javascript"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
