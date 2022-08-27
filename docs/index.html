@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-08-27-bump-bootstrap">Bootstrap のバージョンを上げる</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-08-20-osc-133-in-win-term">Windows Terminal で OSC133 する</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-08-07-git-says-the-local-repo-is-not-yours">git で local repo が自分のものじゃないとなったやつ</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-08-06-usecase-of-get-gzipcontent">Get-GzipContent のユースケース</a></li>
                         
                         
 
@@ -188,72 +188,26 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-08-20</div>
+        <div class="col-lg-6">2022-08-27</div>
         
     </div>
-    <h2>Windows Terminal で OSC133 する</h2>
+    <h2>Bootstrap のバージョンを上げる</h2>
 </div>
 <div>
     
-    <p>先週は盆の関係で時間が取れず書くのをサボった。まあその前の日曜に余分に書いてたし相殺したことにしておく。</p><p>きょうは Windows Terminal でもシェル統合みたいなのができるらしいと気づいたので、それを試す。</p><hr /><p>ちょっと古い Windows Terminal Preview のリリースノートを見てて気づいた。</p><p><a href="https://github.com/microsoft/terminal/releases/tag/v1.15.1862.0">Release Windows Terminal Preview v1.15.186 · microsoft/terminal</a></p><p><code>Get-GitHubRelease -OwnerName microsoft -RepositoryName terminal -Tag v1.15.1862.0 | select -ExpandProperty body | % {$_ -split "`n"} | sls -Pattern '\[Experimental\]' -Context 0,10</code> で雑に抽出。</p><blockquote><ul><li>[Experimental] We now support scrollbar marks! (#12948) (#13163) (#13291) (#13414)
-<ul><li>Use the <code>addMark</code> action to add a scrollbar mark
-<ul><li>The <code>color</code> optional parameter can be used to specify a color</li></ul></li><li>Use the <code>scrollToMark</code> action with a specified <code>direction</code> parameter to scroll between the marks</li><li>Use the <code>clearMark</code> action to remove a selected mark</li><li>Use the <code>clearAllMarks</code> action to remove all scrollbar marks</li><li>The <code>experimental.autoMarkPrompts</code> profile setting can be set to <code>true</code> to automatically mark each prompt
-<ul><li>NOTE: This uses the FTCS_PROMPT sequence from FinalTerm, <code>OSC 133 ; A</code>, which we now support! (#13163)</li></ul></li><li>The <code>experimental.showMarksOnScrollbar</code> profile setting can also be set to <code>true</code> to display the marks on your scrollbar</li></ul></li></ul></blockquote><p>ほう？
-プロンプトに自動でマーカーを付けられる様になったらしい。</p><p>この機能使いたかったが、端末乗り換えて profile にシーケンス足して...みたいなのが必要っぽかったのでメンドイなーと思ってけど、端末だけで対応できるのなら非常に楽。</p><p>これはやりたい。試してみる。</p><h3 id="windows-terminal-の設定">Windows Terminal の設定</h3><p>利用している Windows Terminal Preview のバージョンは Version: 1.15.2282.0 だった。</p><p>以下のような感じの設定で試す。実際の <code>settings.json</code> は他の設定でゴチャついているので、要所だけ切り抜いた。</p><pre><code class="json">{
-  "$help": "https://aka.ms/terminal-documentation",
-  "$schema": "https://raw.githubusercontent.com/microsoft/terminal/main/doc/cascadia/profiles.schema.json",
-  "actions": [
-    {
-      "command": {
-        "action": "addMark",
-        "color": "#CB4B16"
-      },
-      "keys": "ctrl+m"
-    },
-    {
-      "command": {
-        "action": "scrollToMark",
-        "direction": "previous"
-      },
-      "keys": "ctrl+up"
-    },
-    {
-      "command": {
-        "action": "scrollToMark",
-        "direction": "next"
-      },
-      "keys": "ctrl+down"
-    },
-    {
-      "command": "clearAllMarks",
-      "keys": "ctrl+d"
-    }
-  ],
-  "profiles": {
-    "defaults": {
-      "experimental.autoMarkPrompts": true,
-      "experimental.showMarksOnScrollbar": true
-    },
-  },
-</code></pre><p>JSON Schema については、<code>https://aka.ms/terminal-profiles-schema</code> の方はバージョンが古いので Preview 使ってると色々不都合がある。ので repo 直で見る。</p><p>試してみて、とりあえずすべて期待通りに動くのがわかった。</p><p>はじめスクロールバーに色がつかなくて、はて？だったけど、これは <code>settings.json</code> の記述が間違ってたからだった。
-<code>experimental.autoMarkPrompts</code>, <code>experimental.showMarksOnScrollbar</code> は <code>profiles</code> 直下じゃない。
-<code>profiles.defaults</code> に書かないとダメ。</p><p>これに気づいたのは <a href="https://github.com/microsoft/terminal/blob/c12987af415c5e0911d7a0a81b8494fbe6307328/doc/cascadia/profiles.schema.json#L2177-L2181"><code>settings.json</code> の JSON Schema のここ</a>見たら、 <code>Profile</code> 毎の property であることがわかったから。</p><p>ドキュメントにもこの機能出てた。あとから気づいたわ。
-<a href="https://docs.microsoft.com/en-us/windows/terminal/customize-settings/profile-advanced#scroll-marks-preview">Scroll marks (Preview)- Windows Terminal Advanced Profile Settings | Microsoft Docs</a></p><p>ドキュメントの方は、タイトルも「Advanced profile settings in Windows Terminal」 やし、こっちならパっと見で気づけたかな...まあよし。</p><hr /><p>今回この件を調べてから、 <a href="https://github.com/microsoft/terminal/issues/11000">megathread: Scrollbar Marks · Issue #11000 · microsoft/terminal</a> という巨大な Issue を見つけた。
-きょう試した experimental な feature もここ由来のもの。</p><p>まだ VS Code のそれに比べると相当しょぼい。
-またコマンドの成功・失敗に対応してマーカーの色分けがつくとかもない。
-けど、この Issue 見るにそれらはそのうちやるっぽい(<code>category</code> というやつかな)。なので、 subscribe しておいて新しいのが来たら是非試したい。</p><p>普段仕事で使う標準出力が長い <code>cdk</code> とか AWS Tools for PowerShell とかの実行結果を飛び回るのに、こんなに有効な機能が来たことは喜ばしい。
-来週の仕事から早速使う。</p><h3 id="余談">余談</h3><p>ついでに <code>useAcrylic = true</code> じゃないとき、 <code>opacity</code> だけで古き良き透過にできるのにも気づいた。
-Windows 11 で ver1.12 から使えたらしい...気づくのに時間がかかったけど、これもやりたかったことのひとつなので、良い。</p><p><a href="https://docs.microsoft.com/en-us/windows/terminal/customize-settings/profile-appearance#transparency">Opacity - Windows Terminal Appearance Profile Settings | Microsoft Docs</a></p>
+    <p>先週の記事を書いたあとで、何の気なしに <a href="https://web.dev/measure/">Measure page quality - web.dev</a> で当ブログの測定をした。
+そこで既知の脆弱性があるライブラリ (<code>Bootstrap@3.3.0</code> と <code>jQuery@1.11.0</code>)使うなよ！みたいなレポートがでたので、 Bootstrap の更新を思い立った。</p><p>変更した内容 → <a href="https://github.com/krymtkts/krymtkts.github.io/commit/c4adeacb06fe759b787646bba5fb698c1f688c94">Upgrade bootstrap from 3 to 5. · krymtkts/krymtkts.github.io@c4adeac</a></p><p>ブログ作成当時の記事(<a href="/posts/2019-01-10-make-blog-with-clojure">Clojure でブログを作った</a>)を見ると、このブログのテーマは Cryogen 備え付けのテーマである <code>blue_centered</code> をコピって作ったものだった。
+そのままずっと使ってるので、当然の如くテンプレで利用しているライブラリも古いままだったという訳だ。</p><p>さて、 Bootstrap のマイグレーションは当然ドキュメントがあるわけだが、</p><ul><li><a href="https://getbootstrap.com/docs/4.0/migration/">Migrating to v4 · Bootstrap</a></li><li><a href="https://getbootstrap.com/docs/5.0/migration/">Migrating to v5 · Bootstrap v5.0</a></li></ul><p>今回は<del>手抜きによる</del> v3 → v5 という飛び級であるし、わたし自身は Bootstrap に慣れてないので、とりあえずマイグレーションで対応するのは目で見て影響がある範囲のみとした。マイグレーションとしては正攻法な感じじゃなくて、割りと雑な感じだ。</p><p>それらの変更は例えば CSS のセレクタの変更だったり、 <code>class</code> 属性の変更だったりだ。一応レスポンシブなデザインなので PC とモバイル(ブラウザのエミュレータだけど)も見ている。ちょいちょい以前と違うデザインにした・或いは意図せず変わった箇所もある。</p><p>途中コンテンツを空で更新したままデプロイしてしまうしょーもないミスがあったが、再度コンテンツを生成して事なきを得た。
+これ Cryogen の差分ビルドの影響でちょいちょいやらかすのだけど、普段は人間力でカバーしていたところを今回はできず、デプロイしてしまった次第。この記事の投稿時点で設定を見直した。</p><p>今回の VerUp により Best Practices は 92 -&gt; 100 に、 あと Performance も 93 -&gt; 94 と意図せず微妙な好影響があった。</p><ul><li>before
+<ul><li><img src="/img/2022-08-27-capture/before.png" alt="変更前は Performance 93 Accessibility 97 Best Practices 92 SEO 92" /></li></ul></li><li>after
+<ul><li><img src="/img/2022-08-27-capture/after.png" alt="変更後は Performance 94 Accessibility 97 Best Practices 100 SEO 92" /></li></ul></li></ul><p>Bootstrap 5 では CSS カスタムプロパティでフォントサイズとか色とか変えられるみたいなので、このブログ用に再定義してるスタイルのいくつかは不要になるんじゃないかな。
+これを機にちょっと見直すのもありかも知れない。あるいは別の静的サイトジェネレータに乗り換えるとか。他にやることなくなったらそれも一興か。</p><p>終。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/windows-terminal">windows-terminal</a>
-    
-    <a href="/tags/oh-my-posh">oh-my-posh</a>
-    
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/cryogen">cryogen</a>
     
 </div>
 
@@ -263,7 +217,7 @@ Windows 11 で ver1.12 から使えたらしい...気づくのに時間がかか
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-08-07-git-says-the-local-repo-is-not-yours">2022-08-07 git で local repo が自分のものじゃないとなったやつ &raquo;</a>
+        <a class="right" href="/posts/2022-08-20-osc-133-in-win-term">2022-08-20 Windows Terminal で OSC133 する &raquo;</a>
         
     </div>
 </div>
