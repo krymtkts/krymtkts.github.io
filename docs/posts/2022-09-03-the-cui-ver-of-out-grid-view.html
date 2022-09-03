@@ -199,7 +199,7 @@
 <code>peco</code> は PowerShell に最適化されてないから、その後オブジェクトのまま取り扱える <a href="https://github.com/jasonmarcher/poco">jasonmarcher/poco</a> にたどり着いた。
 その後 <code>poco</code> の独自実装を自分で始めたのが <a href="https://github.com/krymtkts/pocof"><code>pocof</code></a>(F# の練習がてら)。</p><p>なもんで、 <code>Out-GridVie</code> の CUI 版があってもしイイ感じに使えるのなら、この長年の変遷に終止符を打つんちゃうかな的な。</p><p>以下 <code>README.md</code> に従い試す。</p><pre><code class="powershell">Install-Module Microsoft.PowerShell.ConsoleGuiTools -AllowPrerelease -Scope AllUsers
 </code></pre><pre><code class="powershell">Get-ChildItem | Out-ConsoleGridView
-</code></pre><!-- ![水色の背景に印字される `ls` の結果](/img/2022-09-03-capture/capture.png) --><p><code>space</code> キーでオブジェクトを選択するか <code>Ctrl+A</code> で全選択して、 <code>Enter</code> で選択した結果を出力する。
+</code></pre><p><img src="/img/2022-09-03-capture/capture.png" alt="水色の背景に印字される ls の結果" /></p><p><code>space</code> キーでオブジェクトを選択するか <code>Ctrl+A</code> で全選択して、 <code>Enter</code> で選択した結果を出力する。
 <code>-Filter</code> オプションに渡した値で初期表示がフィルタリングされた形になる。そのままタイプしてもフィルタ入力できない。<code>Tab</code> キーを押してフィルタのテキストにフォーカスできる。
 フィルタは正規表現のみみたい。不正なパターンを入れたらちゃんとエラー表示されてエライ。
 必ず結果を洗濯した状態で<code>Enter</code> 押さないと結果が得られないのはちょっとメンドイ。
@@ -209,7 +209,7 @@
 表示域にないスクロール可能な部分は吹っ飛んでしまうけど、崩れない方法は真似させてもらいたい(MIT ライセンスなので)。けど、コード読んだ感じどこかわからなかった。</p><p><code>Out-ConsoleGridView</code> は CmdLet の出力に <a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.formatviewdefinition?view=powershellsdk-7.0.0">FormatViewDefinition Class (System.Management.Automation) | Microsoft Docs</a>を自前で作ってるみたい。
 なので PowerShell で表示される内容とちょっと違う。
 それ故か、例えば <code>Get-InstalledModule</code> のような情報量の多い結果を表示するとちょっと悲しい感じになってしまった。 <code>format.ps1xml</code> が利用されないせいかな。しかしこのクラス使い方がわからなかったので勉強になるわ。</p><pre><code class="powershell">Get-InstalledModule | Out-ConsoleGridView
-</code></pre><!-- ![すし詰めに印字される `Get-InstalledModule` の結果](/img/2022-09-03-capture/jam-packed-capture.png) --><p><code>pocof</code> でやりたいことと方向性が違うなあという感じなので、作ってるものを今すぐブン投げ捨てる必要はなかったようだ。こちらの開発は趣味プロで続けようと思った。しかしコード参考にできるものが増えたのでとても助かるなぁ。</p>
+</code></pre><p><img src="/img/2022-09-03-capture/jam-packed-capture.png" alt="すし詰めに印字される Get-InstalledModule の結果" /></p><p><code>pocof</code> でやりたいことと方向性が違うなあという感じなので、作ってるものを今すぐブン投げ捨てる必要はなかったようだ。こちらの開発は趣味プロで続けようと思った。しかしコード参考にできるものが増えたのでとても助かるなぁ。</p>
 </div>
 
 <div id="post-tags">
