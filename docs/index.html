@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">Out-GridVie の CUI 版 Out-ConsoleGridView</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-08-27-bump-bootstrap">Bootstrap のバージョンを上げる</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-08-20-osc-133-in-win-term">Windows Terminal で OSC133 する</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-08-07-git-says-the-local-repo-is-not-yours">git で local repo が自分のものじゃないとなったやつ</a></li>
                         
                         
 
@@ -188,26 +188,34 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-08-27</div>
+        <div class="col-lg-6">2022-09-03</div>
         
     </div>
-    <h2>Bootstrap のバージョンを上げる</h2>
+    <h2>Out-GridVie の CUI 版 Out-ConsoleGridView</h2>
 </div>
 <div>
     
-    <p>先週の記事を書いたあとで、何の気なしに <a href="https://web.dev/measure/">Measure page quality - web.dev</a> で当ブログの測定をした。
-そこで既知の脆弱性があるライブラリ (<code>Bootstrap@3.3.0</code> と <code>jQuery@1.11.0</code>)使うなよ！みたいなレポートがでたので、 Bootstrap の更新を思い立った。</p><p>変更した内容 → <a href="https://github.com/krymtkts/krymtkts.github.io/commit/c4adeacb06fe759b787646bba5fb698c1f688c94">Upgrade bootstrap from 3 to 5. · krymtkts/krymtkts.github.io@c4adeac</a></p><p>ブログ作成当時の記事(<a href="/posts/2019-01-10-make-blog-with-clojure">Clojure でブログを作った</a>)を見ると、このブログのテーマは Cryogen 備え付けのテーマである <code>blue_centered</code> をコピって作ったものだった。
-そのままずっと使ってるので、当然の如くテンプレで利用しているライブラリも古いままだったという訳だ。</p><p>さて、 Bootstrap のマイグレーションは当然ドキュメントがあるわけだが、</p><ul><li><a href="https://getbootstrap.com/docs/4.0/migration/">Migrating to v4 · Bootstrap</a></li><li><a href="https://getbootstrap.com/docs/5.0/migration/">Migrating to v5 · Bootstrap v5.0</a></li></ul><p>今回は<del>手抜きによる</del> v3 → v5 という飛び級であるし、わたし自身は Bootstrap に慣れてないので、とりあえずマイグレーションで対応するのは目で見て影響がある範囲のみとした。マイグレーションとしては正攻法な感じじゃなくて、割りと雑な感じだ。</p><p>それらの変更は例えば CSS のセレクタの変更だったり、 <code>class</code> 属性の変更だったりだ。一応レスポンシブなデザインなので PC とモバイル(ブラウザのエミュレータだけど)も見ている。ちょいちょい以前と違うデザインにした・或いは意図せず変わった箇所もある。</p><p>途中コンテンツを空で更新したままデプロイしてしまうしょーもないミスがあったが、再度コンテンツを生成して事なきを得た。
-これ Cryogen の差分ビルドの影響でちょいちょいやらかすのだけど、普段は人間力でカバーしていたところを今回はできず、デプロイしてしまった次第。この記事の投稿時点で設定を見直した。</p><p>今回の VerUp により Best Practices は 92 -&gt; 100 に、 あと Performance も 93 -&gt; 94 と意図せず微妙な好影響があった。</p><ul><li>before
-<ul><li><img src="/img/2022-08-27-capture/before.png" alt="変更前は Performance 93 Accessibility 97 Best Practices 92 SEO 92" /></li></ul></li><li>after
-<ul><li><img src="/img/2022-08-27-capture/after.png" alt="変更後は Performance 94 Accessibility 97 Best Practices 100 SEO 92" /></li></ul></li></ul><p>Bootstrap 5 では CSS カスタムプロパティでフォントサイズとか色とか変えられるみたいなので、このブログ用に再定義してるスタイルのいくつかは不要になるんじゃないかな。
-これを機にちょっと見直すのもありかも知れない。あるいは別の静的サイトジェネレータに乗り換えるとか。他にやることなくなったらそれも一興か。</p><p>終。</p>
+    <p>最近知ったのだけど、 <code>Out-GridVie</code> の PowerShell Team 謹製 CUI 版 <code>Out-ConsoleGridView</code> があったらしい。これが使えるヤツだったら <code>poco</code> も今作ってる <code>pocof</code> も要らんやん、と思った。</p><p><a href="https://github.com/PowerShell/GraphicalTools">PowerShell/GraphicalTools: Modules that mix PowerShell and GUIs/CUIs! - built on Avalonia and gui.cs</a></p><p>元々 CUI 使ってるのに <code>Out-GridView</code> で GUI 表示しないとインタラクティブな絞り込みできないのがイヤで <a href="https://github.com/peco/peco">peco</a> を使ってたってのがある。
+<code>peco</code> は PowerShell に最適化されてないから、その後オブジェクトのまま取り扱える <a href="https://github.com/jasonmarcher/poco">jasonmarcher/poco</a> にたどり着いた。
+その後 <code>poco</code> の独自実装を自分で始めたのが <a href="https://github.com/krymtkts/pocof"><code>pocof</code></a>(F# の練習がてら)。</p><p>なもんで、 <code>Out-GridVie</code> の CUI 版があってもしイイ感じに使えるのなら、この長年の変遷に終止符を打つんちゃうかな的な。</p><p>以下 <code>README.md</code> に従い試す。</p><pre><code class="powershell">Install-Module Microsoft.PowerShell.ConsoleGuiTools -AllowPrerelease -Scope AllUsers
+</code></pre><pre><code class="powershell">Get-ChildItem | Out-ConsoleGridView
+</code></pre><!-- ![水色の背景に印字される `ls` の結果](/img/2022-09-03-capture/capture.png) --><p><code>space</code> キーでオブジェクトを選択するか <code>Ctrl+A</code> で全選択して、 <code>Enter</code> で選択した結果を出力する。
+<code>-Filter</code> オプションに渡した値で初期表示がフィルタリングされた形になる。そのままタイプしてもフィルタ入力できない。<code>Tab</code> キーを押してフィルタのテキストにフォーカスできる。
+フィルタは正規表現のみみたい。不正なパターンを入れたらちゃんとエラー表示されてエライ。
+必ず結果を洗濯した状態で<code>Enter</code> 押さないと結果が得られないのはちょっとメンドイ。
+わたしは使わないけどマウスコントロール(クリックどころかスクロールまで)できるのもすごいな。
+背景変わるの好きになれないので、今後色とかキーとかのオプション充実したりするかなあ。
+インクリメンタルサーチじゃないのも微妙に好みじゃない操作性だ。</p><p><code>poco</code>、 <code>pocof</code> 共にバッファを元に戻すとレイアウトの崩れが起きるのだけど、 <code>Out-ConsoleGridView</code> は崩れない。素晴らしい。
+表示域にないスクロール可能な部分は吹っ飛んでしまうけど、崩れない方法は真似させてもらいたい(MIT ライセンスなので)。けど、コード読んだ感じどこかわからなかった。</p><p><code>Out-ConsoleGridView</code> は CmdLet の出力に <a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.formatviewdefinition?view=powershellsdk-7.0.0">FormatViewDefinition Class (System.Management.Automation) | Microsoft Docs</a>を自前で作ってるみたい。
+なので PowerShell で表示される内容とちょっと違う。
+それ故か、例えば <code>Get-InstalledModule</code> のような情報量の多い結果を表示するとちょっと悲しい感じになってしまった。 <code>format.ps1xml</code> が利用されないせいかな。しかしこのクラス使い方がわからなかったので勉強になるわ。</p><pre><code class="powershell">Get-InstalledModule | Out-ConsoleGridView
+</code></pre><!-- ![すし詰めに印字される `Get-InstalledModule` の結果](/img/2022-09-03-capture/jam-packed-capture.png) --><p><code>pocof</code> でやりたいことと方向性が違うなあという感じなので、作ってるものを今すぐブン投げ捨てる必要はなかったようだ。こちらの開発は趣味プロで続けようと思った。しかしコード参考にできるものが増えたのでとても助かるなぁ。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/cryogen">cryogen</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -217,7 +225,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-08-20-osc-133-in-win-term">2022-08-20 Windows Terminal で OSC133 する &raquo;</a>
+        <a class="right" href="/posts/2022-08-27-bump-bootstrap">2022-08-27 Bootstrap のバージョンを上げる &raquo;</a>
         
     </div>
 </div>
