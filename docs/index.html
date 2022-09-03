@@ -51,7 +51,7 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
-                        <li><a class="dropdown-item" href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">Out-GridVie の CUI 版 Out-ConsoleGridView</a></li>
+                        <li><a class="dropdown-item" href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">Out-GridView の CUI 版 Out-ConsoleGridView</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-08-27-bump-bootstrap">Bootstrap のバージョンを上げる</a></li>
                         
@@ -191,13 +191,13 @@
         <div class="col-lg-6">2022-09-03</div>
         
     </div>
-    <h2>Out-GridVie の CUI 版 Out-ConsoleGridView</h2>
+    <h2>Out-GridView の CUI 版 Out-ConsoleGridView</h2>
 </div>
 <div>
     
-    <p>最近知ったのだけど、 <code>Out-GridVie</code> の PowerShell Team 謹製 CUI 版 <code>Out-ConsoleGridView</code> があったらしい。これが使えるヤツだったら <code>poco</code> も今作ってる <code>pocof</code> も要らんやん、と思った。</p><p><a href="https://github.com/PowerShell/GraphicalTools">PowerShell/GraphicalTools: Modules that mix PowerShell and GUIs/CUIs! - built on Avalonia and gui.cs</a></p><p>元々 CUI 使ってるのに <code>Out-GridView</code> で GUI 表示しないとインタラクティブな絞り込みできないのがイヤで <a href="https://github.com/peco/peco">peco</a> を使ってたってのがある。
+    <p>最近知ったのだけど、 <code>Out-GridView</code> の PowerShell Team 謹製 CUI 版 <code>Out-ConsoleGridView</code> があったらしい。これが使えるヤツだったら <code>poco</code> も今作ってる <code>pocof</code> も要らんやん、と思った。</p><p><a href="https://github.com/PowerShell/GraphicalTools">PowerShell/GraphicalTools: Modules that mix PowerShell and GUIs/CUIs! - built on Avalonia and gui.cs</a></p><p>元々 CUI 使ってるのに <code>Out-GridView</code> で GUI 表示しないとインタラクティブな絞り込みできないのがイヤで <a href="https://github.com/peco/peco">peco</a> を使ってたってのがある。
 <code>peco</code> は PowerShell に最適化されてないから、その後オブジェクトのまま取り扱える <a href="https://github.com/jasonmarcher/poco">jasonmarcher/poco</a> にたどり着いた。
-その後 <code>poco</code> の独自実装を自分で始めたのが <a href="https://github.com/krymtkts/pocof"><code>pocof</code></a>(F# の練習がてら)。</p><p>なもんで、 <code>Out-GridVie</code> の CUI 版があってもしイイ感じに使えるのなら、この長年の変遷に終止符を打つんちゃうかな的な。</p><p>以下 <code>README.md</code> に従い試す。</p><pre><code class="powershell">Install-Module Microsoft.PowerShell.ConsoleGuiTools -AllowPrerelease -Scope AllUsers
+その後 <code>poco</code> の独自実装を自分で始めたのが <a href="https://github.com/krymtkts/pocof"><code>pocof</code></a>(F# の練習がてら)。</p><p>なもんで、 <code>Out-GridView</code> の CUI 版があってもしイイ感じに使えるのなら、この長年の変遷に終止符を打つんちゃうかな的な。</p><p>以下 <code>README.md</code> に従い試す。</p><pre><code class="powershell">Install-Module Microsoft.PowerShell.ConsoleGuiTools -AllowPrerelease -Scope AllUsers
 </code></pre><pre><code class="powershell">Get-ChildItem | Out-ConsoleGridView
 </code></pre><p><img src="/img/2022-09-03-capture/capture.png" alt="水色の背景に印字される ls の結果" /></p><p><code>space</code> キーでオブジェクトを選択するか <code>Ctrl+A</code> で全選択して、 <code>Enter</code> で選択した結果を出力する。
 <code>-Filter</code> オプションに渡した値で初期表示がフィルタリングされた形になる。そのままタイプしてもフィルタ入力できない。<code>Tab</code> キーを押してフィルタのテキストにフォーカスできる。
