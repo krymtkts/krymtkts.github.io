@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;cryogen&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/cryogen">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.4</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;cryogen&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/cryogen" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.4" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -185,29 +185,45 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;cryogen&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-09-10</div>
+        
     </div>
-    <ul>
+    <h2>F#でコマンドレットを書いてる pt.4</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2022-08-27-bump-bootstrap">2022-08-27 Bootstrap のバージョンを上げる</a>
-        </li>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>めちゃめちゃ放置してたのだけど、 8 月末くらいから触れるようになってきたので、気になる部分ですぐ変えられる部分を書き換えて、 PowerShell Gallery に公開した。 <a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">はじめたころ</a>から 4 ヶ月くらい経ったのか。</p><p><a href="https://www.powershellgallery.com/packages/pocof/0.1.0-alpha">PowerShell Gallery | pocof 0.1.0-alpha</a></p><p>現時点に公開する動機としては、自分の普段遣いでは未だ <code>poco</code> を使ってるというのもあって、折角なのでそれを <code>pocof</code> に変えようと考えた次第だ。
+一部機能に関しては未実装なので、オプションはコメントアウトして隠した形で公開している。</p><p>大きい変更としては、PowerShell オブジェクトを作成せずに <code>PSCmdlet</code> のサブクラスの中で PowerShell の Cmdlet を呼び出す方法がわかったので、その辺を書き換えた。
+これが非常に参考になった →<a href="https://github.com/PowerShell/PowerShell/issues/12137">InvokeCommand.InvokeScript not returning Output · Issue #12137 · PowerShell/PowerShell</a></p><p>DLL の モジュールを公開するのは初めてだったので、これまた躓きつつも先達の知恵を借りて乗り越えられた。
+これ → <a href="https://webcoder.info/fspsmodule.html">Writing a PowerShell Core Module With F#, A Complete Guide | Brianary</a></p><p>結局始めた頃はフォルダ指定の公開でええんちゃうかと思ってたが、 <code>Import-Module</code> してから公開する方がめっちゃ楽なので、参照元に従いそう変えちゃった(こだわり無し)。
+そもそもこの記事がなかったら <code>pocof</code> はサクッと始めてなかったので、感謝しかない。</p><p>それと特に意図があった訳ではないが、 <a href="https://docs.microsoft.com/en-us/powershell/scripting/developer/module/how-to-write-a-powershell-module-manifest?view=powershell-7.2">PowerShell Module Manifest</a> で使ったことがなかった <code>PreRelease</code> を使ってみたりもした。</p><p>公開にあたっての目玉機能は何もない。何なら <code>poco</code> の機能で未だ実装してないものもある。
+ただいくつか自分が <code>poco</code> を使っていて困ってたことは、これで解消される。</p><ul><li>正規表現パターンの記述中にエラーで落ちない</li><li>クエリ記述中に左右カーソル移動ができる(buggy な疑いアリ)</li><li>(あとテスト用の非対話モード ← 普段利用ではまじで意味ないけどテストが楽)</li></ul><p>今後欲しい機能としては、とりあえず自分の使い方だと、プロパティ周り。
+プロパティ指定のフィルタとプロパティ入力の補完ができたら相当楽になる。表示するプロパティが選べたりしたら最高。</p><p><code>pocof</code> で印字されたアイコングリフが <code>??</code> になってたり他にも色々未実装・直さないといけない点あれど、自分が普段使うツールを自分の手でコントロールできる(しかも学習まで兼ねて)というのは、イイことやなと改めて思った。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2022-03-05-customize-cryogen">2022-03-05 Cryogen のカスタマイズ</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-        <li>
-            <a href="/posts/2022-02-27-issue-with-cryogen-version-bump">2022-02-27 Cryogen バージョンアップに伴う困りごと</a>
-        </li>
+    <a href="/tags/fsharp">fsharp</a>
     
-        <li>
-            <a href="/posts/2019-01-10-make-blog-with-clojure">2019-01-10 Clojureでブログを作った</a>
-        </li>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">2022-09-03 Out-GridView の CUI 版 Out-ConsoleGridView &raquo;</a>
+        
+    </div>
+
     
-    </ul>
+
+
 </div>
 
             </div>

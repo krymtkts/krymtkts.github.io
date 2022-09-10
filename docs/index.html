@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4">F#でコマンドレットを書いてる pt.4</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">Out-GridView の CUI 版 Out-ConsoleGridView</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-08-27-bump-bootstrap">Bootstrap のバージョンを上げる</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-08-20-osc-133-in-win-term">Windows Terminal で OSC133 する</a></li>
                         
                         
 
@@ -188,34 +188,28 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-09-03</div>
+        <div class="col-lg-6">2022-09-10</div>
         
     </div>
-    <h2>Out-GridView の CUI 版 Out-ConsoleGridView</h2>
+    <h2>F#でコマンドレットを書いてる pt.4</h2>
 </div>
 <div>
     
-    <p>最近知ったのだけど、 <code>Out-GridView</code> の PowerShell Team 謹製 CUI 版 <code>Out-ConsoleGridView</code> があったらしい。これが使えるヤツだったら <code>poco</code> も今作ってる <code>pocof</code> も要らんやん、と思った。</p><p><a href="https://github.com/PowerShell/GraphicalTools">PowerShell/GraphicalTools: Modules that mix PowerShell and GUIs/CUIs! - built on Avalonia and gui.cs</a></p><p>元々 CUI 使ってるのに <code>Out-GridView</code> で GUI 表示しないとインタラクティブな絞り込みできないのがイヤで <a href="https://github.com/peco/peco">peco</a> を使ってたってのがある。
-<code>peco</code> は PowerShell に最適化されてないから、その後オブジェクトのまま取り扱える <a href="https://github.com/jasonmarcher/poco">jasonmarcher/poco</a> にたどり着いた。
-その後 <code>poco</code> の独自実装を自分で始めたのが <a href="https://github.com/krymtkts/pocof"><code>pocof</code></a>(F# の練習がてら)。</p><p>なもんで、 <code>Out-GridView</code> の CUI 版があってもしイイ感じに使えるのなら、この長年の変遷に終止符を打つんちゃうかな的な。</p><p>以下 <code>README.md</code> に従い試す。</p><pre><code class="powershell">Install-Module Microsoft.PowerShell.ConsoleGuiTools -AllowPrerelease -Scope AllUsers
-</code></pre><pre><code class="powershell">Get-ChildItem | Out-ConsoleGridView
-</code></pre><p><img src="/img/2022-09-03-capture/capture.png" alt="水色の背景に印字される ls の結果" /></p><p><code>space</code> キーでオブジェクトを選択するか <code>Ctrl+A</code> で全選択して、 <code>Enter</code> で選択した結果を出力する。
-<code>-Filter</code> オプションに渡した値で初期表示がフィルタリングされた形になる。そのままタイプしてもフィルタ入力できない。<code>Tab</code> キーを押してフィルタのテキストにフォーカスできる。
-フィルタは正規表現のみみたい。不正なパターンを入れたらちゃんとエラー表示されてエライ。
-必ず結果を洗濯した状態で<code>Enter</code> 押さないと結果が得られないのはちょっとメンドイ。
-わたしは使わないけどマウスコントロール(クリックどころかスクロールまで)できるのもすごいな。
-背景変わるの好きになれないので、今後色とかキーとかのオプション充実したりするかなあ。
-インクリメンタルサーチじゃないのも微妙に好みじゃない操作性だ。</p><p><code>poco</code>、 <code>pocof</code> 共にバッファを元に戻すとレイアウトの崩れが起きるのだけど、 <code>Out-ConsoleGridView</code> は崩れない。素晴らしい。
-表示域にないスクロール可能な部分は吹っ飛んでしまうけど、崩れない方法は真似させてもらいたい(MIT ライセンスなので)。けど、コード読んだ感じどこかわからなかった。</p><p><code>Out-ConsoleGridView</code> は CmdLet の出力に <a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.formatviewdefinition?view=powershellsdk-7.0.0">FormatViewDefinition Class (System.Management.Automation) | Microsoft Docs</a>を自前で作ってるみたい。
-なので PowerShell で表示される内容とちょっと違う。
-それ故か、例えば <code>Get-InstalledModule</code> のような情報量の多い結果を表示するとちょっと悲しい感じになってしまった。 <code>format.ps1xml</code> が利用されないせいかな。しかしこのクラス使い方がわからなかったので勉強になるわ。</p><pre><code class="powershell">Get-InstalledModule | Out-ConsoleGridView
-</code></pre><p><img src="/img/2022-09-03-capture/jam-packed-capture.png" alt="すし詰めに印字される Get-InstalledModule の結果" /></p><p><code>pocof</code> でやりたいことと方向性が違うなあという感じなので、作ってるものを今すぐブン投げ捨てる必要はなかったようだ。こちらの開発は趣味プロで続けようと思った。しかしコード参考にできるものが増えたのでとても助かるなぁ。</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>めちゃめちゃ放置してたのだけど、 8 月末くらいから触れるようになってきたので、気になる部分ですぐ変えられる部分を書き換えて、 PowerShell Gallery に公開した。 <a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">はじめたころ</a>から 4 ヶ月くらい経ったのか。</p><p><a href="https://www.powershellgallery.com/packages/pocof/0.1.0-alpha">PowerShell Gallery | pocof 0.1.0-alpha</a></p><p>現時点に公開する動機としては、自分の普段遣いでは未だ <code>poco</code> を使ってるというのもあって、折角なのでそれを <code>pocof</code> に変えようと考えた次第だ。
+一部機能に関しては未実装なので、オプションはコメントアウトして隠した形で公開している。</p><p>大きい変更としては、PowerShell オブジェクトを作成せずに <code>PSCmdlet</code> のサブクラスの中で PowerShell の Cmdlet を呼び出す方法がわかったので、その辺を書き換えた。
+これが非常に参考になった →<a href="https://github.com/PowerShell/PowerShell/issues/12137">InvokeCommand.InvokeScript not returning Output · Issue #12137 · PowerShell/PowerShell</a></p><p>DLL の モジュールを公開するのは初めてだったので、これまた躓きつつも先達の知恵を借りて乗り越えられた。
+これ → <a href="https://webcoder.info/fspsmodule.html">Writing a PowerShell Core Module With F#, A Complete Guide | Brianary</a></p><p>結局始めた頃はフォルダ指定の公開でええんちゃうかと思ってたが、 <code>Import-Module</code> してから公開する方がめっちゃ楽なので、参照元に従いそう変えちゃった(こだわり無し)。
+そもそもこの記事がなかったら <code>pocof</code> はサクッと始めてなかったので、感謝しかない。</p><p>それと特に意図があった訳ではないが、 <a href="https://docs.microsoft.com/en-us/powershell/scripting/developer/module/how-to-write-a-powershell-module-manifest?view=powershell-7.2">PowerShell Module Manifest</a> で使ったことがなかった <code>PreRelease</code> を使ってみたりもした。</p><p>公開にあたっての目玉機能は何もない。何なら <code>poco</code> の機能で未だ実装してないものもある。
+ただいくつか自分が <code>poco</code> を使っていて困ってたことは、これで解消される。</p><ul><li>正規表現パターンの記述中にエラーで落ちない</li><li>クエリ記述中に左右カーソル移動ができる(buggy な疑いアリ)</li><li>(あとテスト用の非対話モード ← 普段利用ではまじで意味ないけどテストが楽)</li></ul><p>今後欲しい機能としては、とりあえず自分の使い方だと、プロパティ周り。
+プロパティ指定のフィルタとプロパティ入力の補完ができたら相当楽になる。表示するプロパティが選べたりしたら最高。</p><p><code>pocof</code> で印字されたアイコングリフが <code>??</code> になってたり他にも色々未実装・直さないといけない点あれど、自分が普段使うツールを自分の手でコントロールできる(しかも学習まで兼ねて)というのは、イイことやなと改めて思った。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -225,7 +219,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-08-27-bump-bootstrap">2022-08-27 Bootstrap のバージョンを上げる &raquo;</a>
+        <a class="right" href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">2022-09-03 Out-GridView の CUI 版 Out-ConsoleGridView &raquo;</a>
         
     </div>
 </div>
