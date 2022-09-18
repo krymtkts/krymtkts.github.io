@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-09-18-data-ide-data-station-build-notes">データ IDE DataStation のビルド関連メモ</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4">F#でコマンドレットを書いてる pt.4</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">Out-GridView の CUI 版 Out-ConsoleGridView</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-08-27-bump-bootstrap">Bootstrap のバージョンを上げる</a></li>
                         
                         
 
@@ -108,6 +108,8 @@
                         <li><a class="dropdown-item" href="/tags/elb">elb</a></li>
                         
                         <li><a class="dropdown-item" href="/tags/openssh">openssh</a></li>
+                        
+                        <li><a class="dropdown-item" href="/tags/electron">electron</a></li>
                         
                         <li><a class="dropdown-item" href="/tags/powershell">powershell</a></li>
                         
@@ -188,28 +190,32 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-09-10</div>
+        <div class="col-lg-6">2022-09-18</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.4</h2>
+    <h2>データ IDE DataStation のビルド関連メモ</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>めちゃめちゃ放置してたのだけど、 8 月末くらいから触れるようになってきたので、気になる部分ですぐ変えられる部分を書き換えて、 PowerShell Gallery に公開した。 <a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">はじめたころ</a>から 4 ヶ月くらい経ったのか。</p><p><a href="https://www.powershellgallery.com/packages/pocof/0.1.0-alpha">PowerShell Gallery | pocof 0.1.0-alpha</a></p><p>現時点に公開する動機としては、自分の普段遣いでは未だ <code>poco</code> を使ってるというのもあって、折角なのでそれを <code>pocof</code> に変えようと考えた次第だ。
-一部機能に関しては未実装なので、オプションはコメントアウトして隠した形で公開している。</p><p>大きい変更としては、PowerShell オブジェクトを作成せずに <code>PSCmdlet</code> のサブクラスの中で PowerShell の Cmdlet を呼び出す方法がわかったので、その辺を書き換えた。
-これが非常に参考になった →<a href="https://github.com/PowerShell/PowerShell/issues/12137">InvokeCommand.InvokeScript not returning Output · Issue #12137 · PowerShell/PowerShell</a></p><p>DLL の モジュールを公開するのは初めてだったので、これまた躓きつつも先達の知恵を借りて乗り越えられた。
-これ → <a href="https://webcoder.info/fspsmodule.html">Writing a PowerShell Core Module With F#, A Complete Guide | Brianary</a></p><p>結局始めた頃はフォルダ指定の公開でええんちゃうかと思ってたが、 <code>Import-Module</code> してから公開する方がめっちゃ楽なので、参照元に従いそう変えちゃった(こだわり無し)。
-そもそもこの記事がなかったら <code>pocof</code> はサクッと始めてなかったので、感謝しかない。</p><p>それと特に意図があった訳ではないが、 <a href="https://docs.microsoft.com/en-us/powershell/scripting/developer/module/how-to-write-a-powershell-module-manifest?view=powershell-7.2">PowerShell Module Manifest</a> で使ったことがなかった <code>PreRelease</code> を使ってみたりもした。</p><p>公開にあたっての目玉機能は何もない。何なら <code>poco</code> の機能で未だ実装してないものもある。
-ただいくつか自分が <code>poco</code> を使っていて困ってたことは、これで解消される。</p><ul><li>正規表現パターンの記述中にエラーで落ちない</li><li>クエリ記述中に左右カーソル移動ができる(buggy な疑いアリ)</li><li>(あとテスト用の非対話モード ← 普段利用ではまじで意味ないけどテストが楽)</li></ul><p>今後欲しい機能としては、とりあえず自分の使い方だと、プロパティ周り。
-プロパティ指定のフィルタとプロパティ入力の補完ができたら相当楽になる。表示するプロパティが選べたりしたら最高。</p><p><code>pocof</code> で印字されたアイコングリフが <code>??</code> になってたり他にも色々未実装・直さないといけない点あれど、自分が普段使うツールを自分の手でコントロールできる(しかも学習まで兼ねて)というのは、イイことやなと改めて思った。</p>
+    <p>ちょっと前に <a href="https://datastation.multiprocess.io/">DataStation</a> という OSS の IDE を知った。
+GitHub の repo はこちら。<a href="https://github.com/multiprocessio/datastation">multiprocessio/datastation: App to easily query, script, and visualize data from every database, file, and API.</a></p><p>データベース・ファイル・HTTP リクエストまで多様なデータソースへの接続をサポートしてたり、簡単にグラフ化、コードで加工したり、とにかく良い。 Notebook みたいといえばそんな感じ。</p><p>ちょっとコントリしたいネタがあり、その動作確認のためにビルドして実行する必要があった。その時の手順・つまづきポイントを備忘のために雑メモで記しておく。</p><hr /><p>DataStation のアーキテクチャについてはこちらのメモにある。そんなに詳しくないので自力で色々読んだり試したりした方がイイか。</p><p><a href="https://github.com/multiprocessio/datastation/blob/66b77f0cfe41040c49fe1e42e6f267b59f45b5bf/ARCHITECTURE.md">datastation/ARCHITECTURE.md at main · multiprocessio/datastation</a></p><h3 id="デスクトップアプリのビルドと実行">デスクトップアプリのビルドと実行</h3><p><a href="https://github.com/multiprocessio/datastation/blob/66b77f0cfe41040c49fe1e42e6f267b59f45b5bf/HACKING.md">datastation/HACKING.md at main · multiprocessio/datastation</a></p><p>手順はこれを参照した。でも試してる途中でよくわからなくなってくるので、<a href="https://github.com/multiprocessio/datastation/blob/66b77f0cfe41040c49fe1e42e6f267b59f45b5bf/package.json"><code>package.json</code></a> を読んで各スクリプトが何者かは読んだ方がイイかも(実際そうした)。</p><p>ビルドと実行には WSL2 を使う。 手順に記載のある通り Windows でもできるっぽい(<a href="https://jmeubank.github.io/tdm-gcc/">tdm-gcc</a>というのを使う)けど、なんか面倒な気配がしたので Linux で楽をする。いつかチャレンジしてもよいが今ではないと判断した。
+GCC は Go の SQLite3 モジュールをビルドするので必要っぽい。</p><p>ビルドの事前準備には依存関係のインストールスクリプトが用意されてる(CI 用だけど)。それを使って楽をする。
+<a href="https://github.com/multiprocessio/datastation/blob/66b77f0cfe41040c49fe1e42e6f267b59f45b5bf/scripts/ci/prepare_linux.sh">datastation/prepare_linux.sh</a></p><p>DataStation のデスクトップアプリは Electron アプリの様子。
+以下のビルド実行時に権限が必要だったのと、それによって <code>--no-sandbox</code> が必要になった。</p><pre><code class="sh">sudo yarn build-desktop --no-sandbox
+</code></pre><p>このビルド実行でライブラリが不足しているのがわかり、以下を参考にパッケージをインストールした。なんのエラーが出たかはメモを失念したが、 lib* が足りない系。
+足りない依存関係は皆 Electron のビルドに必要なものばかりだった。</p><ul><li><a href="https://akinov.hatenablog.com/entry/2021/04/04/151851">Puppeteer でライブラリ不足 libraries: libatk-1.0.so.0 - ノンカフェインであなたにやさしい</a></li><li><a href="https://github.com/electron/electron-quick-start/issues/486#issuecomment-1153535808">Missing shared libraries · Issue #486 · electron/electron-quick-start</a></li></ul><p>この依存関係のインストール後にビルドが成功するようになったが、実行すると SQLite3 のエラーになった。
+内容は SQLite3 が古いと言われるものだった(メモ失念)。エラーログを見る限りこれの解消には Electron の再ビルドが必要なようだった(これあとから見てもピンとくるのかわからん。エラーログをメモらなかったことが悔やまれる)。</p><p>↓ の記事を参考にした覚えあり。
+<a href="https://stackoverflow.com/questions/46384591/node-was-compiled-against-a-different-node-js-version-using-node-module-versio">npm - Node - was compiled against a different Node.js version using NODE_MODULE_VERSION 51 - Stack Overflow</a></p><pre><code class="sh">./node_modules/.bin/electron-rebuild
+</code></pre><p>ここまでやって初めて ↓ のコマンドで Electron アプリを動かして動作確認できるようになった(理解のために結局 <code>package.json</code> に書かれたスクリプトを直で叩くようになる)。</p><pre><code class="sh">yarn electron --trace-warning --unhandled-rejection=warn build/desktop.js --no-sandbox
+</code></pre><h3 id="runner-の-ut">runner の UT</h3><p>DataStation のデスクトップアプリはいわばフロントエンドで、データソースとの接続やデータ読み取りは Go で書かれた <a href="https://github.com/multiprocessio/datastation/tree/main/runner">datastation/runner</a> で行われてるようだった。</p><p>なので UT の実行に関しては先述のディレクトリで <code>go test</code> するだけで OK だった。とはいえ前の節で先述した通り、 GCC に依存したモジュールのビルドがあるので WSL2 でやるのが良かろう。</p><p>終。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/electron">electron</a>
     
-    <a href="/tags/fsharp">fsharp</a>
+    <a href="/tags/go">go</a>
     
 </div>
 
@@ -219,7 +225,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">2022-09-03 Out-GridView の CUI 版 Out-ConsoleGridView &raquo;</a>
+        <a class="right" href="/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4">2022-09-10 F#でコマンドレットを書いてる pt.4 &raquo;</a>
         
     </div>
 </div>
