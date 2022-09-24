@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-09-24-psjobcanattendance">PowerShell でジョブカン勤怠管理を操作する</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-09-18-data-ide-data-station-build-notes">データ IDE DataStation のビルド関連メモ</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4">F#でコマンドレットを書いてる pt.4</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">Out-GridView の CUI 版 Out-ConsoleGridView</a></li>
                         
                         
 
@@ -190,32 +190,29 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-09-18</div>
+        <div class="col-lg-6">2022-09-24</div>
         
     </div>
-    <h2>データ IDE DataStation のビルド関連メモ</h2>
+    <h2>PowerShell でジョブカン勤怠管理を操作する</h2>
 </div>
 <div>
     
-    <p>ちょっと前に <a href="https://datastation.multiprocess.io/">DataStation</a> という OSS の IDE を知った。
-GitHub の repo はこちら。<a href="https://github.com/multiprocessio/datastation">multiprocessio/datastation: App to easily query, script, and visualize data from every database, file, and API.</a></p><p>データベース・ファイル・HTTP リクエストまで多様なデータソースへの接続をサポートしてたり、簡単にグラフ化、コードで加工したり、とにかく良い。 Notebook みたいといえばそんな感じ。</p><p>ちょっとコントリしたいネタがあり、その動作確認のためにビルドして実行する必要があった。その時の手順・つまづきポイントを備忘のために雑メモで記しておく。</p><hr /><p>DataStation のアーキテクチャについてはこちらのメモにある。そんなに詳しくないので自力で色々読んだり試したりした方がイイか。</p><p><a href="https://github.com/multiprocessio/datastation/blob/66b77f0cfe41040c49fe1e42e6f267b59f45b5bf/ARCHITECTURE.md">datastation/ARCHITECTURE.md at main · multiprocessio/datastation</a></p><h3 id="デスクトップアプリのビルドと実行">デスクトップアプリのビルドと実行</h3><p><a href="https://github.com/multiprocessio/datastation/blob/66b77f0cfe41040c49fe1e42e6f267b59f45b5bf/HACKING.md">datastation/HACKING.md at main · multiprocessio/datastation</a></p><p>手順はこれを参照した。でも試してる途中でよくわからなくなってくるので、<a href="https://github.com/multiprocessio/datastation/blob/66b77f0cfe41040c49fe1e42e6f267b59f45b5bf/package.json"><code>package.json</code></a> を読んで各スクリプトが何者かは読んだ方がイイかも(実際そうした)。</p><p>ビルドと実行には WSL2 を使う。 手順に記載のある通り Windows でもできるっぽい(<a href="https://jmeubank.github.io/tdm-gcc/">tdm-gcc</a>というのを使う)けど、なんか面倒な気配がしたので Linux で楽をする。いつかチャレンジしてもよいが今ではないと判断した。
-GCC は Go の SQLite3 モジュールをビルドするので必要っぽい。</p><p>ビルドの事前準備には依存関係のインストールスクリプトが用意されてる(CI 用だけど)。それを使って楽をする。
-<a href="https://github.com/multiprocessio/datastation/blob/66b77f0cfe41040c49fe1e42e6f267b59f45b5bf/scripts/ci/prepare_linux.sh">datastation/prepare_linux.sh</a></p><p>DataStation のデスクトップアプリは Electron アプリの様子。
-以下のビルド実行時に権限が必要だったのと、それによって <code>--no-sandbox</code> が必要になった。</p><pre><code class="sh">sudo yarn build-desktop --no-sandbox
-</code></pre><p>このビルド実行でライブラリが不足しているのがわかり、以下を参考にパッケージをインストールした。なんのエラーが出たかはメモを失念したが、 lib* が足りない系。
-足りない依存関係は皆 Electron のビルドに必要なものばかりだった。</p><ul><li><a href="https://akinov.hatenablog.com/entry/2021/04/04/151851">Puppeteer でライブラリ不足 libraries: libatk-1.0.so.0 - ノンカフェインであなたにやさしい</a></li><li><a href="https://github.com/electron/electron-quick-start/issues/486#issuecomment-1153535808">Missing shared libraries · Issue #486 · electron/electron-quick-start</a></li></ul><p>この依存関係のインストール後にビルドが成功するようになったが、実行すると SQLite3 のエラーになった。
-内容は SQLite3 が古いと言われるものだった(メモ失念)。エラーログを見る限りこれの解消には Electron の再ビルドが必要なようだった(これあとから見てもピンとくるのかわからん。エラーログをメモらなかったことが悔やまれる)。</p><p>↓ の記事を参考にした覚えあり。
-<a href="https://stackoverflow.com/questions/46384591/node-was-compiled-against-a-different-node-js-version-using-node-module-versio">npm - Node - was compiled against a different Node.js version using NODE_MODULE_VERSION 51 - Stack Overflow</a></p><pre><code class="sh">./node_modules/.bin/electron-rebuild
-</code></pre><p>ここまでやって初めて ↓ のコマンドで Electron アプリを動かして動作確認できるようになった(理解のために結局 <code>package.json</code> に書かれたスクリプトを直で叩くようになる)。</p><pre><code class="sh">yarn electron --trace-warning --unhandled-rejection=warn build/desktop.js --no-sandbox
-</code></pre><h3 id="runner-の-ut">runner の UT</h3><p>DataStation のデスクトップアプリはいわばフロントエンドで、データソースとの接続やデータ読み取りは Go で書かれた <a href="https://github.com/multiprocessio/datastation/tree/main/runner">datastation/runner</a> で行われてるようだった。</p><p>なので UT の実行に関しては先述のディレクトリで <code>go test</code> するだけで OK だった。とはいえ前の節で先述した通り、 GCC に依存したモジュールのビルドがあるので WSL2 でやるのが良かろう。</p><p>終。</p>
+    <p>現職について半年が経とうとしている。幸運なことに毎日忙しく過ごしており打刻もままならん(<del>単にいつも忘れてるだけ</del>)。
+なので、またアレを作った。打刻スクリプトだ。</p><p><a href="https://github.com/krymtkts/PSJobCanAttendance">krymtkts/PSJobCanAttendance</a></p><p>現職は<a href="https://jobcan.ne.jp/">ジョブカン勤怠管理</a>を使ってるので、また新しく作る必要があった。
+とはいえ<a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a>をベースに開発(コピペ)しているので、構造的には同じ。
+異なるのはスクレイピングの部分だけといって過言ない。</p><p>個人的に考える目玉機能は以下の 2 つ。</p><ol><li>OTP 対応</li><li>一括編集</li></ol><p>1 については、認証時に OTP を取得する <code>ScriptBlock</code> 差し込めるようにしてある。現職では都合が良いことに 1Password を使わせえてもらえてるので、 <a href="https://developer.1password.com/docs/cli/get-started/">op</a> を使って取得した OTP が渡せるのだ。
+<code>ScriptBlock</code> がない場合は入力を求めるプロンプトになる。</p><p>2 については、自分の現職における勤務実績の入れ方を考えると、絶対必要だったものだ。
+現職はフレックスでかなりゆるいのでほぼ勤怠管理無いに等しいが、打刻は求められている。ただ自身が怠惰なせいもあり、3 週間くらい打刻を忘れていて〆前に急いで入力するなんてことが多発している。これを楽にこなすためにも、今回は絶対に一括編集機能を作りたかった。休憩時間が自動入力の設定じゃないようなので、打刻漏れしたときの作業の重さは尚更だ。</p><p>以下のようにパイプを使った一括編集ができる。端的に言って、楽過ぎてヤバい(打刻しろ)。</p><pre><code class="powershell">@(12..16;20..22) | %{get-date "2022-09-$($_) 08:15:00+0900"} | Edit-JobCanAttendances -TimeRecordEvent work_start -AditGroupId 10
+</code></pre><p>上記の様な感じで試しに 3 週ほどの実績をドバドバと書き込んでみたが、リクエストが拒否されることもなく使えて一安心だった。
+今回の打刻スクリプトを作るにあたり、毎度のごとく利用規約はチェック済みだ。<a href="https://jobcan.ne.jp/aup">利用規約｜ジョブカン勤怠管理</a>を確認したが、こういうスクリプトを作ることに関し問題なさそうだった。</p><p>本当は 2022 年夏頃には一通り作ってたのだけど、その後 2 ヶ月位使わずに来てたので、この週末でまとめ上げた。来週から実際に使ってみて、熟れてきたら PowerShell Gallery に公開しようと考えている。</p><p>今回作ってみて気づいたこと。<a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a> を作ったときは、同サービスの前例が 1 つくらいしかなかったのに、今回は前例を探せば結構ヒットした。
+「No.1 勤怠管理」の名は伊達じゃないな！と思わせるものがあった(何様)。</p><hr /><p><a href="/posts/2021-11-27-psmfattendance">前に作った Money Forward クラウド勤怠のやつ</a>は、前職を離れて実行環境がないからもうメンテもできないし、そろそろ Archive してもイイ気がする。
+バグ残ったママだけど直して動作確認できないからしゃーない。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/electron">electron</a>
-    
-    <a href="/tags/go">go</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -225,7 +222,7 @@ GCC は Go の SQLite3 モジュールをビルドするので必要っぽい。
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4">2022-09-10 F#でコマンドレットを書いてる pt.4 &raquo;</a>
+        <a class="right" href="/posts/2022-09-18-data-ide-data-station-build-notes">2022-09-18 データ IDE DataStation のビルド関連メモ &raquo;</a>
         
     </div>
 </div>
