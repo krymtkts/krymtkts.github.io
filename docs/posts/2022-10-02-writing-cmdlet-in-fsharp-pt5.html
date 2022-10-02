@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;oh-my-posh&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/oh-my-posh">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.5</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-10-02-writing-cmdlet-in-fsharp-pt5">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;oh-my-posh&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/oh-my-posh" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.5" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-10-02-writing-cmdlet-in-fsharp-pt5" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -187,25 +187,56 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;oh-my-posh&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-10-02</div>
+        
     </div>
-    <ul>
+    <h2>F#でコマンドレットを書いてる pt.5</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2022-08-20-osc-133-in-win-term">2022-08-20 Windows Terminal で OSC133 する</a>
-        </li>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。ほぼ実装におけるメモ、壁打ち。</p><p><a href="https://github.com/PowerShell/GraphicalTools">Out-ConsoleGridView</a>を見て <code>hashtable</code> をフィルタできるのいいな～と思ったので、 <code>hashtable</code> サポートを始めている。誰得な機能ではあれど、これがあると自分にとって利用の幅が広がる。</p><p><code>ProcessRecord</code> メソッドにおいて、 <code>IDictionary</code> 実装の場合のみ展開した要素を内部で保持するようにしてみた。一見して煩雑なので、なんかマシにしたい。 <code>list</code> にして <code>list</code> 外すあたりがどーにも。</p><pre><code class="diff">     override __.ProcessRecord() =
+-        input &lt;- List.append input &lt;| List.ofArray __.InputObject
++        let entries: list&lt;obj&gt; =
++            List.ofArray __.InputObject
++            |&gt; List.collect (fun (o: PSObject) -&gt;
++                match o.BaseObject with
++                | :? IDictionary as dct -&gt;
++                    Seq.cast&lt;DictionaryEntry&gt; dct
++                    |&gt; Seq.cast&lt;obj&gt;
++                    |&gt; Seq.toList
++                | _ as o -&gt; [ o ])
++
++        input &lt;- List.append input entries
+</code></pre><p>破壊的な操作ならすぐマシなのが思いつくが、ちょっと寝かせる。とはいえそっちでスッキリするならそっちがいいかな。
+いや待て、ここまで書いて <code>fold</code> の方がスッキリする気が...してきたので後でやってみる。</p><hr /><p>この変更を加えることで <code>hashtable</code> の各要素を扱えるようになるけど、依然フィルタした結果は得られない。</p><p><code>pocof</code> はいま内部的に各要素の <code>ToString</code> メソッドの結果に対して LINQ のクエリをかけてる。
+そのため <code>DictionaryEntry</code> のような <code>ToString</code> の結果が自身のクラスを示す文字列 <code>System.Collections.DictionaryEntry</code> を返す場合、使い物にならない。</p><p>未実装のプロパティ指定可能にする機能があればまあ使えるので先にやるべきと考えるが、プロパティ未指定時の挙動が定義できてないといけない。
+常時プロパティ指定なんてしないので、 <code>ToString</code> に値が反映されないタイプのオブジェクトの場合に、デフォルトでフィルタ可能な挙動を定義する必要がある。あーこっちのが大事やわ。
+やはり <code>IDictionary</code> 実装用に特別処理みたいなのを書いてあげないといけないかなーという気が若干してる。コイツ以外にも色々出てきたら面倒なので気が向かないけど、特別扱いなのはたしかにそうなので。</p><p>つづく</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2022-04-29-good-bye-omp-module">2022-04-29 さよなら oh-my-posh モジュール</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-        <li>
-            <a href="/posts/2020-03-31_oh-my-posh-theme">2020-03-31 My own oh-my-posh theme</a>
-        </li>
+    <a href="/tags/fsharp">fsharp</a>
     
-    </ul>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-09-24-psjobcanattendance">2022-09-24 PowerShell でジョブカン勤怠管理を操作する &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>

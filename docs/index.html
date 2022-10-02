@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-10-02-writing-cmdlet-in-fsharp-pt5">F#でコマンドレットを書いてる pt.5</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-09-24-psjobcanattendance">PowerShell でジョブカン勤怠管理を操作する</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-09-18-data-ide-data-station-build-notes">データ IDE DataStation のビルド関連メモ</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4">F#でコマンドレットを書いてる pt.4</a></li>
                         
                         
 
@@ -190,29 +190,39 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-09-24</div>
+        <div class="col-lg-6">2022-10-02</div>
         
     </div>
-    <h2>PowerShell でジョブカン勤怠管理を操作する</h2>
+    <h2>F#でコマンドレットを書いてる pt.5</h2>
 </div>
 <div>
     
-    <p>現職について半年が経とうとしている。幸運なことに毎日忙しく過ごしており打刻もままならん(<del>単にいつも忘れてるだけ</del>)。
-なので、またアレを作った。打刻スクリプトだ。</p><p><a href="https://github.com/krymtkts/PSJobCanAttendance">krymtkts/PSJobCanAttendance</a></p><p>現職は<a href="https://jobcan.ne.jp/">ジョブカン勤怠管理</a>を使ってるので、また新しく作る必要があった。
-とはいえ<a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a>をベースに開発(コピペ)しているので、構造的には同じ。
-異なるのはスクレイピングの部分だけといって過言ない。</p><p>個人的に考える目玉機能は以下の 2 つ。</p><ol><li>OTP 対応</li><li>一括編集</li></ol><p>1 については、認証時に OTP を取得する <code>ScriptBlock</code> 差し込めるようにしてある。現職では都合が良いことに 1Password を使わせえてもらえてるので、 <a href="https://developer.1password.com/docs/cli/get-started/">op</a> を使って取得した OTP が渡せるのだ。
-<code>ScriptBlock</code> がない場合は入力を求めるプロンプトになる。</p><p>2 については、自分の現職における勤務実績の入れ方を考えると、絶対必要だったものだ。
-現職はフレックスでかなりゆるいのでほぼ勤怠管理無いに等しいが、打刻は求められている。ただ自身が怠惰なせいもあり、3 週間くらい打刻を忘れていて〆前に急いで入力するなんてことが多発している。これを楽にこなすためにも、今回は絶対に一括編集機能を作りたかった。休憩時間が自動入力の設定じゃないようなので、打刻漏れしたときの作業の重さは尚更だ。</p><p>以下のようにパイプを使った一括編集ができる。端的に言って、楽過ぎてヤバい(打刻しろ)。</p><pre><code class="powershell">@(12..16;20..22) | %{get-date "2022-09-$($_) 08:15:00+0900"} | Edit-JobCanAttendances -TimeRecordEvent work_start -AditGroupId 10
-</code></pre><p>上記の様な感じで試しに 3 週ほどの実績をドバドバと書き込んでみたが、リクエストが拒否されることもなく使えて一安心だった。
-今回の打刻スクリプトを作るにあたり、毎度のごとく利用規約はチェック済みだ。<a href="https://jobcan.ne.jp/aup">利用規約｜ジョブカン勤怠管理</a>を確認したが、こういうスクリプトを作ることに関し問題なさそうだった。</p><p>本当は 2022 年夏頃には一通り作ってたのだけど、その後 2 ヶ月位使わずに来てたので、この週末でまとめ上げた。来週から実際に使ってみて、熟れてきたら PowerShell Gallery に公開しようと考えている。</p><p>今回作ってみて気づいたこと。<a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a> を作ったときは、同サービスの前例が 1 つくらいしかなかったのに、今回は前例を探せば結構ヒットした。
-「No.1 勤怠管理」の名は伊達じゃないな！と思わせるものがあった(何様)。</p><hr /><p><a href="/posts/2021-11-27-psmfattendance">前に作った Money Forward クラウド勤怠のやつ</a>は、前職を離れて実行環境がないからもうメンテもできないし、そろそろ Archive してもイイ気がする。
-バグ残ったママだけど直して動作確認できないからしゃーない。</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。ほぼ実装におけるメモ、壁打ち。</p><p><a href="https://github.com/PowerShell/GraphicalTools">Out-ConsoleGridView</a>を見て <code>hashtable</code> をフィルタできるのいいな～と思ったので、 <code>hashtable</code> サポートを始めている。誰得な機能ではあれど、これがあると自分にとって利用の幅が広がる。</p><p><code>ProcessRecord</code> メソッドにおいて、 <code>IDictionary</code> 実装の場合のみ展開した要素を内部で保持するようにしてみた。一見して煩雑なので、なんかマシにしたい。 <code>list</code> にして <code>list</code> 外すあたりがどーにも。</p><pre><code class="diff">     override __.ProcessRecord() =
+-        input &lt;- List.append input &lt;| List.ofArray __.InputObject
++        let entries: list&lt;obj&gt; =
++            List.ofArray __.InputObject
++            |&gt; List.collect (fun (o: PSObject) -&gt;
++                match o.BaseObject with
++                | :? IDictionary as dct -&gt;
++                    Seq.cast&lt;DictionaryEntry&gt; dct
++                    |&gt; Seq.cast&lt;obj&gt;
++                    |&gt; Seq.toList
++                | _ as o -&gt; [ o ])
++
++        input &lt;- List.append input entries
+</code></pre><p>破壊的な操作ならすぐマシなのが思いつくが、ちょっと寝かせる。とはいえそっちでスッキリするならそっちがいいかな。
+いや待て、ここまで書いて <code>fold</code> の方がスッキリする気が...してきたので後でやってみる。</p><hr /><p>この変更を加えることで <code>hashtable</code> の各要素を扱えるようになるけど、依然フィルタした結果は得られない。</p><p><code>pocof</code> はいま内部的に各要素の <code>ToString</code> メソッドの結果に対して LINQ のクエリをかけてる。
+そのため <code>DictionaryEntry</code> のような <code>ToString</code> の結果が自身のクラスを示す文字列 <code>System.Collections.DictionaryEntry</code> を返す場合、使い物にならない。</p><p>未実装のプロパティ指定可能にする機能があればまあ使えるので先にやるべきと考えるが、プロパティ未指定時の挙動が定義できてないといけない。
+常時プロパティ指定なんてしないので、 <code>ToString</code> に値が反映されないタイプのオブジェクトの場合に、デフォルトでフィルタ可能な挙動を定義する必要がある。あーこっちのが大事やわ。
+やはり <code>IDictionary</code> 実装用に特別処理みたいなのを書いてあげないといけないかなーという気が若干してる。コイツ以外にも色々出てきたら面倒なので気が向かないけど、特別扱いなのはたしかにそうなので。</p><p>つづく</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -222,7 +232,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-09-18-data-ide-data-station-build-notes">2022-09-18 データ IDE DataStation のビルド関連メモ &raquo;</a>
+        <a class="right" href="/posts/2022-09-24-psjobcanattendance">2022-09-24 PowerShell でジョブカン勤怠管理を操作する &raquo;</a>
         
     </div>
 </div>
