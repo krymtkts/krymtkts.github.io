@@ -211,7 +211,22 @@
 +
 +        input &lt;- List.append input entries
 </code></pre><p>破壊的な操作ならすぐマシなのが思いつくが、ちょっと寝かせる。とはいえそっちでスッキリするならそっちがいいかな。
-いや待て、ここまで書いて <code>fold</code> の方がスッキリする気が...してきたので後でやってみる。</p><hr /><p>この変更を加えることで <code>hashtable</code> の各要素を扱えるようになるけど、依然フィルタした結果は得られない。</p><p><code>pocof</code> はいま内部的に各要素の <code>ToString</code> メソッドの結果に対して LINQ のクエリをかけてる。
+いや待て、ここまで書いて <code>fold</code> の方がスッキリする気が...してきたので後でやってみる。</p><h3 id="追記2022-10-03">追記(2022-10-03)</h3><p>要らんコードも取り除いてこうした。幾分マシかなあ。</p><pre><code class="diff">     override __.ProcessRecord() =
+-        input &lt;- List.append input &lt;| List.ofArray __.InputObject
++        input &lt;-
++            List.ofArray __.InputObject
++            |&gt; List.fold
++                (fun acc o -&gt;
++                    match o.BaseObject with
++                    | :? IDictionary as dct -&gt;
++                        Seq.cast&lt;obj&gt; dct
++                        |&gt; Seq.fold (fun a d -&gt; d :: a) acc
++                    | _ as o -&gt; o :: acc)
++                input
+
+     override __.EndProcessing() =
++        input &lt;- List.rev input
+</code></pre><hr /><p>この変更を加えることで <code>hashtable</code> の各要素を扱えるようになるけど、依然フィルタした結果は得られない。</p><p><code>pocof</code> はいま内部的に各要素の <code>ToString</code> メソッドの結果に対して LINQ のクエリをかけてる。
 そのため <code>DictionaryEntry</code> のような <code>ToString</code> の結果が自身のクラスを示す文字列 <code>System.Collections.DictionaryEntry</code> を返す場合、使い物にならない。</p><p>未実装のプロパティ指定可能にする機能があればまあ使えるので先にやるべきと考えるが、プロパティ未指定時の挙動が定義できてないといけない。
 常時プロパティ指定なんてしないので、 <code>ToString</code> に値が反映されないタイプのオブジェクトの場合に、デフォルトでフィルタ可能な挙動を定義する必要がある。あーこっちのが大事やわ。
 やはり <code>IDictionary</code> 実装用に特別処理みたいなのを書いてあげないといけないかなーという気が若干してる。コイツ以外にも色々出てきたら面倒なので気が向かないけど、特別扱いなのはたしかにそうなので。</p><p>つづく</p>

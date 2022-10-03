@@ -27,6 +27,28 @@
 破壊的な操作ならすぐマシなのが思いつくが、ちょっと寝かせる。とはいえそっちでスッキリするならそっちがいいかな。
 いや待て、ここまで書いて `fold` の方がスッキリする気が...してきたので後でやってみる。
 
+### 追記(2022-10-03)
+
+要らんコードも取り除いてこうした。幾分マシかなあ。
+
+```diff
+     override __.ProcessRecord() =
+-        input <- List.append input <| List.ofArray __.InputObject
++        input <-
++            List.ofArray __.InputObject
++            |> List.fold
++                (fun acc o ->
++                    match o.BaseObject with
++                    | :? IDictionary as dct ->
++                        Seq.cast<obj> dct
++                        |> Seq.fold (fun a d -> d :: a) acc
++                    | _ as o -> o :: acc)
++                input
+
+     override __.EndProcessing() =
++        input <- List.rev input
+```
+
 ---
 
 この変更を加えることで `hashtable` の各要素を扱えるようになるけど、依然フィルタした結果は得られない。
