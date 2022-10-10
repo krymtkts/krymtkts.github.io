@@ -122,6 +122,14 @@ footer {
     padding-bottom: 30px;
 }
 
+blockquote {
+    padding: 1rem;
+    padding-bottom: 0.1rem;
+    color: #586e75; /* base01 */
+    background-color: #eee8d5; /* base2 */
+    border-left: 5px solid #93a1a1; /* base1 */
+}
+
 blockquote footer {
     text-align: left;
     padding-top: 0px;
