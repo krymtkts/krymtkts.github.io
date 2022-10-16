@@ -1,4 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Mon, 10 Oct 2022 11:24:10 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-10-09-replace-battery-of-razer-stealth</guid><link>https://krymtkts.github.io/posts/2022-10-09-replace-battery-of-razer-stealth</link><title>Razer Blade Stealth 13 (2017)のバッテリーを換装する</title><description>&lt;p&gt;My Laptop は Razer Blade Stealth 13 2017 モデルなのだが、流石に経年劣化が目立つようになってきた。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 16 Oct 2022 16:00:20 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6</guid><link>https://krymtkts.github.io/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6</link><title>F#でコマンドレットを書いてる pt.6</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;&lt;code&gt;hashtable&lt;/code&gt; サポートした。&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;やはり &lt;code&gt;IDictionary&lt;/code&gt; 実装用に特別処理みたいなのを書いてあげないといけないかなーという気が若干してる。コイツ以外にも色々出てきたら面倒なので気が向かないけど、特別扱いなのはたしかにそうなので。&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;前回コメントしていた実装方針にした。先のことはわからないので、いま想定できない未来は未来の自分に託す。&lt;/p&gt;&lt;p&gt;これによって &lt;code&gt;pocof&lt;/code&gt; は &lt;code&gt;hashtable&lt;/code&gt; のエントリをフィルタできるようになった。 クエリは &lt;code&gt;hashtable&lt;/code&gt; の &lt;code&gt;Key&lt;/code&gt; / &lt;code&gt;Value&lt;/code&gt; それぞれに適用される。こんな感じ ↓。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;@{a='1';b='2';c='3';d='a1';e='b2'} | pocof -NonInteractive -Query a
+
+# Name                           Value
+# ----                           -----
+# a                              1
+# d                              a1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;ただしフィルタして得られる値は &lt;code&gt;hashtable&lt;/code&gt; ではなく、 &lt;code&gt;Object[]&lt;/code&gt; (中身は &lt;code&gt;System.Collections.DictionaryEntry&lt;/code&gt;) になる。
+一瞬 &lt;code&gt;hashtable&lt;/code&gt; に戻したいかな～と思ったが、色々使い道を模索しているときに以下のようなおもしろ利用法あるとわかったので、そのケースで不都合ありそうでやめた。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# 十把一絡げ
+$misc = @(Get-Date; @{a=1;b=2;c=3}; (10..15))
+
+# Sunday, 16 October, 2022 15:25:19
+#
+# Key   : c
+# Value : 3
+# Name  : c
+#
+#
+# Key   : b
+# Value : 2
+# Name  : b
+#
+#
+# Key   : a
+# Value : 1
+# Name  : a
+#
+# 10
+# 11
+# 12
+# 13
+# 14
+# 15
+
+$misc | pocof -NonInteractive -Query 15
+
+# Sunday, 16 October, 2022 15:25:19
+# 15
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;因みにこういったケースの活用方法はまだ見出していない。ただなんかこのファジーな検索あると面白そうなので残している。例えば、色んなものを array に詰め込んでおいて後でから見ようってアプローチとかになるんではないかと。
+仕事の製品コードにこういうの見つけたら卒倒しそうやけど、自分が terminal でなんかデータを捏ねくり回すときにあったら、新たな世界が開けるのでは？的な。しらんけど。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/PowerShell/GraphicalTools"&gt;&lt;code&gt;Out-ConsoleGridView&lt;/code&gt;&lt;/a&gt; はこういう事できなくて、同じ型が揃ってないとエラーになる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;$misc | Out-ConsoleGridView
+# Out-ConsoleGridView: Object reference not set to an instance of an object.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/where-object?view=powershell-7.2"&gt;&lt;code&gt;Where-Object&lt;/code&gt;&lt;/a&gt; は流石懐が深くて、 &lt;code&gt;-FilterScript&lt;/code&gt; を使えば同様のことができる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;$misc | ? {$_ -match 15}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;ひとまず &lt;code&gt;hashtable&lt;/code&gt; サポートも終えたので、 プロパティ指定でフィルタする機能を実装する気持ちが高まってきてる。
+だけど、このファジーなフィルタの発見によって、フィルタ対象の array に登場する型をチェックしてプロパティを得て...みたいなことが必要になり、面倒さが増した。&lt;/p&gt;&lt;p&gt;率直に言ってコレだるいｗのだけど、こういう楽しみって趣味プロならではの醍醐味じゃないかな。第一ユーザが自分なので、自分が納得できないモノは許容し難いのよな。&lt;/p&gt;&lt;p&gt;まだまだゆるく長く楽しめそうな気配がしていて、良い。&lt;/p&gt;</description><pubDate>Sun, 16 Oct 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-10-09-replace-battery-of-razer-stealth</guid><link>https://krymtkts.github.io/posts/2022-10-09-replace-battery-of-razer-stealth</link><title>Razer Blade Stealth 13 (2017)のバッテリーを換装する</title><description>&lt;p&gt;My Laptop は Razer Blade Stealth 13 2017 モデルなのだが、流石に経年劣化が目立つようになってきた。
 バッテリーの膨張だ。&lt;/p&gt;&lt;p&gt;Razer Blade Stealth 13 は美しいアルミ削り出しボティなのだけど、ここ 1 年くらいは底面が何か弧を描いてんな～と感じていたものの、実用上支障がなかったので放置していた。
 ところが、夏を過ぎた頃になって蓋を締めたときにピッチリ閉まらなくなってきて「あ、これはヤバイな」と感じた。
 早急に交換が必要だと(あんま放置すると筐体の歪みが戻らなくなる)。&lt;/p&gt;&lt;p&gt;もう 4,5 年ものなので CPU の遅さや RAM の少なさ(16GB)も目立つといえば目立つのだけど、 PC のスタートアップやソフトウェアのアップデートに時間がかかる以外ではまだ開発したりゲームする上で対して不満はない状態(仕事だとイライラしそうだが)なので、&lt;del&gt;円安世界で不要な出費を抑えるためにも&lt;/del&gt;バッテリーを交換して長く使おうと考えた。&lt;/p&gt;&lt;p&gt;参考にした記事 →&lt;a href="https://neareal.com/3353/"&gt;RazerBlade のバッテリーを換装する – NEAREAL&lt;/a&gt;&lt;/p&gt;&lt;p&gt;ホントのところは iFixit のリペアキット込み込みバッテリが欲しかったのだけど、おま国で購入できなかった(結果無駄にアカウントだけ作ってしまった)。&lt;/p&gt;&lt;p&gt;なもんで Razer Blade Stealth 13 2017 モデルの型番を Amazon.co.jp で調べて、交換バッテリーをサクッと見つけた。何個もあったので一番安いのを選ぶ。

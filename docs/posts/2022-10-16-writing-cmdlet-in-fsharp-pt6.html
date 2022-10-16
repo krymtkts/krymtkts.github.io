@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;lambda&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/lambda">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.6</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;lambda&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/lambda" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.6" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -189,21 +189,81 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;lambda&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-10-16</div>
+        
     </div>
-    <ul>
+    <h2>F#でコマンドレットを書いてる pt.6</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2019-09-01-aws-lambda-cloud-front-and-serverless">2019-09-01 Serverless FrameworkでAWS LambdaとCloudFront</a>
-        </li>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p><code>hashtable</code> サポートした。</p><blockquote><p>やはり <code>IDictionary</code> 実装用に特別処理みたいなのを書いてあげないといけないかなーという気が若干してる。コイツ以外にも色々出てきたら面倒なので気が向かないけど、特別扱いなのはたしかにそうなので。</p></blockquote><p>前回コメントしていた実装方針にした。先のことはわからないので、いま想定できない未来は未来の自分に託す。</p><p>これによって <code>pocof</code> は <code>hashtable</code> のエントリをフィルタできるようになった。 クエリは <code>hashtable</code> の <code>Key</code> / <code>Value</code> それぞれに適用される。こんな感じ ↓。</p><pre><code class="powershell">@{a='1';b='2';c='3';d='a1';e='b2'} | pocof -NonInteractive -Query a
+
+# Name                           Value
+# ----                           -----
+# a                              1
+# d                              a1
+</code></pre><p>ただしフィルタして得られる値は <code>hashtable</code> ではなく、 <code>Object[]</code> (中身は <code>System.Collections.DictionaryEntry</code>) になる。
+一瞬 <code>hashtable</code> に戻したいかな～と思ったが、色々使い道を模索しているときに以下のようなおもしろ利用法あるとわかったので、そのケースで不都合ありそうでやめた。</p><pre><code class="powershell"># 十把一絡げ
+$misc = @(Get-Date; @{a=1;b=2;c=3}; (10..15))
+
+# Sunday, 16 October, 2022 15:25:19
+#
+# Key   : c
+# Value : 3
+# Name  : c
+#
+#
+# Key   : b
+# Value : 2
+# Name  : b
+#
+#
+# Key   : a
+# Value : 1
+# Name  : a
+#
+# 10
+# 11
+# 12
+# 13
+# 14
+# 15
+
+$misc | pocof -NonInteractive -Query 15
+
+# Sunday, 16 October, 2022 15:25:19
+# 15
+</code></pre><p>因みにこういったケースの活用方法はまだ見出していない。ただなんかこのファジーな検索あると面白そうなので残している。例えば、色んなものを array に詰め込んでおいて後でから見ようってアプローチとかになるんではないかと。
+仕事の製品コードにこういうの見つけたら卒倒しそうやけど、自分が terminal でなんかデータを捏ねくり回すときにあったら、新たな世界が開けるのでは？的な。しらんけど。</p><p><a href="https://github.com/PowerShell/GraphicalTools"><code>Out-ConsoleGridView</code></a> はこういう事できなくて、同じ型が揃ってないとエラーになる。</p><pre><code class="powershell">$misc | Out-ConsoleGridView
+# Out-ConsoleGridView: Object reference not set to an instance of an object.
+</code></pre><p><a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/where-object?view=powershell-7.2"><code>Where-Object</code></a> は流石懐が深くて、 <code>-FilterScript</code> を使えば同様のことができる。</p><pre><code class="powershell">$misc | ? {$_ -match 15}
+</code></pre><p>ひとまず <code>hashtable</code> サポートも終えたので、 プロパティ指定でフィルタする機能を実装する気持ちが高まってきてる。
+だけど、このファジーなフィルタの発見によって、フィルタ対象の array に登場する型をチェックしてプロパティを得て...みたいなことが必要になり、面倒さが増した。</p><p>率直に言ってコレだるいｗのだけど、こういう楽しみって趣味プロならではの醍醐味じゃないかな。第一ユーザが自分なので、自分が納得できないモノは許容し難いのよな。</p><p>まだまだゆるく長く楽しめそうな気配がしていて、良い。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2019-08-11-test-lambda-with-pwsh">2019-08-11 AWS LambdaをPowershellでテスト実行する</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-    </ul>
+    <a href="/tags/fsharp">fsharp</a>
+    
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-10-09-replace-battery-of-razer-stealth">2022-10-09 Razer Blade Stealth 13 (2017)のバッテリーを換装する &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>
