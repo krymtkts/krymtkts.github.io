@@ -1,4 +1,81 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 16 Oct 2022 16:00:20 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6</guid><link>https://krymtkts.github.io/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6</link><title>F#でコマンドレットを書いてる pt.6</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;&lt;code&gt;hashtable&lt;/code&gt; サポートした。&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;やはり &lt;code&gt;IDictionary&lt;/code&gt; 実装用に特別処理みたいなのを書いてあげないといけないかなーという気が若干してる。コイツ以外にも色々出てきたら面倒なので気が向かないけど、特別扱いなのはたしかにそうなので。&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;前回コメントしていた実装方針にした。先のことはわからないので、いま想定できない未来は未来の自分に託す。&lt;/p&gt;&lt;p&gt;これによって &lt;code&gt;pocof&lt;/code&gt; は &lt;code&gt;hashtable&lt;/code&gt; のエントリをフィルタできるようになった。 クエリは &lt;code&gt;hashtable&lt;/code&gt; の &lt;code&gt;Key&lt;/code&gt; / &lt;code&gt;Value&lt;/code&gt; それぞれに適用される。こんな感じ ↓。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;@{a='1';b='2';c='3';d='a1';e='b2'} | pocof -NonInteractive -Query a
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 23 Oct 2022 17:26:41 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-10-23-cleaning-my-pwsh-profile</guid><link>https://krymtkts.github.io/posts/2022-10-23-cleaning-my-pwsh-profile</link><title>PowerShell の My Profile を掃除する</title><description>&lt;p&gt;PowerShell の profile を Gist で管理してるのだけど、この度掃除をした。&lt;/p&gt;&lt;p&gt;&lt;a href="https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be"&gt;My PowerShell profile.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;片手間にできる範囲しかやらなかったので、使ってないモジュールと関数の取り除きが主。あとは順番をちょっと入れ替えてみたり、把握してなかった全貌を眺めてみた。&lt;/p&gt;&lt;p&gt;これらの取り除きついでに、供養がてら何のためにつかってたのかとか振り返ってみる。&lt;/p&gt;&lt;h3 id="モジュール取り除き"&gt;モジュール取り除き&lt;/h3&gt;&lt;p&gt;&lt;a href="https://github.com/mklement0/ClipboardText"&gt;mklement0/ClipboardText: Universal clipboard text support for PowerShell, notably also in PowerShell Core (cross-platform) and Windows PowerShell v2-v4&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://www.powershellgallery.com/packages/ClipboardText/0.1.8"&gt;ClipboardText&lt;/a&gt; というモジュール。コレなんで使ってたのかすら忘れてしまったけど、結構使ってた記憶がある。
+&lt;code&gt;Set-ClipboardText&lt;/code&gt; &lt;code&gt;Get-ClipboardText&lt;/code&gt; が使えるようになる。
+PowerShell Core を使い始めた頃はクリップボード操作の Cmdlet がなくてできなかったとかそんな理由だったか？&lt;/p&gt;&lt;p&gt;今やフツーに &lt;code&gt;Set-Clipboard&lt;/code&gt; &lt;code&gt;Get-Clipboard&lt;/code&gt; 使ってるので不要になったけどずっと消してなかった。今までありがとう、消した。&lt;/p&gt;&lt;p&gt;&lt;a href="https://www.powershellgallery.com/packages/poco/1.1.0"&gt;poco&lt;/a&gt;も残ってるかな？と思ったが、そうでもなかった。
+(変え漏れを除けば)意外にも &lt;a href="https://www.powershellgallery.com/packages/pocof/0.2.0-alpha"&gt;pocof&lt;/a&gt; への変更は忘れてなかったらしい。&lt;/p&gt;&lt;p&gt;あとモジュールは跡形もなかったが、昔 &lt;a href="https://www.powershellgallery.com/packages/GoogleCloud/1.0.1.10"&gt;GoogleCloud&lt;/a&gt; を使って勉強してたときの名残があったのでそれも消した。
+このモジュールもう 4 年くらいメンテされてない様子、残念やけど多分重要でないんだろうな。&lt;/p&gt;&lt;h3 id="関数取り除き"&gt;関数取り除き&lt;/h3&gt;&lt;h4 id="明らかな消し忘れ-virtualbox-関連"&gt;明らかな消し忘れ。 VirtualBox 関連&lt;/h4&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function Start-VBoxMachine() {
+    vboxmanage list vms | Select-Pocof -CaseSensitive | Out-String -Stream | Select-String -Pattern '\{(.+)\}' | ForEach-Object { vboxmanage startvm ($_.Matches[0].Groups['1'].Value) --type headless }
+}
+
+function Stop-VBoxMachine() {
+    vboxmanage list runningvms | Select-Pocof -CaseSensitive | Out-String -Stream | Select-String -Pattern '\{(.+)\}' | ForEach-Object { vboxmanage controlvm ($_.Matches[0].Groups['1'].Value) poweroff }
+}
+
+function Get-RunningVBoxMachines() {
+    vboxmanage list runningvms
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;こんなのがあった。VirtualBox の GUI を介さずに VM の起動・停止をするための奴らだったか確か。
+前々職でコンテナ移行しきれてない秘伝の開発環境 VM がチラホラあって、それで使ってた記憶がある。あの VM ちゃん達は今も元気に VM してるのだろうか。
+もはや使うこともないので消す。でも供養がてら Gist に残しておいた。&lt;/p&gt;&lt;p&gt;&lt;a href="https://gist.github.com/krymtkts/47f70697cbe006e81d7fd801e1e3b351"&gt;krymtkts/scripts-for-virtualbox.ps1&lt;/a&gt;&lt;/p&gt;&lt;h4 id="なんだコレ-find-ぽいやつ"&gt;なんだコレ。 &lt;code&gt;find&lt;/code&gt; ぽい？やつ&lt;/h4&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function find {
+    [CmdletBinding()]
+    param(
+        [string]$path = '.',
+        [Parameter(Mandatory = $True,
+            ValueFromPipeline = $True)]
+        [string[]]$name,
+        [switch]$delete
+    )
+
+    begin {
+    }
+
+    process {
+        foreach ($n in $Name) {
+            if ($delete) {
+                Get-ChildItem -Recurse -Path $path | Where-Object -Property Name -Like $n | Remove-Item
+            }
+            else {
+                Get-ChildItem -Recurse -Path $path | Where-Object -Property Name -Like $n
+            }
+        }
+    }
+
+    end {
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;なんか薄っすらと、 &lt;code&gt;Makefile&lt;/code&gt; から &lt;code&gt;find&lt;/code&gt; 呼ぶときに何のシェルか考えるの面倒で PowerShell で &lt;code&gt;find&lt;/code&gt; 作ろうとしてた覚えがあるのだけど、それをいつやってたのかわからない。いま使ってもないのでなんでここにあるのか不明。
+消す。&lt;/p&gt;&lt;h4 id="何故-profile-に足したクソデカテキストファイルを作る関数"&gt;何故 profile に足した？クソデカテキストファイルを作る関数&lt;/h4&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function New-TextFile {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string]
+        $Name,
+        [Parameter()]
+        [long]
+        $Byte = [Math]::Pow(1024, 3),
+        [Parameter()]
+        [int]
+        $Basis = [Math]::Pow(1024, 2)
+    )
+    begin {
+        if (Test-Path $Name) {
+            Write-Error 'overrides currently not supported.'
+            return
+        }
+        $Remains = $Byte % $Basis
+        $Per = $Byte / $Basis
+    }
+    process {
+        1..$Per | ForEach-Object { 'x' * $Basis | Add-Content $Name -Encoding ascii -NoNewline }
+        if ($Remains -ne 0) {
+            'x' * $Remains | Add-Content $Name -Encoding ascii -NoNewline
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;前に書いた &lt;a href="/posts/2022-03-13-create-huge-text-file-in-pwsh"&gt;PowerShell でクソデカテキストファイルを作る&lt;/a&gt; の関数版だと思われる。
+わざわざ profile に入れておいたのはなんでだろう。スクリプトにするだけで良いのでは...過去の自分に問いたい。消した。&lt;/p&gt;&lt;h4 id="psake-の-auto-completer-壊れてるで"&gt;&lt;code&gt;psake&lt;/code&gt; の auto completer 壊れてるで...&lt;/h4&gt;&lt;p&gt;あと今回の掃除を通して &lt;code&gt;psake&lt;/code&gt; の auto completer 壊れてるやんと言うのに気づいたので、直した。&lt;/p&gt;&lt;p&gt;&lt;code&gt;Invoke-psake&lt;/code&gt; の存在チェックをしてあったら &lt;code&gt;Register-ArgumentCompleter&lt;/code&gt; するようにしてた。
+けど、どっかのタイミングから &lt;code&gt;invoke-psake&lt;/code&gt; が &lt;code&gt;invoke-cpsake&lt;/code&gt; になってて、 auto completer が登録されなくなってた。&lt;/p&gt;&lt;p&gt;auto completer 周り、 &lt;code&gt;aws_completer&lt;/code&gt; で &lt;code&gt;Register-ArgumentCompleter&lt;/code&gt; 設定するとこも、 AWS CLI 1 の頃から使ってたのもあり AWS CLI 2 では要らなくなった部分がある(良くないけど PyPI からモジュール取ってたときの名残)。
+今回は対応を先送りにした。&lt;/p&gt;&lt;h3 id="おわり"&gt;おわり&lt;/h3&gt;&lt;p&gt;そこまで消すものなかったな、というのが率直な感想だが、掃除してないな～という profile だった。&lt;/p&gt;&lt;p&gt;コマンドの存在をチェックしてから関数とか auto completer 登録するみたいなの増えてるので、この辺共通化したいなあ。
+でも共通化しだすとファイル分割もしたくなり、結局のところ今の Gist から取ってくるの終焉に向かうのでは...と思った。&lt;/p&gt;&lt;p&gt;なんかより良い(楽な) PowerShell の Profile 管理手段ないかなー。&lt;/p&gt;</description><pubDate>Sun, 23 Oct 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6</guid><link>https://krymtkts.github.io/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6</link><title>F#でコマンドレットを書いてる pt.6</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;&lt;code&gt;hashtable&lt;/code&gt; サポートした。&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;やはり &lt;code&gt;IDictionary&lt;/code&gt; 実装用に特別処理みたいなのを書いてあげないといけないかなーという気が若干してる。コイツ以外にも色々出てきたら面倒なので気が向かないけど、特別扱いなのはたしかにそうなので。&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;前回コメントしていた実装方針にした。先のことはわからないので、いま想定できない未来は未来の自分に託す。&lt;/p&gt;&lt;p&gt;これによって &lt;code&gt;pocof&lt;/code&gt; は &lt;code&gt;hashtable&lt;/code&gt; のエントリをフィルタできるようになった。 クエリは &lt;code&gt;hashtable&lt;/code&gt; の &lt;code&gt;Key&lt;/code&gt; / &lt;code&gt;Value&lt;/code&gt; それぞれに適用される。こんな感じ ↓。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;@{a='1';b='2';c='3';d='a1';e='b2'} | pocof -NonInteractive -Query a
 
 # Name                           Value
 # ----                           -----
