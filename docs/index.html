@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">PSJobCanAttendance の公開準備</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-10-23-cleaning-my-pwsh-profile">PowerShell の My Profile を掃除する</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6">F#でコマンドレットを書いてる pt.6</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-10-09-replace-battery-of-razer-stealth">Razer Blade Stealth 13 (2017)のバッテリーを換装する</a></li>
                         
                         
 
@@ -192,91 +192,41 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-10-23</div>
+        <div class="col-lg-6">2022-10-30</div>
         
     </div>
-    <h2>PowerShell の My Profile を掃除する</h2>
+    <h2>PSJobCanAttendance の公開準備</h2>
 </div>
 <div>
     
-    <p>PowerShell の profile を Gist で管理してるのだけど、この度掃除をした。</p><p><a href="https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be">My PowerShell profile.</a></p><p>片手間にできる範囲しかやらなかったので、使ってないモジュールと関数の取り除きが主。あとは順番をちょっと入れ替えてみたり、把握してなかった全貌を眺めてみた。</p><p>これらの取り除きついでに、供養がてら何のためにつかってたのかとか振り返ってみる。</p><h3 id="モジュール取り除き">モジュール取り除き</h3><p><a href="https://github.com/mklement0/ClipboardText">mklement0/ClipboardText: Universal clipboard text support for PowerShell, notably also in PowerShell Core (cross-platform) and Windows PowerShell v2-v4</a></p><p><a href="https://www.powershellgallery.com/packages/ClipboardText/0.1.8">ClipboardText</a> というモジュール。コレなんで使ってたのかすら忘れてしまったけど、結構使ってた記憶がある。
-<code>Set-ClipboardText</code> <code>Get-ClipboardText</code> が使えるようになる。
-PowerShell Core を使い始めた頃はクリップボード操作の Cmdlet がなくてできなかったとかそんな理由だったか？</p><p>今やフツーに <code>Set-Clipboard</code> <code>Get-Clipboard</code> 使ってるので不要になったけどずっと消してなかった。今までありがとう、消した。</p><p><a href="https://www.powershellgallery.com/packages/poco/1.1.0">poco</a>も残ってるかな？と思ったが、そうでもなかった。
-(変え漏れを除けば)意外にも <a href="https://www.powershellgallery.com/packages/pocof/0.2.0-alpha">pocof</a> への変更は忘れてなかったらしい。</p><p>あとモジュールは跡形もなかったが、昔 <a href="https://www.powershellgallery.com/packages/GoogleCloud/1.0.1.10">GoogleCloud</a> を使って勉強してたときの名残があったのでそれも消した。
-このモジュールもう 4 年くらいメンテされてない様子、残念やけど多分重要でないんだろうな。</p><h3 id="関数取り除き">関数取り除き</h3><h4 id="明らかな消し忘れ-virtualbox-関連">明らかな消し忘れ。 VirtualBox 関連</h4><pre><code class="powershell">function Start-VBoxMachine() {
-    vboxmanage list vms | Select-Pocof -CaseSensitive | Out-String -Stream | Select-String -Pattern '\{(.+)\}' | ForEach-Object { vboxmanage startvm ($_.Matches[0].Groups['1'].Value) --type headless }
-}
-
-function Stop-VBoxMachine() {
-    vboxmanage list runningvms | Select-Pocof -CaseSensitive | Out-String -Stream | Select-String -Pattern '\{(.+)\}' | ForEach-Object { vboxmanage controlvm ($_.Matches[0].Groups['1'].Value) poweroff }
-}
-
-function Get-RunningVBoxMachines() {
-    vboxmanage list runningvms
-}
-</code></pre><p>こんなのがあった。VirtualBox の GUI を介さずに VM の起動・停止をするための奴らだったか確か。
-前々職でコンテナ移行しきれてない秘伝の開発環境 VM がチラホラあって、それで使ってた記憶がある。あの VM ちゃん達は今も元気に VM してるのだろうか。
-もはや使うこともないので消す。でも供養がてら Gist に残しておいた。</p><p><a href="https://gist.github.com/krymtkts/47f70697cbe006e81d7fd801e1e3b351">krymtkts/scripts-for-virtualbox.ps1</a></p><h4 id="なんだコレ-find-ぽいやつ">なんだコレ。 <code>find</code> ぽい？やつ</h4><pre><code class="powershell">function find {
-    [CmdletBinding()]
-    param(
-        [string]$path = '.',
-        [Parameter(Mandatory = $True,
-            ValueFromPipeline = $True)]
-        [string[]]$name,
-        [switch]$delete
-    )
-
-    begin {
+    <p><a href="https://github.com/krymtkts/PSJobCanAttendance">krymtkts/PSJobCanAttendance</a> を PowerShell Gallery に公開する準備をしている。
+一括編集機能に若干の改善をした。</p><p>従来は、パイプラインを使った一括編集が可能だったが、出勤とか退勤とかの打刻イベント毎にパイプを分ける必要があった。</p><pre><code class="powershell"># 従来はこんなん
+@(12..16;20..22) | %{get-date "2022-09-$($_) 08:15:00+0900"} | Edit-JobCanAttendance -TimeRecordEvent work_start -AditGroupId 10
+@(12..16;20..22) | %{get-date "2022-09-$($_) 12:00:00+0900"} | Edit-JobCanAttendance -TimeRecordEvent rest_start -AditGroupId 10
+</code></pre><p>これ自分で使ってみて結構面倒に感じて、時刻と打刻イベントをパイプラインで渡せるように調整した。
+この調整により、 1 ヶ月分の出勤・休憩の開始＆終了を一気に登録できる様になってしまった。怠惰が捗る(打刻を必要とする勤怠管理なのは触れてはならない)。</p><pre><code class="powershell"># 1 ~ 31 日の間で 7 日、 10 日、土日を除いた日に出勤と休憩開始・終了を一括登録する。
+1..31 | ? {$_ -notin 7,10 } | % {get-date -Day $_} | ? -Property DayOfWeek -notin 0,6 | % {
+    [PSCustomObject]@{
+        TimeRecordEvent='work_start'
+        RecordTime= Get-Date -Date $_ -Hour 8 -Minute 15 -Second 0
     }
-
-    process {
-        foreach ($n in $Name) {
-            if ($delete) {
-                Get-ChildItem -Recurse -Path $path | Where-Object -Property Name -Like $n | Remove-Item
-            }
-            else {
-                Get-ChildItem -Recurse -Path $path | Where-Object -Property Name -Like $n
-            }
-        }
+    [PSCustomObject]@{
+        TimeRecordEvent='rest_start'
+        RecordTime= Get-Date -Date $_ -Hour 12 -Minute 0 -Second 0
     }
-
-    end {
+    [PSCustomObject]@{
+        TimeRecordEvent='rest_end'
+        RecordTime= Get-Date -Date $_ -Hour 13 -Minute 0 -Second 0
     }
-}
-</code></pre><p>なんか薄っすらと、 <code>Makefile</code> から <code>find</code> 呼ぶときに何のシェルか考えるの面倒で PowerShell で <code>find</code> 作ろうとしてた覚えがあるのだけど、それをいつやってたのかわからない。いま使ってもないのでなんでここにあるのか不明。
-消す。</p><h4 id="何故-profile-に足したクソデカテキストファイルを作る関数">何故 profile に足した？クソデカテキストファイルを作る関数</h4><pre><code class="powershell">function New-TextFile {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory)]
-        [string]
-        $Name,
-        [Parameter()]
-        [long]
-        $Byte = [Math]::Pow(1024, 3),
-        [Parameter()]
-        [int]
-        $Basis = [Math]::Pow(1024, 2)
-    )
-    begin {
-        if (Test-Path $Name) {
-            Write-Error 'overrides currently not supported.'
-            return
-        }
-        $Remains = $Byte % $Basis
-        $Per = $Byte / $Basis
-    }
-    process {
-        1..$Per | ForEach-Object { 'x' * $Basis | Add-Content $Name -Encoding ascii -NoNewline }
-        if ($Remains -ne 0) {
-            'x' * $Remains | Add-Content $Name -Encoding ascii -NoNewline
-        }
-    }
-}
-</code></pre><p>前に書いた <a href="/posts/2022-03-13-create-huge-text-file-in-pwsh">PowerShell でクソデカテキストファイルを作る</a> の関数版だと思われる。
-わざわざ profile に入れておいたのはなんでだろう。スクリプトにするだけで良いのでは...過去の自分に問いたい。消した。</p><h4 id="psake-の-auto-completer-壊れてるで"><code>psake</code> の auto completer 壊れてるで...</h4><p>あと今回の掃除を通して <code>psake</code> の auto completer 壊れてるやんと言うのに気づいたので、直した。</p><p><code>Invoke-psake</code> の存在チェックをしてあったら <code>Register-ArgumentCompleter</code> するようにしてた。
-けど、どっかのタイミングから <code>invoke-psake</code> が <code>invoke-cpsake</code> になってて、 auto completer が登録されなくなってた。</p><p>auto completer 周り、 <code>aws_completer</code> で <code>Register-ArgumentCompleter</code> 設定するとこも、 AWS CLI 1 の頃から使ってたのもあり AWS CLI 2 では要らなくなった部分がある(良くないけど PyPI からモジュール取ってたときの名残)。
-今回は対応を先送りにした。</p><h3 id="おわり">おわり</h3><p>そこまで消すものなかったな、というのが率直な感想だが、掃除してないな～という profile だった。</p><p>コマンドの存在をチェックしてから関数とか auto completer 登録するみたいなの増えてるので、この辺共通化したいなあ。
-でも共通化しだすとファイル分割もしたくなり、結局のところ今の Gist から取ってくるの終焉に向かうのでは...と思った。</p><p>なんかより良い(楽な) PowerShell の Profile 管理手段ないかなー。</p>
+} | Edit-JobCanAttendance -AditGroupId 10 -Verbose​
+</code></pre><p>これには <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.management.automation.parameterattribute.valuefrompipelinebypropertyname?view=powershellsdk-1.1.0">ValueFromPipelineByPropertyName</a> を使った。
+Cmdlet のパラメータにパイプラインの入力オブジェクト(<code>hashtable</code> は No)が持つ同名プロパティをマッピングできるので、複数のパラメータをバインドできる。
+これ自分の書いた Cmdlet で使うことなかったので、いい勉強になった。</p><p>その後 PSScriptAnalyzer の指摘を修正して、さて公開しよう、というところで登録済みの勤怠を一覧するところにバグが見つかった。
+登録した日と勤怠の実績がずれるバグで、これは直したいな～というやつなので、公開はまた先送り・未遂に終わった。</p><p>続く。</p><hr /><p>あと別の文脈で、放置していた<a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a>にメンテの予定がないよとアナウンスを追記した。これで Archive する準備も整った(まだしてない)。</p><p>これまた別の文脈で、現職では Slack に日報を投稿してから退勤するようにしてるので、そこから投稿時間を拾って退勤実績を作るようにしたいと考えている。
+そのために Slack からメッセージの一覧を取得し、 PSJobCanAttendance での一括編集にもっていきたい。</p><p>過去に似たようなことをしたとき、 <a href="https://github.com/RamblingCookieMonster/PSSlack">RamblingCookieMonster/PSSlack</a> を使った。
+しかし PSSlack は 2021 年頃の Slack API の変更に追いついてないので、使うには自力でパッチする必要がある。
+(パッチは来てるが適用されていない <a href="https://github.com/RamblingCookieMonster/PSSlack/pull/115">Fix API deprecation 2021-02-24 by simonfagerholm · Pull Request #115 · RamblingCookieMonster/PSSlack</a>)。</p><p>以前使った時はそうしたが、面倒なので .NET の Slack のモジュールとか探してなんとかしたい。
+でも、どのモジュールがいいんか...と調べるのも面倒なので、悩み中。</p>
 </div>
 
 <div id="post-tags">
@@ -292,7 +242,7 @@ function Get-RunningVBoxMachines() {
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6">2022-10-16 F#でコマンドレットを書いてる pt.6 &raquo;</a>
+        <a class="right" href="/posts/2022-10-23-cleaning-my-pwsh-profile">2022-10-23 PowerShell の My Profile を掃除する &raquo;</a>
         
     </div>
 </div>
