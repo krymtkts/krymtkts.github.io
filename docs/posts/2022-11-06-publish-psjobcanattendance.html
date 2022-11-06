@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: 色々あって Nodist を使い始めた話</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-02-12-various-stories-about-starting-to-use-nodist">
+    <title>krymtkts: PSJobCanAttendance の公開</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-11-06-publish-psjobcanattendance">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: 色々あって Nodist を使い始めた話" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-02-12-various-stories-about-starting-to-use-nodist" />
+    <meta property="og:title" content="krymtkts: PSJobCanAttendance の公開" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-11-06-publish-psjobcanattendance" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -192,49 +192,35 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-02-12</div>
+        <div class="col-lg-6">2022-11-06</div>
         
     </div>
-    <h2>色々あって Nodist を使い始めた話</h2>
+    <h2>PSJobCanAttendance の公開</h2>
 </div>
 <div>
     
-    <p>重い腰を上げて、<a href="https://github.com/krymtkts/mccall-bot">Slackbot のマッコールさん</a>の Typo を直す気になった。
-タイポの修正と追加のセンテンスを登録して、いざ deploy しようとしたら、Serverless Framework がエラーを吐くようになっていた。↓ らしい。</p><p><a href="https://github.com/serverless/serverless/issues/8794">Unable to deploy to Serverless due to 'empty zip' · Issue #8794 · serverless/serverless</a></p><p>aws-cdk の方も同様のバグがあるらしいけど、あっちは直してくれてるみたい。</p><p><a href="https://github.com/aws/aws-cdk/issues/12536">lambda: corrupt zip archive asset produced when using node v15.6 · Issue #12536 · aws/aws-cdk</a></p><p>残念ながら Serverless Framework の方は直してないっぽなので、Node.js のバージョンを 15 から 14 に落とす必要が出てきた。この時リアルタイムで友人に <a href="https://github.com/nullivex/nodist">nodist</a> を教えてもらったので、これを使って複数の系を利用できるようにした。</p><p><del>(というか Chocolatey で Node.js の v15 を uninstall して v14 入れようとしてもなんかエラーになって、ログ見たら「新しい版いるから失敗するね！」てあって「はぁ!?」と調べたら<code>choco uninstall nodejs</code>は仕事してくれへんらしい。古き良き Chocolatey 流儀はやめろ。で日頃使ってた node modules も全部吹っ飛んで災難やで...)</del></p><pre><code class="powershell">choco install nodist -y
-# RapidEE で PATH に `C:\Program Files (x86)\Nodist\bin` を追加した
-
-# nodist と一緒に install される系は古い
-nodist list
-  (x64)
-&gt; 11.13.0
-# 15 系と 14 系の最新を入れる
-nodist add 15.8.0
-nodist add 14.15.5
-# 14 系を選択
-nodist 14.15.5
-# npm も古い
-nodist npm list
-&gt; 6.9.0
-# 選択中の node と合わせる
-nodist npm match
-</code></pre><p><a href="https://nodejs.org/ja/download/releases/">Node.js のリリース一覧</a>から node と npm の対応を見て選んでってやってもいいけど、そんなんめんどすぎるので <code>nodist npm match</code> の一度ではないかと考える。
-もし、厳密に指定のバージョン使いたいとかあったら加初環境をコンテナに構築したりすればいいし、そもそも nodist を使ってローカル PC のグローバル node をこねくったりしてないはず。</p><p>ちょっとおもしろいのが、node/npm の version を変えても install した node_modules は同じものを使えるところ。 v14.15.5 で入れたモジュールが v15.8.0 でも見れた。何度も同じモジュールをインストールしなくていいのは楽やけど、バージョン互換性の厳しいモジュールは使うのが難しいのでは。</p><p>node、npm、モジュールの実態はそれぞれ、<code>$env:NODIST_PREFIX/v-x64</code>(32bit が<code>$env:NODIST_PREFIX/v</code>?) <code>$env:NODIST_PREFIX/npmv</code> <code>$env:NODIST_PREFIX/bin/node_modules</code> 配下にインストールされる様子。</p><p>nodist、どうも 2019 年を最後にメンテが止まっている様子(単にマジで変更がないのかも知れん)。現時点でこいつが最後 <a href="https://github.com/nullivex/nodist/commit/bb099ba3723027469bf46e3159f51171b5dd4b59">Fix deprecated use of Tar.Extract in npm.js, release 0.9.1 · nullivex/nodist@bb099ba</a></p><p>とはいえ便利なので不都合ない限り利用してみるつもり。</p><p>と色々やったことでようやくマッコールさん Bot の最新版を deploy できるようになったとさ。めでたし x2。</p>
+    <p>自分が使う機能はおおよそできたので、 <a href="https://github.com/krymtkts/PSJobCanAttendance">krymtkts/PSJobCanAttendance</a> を PowerShell Gallery に公開した。</p><p><a href="https://www.powershellgallery.com/packages/PSJobCanAttendance/1.0.1">PowerShell Gallery | PSJobCanAttendance 1.0.1</a></p><p>デバッグプリント仕込んだまま publish してしまって速攻パッチが上がっている。これ過去に何度かやらかしたので防ぎたいけど防げてない。横着せずにログレベルちゃんと使ってやれよというところか...</p><p>公開のために、<a href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">前回見つけた</a> 勤怠の実績を一覧する機能のバグを修正した。</p><ul><li>休暇があると日付と実績がずれる</li><li>最終日の実績が欠落する</li></ul><p>休暇の実績を含めるようになったので、稼働していない日もひと目で分かる。</p><p>動作確認を行うにあたり、指定した月の勤怠の実績を出力できる必要があったため、それも実装した。
+ついでにパイプラインからパラメータを受けるようにしたことで、複数月の勤務実績を取得するのも容易だ。しかも期間が連続していない実績を引っこ抜くことができる。この挙動、画面ではできないはず(使い道が思い浮かばんけど)。</p><pre><code class="powershell"># 何故か 8 月を飛ばして 7,9 月の実績を一覧するムーブ
+7,9 | % {Get-Date -Month $_} | Get-JobCanAttendance
+</code></pre><p>ただいまこれ書いてて、休日出勤の実績がある場合にちゃんと一覧できるかな？と思いついたので動作確認してみる必要がありそう。ダメそうなら Issue 行き。</p><h3 id="今後やること">今後やること</h3><p>勤怠管理サービスを CLI で処理できるようにするの、非公開のものも含めたらこれで 3 個目になった。
+私的用途だと、大抵の勤怠管理で以下の機能を作ってきた。自動打刻は作れるが作らないのが良心。</p><ul><li>出退勤のリアルタイム打刻</li><li>事後の打刻(編集機能)</li><li>実績の一覧</li></ul><p>今回のケースでいうと、あとコレができたらいいなーというのに以下がある。いずれもジョブカン勤怠管理ローカルな使い勝手を改善するものだ。</p><ol><li>グループが 1 つの場合に group_id の入力を省略できるようにする</li><li>実績の削除</li></ol><p>まず 1 からできたらいい。 大抵の場合入力パラメータを減らせるから、楽さが増す。
+2 は画面での編集が面倒でなければ普段作らないのだけど、今回のケースではほしいかなと思っている。理想はインタラクティブに削除対象を選べるようにしたいけど、まずは指定のパラメータで消すとこからやるか。</p><p>あと krymtkts/PSJobCanAttendance 自体 <a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a> のコピペで作ったのもあって、今見るとなんか至らないイマイチな箇所がチラホラある。
+それらを直したい気持ちもあるが、直したとて勤怠入力体験が良くなるわけでもないので、あんま動機づけにならない。</p><p>個人的には、 <a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の方をいじれてないから、さっさと勤怠スクリプトは終えてしまいたい。でも、やり始めたら気になって止めにくいのもあって止まらない状態が続いてる。要は惰性だ。
+なのでリストアップしたものの、やる気がわかない場合はやらないかも...これぞ趣味プロの醍醐味(しらんけど)。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/nodejs">nodejs</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2021-03-06-fix-publish-failure-to-powershell-gallery">&laquo; 2021-03-06 PSGallery への公開つまづき 2021</a>
         
-        
-        <a class="right" href="/posts/2021-02-01-go-map-key-tips">2021-02-01 go の map のキーの Tips &raquo;</a>
+        <a class="right" href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">2022-10-30 PSJobCanAttendance の公開準備 &raquo;</a>
         
     </div>
 

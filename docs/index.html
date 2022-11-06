@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-11-06-publish-psjobcanattendance">PSJobCanAttendance の公開</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">PSJobCanAttendance の公開準備</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-10-23-cleaning-my-pwsh-profile">PowerShell の My Profile を掃除する</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-10-16-writing-cmdlet-in-fsharp-pt6">F#でコマンドレットを書いてる pt.6</a></li>
                         
                         
 
@@ -192,41 +192,21 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-10-30</div>
+        <div class="col-lg-6">2022-11-06</div>
         
     </div>
-    <h2>PSJobCanAttendance の公開準備</h2>
+    <h2>PSJobCanAttendance の公開</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/PSJobCanAttendance">krymtkts/PSJobCanAttendance</a> を PowerShell Gallery に公開する準備をしている。
-一括編集機能に若干の改善をした。</p><p>従来は、パイプラインを使った一括編集が可能だったが、出勤とか退勤とかの打刻イベント毎にパイプを分ける必要があった。</p><pre><code class="powershell"># 従来はこんなん
-@(12..16;20..22) | %{get-date "2022-09-$($_) 08:15:00+0900"} | Edit-JobCanAttendance -TimeRecordEvent work_start -AditGroupId 10
-@(12..16;20..22) | %{get-date "2022-09-$($_) 12:00:00+0900"} | Edit-JobCanAttendance -TimeRecordEvent rest_start -AditGroupId 10
-</code></pre><p>これ自分で使ってみて結構面倒に感じて、時刻と打刻イベントをパイプラインで渡せるように調整した。
-この調整により、 1 ヶ月分の出勤・休憩の開始＆終了を一気に登録できる様になってしまった。怠惰が捗る(打刻を必要とする勤怠管理なのは触れてはならない)。</p><pre><code class="powershell"># 1 ~ 31 日の間で 7 日、 10 日、土日を除いた日に出勤と休憩開始・終了を一括登録する。
-1..31 | ? {$_ -notin 7,10 } | % {get-date -Day $_} | ? -Property DayOfWeek -notin 0,6 | % {
-    [PSCustomObject]@{
-        TimeRecordEvent='work_start'
-        RecordTime= Get-Date -Date $_ -Hour 8 -Minute 15 -Second 0
-    }
-    [PSCustomObject]@{
-        TimeRecordEvent='rest_start'
-        RecordTime= Get-Date -Date $_ -Hour 12 -Minute 0 -Second 0
-    }
-    [PSCustomObject]@{
-        TimeRecordEvent='rest_end'
-        RecordTime= Get-Date -Date $_ -Hour 13 -Minute 0 -Second 0
-    }
-} | Edit-JobCanAttendance -AditGroupId 10 -Verbose​
-</code></pre><p>これには <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.management.automation.parameterattribute.valuefrompipelinebypropertyname?view=powershellsdk-1.1.0">ValueFromPipelineByPropertyName</a> を使った。
-Cmdlet のパラメータにパイプラインの入力オブジェクト(<code>hashtable</code> は No)が持つ同名プロパティをマッピングできるので、複数のパラメータをバインドできる。
-これ自分の書いた Cmdlet で使うことなかったので、いい勉強になった。</p><p>その後 PSScriptAnalyzer の指摘を修正して、さて公開しよう、というところで登録済みの勤怠を一覧するところにバグが見つかった。
-登録した日と勤怠の実績がずれるバグで、これは直したいな～というやつなので、公開はまた先送り・未遂に終わった。</p><p>続く。</p><hr /><p>あと別の文脈で、放置していた<a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a>にメンテの予定がないよとアナウンスを追記した。これで Archive する準備も整った(まだしてない)。</p><p>これまた別の文脈で、現職では Slack に日報を投稿してから退勤するようにしてるので、そこから投稿時間を拾って退勤実績を作るようにしたいと考えている。
-そのために Slack からメッセージの一覧を取得し、 PSJobCanAttendance での一括編集にもっていきたい。</p><p>過去に似たようなことをしたとき、 <a href="https://github.com/RamblingCookieMonster/PSSlack">RamblingCookieMonster/PSSlack</a> を使った。
-しかし PSSlack は 2021 年頃の Slack API の変更に追いついてないので、使うには自力でパッチする必要がある。
-(パッチは来てるが適用されていない <a href="https://github.com/RamblingCookieMonster/PSSlack/pull/115">Fix API deprecation 2021-02-24 by simonfagerholm · Pull Request #115 · RamblingCookieMonster/PSSlack</a>)。</p><p>以前使った時はそうしたが、面倒なので .NET の Slack のモジュールとか探してなんとかしたい。
-でも、どのモジュールがいいんか...と調べるのも面倒なので、悩み中。</p>
+    <p>自分が使う機能はおおよそできたので、 <a href="https://github.com/krymtkts/PSJobCanAttendance">krymtkts/PSJobCanAttendance</a> を PowerShell Gallery に公開した。</p><p><a href="https://www.powershellgallery.com/packages/PSJobCanAttendance/1.0.1">PowerShell Gallery | PSJobCanAttendance 1.0.1</a></p><p>デバッグプリント仕込んだまま publish してしまって速攻パッチが上がっている。これ過去に何度かやらかしたので防ぎたいけど防げてない。横着せずにログレベルちゃんと使ってやれよというところか...</p><p>公開のために、<a href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">前回見つけた</a> 勤怠の実績を一覧する機能のバグを修正した。</p><ul><li>休暇があると日付と実績がずれる</li><li>最終日の実績が欠落する</li></ul><p>休暇の実績を含めるようになったので、稼働していない日もひと目で分かる。</p><p>動作確認を行うにあたり、指定した月の勤怠の実績を出力できる必要があったため、それも実装した。
+ついでにパイプラインからパラメータを受けるようにしたことで、複数月の勤務実績を取得するのも容易だ。しかも期間が連続していない実績を引っこ抜くことができる。この挙動、画面ではできないはず(使い道が思い浮かばんけど)。</p><pre><code class="powershell"># 何故か 8 月を飛ばして 7,9 月の実績を一覧するムーブ
+7,9 | % {Get-Date -Month $_} | Get-JobCanAttendance
+</code></pre><p>ただいまこれ書いてて、休日出勤の実績がある場合にちゃんと一覧できるかな？と思いついたので動作確認してみる必要がありそう。ダメそうなら Issue 行き。</p><h3 id="今後やること">今後やること</h3><p>勤怠管理サービスを CLI で処理できるようにするの、非公開のものも含めたらこれで 3 個目になった。
+私的用途だと、大抵の勤怠管理で以下の機能を作ってきた。自動打刻は作れるが作らないのが良心。</p><ul><li>出退勤のリアルタイム打刻</li><li>事後の打刻(編集機能)</li><li>実績の一覧</li></ul><p>今回のケースでいうと、あとコレができたらいいなーというのに以下がある。いずれもジョブカン勤怠管理ローカルな使い勝手を改善するものだ。</p><ol><li>グループが 1 つの場合に group_id の入力を省略できるようにする</li><li>実績の削除</li></ol><p>まず 1 からできたらいい。 大抵の場合入力パラメータを減らせるから、楽さが増す。
+2 は画面での編集が面倒でなければ普段作らないのだけど、今回のケースではほしいかなと思っている。理想はインタラクティブに削除対象を選べるようにしたいけど、まずは指定のパラメータで消すとこからやるか。</p><p>あと krymtkts/PSJobCanAttendance 自体 <a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a> のコピペで作ったのもあって、今見るとなんか至らないイマイチな箇所がチラホラある。
+それらを直したい気持ちもあるが、直したとて勤怠入力体験が良くなるわけでもないので、あんま動機づけにならない。</p><p>個人的には、 <a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の方をいじれてないから、さっさと勤怠スクリプトは終えてしまいたい。でも、やり始めたら気になって止めにくいのもあって止まらない状態が続いてる。要は惰性だ。
+なのでリストアップしたものの、やる気がわかない場合はやらないかも...これぞ趣味プロの醍醐味(しらんけど)。</p>
 </div>
 
 <div id="post-tags">
@@ -242,7 +222,7 @@ Cmdlet のパラメータにパイプラインの入力オブジェクト(<code>
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-10-23-cleaning-my-pwsh-profile">2022-10-23 PowerShell の My Profile を掃除する &raquo;</a>
+        <a class="right" href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">2022-10-30 PSJobCanAttendance の公開準備 &raquo;</a>
         
     </div>
 </div>
