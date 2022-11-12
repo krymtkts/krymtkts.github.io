@@ -1,4 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 06 Nov 2022 16:19:31 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-11-06-publish-psjobcanattendance</guid><link>https://krymtkts.github.io/posts/2022-11-06-publish-psjobcanattendance</link><title>PSJobCanAttendance の公開</title><description>&lt;p&gt;自分が使う機能はおおよそできたので、 &lt;a href="https://github.com/krymtkts/PSJobCanAttendance"&gt;krymtkts/PSJobCanAttendance&lt;/a&gt; を PowerShell Gallery に公開した。&lt;/p&gt;&lt;p&gt;&lt;a href="https://www.powershellgallery.com/packages/PSJobCanAttendance/1.0.1"&gt;PowerShell Gallery | PSJobCanAttendance 1.0.1&lt;/a&gt;&lt;/p&gt;&lt;p&gt;デバッグプリント仕込んだまま publish してしまって速攻パッチが上がっている。これ過去に何度かやらかしたので防ぎたいけど防げてない。横着せずにログレベルちゃんと使ってやれよというところか...&lt;/p&gt;&lt;p&gt;公開のために、&lt;a href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance"&gt;前回見つけた&lt;/a&gt; 勤怠の実績を一覧する機能のバグを修正した。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;休暇があると日付と実績がずれる&lt;/li&gt;&lt;li&gt;最終日の実績が欠落する&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;休暇の実績を含めるようになったので、稼働していない日もひと目で分かる。&lt;/p&gt;&lt;p&gt;動作確認を行うにあたり、指定した月の勤怠の実績を出力できる必要があったため、それも実装した。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 12 Nov 2022 17:17:46 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules</guid><link>https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules</link><title>師走に向けて PowerShell モジュールの大掃除</title><description>&lt;p&gt;PowerShell あるあるなのだけど、過去のモジュールが溜まってしまって自分で掃除しないといけない。
+開発中でもない限りモジュールを切り戻することもないので、一気に消す。これが PowerFighter(勝手に作った PowerShell 使いの呼び名)の嗜み。&lt;/p&gt;&lt;p&gt;ゆーてもこしらえてあるスクリプトを流すだけ。以下の通り。個人的に &lt;code&gt;-Scope AllUsers&lt;/code&gt; でモジュールを入れてるからそれに合わせた形となっている。
+簡単のため改行を入れている。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# $PSGetPath.AllUsersModules をロードするために一度流す。
+Get-InstalledModule
+# Uninstall 対象の取り方。 AllUser 向けに入れてる場合。
+Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
+| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
+| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
+| ForEach-Object { [pscustomobject]@{
+        Name = $_.Name;
+        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
+    } }
+
+# 心配なときは以下の出力の最新バージョンが Hit してないことを目検する。
+# Get-Module -ListAvailable | ? -Property Path -like "$($PSGetPath.AllUsersModules)*"
+
+# エグゼキューション。
+# はじめは -WhatIf アリで流し、処理する時心配なら Confirm で一個ずつ確認する。
+Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
+| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
+| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
+| ForEach-Object { [pscustomobject]@{
+        Name = $_.Name
+        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
+    } } | Uninstall-Module -AllowPrerelease
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;prerelease なモジュールの削除も一緒に含めるため、ごちゃごちゃしている。
+&lt;code&gt;-Version&lt;/code&gt; の指定を楽にする場合は &lt;code&gt;Get-InstalledModule&lt;/code&gt; を使ったらいいけど、モジュールごとに実行すると遅いし...と思って使ってない。&lt;/p&gt;&lt;p&gt;これで消しきれるかなと思ったけど、依存関係を忘れてたことでいくつかエラーをもらった。 2 周したらきれいになるかなと思いきや、以下のモジュールに関しては消しきれなかった。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;Configuration&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;Metadata&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;PackageManagement&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;PowerShellGet&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;これらは &lt;code&gt;AWS.Tools.Installer&lt;/code&gt; と &lt;code&gt;PowerShellGet&lt;/code&gt; が依存しており消せないとのこと。
+先述のスクリプトでは最新版は確保するようになってあるし、壊れても入れ直したらいから、古いものに関してはやや強引に &lt;code&gt;-Force&lt;/code&gt; を付与して消し去る。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
+| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
+| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
+| ForEach-Object { [pscustomobject]@{
+        Name = $_.Name
+        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
+    } } | Uninstall-Module -AllowPrerelease -Force
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;この如何にも PowerFighter な近距離パワー型アプローチ、まさに PowerShell って感じ(いいたいだけ)。
+穢れたモジュールフォルダを綺麗にできた。&lt;/p&gt;</description><pubDate>Sat, 12 Nov 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-11-06-publish-psjobcanattendance</guid><link>https://krymtkts.github.io/posts/2022-11-06-publish-psjobcanattendance</link><title>PSJobCanAttendance の公開</title><description>&lt;p&gt;自分が使う機能はおおよそできたので、 &lt;a href="https://github.com/krymtkts/PSJobCanAttendance"&gt;krymtkts/PSJobCanAttendance&lt;/a&gt; を PowerShell Gallery に公開した。&lt;/p&gt;&lt;p&gt;&lt;a href="https://www.powershellgallery.com/packages/PSJobCanAttendance/1.0.1"&gt;PowerShell Gallery | PSJobCanAttendance 1.0.1&lt;/a&gt;&lt;/p&gt;&lt;p&gt;デバッグプリント仕込んだまま publish してしまって速攻パッチが上がっている。これ過去に何度かやらかしたので防ぎたいけど防げてない。横着せずにログレベルちゃんと使ってやれよというところか...&lt;/p&gt;&lt;p&gt;公開のために、&lt;a href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance"&gt;前回見つけた&lt;/a&gt; 勤怠の実績を一覧する機能のバグを修正した。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;休暇があると日付と実績がずれる&lt;/li&gt;&lt;li&gt;最終日の実績が欠落する&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;休暇の実績を含めるようになったので、稼働していない日もひと目で分かる。&lt;/p&gt;&lt;p&gt;動作確認を行うにあたり、指定した月の勤怠の実績を出力できる必要があったため、それも実装した。
 ついでにパイプラインからパラメータを受けるようにしたことで、複数月の勤務実績を取得するのも容易だ。しかも期間が連続していない実績を引っこ抜くことができる。この挙動、画面ではできないはず(使い道が思い浮かばんけど)。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# 何故か 8 月を飛ばして 7,9 月の実績を一覧するムーブ
 7,9 | % {Get-Date -Month $_} | Get-JobCanAttendance
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;ただいまこれ書いてて、休日出勤の実績がある場合にちゃんと一覧できるかな？と思いついたので動作確認してみる必要がありそう。ダメそうなら Issue 行き。&lt;/p&gt;&lt;h3 id="今後やること"&gt;今後やること&lt;/h3&gt;&lt;p&gt;勤怠管理サービスを CLI で処理できるようにするの、非公開のものも含めたらこれで 3 個目になった。

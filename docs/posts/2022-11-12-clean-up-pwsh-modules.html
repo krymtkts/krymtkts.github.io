@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;nodejs&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/nodejs">
+    <title>krymtkts: 師走に向けて PowerShell モジュールの大掃除</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;nodejs&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/nodejs" />
+    <meta property="og:title" content="krymtkts: 師走に向けて PowerShell モジュールの大掃除" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -189,33 +189,72 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;nodejs&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-11-12</div>
+        
     </div>
-    <ul>
+    <h2>師走に向けて PowerShell モジュールの大掃除</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2021-12-26-fnm-tips-with-ccleaner">2021-12-26 fnm でインストールした処理系は Temp フォルダからシンボリックリンクされるので ccleaner で消える話(当然)</a>
-        </li>
+    <p>PowerShell あるあるなのだけど、過去のモジュールが溜まってしまって自分で掃除しないといけない。
+開発中でもない限りモジュールを切り戻することもないので、一気に消す。これが PowerFighter(勝手に作った PowerShell 使いの呼び名)の嗜み。</p><p>ゆーてもこしらえてあるスクリプトを流すだけ。以下の通り。個人的に <code>-Scope AllUsers</code> でモジュールを入れてるからそれに合わせた形となっている。
+簡単のため改行を入れている。</p><pre><code class="powershell"># $PSGetPath.AllUsersModules をロードするために一度流す。
+Get-InstalledModule
+# Uninstall 対象の取り方。 AllUser 向けに入れてる場合。
+Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
+| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
+| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
+| ForEach-Object { [pscustomobject]@{
+        Name = $_.Name;
+        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
+    } }
+
+# 心配なときは以下の出力の最新バージョンが Hit してないことを目検する。
+# Get-Module -ListAvailable | ? -Property Path -like "$($PSGetPath.AllUsersModules)*"
+
+# エグゼキューション。
+# はじめは -WhatIf アリで流し、処理する時心配なら Confirm で一個ずつ確認する。
+Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
+| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
+| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
+| ForEach-Object { [pscustomobject]@{
+        Name = $_.Name
+        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
+    } } | Uninstall-Module -AllowPrerelease
+</code></pre><p>prerelease なモジュールの削除も一緒に含めるため、ごちゃごちゃしている。
+<code>-Version</code> の指定を楽にする場合は <code>Get-InstalledModule</code> を使ったらいいけど、モジュールごとに実行すると遅いし...と思って使ってない。</p><p>これで消しきれるかなと思ったけど、依存関係を忘れてたことでいくつかエラーをもらった。 2 周したらきれいになるかなと思いきや、以下のモジュールに関しては消しきれなかった。</p><ul><li><code>Configuration</code></li><li><code>Metadata</code></li><li><code>PackageManagement</code></li><li><code>PowerShellGet</code></li></ul><p>これらは <code>AWS.Tools.Installer</code> と <code>PowerShellGet</code> が依存しており消せないとのこと。
+先述のスクリプトでは最新版は確保するようになってあるし、壊れても入れ直したらいから、古いものに関してはやや強引に <code>-Force</code> を付与して消し去る。</p><pre><code class="powershell">Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
+| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
+| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
+| ForEach-Object { [pscustomobject]@{
+        Name = $_.Name
+        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
+    } } | Uninstall-Module -AllowPrerelease -Force
+</code></pre><p>この如何にも PowerFighter な近距離パワー型アプローチ、まさに PowerShell って感じ(いいたいだけ)。
+穢れたモジュールフォルダを綺麗にできた。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2021-02-12-various-stories-about-starting-to-use-nodist">2021-02-12 色々あって Nodist を使い始めた話</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-        <li>
-            <a href="/posts/2019-04-07-lint-my-statement">2019-04-07 下手な文章を Lint する</a>
-        </li>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-11-06-publish-psjobcanattendance">2022-11-06 PSJobCanAttendance の公開 &raquo;</a>
+        
+    </div>
+
     
-        <li>
-            <a href="/posts/2019-03-24_coverage-of-qunt-puppeteer">2019-03-24 QUnit で CI したい その 2</a>
-        </li>
-    
-        <li>
-            <a href="/posts/2019-03-21_want-to-run-qunit-in-cli">2019-03-21 QUnit で CI したい その 1</a>
-        </li>
-    
-    </ul>
+
+
 </div>
 
             </div>

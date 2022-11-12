@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-11-12-clean-up-pwsh-modules">師走に向けて PowerShell モジュールの大掃除</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-11-06-publish-psjobcanattendance">PSJobCanAttendance の公開</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">PSJobCanAttendance の公開準備</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-10-23-cleaning-my-pwsh-profile">PowerShell の My Profile を掃除する</a></li>
                         
                         
 
@@ -192,21 +192,49 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-11-06</div>
+        <div class="col-lg-6">2022-11-12</div>
         
     </div>
-    <h2>PSJobCanAttendance の公開</h2>
+    <h2>師走に向けて PowerShell モジュールの大掃除</h2>
 </div>
 <div>
     
-    <p>自分が使う機能はおおよそできたので、 <a href="https://github.com/krymtkts/PSJobCanAttendance">krymtkts/PSJobCanAttendance</a> を PowerShell Gallery に公開した。</p><p><a href="https://www.powershellgallery.com/packages/PSJobCanAttendance/1.0.1">PowerShell Gallery | PSJobCanAttendance 1.0.1</a></p><p>デバッグプリント仕込んだまま publish してしまって速攻パッチが上がっている。これ過去に何度かやらかしたので防ぎたいけど防げてない。横着せずにログレベルちゃんと使ってやれよというところか...</p><p>公開のために、<a href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">前回見つけた</a> 勤怠の実績を一覧する機能のバグを修正した。</p><ul><li>休暇があると日付と実績がずれる</li><li>最終日の実績が欠落する</li></ul><p>休暇の実績を含めるようになったので、稼働していない日もひと目で分かる。</p><p>動作確認を行うにあたり、指定した月の勤怠の実績を出力できる必要があったため、それも実装した。
-ついでにパイプラインからパラメータを受けるようにしたことで、複数月の勤務実績を取得するのも容易だ。しかも期間が連続していない実績を引っこ抜くことができる。この挙動、画面ではできないはず(使い道が思い浮かばんけど)。</p><pre><code class="powershell"># 何故か 8 月を飛ばして 7,9 月の実績を一覧するムーブ
-7,9 | % {Get-Date -Month $_} | Get-JobCanAttendance
-</code></pre><p>ただいまこれ書いてて、休日出勤の実績がある場合にちゃんと一覧できるかな？と思いついたので動作確認してみる必要がありそう。ダメそうなら Issue 行き。</p><h3 id="今後やること">今後やること</h3><p>勤怠管理サービスを CLI で処理できるようにするの、非公開のものも含めたらこれで 3 個目になった。
-私的用途だと、大抵の勤怠管理で以下の機能を作ってきた。自動打刻は作れるが作らないのが良心。</p><ul><li>出退勤のリアルタイム打刻</li><li>事後の打刻(編集機能)</li><li>実績の一覧</li></ul><p>今回のケースでいうと、あとコレができたらいいなーというのに以下がある。いずれもジョブカン勤怠管理ローカルな使い勝手を改善するものだ。</p><ol><li>グループが 1 つの場合に group_id の入力を省略できるようにする</li><li>実績の削除</li></ol><p>まず 1 からできたらいい。 大抵の場合入力パラメータを減らせるから、楽さが増す。
-2 は画面での編集が面倒でなければ普段作らないのだけど、今回のケースではほしいかなと思っている。理想はインタラクティブに削除対象を選べるようにしたいけど、まずは指定のパラメータで消すとこからやるか。</p><p>あと krymtkts/PSJobCanAttendance 自体 <a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a> のコピペで作ったのもあって、今見るとなんか至らないイマイチな箇所がチラホラある。
-それらを直したい気持ちもあるが、直したとて勤怠入力体験が良くなるわけでもないので、あんま動機づけにならない。</p><p>個人的には、 <a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の方をいじれてないから、さっさと勤怠スクリプトは終えてしまいたい。でも、やり始めたら気になって止めにくいのもあって止まらない状態が続いてる。要は惰性だ。
-なのでリストアップしたものの、やる気がわかない場合はやらないかも...これぞ趣味プロの醍醐味(しらんけど)。</p>
+    <p>PowerShell あるあるなのだけど、過去のモジュールが溜まってしまって自分で掃除しないといけない。
+開発中でもない限りモジュールを切り戻することもないので、一気に消す。これが PowerFighter(勝手に作った PowerShell 使いの呼び名)の嗜み。</p><p>ゆーてもこしらえてあるスクリプトを流すだけ。以下の通り。個人的に <code>-Scope AllUsers</code> でモジュールを入れてるからそれに合わせた形となっている。
+簡単のため改行を入れている。</p><pre><code class="powershell"># $PSGetPath.AllUsersModules をロードするために一度流す。
+Get-InstalledModule
+# Uninstall 対象の取り方。 AllUser 向けに入れてる場合。
+Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
+| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
+| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
+| ForEach-Object { [pscustomobject]@{
+        Name = $_.Name;
+        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
+    } }
+
+# 心配なときは以下の出力の最新バージョンが Hit してないことを目検する。
+# Get-Module -ListAvailable | ? -Property Path -like "$($PSGetPath.AllUsersModules)*"
+
+# エグゼキューション。
+# はじめは -WhatIf アリで流し、処理する時心配なら Confirm で一個ずつ確認する。
+Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
+| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
+| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
+| ForEach-Object { [pscustomobject]@{
+        Name = $_.Name
+        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
+    } } | Uninstall-Module -AllowPrerelease
+</code></pre><p>prerelease なモジュールの削除も一緒に含めるため、ごちゃごちゃしている。
+<code>-Version</code> の指定を楽にする場合は <code>Get-InstalledModule</code> を使ったらいいけど、モジュールごとに実行すると遅いし...と思って使ってない。</p><p>これで消しきれるかなと思ったけど、依存関係を忘れてたことでいくつかエラーをもらった。 2 周したらきれいになるかなと思いきや、以下のモジュールに関しては消しきれなかった。</p><ul><li><code>Configuration</code></li><li><code>Metadata</code></li><li><code>PackageManagement</code></li><li><code>PowerShellGet</code></li></ul><p>これらは <code>AWS.Tools.Installer</code> と <code>PowerShellGet</code> が依存しており消せないとのこと。
+先述のスクリプトでは最新版は確保するようになってあるし、壊れても入れ直したらいから、古いものに関してはやや強引に <code>-Force</code> を付与して消し去る。</p><pre><code class="powershell">Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
+| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
+| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
+| ForEach-Object { [pscustomobject]@{
+        Name = $_.Name
+        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
+    } } | Uninstall-Module -AllowPrerelease -Force
+</code></pre><p>この如何にも PowerFighter な近距離パワー型アプローチ、まさに PowerShell って感じ(いいたいだけ)。
+穢れたモジュールフォルダを綺麗にできた。</p>
 </div>
 
 <div id="post-tags">
@@ -222,7 +250,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">2022-10-30 PSJobCanAttendance の公開準備 &raquo;</a>
+        <a class="right" href="/posts/2022-11-06-publish-psjobcanattendance">2022-11-06 PSJobCanAttendance の公開 &raquo;</a>
         
     </div>
 </div>
