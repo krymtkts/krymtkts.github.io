@@ -169,7 +169,6 @@ pre {
 }
 pre code {
     display: block;
-    font-size: 16px;
     padding: 0.5em;
     overflow-wrap: normal;
     white-space: pre;
@@ -178,7 +177,7 @@ pre code {
 code {
     color: #839496;
     font-family: 'Ubuntu Mono';
-    font-size: 16px;
+    font-size: 100%;
     padding: 0 0.3em;
     border-radius: 0.2em;
 }
