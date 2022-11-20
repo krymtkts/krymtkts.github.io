@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-11-20-writing-cmdlet-in-fsharp-pt7">F#でコマンドレットを書いてる pt.7</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-11-12-clean-up-pwsh-modules">師走に向けて PowerShell モジュールの大掃除</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-11-06-publish-psjobcanattendance">PSJobCanAttendance の公開</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-10-30-prepare-to-publish-psjobcanattendance">PSJobCanAttendance の公開準備</a></li>
                         
                         
 
@@ -192,55 +192,39 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-11-12</div>
+        <div class="col-lg-6">2022-11-20</div>
         
     </div>
-    <h2>師走に向けて PowerShell モジュールの大掃除</h2>
+    <h2>F#でコマンドレットを書いてる pt.7</h2>
 </div>
 <div>
     
-    <p>PowerShell あるあるなのだけど、過去のモジュールが溜まってしまって自分で掃除しないといけない。
-開発中でもない限りモジュールを切り戻することもないので、一気に消す。これが PowerFighter(勝手に作った PowerShell 使いの呼び名)の嗜み。</p><p>ゆーてもこしらえてあるスクリプトを流すだけ。以下の通り。個人的に <code>-Scope AllUsers</code> でモジュールを入れてるからそれに合わせた形となっている。
-簡単のため改行を入れている。</p><pre><code class="powershell"># $PSGetPath.AllUsersModules をロードするために一度流す。
-Get-InstalledModule
-# Uninstall 対象の取り方。 AllUser 向けに入れてる場合。
-Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
-| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
-| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
-| ForEach-Object { [pscustomobject]@{
-        Name = $_.Name;
-        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
-    } }
-
-# 心配なときは以下の出力の最新バージョンが Hit してないことを目検する。
-# Get-Module -ListAvailable | ? -Property Path -like "$($PSGetPath.AllUsersModules)*"
-
-# エグゼキューション。
-# はじめは -WhatIf アリで流し、処理する時心配なら Confirm で一個ずつ確認する。
-Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
-| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
-| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
-| ForEach-Object { [pscustomobject]@{
-        Name = $_.Name
-        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
-    } } | Uninstall-Module -AllowPrerelease
-</code></pre><p>prerelease なモジュールの削除も一緒に含めるため、ごちゃごちゃしている。
-<code>-Version</code> の指定を楽にする場合は <code>Get-InstalledModule</code> を使ったらいいけど、モジュールごとに実行すると遅いし...と思って使ってない。</p><p>これで消しきれるかなと思ったけど、依存関係を忘れてたことでいくつかエラーをもらった。 2 周したらきれいになるかなと思いきや、以下のモジュールに関しては消しきれなかった。</p><ul><li><code>Configuration</code></li><li><code>Metadata</code></li><li><code>PackageManagement</code></li><li><code>PowerShellGet</code></li></ul><p>これらは <code>AWS.Tools.Installer</code> と <code>PowerShellGet</code> が依存しており消せないとのこと。
-先述のスクリプトでは最新版は確保するようになってあるし、壊れても入れ直したらいから、古いものに関してはやや強引に <code>-Force</code> を付与して消し去る。</p><pre><code class="powershell">Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
-| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
-| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
-| ForEach-Object { [pscustomobject]@{
-        Name = $_.Name
-        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
-    } } | Uninstall-Module -AllowPrerelease -Force
-</code></pre><p>この如何にも PowerFighter な近距離パワー型アプローチ、まさに PowerShell って感じ(いいたいだけ)。
-穢れたモジュールフォルダを綺麗にできた。</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。
+プロパティ指定の検索に対応しようとしていて、今日のはその思考整理のようなもの。 <a href="https://github.com/krymtkts/pocof/issues/2">Add a property support. · Issue #2 · krymtkts/pocof</a></p><p>実は？ <a href="https://github.com/jasonmarcher/poco">jasonmarcher/poco</a> を使ってたときから今に至るまで、プロパティ指定の検索をあまりやってこなかった。
+可能性は感じていて何なら使いたかったけど、プロパティをいちいち覚えて打つとかできなくて、使いこなせなかった。
+なので pocof でそれを実装するからには、障壁を取り除いて簡単に使える機能にしたい。
+そのため、まず pocof が機能に対応したと仮定してどんな風に使うか手を動かすイメージをして、そのあと今の pocof との差を表出させるようなことをしている。</p><p>このアプローチだけでも色々足りないものが見えてきて面白い。
+pocof の時から今の pocof に至るまでの自分の使い方が非常に限定的だったのがよく分かる。
+今の自分のユースケースの殆どは、文字列化されたオブジェクトに対して正規表現でフィルタできたら、それで済んでしまうのがわかった。<code>Where-Object</code> でフィルタするタイミングを、実行してデータがわかったその時まで遅延させる、そんな使い方しかしてない。
+だから今の pocof はほんとにそれを満たすだけのミニマルさになってて、欲を言えばツールが使用者に違った視点を与えるとかのフィードバックするとか、そいういうモノがないんやなと改めて感じている。</p><p>例えば、 poco の頃にあったスペース区切りで複数の and filter できる機能は pocof にはない。自分が使ってこなかったから作ってなかった。
+でもプロパティ指定の検索をするとしたら、これは絶対に使いたい。 1 つのプロパティで絞り込んだとて満足な結果を得られることはないだろう。なんならこれらの複数のプロパティの絞り込みは and だけじゃなくて or でも結合させたい場面が出てくるだろう。
+他にも、いま正規表現で <code>.+dir/*+.js</code> とか書いてるのもスペース区切りで置き換えて <code>dir js</code> でできたらタイプ数も減って楽でいいよなとか。(正規表現は正規表現で使ったらいいけどほとんどはもっと少ないルールに従ってフィルタできるであろうから)。
+こんな感じで、ある 1 つの使い方から芋づる的に派生していく。
+確信はないけど、こういった派生が自分の普段の使い方に変化をもたらす気配がしてる。</p><p>とりあえずこの複数のフィルタは composite query と(若干中二病的に)名付けて Issue を起こした。<a href="https://github.com/krymtkts/pocof/issues/9">Support composite query · Issue #9 · krymtkts/pocof</a>
+やることのイメージが膨れ上がりそうやし、プロパティ指定の検索に必要な最低限を細かく刻んで機能を追加して、その後の成長はまた別に考えるのが良さそうかと考えている。</p><p>はじめに述べたプロパティ指定の検索も、この「普段の使い方に変化をもたらす」気配がしてる。
+例えば、わたしは仕事が AWS のリソースを探るのによく使う AWS Tools for PowerShell 。
+Cmdlet の出力をフィルタするのやプロパティの確認なんかで、何度か結果を出力したり変数に格納したり、ステップを踏むことが多い。
+でもこれが pocof のインタラクティブな検索で試行錯誤できるようになれば、何度もコマンドを実行しなくても粘土をこねるみたいに try &amp; error しやすくなったりしないかな？とか。
+選択したプロパティが列になって検索結果に表示されることでわかりやすさが向上しそうだな、とか。</p><p>個人開発では主にゴミスクリプトしか書かないのもあって、改めて自分用のツールを育てる面白さがわかりだした。
+個人的な嗜好として、あまり長く同じやり方を続けることを良しとしないのだけど、自分で自分のツールを開発するのってコレとめちゃくちゃ相性良いのでは？と最近思ったりしてる。</p><hr /><p>全然関係ないけど .NET 7 出たし、 pocof もさっさと乗り換えてしまのが良さそう(今 .NET 6)。 prerelease なので気兼ねなくやれる。 .NET 7 対応した PowerShell 7.3 かなり速くなった気がするのよな(気だけ？)。その恩恵にあやかりたい。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -250,7 +234,7 @@ Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllU
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-11-06-publish-psjobcanattendance">2022-11-06 PSJobCanAttendance の公開 &raquo;</a>
+        <a class="right" href="/posts/2022-11-12-clean-up-pwsh-modules">2022-11-12 師走に向けて PowerShell モジュールの大掃除 &raquo;</a>
         
     </div>
 </div>

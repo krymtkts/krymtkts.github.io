@@ -1,4 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 13 Nov 2022 17:59:27 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules</guid><link>https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules</link><title>師走に向けて PowerShell モジュールの大掃除</title><description>&lt;p&gt;PowerShell あるあるなのだけど、過去のモジュールが溜まってしまって自分で掃除しないといけない。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 20 Nov 2022 15:39:28 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-11-20-writing-cmdlet-in-fsharp-pt7</guid><link>https://krymtkts.github.io/posts/2022-11-20-writing-cmdlet-in-fsharp-pt7</link><title>F#でコマンドレットを書いてる pt.7</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。
+プロパティ指定の検索に対応しようとしていて、今日のはその思考整理のようなもの。 &lt;a href="https://github.com/krymtkts/pocof/issues/2"&gt;Add a property support. · Issue #2 · krymtkts/pocof&lt;/a&gt;&lt;/p&gt;&lt;p&gt;実は？ &lt;a href="https://github.com/jasonmarcher/poco"&gt;jasonmarcher/poco&lt;/a&gt; を使ってたときから今に至るまで、プロパティ指定の検索をあまりやってこなかった。
+可能性は感じていて何なら使いたかったけど、プロパティをいちいち覚えて打つとかできなくて、使いこなせなかった。
+なので pocof でそれを実装するからには、障壁を取り除いて簡単に使える機能にしたい。
+そのため、まず pocof が機能に対応したと仮定してどんな風に使うか手を動かすイメージをして、そのあと今の pocof との差を表出させるようなことをしている。&lt;/p&gt;&lt;p&gt;このアプローチだけでも色々足りないものが見えてきて面白い。
+pocof の時から今の pocof に至るまでの自分の使い方が非常に限定的だったのがよく分かる。
+今の自分のユースケースの殆どは、文字列化されたオブジェクトに対して正規表現でフィルタできたら、それで済んでしまうのがわかった。&lt;code&gt;Where-Object&lt;/code&gt; でフィルタするタイミングを、実行してデータがわかったその時まで遅延させる、そんな使い方しかしてない。
+だから今の pocof はほんとにそれを満たすだけのミニマルさになってて、欲を言えばツールが使用者に違った視点を与えるとかのフィードバックするとか、そいういうモノがないんやなと改めて感じている。&lt;/p&gt;&lt;p&gt;例えば、 poco の頃にあったスペース区切りで複数の and filter できる機能は pocof にはない。自分が使ってこなかったから作ってなかった。
+でもプロパティ指定の検索をするとしたら、これは絶対に使いたい。 1 つのプロパティで絞り込んだとて満足な結果を得られることはないだろう。なんならこれらの複数のプロパティの絞り込みは and だけじゃなくて or でも結合させたい場面が出てくるだろう。
+他にも、いま正規表現で &lt;code&gt;.+dir/*+.js&lt;/code&gt; とか書いてるのもスペース区切りで置き換えて &lt;code&gt;dir js&lt;/code&gt; でできたらタイプ数も減って楽でいいよなとか。(正規表現は正規表現で使ったらいいけどほとんどはもっと少ないルールに従ってフィルタできるであろうから)。
+こんな感じで、ある 1 つの使い方から芋づる的に派生していく。
+確信はないけど、こういった派生が自分の普段の使い方に変化をもたらす気配がしてる。&lt;/p&gt;&lt;p&gt;とりあえずこの複数のフィルタは composite query と(若干中二病的に)名付けて Issue を起こした。&lt;a href="https://github.com/krymtkts/pocof/issues/9"&gt;Support composite query · Issue #9 · krymtkts/pocof&lt;/a&gt;
+やることのイメージが膨れ上がりそうやし、プロパティ指定の検索に必要な最低限を細かく刻んで機能を追加して、その後の成長はまた別に考えるのが良さそうかと考えている。&lt;/p&gt;&lt;p&gt;はじめに述べたプロパティ指定の検索も、この「普段の使い方に変化をもたらす」気配がしてる。
+例えば、わたしは仕事が AWS のリソースを探るのによく使う AWS Tools for PowerShell 。
+Cmdlet の出力をフィルタするのやプロパティの確認なんかで、何度か結果を出力したり変数に格納したり、ステップを踏むことが多い。
+でもこれが pocof のインタラクティブな検索で試行錯誤できるようになれば、何度もコマンドを実行しなくても粘土をこねるみたいに try &amp;amp; error しやすくなったりしないかな？とか。
+選択したプロパティが列になって検索結果に表示されることでわかりやすさが向上しそうだな、とか。&lt;/p&gt;&lt;p&gt;個人開発では主にゴミスクリプトしか書かないのもあって、改めて自分用のツールを育てる面白さがわかりだした。
+個人的な嗜好として、あまり長く同じやり方を続けることを良しとしないのだけど、自分で自分のツールを開発するのってコレとめちゃくちゃ相性良いのでは？と最近思ったりしてる。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;全然関係ないけど .NET 7 出たし、 pocof もさっさと乗り換えてしまのが良さそう(今 .NET 6)。 prerelease なので気兼ねなくやれる。 .NET 7 対応した PowerShell 7.3 かなり速くなった気がするのよな(気だけ？)。その恩恵にあやかりたい。&lt;/p&gt;</description><pubDate>Sun, 20 Nov 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules</guid><link>https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules</link><title>師走に向けて PowerShell モジュールの大掃除</title><description>&lt;p&gt;PowerShell あるあるなのだけど、過去のモジュールが溜まってしまって自分で掃除しないといけない。
 開発中でもない限りモジュールを切り戻することもないので、一気に消す。これが PowerFighter(勝手に作った PowerShell 使いの呼び名)の嗜み。&lt;/p&gt;&lt;p&gt;ゆーてもこしらえてあるスクリプトを流すだけ。以下の通り。個人的に &lt;code&gt;-Scope AllUsers&lt;/code&gt; でモジュールを入れてるからそれに合わせた形となっている。
 簡単のため改行を入れている。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# $PSGetPath.AllUsersModules をロードするために一度流す。
 Get-InstalledModule
