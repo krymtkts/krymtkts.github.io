@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8">F#でコマンドレットを書いてる pt.8</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-11-20-writing-cmdlet-in-fsharp-pt7">F#でコマンドレットを書いてる pt.7</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-11-12-clean-up-pwsh-modules">師走に向けて PowerShell モジュールの大掃除</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-11-06-publish-psjobcanattendance">PSJobCanAttendance の公開</a></li>
                         
                         
 
@@ -192,31 +192,23 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-11-20</div>
+        <div class="col-lg-6">2022-11-27</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.7</h2>
+    <h2>F#でコマンドレットを書いてる pt.8</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。
-プロパティ指定の検索に対応しようとしていて、今日のはその思考整理のようなもの。 <a href="https://github.com/krymtkts/pocof/issues/2">Add a property support. · Issue #2 · krymtkts/pocof</a></p><p>実は？ <a href="https://github.com/jasonmarcher/poco">jasonmarcher/poco</a> を使ってたときから今に至るまで、プロパティ指定の検索をあまりやってこなかった。
-可能性は感じていて何なら使いたかったけど、プロパティをいちいち覚えて打つとかできなくて、使いこなせなかった。
-なので pocof でそれを実装するからには、障壁を取り除いて簡単に使える機能にしたい。
-そのため、まず pocof が機能に対応したと仮定してどんな風に使うか手を動かすイメージをして、そのあと今の pocof との差を表出させるようなことをしている。</p><p>このアプローチだけでも色々足りないものが見えてきて面白い。
-pocof の時から今の pocof に至るまでの自分の使い方が非常に限定的だったのがよく分かる。
-今の自分のユースケースの殆どは、文字列化されたオブジェクトに対して正規表現でフィルタできたら、それで済んでしまうのがわかった。<code>Where-Object</code> でフィルタするタイミングを、実行してデータがわかったその時まで遅延させる、そんな使い方しかしてない。
-だから今の pocof はほんとにそれを満たすだけのミニマルさになってて、欲を言えばツールが使用者に違った視点を与えるとかのフィードバックするとか、そいういうモノがないんやなと改めて感じている。</p><p>例えば、 poco の頃にあったスペース区切りで複数の and filter できる機能は pocof にはない。自分が使ってこなかったから作ってなかった。
-でもプロパティ指定の検索をするとしたら、これは絶対に使いたい。 1 つのプロパティで絞り込んだとて満足な結果を得られることはないだろう。なんならこれらの複数のプロパティの絞り込みは and だけじゃなくて or でも結合させたい場面が出てくるだろう。
-他にも、いま正規表現で <code>.+dir/*+.js</code> とか書いてるのもスペース区切りで置き換えて <code>dir js</code> でできたらタイプ数も減って楽でいいよなとか。(正規表現は正規表現で使ったらいいけどほとんどはもっと少ないルールに従ってフィルタできるであろうから)。
-こんな感じで、ある 1 つの使い方から芋づる的に派生していく。
-確信はないけど、こういった派生が自分の普段の使い方に変化をもたらす気配がしてる。</p><p>とりあえずこの複数のフィルタは composite query と(若干中二病的に)名付けて Issue を起こした。<a href="https://github.com/krymtkts/pocof/issues/9">Support composite query · Issue #9 · krymtkts/pocof</a>
-やることのイメージが膨れ上がりそうやし、プロパティ指定の検索に必要な最低限を細かく刻んで機能を追加して、その後の成長はまた別に考えるのが良さそうかと考えている。</p><p>はじめに述べたプロパティ指定の検索も、この「普段の使い方に変化をもたらす」気配がしてる。
-例えば、わたしは仕事が AWS のリソースを探るのによく使う AWS Tools for PowerShell 。
-Cmdlet の出力をフィルタするのやプロパティの確認なんかで、何度か結果を出力したり変数に格納したり、ステップを踏むことが多い。
-でもこれが pocof のインタラクティブな検索で試行錯誤できるようになれば、何度もコマンドを実行しなくても粘土をこねるみたいに try &amp; error しやすくなったりしないかな？とか。
-選択したプロパティが列になって検索結果に表示されることでわかりやすさが向上しそうだな、とか。</p><p>個人開発では主にゴミスクリプトしか書かないのもあって、改めて自分用のツールを育てる面白さがわかりだした。
-個人的な嗜好として、あまり長く同じやり方を続けることを良しとしないのだけど、自分で自分のツールを開発するのってコレとめちゃくちゃ相性良いのでは？と最近思ったりしてる。</p><hr /><p>全然関係ないけど .NET 7 出たし、 pocof もさっさと乗り換えてしまのが良さそう(今 .NET 6)。 prerelease なので気兼ねなくやれる。 .NET 7 対応した PowerShell 7.3 かなり速くなった気がするのよな(気だけ？)。その恩恵にあやかりたい。</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>前回書いた、 composite query の実装をした。 <a href="https://github.com/krymtkts/pocof/issues/9">#9</a></p><p>デフォルトでは and で複数のクエリを合成するようにしてる。
+一応理由がある。
+最初から or だと絞り込む前の状態を覚えていて、追加でほしい候補のためにクエリを書くような使い方になる。
+そういう使い方もできるが、ちょっと上級者感がするので、まずは見える範囲で徐々に候補を絞り込めるような and をデフォルトとすることにした。</p><p>そのうちショートカット含めた初期値の変更にも対応したいと思ってたし、起動時から or にしたい場合はそこに盛り込めたらいい。</p><p>ただこの and での合成は hashtable を絞り込むときに出来が悪くて、まだ思ったような絞り込みになっていない。現状 hashtable は or でのみ気持ちよく絞り込むのができなかった。</p><p>これは、 <code>List.allPairs</code> した複合クエリの List × エントリの List に and の場合は <code>List.forall</code> or の場合は <code>List.exists</code> してることで、 hashtable はエントリ Key-Value の二要素あるので and だと両方に共通の文字がないと釣れない...となっているため。
+正しくは、 エントリ内の検索候補プロパティは or で、各エントリ毎は and / or のモードを適用できるようにするのが良いか。
+プロパティ指定の絞り込みするときにこの問題対処するの必須。</p><p>あと like matcher のときだけクエリが空の状態でもフィルタリングされて表示が 0 件になる挙動を直した。 <a href="https://github.com/krymtkts/pocof/issues/10">#10</a></p><p>流石に初期表示が 0 件だとはじめ何で絞り込んだらいいんや...(wildcard 埋めたらいいだけやけど)と困惑するので、はじめは全件表示する。</p><p>最後に、今回 PowerShell Gallery に公開する時手間取ったのが、 <a href="https://github.com/PowerShell/platyPS">platyPS</a> 。</p><p><a href="/posts/2022-11-12-clean-up-pwsh-modules">前にモジュールの掃除した</a>影響で <a href="https://github.com/PowerShell/platyPS/tree/v2">platyPS</a> の version 2 preview より前のモジュールを消し去ってた。
+コレにより <code>New-ExternalHelp</code> Cmdlet がなくなっていて、 psake のリリーススクリプトがエラーするようになってた。
+全く想定外。 v2 で消えるのかこの Cmdlet ？？て感じ。
+まだ <a href="https://github.com/PowerShell/platyPS/blob/8ca28935c376ae8dc36ac142e4960fc6d3b725e5/README.md">README.md</a> に消えるような話書いてないし、対応待ってたらいだけなんかな ↓↓</p><blockquote><p>Create external help xml files (MAML) from platyPS Markdown.</p></blockquote><p>とりあえず preview でない platyPS を使うことで回避した。
+pocof に v1 刻むときにはヘルプファイルもきれいにする必要があるし、その時までに platyPS が v2 でほんとに Cmdlet 失われるのかとかチェックする必要が出てきた。</p>
 </div>
 
 <div id="post-tags">
@@ -234,7 +226,7 @@ Cmdlet の出力をフィルタするのやプロパティの確認なんかで�
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-11-12-clean-up-pwsh-modules">2022-11-12 師走に向けて PowerShell モジュールの大掃除 &raquo;</a>
+        <a class="right" href="/posts/2022-11-20-writing-cmdlet-in-fsharp-pt7">2022-11-20 F#でコマンドレットを書いてる pt.7 &raquo;</a>
         
     </div>
 </div>
