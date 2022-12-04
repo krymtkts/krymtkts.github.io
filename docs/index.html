@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-12-04-often-forgotten-in-pwsh-part-1">PowerShell で忘れがちなこと pt.1</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8">F#でコマンドレットを書いてる pt.8</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-11-20-writing-cmdlet-in-fsharp-pt7">F#でコマンドレットを書いてる pt.7</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-11-12-clean-up-pwsh-modules">師走に向けて PowerShell モジュールの大掃除</a></li>
                         
                         
 
@@ -192,31 +192,66 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-11-27</div>
+        <div class="col-lg-6">2022-12-04</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.8</h2>
+    <h2>PowerShell で忘れがちなこと pt.1</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>前回書いた、 composite query の実装をした。 <a href="https://github.com/krymtkts/pocof/issues/9">#9</a></p><p>デフォルトでは and で複数のクエリを合成するようにしてる。
-一応理由がある。
-最初から or だと絞り込む前の状態を覚えていて、追加でほしい候補のためにクエリを書くような使い方になる。
-そういう使い方もできるが、ちょっと上級者感がするので、まずは見える範囲で徐々に候補を絞り込めるような and をデフォルトとすることにした。</p><p>そのうちショートカット含めた初期値の変更にも対応したいと思ってたし、起動時から or にしたい場合はそこに盛り込めたらいい。</p><p>ただこの and での合成は hashtable を絞り込むときに出来が悪くて、まだ思ったような絞り込みになっていない。現状 hashtable は or でのみ気持ちよく絞り込むのができなかった。</p><p>これは、 <code>List.allPairs</code> した複合クエリの List × エントリの List に and の場合は <code>List.forall</code> or の場合は <code>List.exists</code> してることで、 hashtable はエントリ Key-Value の二要素あるので and だと両方に共通の文字がないと釣れない...となっているため。
-正しくは、 エントリ内の検索候補プロパティは or で、各エントリ毎は and / or のモードを適用できるようにするのが良いか。
-プロパティ指定の絞り込みするときにこの問題対処するの必須。</p><p>あと like matcher のときだけクエリが空の状態でもフィルタリングされて表示が 0 件になる挙動を直した。 <a href="https://github.com/krymtkts/pocof/issues/10">#10</a></p><p>流石に初期表示が 0 件だとはじめ何で絞り込んだらいいんや...(wildcard 埋めたらいいだけやけど)と困惑するので、はじめは全件表示する。</p><p>最後に、今回 PowerShell Gallery に公開する時手間取ったのが、 <a href="https://github.com/PowerShell/platyPS">platyPS</a> 。</p><p><a href="/posts/2022-11-12-clean-up-pwsh-modules">前にモジュールの掃除した</a>影響で <a href="https://github.com/PowerShell/platyPS/tree/v2">platyPS</a> の version 2 preview より前のモジュールを消し去ってた。
-コレにより <code>New-ExternalHelp</code> Cmdlet がなくなっていて、 psake のリリーススクリプトがエラーするようになってた。
-全く想定外。 v2 で消えるのかこの Cmdlet ？？て感じ。
-まだ <a href="https://github.com/PowerShell/platyPS/blob/8ca28935c376ae8dc36ac142e4960fc6d3b725e5/README.md">README.md</a> に消えるような話書いてないし、対応待ってたらいだけなんかな ↓↓</p><blockquote><p>Create external help xml files (MAML) from platyPS Markdown.</p></blockquote><p>とりあえず preview でない platyPS を使うことで回避した。
-pocof に v1 刻むときにはヘルプファイルもきれいにする必要があるし、その時までに platyPS が v2 でほんとに Cmdlet 失われるのかとかチェックする必要が出てきた。</p>
+    <p>小ネタ。</p><p><code>hashtable</code> は PowerFighter(勝手に作った PowerShell 使いの呼び名) なら誰しも使いまくるに違いない。</p><p>リテラルが用意されており書きやすいから、ついつい適さない用途にふんだんに利用してしまい、たまにハマる(自分調べ)。
+この度、仕事で使っている PowerShell で書いたスクリプトを久しぶりにメンテしたときハマったので、備忘のため記す。
+ハマったのは次のような内容だ。</p><p>「複数の数値から重複を取り除く術として <code>hashtable</code> を使ったが、<code>hashtable</code> に重複が残った」</p><pre><code class="powershell">PS&gt; $hash
+
+Name                           Value
+----                           -----
+1                              True
+1                              True
+</code></pre><p>なんだこりゃ。</p><p>コレが起こった理由は簡単。 1 つ目と 2 つ目の型が異なるからだ。</p><pre><code class="powershell">PS&gt; $hash.Keys | % GetType
+
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     String                                   System.Object
+True     True     Int32                                    System.ValueType
+</code></pre><p>理由がわかれば簡単でまじでしょーもない内容だったが、本当にコレで小一時間ハマった。
+異なる型が混在したのは単純に全ての分岐で同じ型になっていなかったバグなのだけど、REPL だと一見同じ値にしか見えないのでびっくりする。</p><p>こんなことにならないように、重複を除く用途では型を厳密にできる <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.generic?view=net-7.0">System.Collections.Generic 名前空間</a>のコレクションを使うべきだろう。
+型属性がクソ長くなるけど。</p><p>先述の、億劫して <code>hashtable</code> を使った重複の除去は、 <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.generic.hashset-1?view=net-7.0">System.Collections.Generic.HashSet<T></T></a> を使えば以下のように安全だ。</p><p>ただ各メソッドに戻り値があるので PowerShell の戻り値と相性悪い。
+そこが面倒なら <a href="https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2?view=net-7.0">System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;</a> かなあ...宣言がさらに長くなる。</p><pre><code class="powershell">PS&gt; $h1 = @{}
+PS&gt; $h1[1] = 1
+PS&gt; $h1['1'] = 2
+PS&gt; $h1
+
+Name                           Value
+----                           -----
+1                              2
+1                              1
+
+PS&gt; [System.Collections.Generic.HashSet[int]]$h2 = @{}
+PS&gt; $h2.add(1) | Out-Null # 戻り値を無に帰すのがメンドイ
+PS&gt; $h2.add('1') | Out-Null # 同上
+PS&gt; $h2
+
+Key Value
+--- -----
+  1     2
+
+PS&gt; [System.Collections.Generic.Dictionary[int,int]]$h3 = @{} # 長いな...
+PS&gt; $h3[1] = 1
+PS&gt; $h3['1'] = 2
+PS&gt; $h3
+
+Key Value
+--- -----
+  1     2
+
+</code></pre><p>とはいえ、型属性の長さやメソッドの戻り値の取り回しにさえ目を瞑れれば、あとは提供される暗黙的変換ライフにより安全な生活が始まる。</p><p>簡潔な構文糖は手に入らないけど、「こんなに長いのタイプできないにょ...」となるときは、代わりの術はあるから...それで以て茶を濁す。</p><ul><li>Terminal でなら <code>[hashset</code> とタイプして TAB を押下すれば、あ～ら不思議、完全名称が自動補完される(これは速くてまじですごい)</li><li>VS Code であれば <code>[hashset</code> とタイプして補完候補から選ぶ。Terminal と比較すると若干もっさり感じる</li></ul><p>雑多に書きたいときに Generic Type を使うのはちょっと大げさかなという気がしないでもないが、安心安全の PowerLife を送るにはこういうのも必要ということで。
+↓ に引用した通り Generics のサポートも手厚くなってるわけだし。</p><p><a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_calling_generic_methods?view=powershell-7.3">about Calling Generic Methods - PowerShell | Microsoft Learn</a></p><blockquote><p>Beginning with PowerShell 7.3, you can specify the types for a generic method.</p></blockquote>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
     <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -226,7 +261,7 @@ pocof に v1 刻むときにはヘルプファイルもきれいにする必要�
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-11-20-writing-cmdlet-in-fsharp-pt7">2022-11-20 F#でコマンドレットを書いてる pt.7 &raquo;</a>
+        <a class="right" href="/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8">2022-11-27 F#でコマンドレットを書いてる pt.8 &raquo;</a>
         
     </div>
 </div>

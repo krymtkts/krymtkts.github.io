@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Out-GridView の CUI 版 Out-ConsoleGridView</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-09-03-the-cui-ver-of-out-grid-view">
+    <title>krymtkts: PowerShell で忘れがちなこと pt.1</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-12-04-often-forgotten-in-pwsh-part-1">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Out-GridView の CUI 版 Out-ConsoleGridView" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-09-03-the-cui-ver-of-out-grid-view" />
+    <meta property="og:title" content="krymtkts: PowerShell で忘れがちなこと pt.1" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-12-04-often-forgotten-in-pwsh-part-1" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -192,28 +192,60 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-09-03</div>
+        <div class="col-lg-6">2022-12-04</div>
         
     </div>
-    <h2>Out-GridView の CUI 版 Out-ConsoleGridView</h2>
+    <h2>PowerShell で忘れがちなこと pt.1</h2>
 </div>
 <div>
     
-    <p>最近知ったのだけど、 <code>Out-GridView</code> の PowerShell Team 謹製 CUI 版 <code>Out-ConsoleGridView</code> があったらしい。これが使えるヤツだったら <code>poco</code> も今作ってる <code>pocof</code> も要らんやん、と思った。</p><p><a href="https://github.com/PowerShell/GraphicalTools">PowerShell/GraphicalTools: Modules that mix PowerShell and GUIs/CUIs! - built on Avalonia and gui.cs</a></p><p>元々 CUI 使ってるのに <code>Out-GridView</code> で GUI 表示しないとインタラクティブな絞り込みできないのがイヤで <a href="https://github.com/peco/peco">peco</a> を使ってたってのがある。
-<code>peco</code> は PowerShell に最適化されてないから、その後オブジェクトのまま取り扱える <a href="https://github.com/jasonmarcher/poco">jasonmarcher/poco</a> にたどり着いた。
-その後 <code>poco</code> の独自実装を自分で始めたのが <a href="https://github.com/krymtkts/pocof"><code>pocof</code></a>(F# の練習がてら)。</p><p>なもんで、 <code>Out-GridView</code> の CUI 版があってもしイイ感じに使えるのなら、この長年の変遷に終止符を打つんちゃうかな的な。</p><p>以下 <code>README.md</code> に従い試す。</p><pre><code class="powershell">Install-Module Microsoft.PowerShell.ConsoleGuiTools -AllowPrerelease -Scope AllUsers
-</code></pre><pre><code class="powershell">Get-ChildItem | Out-ConsoleGridView
-</code></pre><p><img src="/img/2022-09-03-capture/capture.png" alt="水色の背景に印字される ls の結果" /></p><p><code>space</code> キーでオブジェクトを選択するか <code>Ctrl+A</code> で全選択して、 <code>Enter</code> で選択した結果を出力する。
-<code>-Filter</code> オプションに渡した値で初期表示がフィルタリングされた形になる。そのままタイプしてもフィルタ入力できない。<code>Tab</code> キーを押してフィルタのテキストにフォーカスできる。
-フィルタは正規表現のみみたい。不正なパターンを入れたらちゃんとエラー表示されてエライ。
-必ず結果を洗濯した状態で<code>Enter</code> 押さないと結果が得られないのはちょっとメンドイ。
-わたしは使わないけどマウスコントロール(クリックどころかスクロールまで)できるのもすごいな。
-背景変わるの好きになれないので、今後色とかキーとかのオプション充実したりするかなあ。
-インクリメンタルサーチじゃないのも微妙に好みじゃない操作性だ。</p><p><code>poco</code>、 <code>pocof</code> 共にバッファを元に戻すとレイアウトの崩れが起きるのだけど、 <code>Out-ConsoleGridView</code> は崩れない。素晴らしい。
-表示域にないスクロール可能な部分は吹っ飛んでしまうけど、崩れない方法は真似させてもらいたい(MIT ライセンスなので)。けど、コード読んだ感じどこかわからなかった。</p><p><code>Out-ConsoleGridView</code> は CmdLet の出力に <a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.formatviewdefinition?view=powershellsdk-7.0.0">FormatViewDefinition Class (System.Management.Automation) | Microsoft Docs</a>を自前で作ってるみたい。
-なので PowerShell で表示される内容とちょっと違う。
-それ故か、例えば <code>Get-InstalledModule</code> のような情報量の多い結果を表示するとちょっと悲しい感じになってしまった。 <code>format.ps1xml</code> が利用されないせいかな。しかしこのクラス使い方がわからなかったので勉強になるわ。</p><pre><code class="powershell">Get-InstalledModule | Out-ConsoleGridView
-</code></pre><p><img src="/img/2022-09-03-capture/jam-packed-capture.png" alt="すし詰めに印字される Get-InstalledModule の結果" /></p><p><code>pocof</code> でやりたいことと方向性が違うなあという感じなので、作ってるものを今すぐブン投げ捨てる必要はなかったようだ。こちらの開発は趣味プロで続けようと思った。しかしコード参考にできるものが増えたのでとても助かるなぁ。</p>
+    <p>小ネタ。</p><p><code>hashtable</code> は PowerFighter(勝手に作った PowerShell 使いの呼び名) なら誰しも使いまくるに違いない。</p><p>リテラルが用意されており書きやすいから、ついつい適さない用途にふんだんに利用してしまい、たまにハマる(自分調べ)。
+この度、仕事で使っている PowerShell で書いたスクリプトを久しぶりにメンテしたときハマったので、備忘のため記す。
+ハマったのは次のような内容だ。</p><p>「複数の数値から重複を取り除く術として <code>hashtable</code> を使ったが、<code>hashtable</code> に重複が残った」</p><pre><code class="powershell">PS&gt; $hash
+
+Name                           Value
+----                           -----
+1                              True
+1                              True
+</code></pre><p>なんだこりゃ。</p><p>コレが起こった理由は簡単。 1 つ目と 2 つ目の型が異なるからだ。</p><pre><code class="powershell">PS&gt; $hash.Keys | % GetType
+
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     String                                   System.Object
+True     True     Int32                                    System.ValueType
+</code></pre><p>理由がわかれば簡単でまじでしょーもない内容だったが、本当にコレで小一時間ハマった。
+異なる型が混在したのは単純に全ての分岐で同じ型になっていなかったバグなのだけど、REPL だと一見同じ値にしか見えないのでびっくりする。</p><p>こんなことにならないように、重複を除く用途では型を厳密にできる <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.generic?view=net-7.0">System.Collections.Generic 名前空間</a>のコレクションを使うべきだろう。
+型属性がクソ長くなるけど。</p><p>先述の、億劫して <code>hashtable</code> を使った重複の除去は、 <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.generic.hashset-1?view=net-7.0">System.Collections.Generic.HashSet<T></T></a> を使えば以下のように安全だ。</p><p>ただ各メソッドに戻り値があるので PowerShell の戻り値と相性悪い。
+そこが面倒なら <a href="https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2?view=net-7.0">System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;</a> かなあ...宣言がさらに長くなる。</p><pre><code class="powershell">PS&gt; $h1 = @{}
+PS&gt; $h1[1] = 1
+PS&gt; $h1['1'] = 2
+PS&gt; $h1
+
+Name                           Value
+----                           -----
+1                              2
+1                              1
+
+PS&gt; [System.Collections.Generic.HashSet[int]]$h2 = @{}
+PS&gt; $h2.add(1) | Out-Null # 戻り値を無に帰すのがメンドイ
+PS&gt; $h2.add('1') | Out-Null # 同上
+PS&gt; $h2
+
+Key Value
+--- -----
+  1     2
+
+PS&gt; [System.Collections.Generic.Dictionary[int,int]]$h3 = @{} # 長いな...
+PS&gt; $h3[1] = 1
+PS&gt; $h3['1'] = 2
+PS&gt; $h3
+
+Key Value
+--- -----
+  1     2
+
+</code></pre><p>とはいえ、型属性の長さやメソッドの戻り値の取り回しにさえ目を瞑れれば、あとは提供される暗黙的変換ライフにより安全な生活が始まる。</p><p>簡潔な構文糖は手に入らないけど、「こんなに長いのタイプできないにょ...」となるときは、代わりの術はあるから...それで以て茶を濁す。</p><ul><li>Terminal でなら <code>[hashset</code> とタイプして TAB を押下すれば、あ～ら不思議、完全名称が自動補完される(これは速くてまじですごい)</li><li>VS Code であれば <code>[hashset</code> とタイプして補完候補から選ぶ。Terminal と比較すると若干もっさり感じる</li></ul><p>雑多に書きたいときに Generic Type を使うのはちょっと大げさかなという気がしないでもないが、安心安全の PowerLife を送るにはこういうのも必要ということで。
+↓ に引用した通り Generics のサポートも手厚くなってるわけだし。</p><p><a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_calling_generic_methods?view=powershell-7.3">about Calling Generic Methods - PowerShell | Microsoft Learn</a></p><blockquote><p>Beginning with PowerShell 7.3, you can specify the types for a generic method.</p></blockquote>
 </div>
 
 <div id="post-tags">
@@ -226,10 +258,8 @@
 
     <div id="prev-next">
         
-        <a href="/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4">&laquo; 2022-09-10 F#でコマンドレットを書いてる pt.4</a>
         
-        
-        <a class="right" href="/posts/2022-08-27-bump-bootstrap">2022-08-27 Bootstrap のバージョンを上げる &raquo;</a>
+        <a class="right" href="/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8">2022-11-27 F#でコマンドレットを書いてる pt.8 &raquo;</a>
         
     </div>
 

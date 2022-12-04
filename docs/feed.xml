@@ -1,4 +1,50 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 27 Nov 2022 17:37:30 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8</guid><link>https://krymtkts.github.io/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8</link><title>F#でコマンドレットを書いてる pt.8</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;前回書いた、 composite query の実装をした。 &lt;a href="https://github.com/krymtkts/pocof/issues/9"&gt;#9&lt;/a&gt;&lt;/p&gt;&lt;p&gt;デフォルトでは and で複数のクエリを合成するようにしてる。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 04 Dec 2022 16:34:56 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2022-12-04-often-forgotten-in-pwsh-part-1</guid><link>https://krymtkts.github.io/posts/2022-12-04-often-forgotten-in-pwsh-part-1</link><title>PowerShell で忘れがちなこと pt.1</title><description>&lt;p&gt;小ネタ。&lt;/p&gt;&lt;p&gt;&lt;code&gt;hashtable&lt;/code&gt; は PowerFighter(勝手に作った PowerShell 使いの呼び名) なら誰しも使いまくるに違いない。&lt;/p&gt;&lt;p&gt;リテラルが用意されており書きやすいから、ついつい適さない用途にふんだんに利用してしまい、たまにハマる(自分調べ)。
+この度、仕事で使っている PowerShell で書いたスクリプトを久しぶりにメンテしたときハマったので、備忘のため記す。
+ハマったのは次のような内容だ。&lt;/p&gt;&lt;p&gt;「複数の数値から重複を取り除く術として &lt;code&gt;hashtable&lt;/code&gt; を使ったが、&lt;code&gt;hashtable&lt;/code&gt; に重複が残った」&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; $hash
+
+Name                           Value
+----                           -----
+1                              True
+1                              True
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;なんだこりゃ。&lt;/p&gt;&lt;p&gt;コレが起こった理由は簡単。 1 つ目と 2 つ目の型が異なるからだ。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; $hash.Keys | % GetType
+
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     String                                   System.Object
+True     True     Int32                                    System.ValueType
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;理由がわかれば簡単でまじでしょーもない内容だったが、本当にコレで小一時間ハマった。
+異なる型が混在したのは単純に全ての分岐で同じ型になっていなかったバグなのだけど、REPL だと一見同じ値にしか見えないのでびっくりする。&lt;/p&gt;&lt;p&gt;こんなことにならないように、重複を除く用途では型を厳密にできる &lt;a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.generic?view=net-7.0"&gt;System.Collections.Generic 名前空間&lt;/a&gt;のコレクションを使うべきだろう。
+型属性がクソ長くなるけど。&lt;/p&gt;&lt;p&gt;先述の、億劫して &lt;code&gt;hashtable&lt;/code&gt; を使った重複の除去は、 &lt;a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.generic.hashset-1?view=net-7.0"&gt;System.Collections.Generic.HashSet&lt;T&gt;&lt;/T&gt;&lt;/a&gt; を使えば以下のように安全だ。&lt;/p&gt;&lt;p&gt;ただ各メソッドに戻り値があるので PowerShell の戻り値と相性悪い。
+そこが面倒なら &lt;a href="https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2?view=net-7.0"&gt;System.Collections.Generic.Dictionary&amp;lt;TKey,TValue&amp;gt;&lt;/a&gt; かなあ...宣言がさらに長くなる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; $h1 = @{}
+PS&amp;gt; $h1[1] = 1
+PS&amp;gt; $h1['1'] = 2
+PS&amp;gt; $h1
+
+Name                           Value
+----                           -----
+1                              2
+1                              1
+
+PS&amp;gt; [System.Collections.Generic.HashSet[int]]$h2 = @{}
+PS&amp;gt; $h2.add(1) | Out-Null # 戻り値を無に帰すのがメンドイ
+PS&amp;gt; $h2.add('1') | Out-Null # 同上
+PS&amp;gt; $h2
+
+Key Value
+--- -----
+  1     2
+
+PS&amp;gt; [System.Collections.Generic.Dictionary[int,int]]$h3 = @{} # 長いな...
+PS&amp;gt; $h3[1] = 1
+PS&amp;gt; $h3['1'] = 2
+PS&amp;gt; $h3
+
+Key Value
+--- -----
+  1     2
+
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;とはいえ、型属性の長さやメソッドの戻り値の取り回しにさえ目を瞑れれば、あとは提供される暗黙的変換ライフにより安全な生活が始まる。&lt;/p&gt;&lt;p&gt;簡潔な構文糖は手に入らないけど、「こんなに長いのタイプできないにょ...」となるときは、代わりの術はあるから...それで以て茶を濁す。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Terminal でなら &lt;code&gt;[hashset&lt;/code&gt; とタイプして TAB を押下すれば、あ～ら不思議、完全名称が自動補完される(これは速くてまじですごい)&lt;/li&gt;&lt;li&gt;VS Code であれば &lt;code&gt;[hashset&lt;/code&gt; とタイプして補完候補から選ぶ。Terminal と比較すると若干もっさり感じる&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;雑多に書きたいときに Generic Type を使うのはちょっと大げさかなという気がしないでもないが、安心安全の PowerLife を送るにはこういうのも必要ということで。
+↓ に引用した通り Generics のサポートも手厚くなってるわけだし。&lt;/p&gt;&lt;p&gt;&lt;a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_calling_generic_methods?view=powershell-7.3"&gt;about Calling Generic Methods - PowerShell | Microsoft Learn&lt;/a&gt;&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;Beginning with PowerShell 7.3, you can specify the types for a generic method.&lt;/p&gt;&lt;/blockquote&gt;</description><pubDate>Sun, 04 Dec 2022 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8</guid><link>https://krymtkts.github.io/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8</link><title>F#でコマンドレットを書いてる pt.8</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;前回書いた、 composite query の実装をした。 &lt;a href="https://github.com/krymtkts/pocof/issues/9"&gt;#9&lt;/a&gt;&lt;/p&gt;&lt;p&gt;デフォルトでは and で複数のクエリを合成するようにしてる。
 一応理由がある。
 最初から or だと絞り込む前の状態を覚えていて、追加でほしい候補のためにクエリを書くような使い方になる。
 そういう使い方もできるが、ちょっと上級者感がするので、まずは見える範囲で徐々に候補を絞り込めるような and をデフォルトとすることにした。&lt;/p&gt;&lt;p&gt;そのうちショートカット含めた初期値の変更にも対応したいと思ってたし、起動時から or にしたい場合はそこに盛り込めたらいい。&lt;/p&gt;&lt;p&gt;ただこの and での合成は hashtable を絞り込むときに出来が悪くて、まだ思ったような絞り込みになっていない。現状 hashtable は or でのみ気持ちよく絞り込むのができなかった。&lt;/p&gt;&lt;p&gt;これは、 &lt;code&gt;List.allPairs&lt;/code&gt; した複合クエリの List × エントリの List に and の場合は &lt;code&gt;List.forall&lt;/code&gt; or の場合は &lt;code&gt;List.exists&lt;/code&gt; してることで、 hashtable はエントリ Key-Value の二要素あるので and だと両方に共通の文字がないと釣れない...となっているため。
