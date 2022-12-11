@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;font&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/font">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.9</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-12-11-writing-cmdlet-in-fsharp-pt9">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;font&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/font" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.9" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-12-11-writing-cmdlet-in-fsharp-pt9" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -189,33 +189,46 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;font&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2022-12-11</div>
+        
     </div>
-    <ul>
+    <h2>F#でコマンドレットを書いてる pt.9</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2021-07-11-my-terminal-icons">2021-07-11 Terminal-Icons のアイコングリフのコードポイントを変えたい</a>
-        </li>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>師走は何かと忙しくて pocof のプロパティ指定検索対応に時間が割けていない。
+あんまり手も動かせないので、プロパティ指定どうやったらいいかなーと思案している。
+つまりこの記事は壁打ちだ。</p><p>どー考えても一番楽なのは、 <a href="https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.pscmdlet.invokecommand?view=powershellsdk-7.0.0"><code>PSCmdlet.InvokeCommand</code></a> にクエリ文字列から組み立てた <code>FilterScript</code> を渡す方法。
+でもこのやり方でやったとして自分の知見が広がるわけでもないし、楽しくない。</p><p>ということでどうせなら F# の世界からどうにかしてやろうと思っている。
+やはり正攻法なのは、<a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.management.automation.psobject.properties?view=powershellsdk-7.3.0"><code>PSObject.Properties</code></a>にアクセスする方法だろう。</p><p>難点は、 pocof の <code>InputObject</code> を内部では <code>PSObject[]</code> から <code>obj list</code> に変えてしまってるので、それらを適宜補正してやる必要があるくらい(そもそもなんで <code>obj list</code> にしたか覚えてない)。なんかできそうに思えてきた。</p><p>フィルタの方は、 <code>PSObject.Properties</code> にクエリ文字列をパースして抜き出したプロパティ名で値を取れば、クエリ式内で <code>where</code> に使うのは造作もないことだろう。
+<code>hashtable</code> のときだけ特別サポートしているので、そこと折り合いつけれれば困ること無いのでは(油断している)。</p><p>プロパティの入力候補出すやつは...どうかな。
+パラメータ <code>InputObject</code> に単一の型だけが含まれるのであれば、先頭の要素の <code>PSObject.Properties</code> から候補を一覧するだけでいいのだけど、奇しくも pocof は複数の型も許容する包容力を持ってるから...</p><p>まー単純に考えて、全走査しているタイミングは 2 つあるので、そこで型情報も一緒に控えておくのが良かろう。</p><ol><li><code>PSCmdlet.ProcessRecord</code> で <code>list</code> に詰めてるのでその時に <code>GetType</code> する</li><li><code>List.rev</code> してるときか(<code>ProcessRecord</code> で計算量減らすため逆に詰めているから)</li></ol><p>フツーに <code>PSCmdlet.ProcessRecord</code> いいな。型情報取るだけならなんかこれもできそうな気配してきたな。</p><p>問題は取得したプロパティをどう表示するかやけど、スペース的に空いてるのは正規表現パターンのエラー表示するための行だけなので、そこに出そう。要素数が多い場合は水平方向のスクロール機能(！)を実装しないと使い物にならなさそう...全く実装イメージつかんなこれ。</p><p>会社の期末が 2023-01 なので、なんか来年頭は忙しくなりそうやな～と思うし、この年末年始のお休み期間で如何に F# と戯れることができるかが重要な気がする。 pocof の至らぬ点諸々の棚卸しもやっておきたいし。
+それに今年の振り返りもボチボチやり始めとかないと...</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2021-07-01-i-want-to-change-codepoint">2021-07-01 Terminal-Icons のアイコングリフのコードポイントを変えたい</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-        <li>
-            <a href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font">2021-05-30 Migu Nerd Font の改善が完了したっぽい</a>
-        </li>
+    <a href="/tags/fsharp">fsharp</a>
     
-        <li>
-            <a href="/posts/2021-05-07-i-want-to-resize-migu-icon">2021-05-07 Migu Nerd Font のアイコンフォントを narrow にしたい</a>
-        </li>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2022-12-04-often-forgotten-in-pwsh-part-1">2022-12-04 PowerShell で忘れがちなこと pt.1 &raquo;</a>
+        
+    </div>
+
     
-        <li>
-            <a href="/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu">2021-04-11 Cascadia Code PL と Migu Nerd Font の違い</a>
-        </li>
-    
-    </ul>
+
+
 </div>
 
             </div>
