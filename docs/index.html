@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2022-12-18-writing-cmdlet-in-fsharp-pt10">F#でコマンドレットを書いてる pt.10</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2022-12-11-writing-cmdlet-in-fsharp-pt9">F#でコマンドレットを書いてる pt.9</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-12-04-often-forgotten-in-pwsh-part-1">PowerShell で忘れがちなこと pt.1</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8">F#でコマンドレットを書いてる pt.8</a></li>
                         
                         
 
@@ -192,21 +192,18 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-12-11</div>
+        <div class="col-lg-6">2022-12-18</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.9</h2>
+    <h2>F#でコマンドレットを書いてる pt.10</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>師走は何かと忙しくて pocof のプロパティ指定検索対応に時間が割けていない。
-あんまり手も動かせないので、プロパティ指定どうやったらいいかなーと思案している。
-つまりこの記事は壁打ちだ。</p><p>どー考えても一番楽なのは、 <a href="https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.pscmdlet.invokecommand?view=powershellsdk-7.0.0"><code>PSCmdlet.InvokeCommand</code></a> にクエリ文字列から組み立てた <code>FilterScript</code> を渡す方法。
-でもこのやり方でやったとして自分の知見が広がるわけでもないし、楽しくない。</p><p>ということでどうせなら F# の世界からどうにかしてやろうと思っている。
-やはり正攻法なのは、<a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.management.automation.psobject.properties?view=powershellsdk-7.3.0"><code>PSObject.Properties</code></a>にアクセスする方法だろう。</p><p>難点は、 pocof の <code>InputObject</code> を内部では <code>PSObject[]</code> から <code>obj list</code> に変えてしまってるので、それらを適宜補正してやる必要があるくらい(そもそもなんで <code>obj list</code> にしたか覚えてない)。なんかできそうに思えてきた。</p><p>フィルタの方は、 <code>PSObject.Properties</code> にクエリ文字列をパースして抜き出したプロパティ名で値を取れば、クエリ式内で <code>where</code> に使うのは造作もないことだろう。
-<code>hashtable</code> のときだけ特別サポートしているので、そこと折り合いつけれれば困ること無いのでは(油断している)。</p><p>プロパティの入力候補出すやつは...どうかな。
-パラメータ <code>InputObject</code> に単一の型だけが含まれるのであれば、先頭の要素の <code>PSObject.Properties</code> から候補を一覧するだけでいいのだけど、奇しくも pocof は複数の型も許容する包容力を持ってるから...</p><p>まー単純に考えて、全走査しているタイミングは 2 つあるので、そこで型情報も一緒に控えておくのが良かろう。</p><ol><li><code>PSCmdlet.ProcessRecord</code> で <code>list</code> に詰めてるのでその時に <code>GetType</code> する</li><li><code>List.rev</code> してるときか(<code>ProcessRecord</code> で計算量減らすため逆に詰めているから)</li></ol><p>フツーに <code>PSCmdlet.ProcessRecord</code> いいな。型情報取るだけならなんかこれもできそうな気配してきたな。</p><p>問題は取得したプロパティをどう表示するかやけど、スペース的に空いてるのは正規表現パターンのエラー表示するための行だけなので、そこに出そう。要素数が多い場合は水平方向のスクロール機能(！)を実装しないと使い物にならなさそう...全く実装イメージつかんなこれ。</p><p>会社の期末が 2023-01 なので、なんか来年頭は忙しくなりそうやな～と思うし、この年末年始のお休み期間で如何に F# と戯れることができるかが重要な気がする。 pocof の至らぬ点諸々の棚卸しもやっておきたいし。
-それに今年の振り返りもボチボチやり始めとかないと...</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>少しだけ pocof のプロパティ指定検索対応を進めた。</p><p><code>PSCmdlet.ProcessRecord</code> のときに <code>PSObject.Properties</code> から <code>PSPropertyInfo.Name</code> を取り出して <code>Set&lt;string&gt;</code> の変数に格納する。
+その変数を画面の描画のときに通知領域のところに出すまでを実装した。うまく出てるのを見てみようということだ。</p><p>当然のごとく、常時プロパティの補完候補が出ているのはヘンなので、クエリの入力状況に応じた表示＆プロパティ候補表示 ON/OFF のオプションの追加が必要になる(のが見えてきた。行き当たりばったり)。</p><p>ここで「クエリの入力状況」と書いたが、「プロパティ指定子」(<code>poco</code> に倣い既定で <code>:</code> を検討している)が入力されていて、かつカーソルがその「プロパティ指定子」に連続する文字列のポジションにある時が、「プロパティ入力」。つまり入力中のクエリとカーソル位置でモードを切り替える必要がある。</p><p>これ結構めんどくて、クエリとか内部状態として持っているレコードにモードを足して、あとキー押下時やカーソル移動のそれぞれのアクションでモードの ON/OF をやらないといけない。</p><p>もう他にも面倒なやつらしかないんやけど、今とりあえずプロパティ指定検索では以下を実装しようとしている。</p><ul><li>オプションにプロパティ候補 ON/OFF を追加する</li><li>内部状態に入力モード(通常・プロパティ)を追加する</li><li>「プロパティ入力モード」のときに
+<ul><li>プロパティのタブ補完できるようにする</li><li>プロパティ名入力に合わせてプロパティ表示を絞り込み</li></ul></li><li><code>InputObject</code> のプロパティ指定検索対応</li></ul><p>途中 <code>PSPropertyInfo</code> の型に合わせて入力の検査をしたら...とか思い始めたが、これ今やるのは違うわ今はいいわと思って虚無に帰した。やったら楽しそうなので、そのうち復活してくるかも。
+他にも湧いては消え × N するアイデアはポツポツあるので、プロパティの対応が終わったらボチボチ真面目に検討できるようになるかなー。</p><hr /><p>試しに実装してみて、使い勝手を検証して、更に実装していく。</p><p>これまさにプロトタイピングなのだけど、それなら紙芝居でもいいのでは...という気はしなくもない。
+が、紙芝居で作ったらすぐさま試用できるモノが手に入らないので、常に動くものを持てるこっちの方法が楽しい。仕事で気分任せに進めるとヤバい(終わりのないプロトタイピングで金食い潰すとかヤバい)けど趣味プロは誰にも邪魔されない。</p><p>とは言えこのアプローチは継ぎ足し〃の九龍城砦になりがちなので、都度再構築されて然るべきなんだろうとひしと感じている。出発点が PowerShell から F# への写経だったのもあって、当初から微妙と感じるところがいくつかあるのと、 F# の腕が悪いのもあってかっこよくないところとか。来年に持ち越しかなー。これも楽しいのでやりたいけど、先にプロパティを始末したい。</p>
 </div>
 
 <div id="post-tags">
@@ -224,7 +221,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-12-04-often-forgotten-in-pwsh-part-1">2022-12-04 PowerShell で忘れがちなこと pt.1 &raquo;</a>
+        <a class="right" href="/posts/2022-12-11-writing-cmdlet-in-fsharp-pt9">2022-12-11 F#でコマンドレットを書いてる pt.9 &raquo;</a>
         
     </div>
 </div>
