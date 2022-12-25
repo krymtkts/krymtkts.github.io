@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: psake の Task 名を自動補完する</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-07-18-psake-completion">
+    <title>krymtkts: Posts Tagged &quot;ouraring&quot;</title>
+    <link rel="canonical" href="https://krymtkts.github.io/tags/ouraring">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: psake の Task 名を自動補完する" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-07-18-psake-completion" />
+    <meta property="og:title" content="krymtkts: Posts Tagged &quot;ouraring&quot;" />
+    <meta property="og:url" content="https://krymtkts.github.io/tags/ouraring" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -191,81 +191,17 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="post">
-    <div class="post-header">
-    <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-07-18</div>
-        
+<div id="posts-by-tag">
+    <div id="page-header">
+        <h2>Posts Tagged &quot;ouraring&quot;</h2>
     </div>
-    <h2>psake の Task 名を自動補完する</h2>
-</div>
-<div>
+    <ul>
     
-    <p>ほぼ趣味レベルなのだが、所謂タスクランナーとして<a href="https://github.com/psake/psake">psake</a>を使っている。趣味レベルなのは、Go とか Python とかでは <code>make</code> を使うので <code>psake</code> を製品コードでは使ったことなくて、自分の細々とした面倒な処理をスクリプト化してまとめるのに <code>psake</code> を使ってるからだ。</p><p>そんな訳で利用頻度も高くなかったのだが、なんか最近は AWS のリソースを操作するニッチなスクリプト(例えば開発環境とかステージング環境だけに使うようなやつ)が大量にあって、それをまとめるのに使い出した。
-その御蔭で利用頻度が高まり、いやーよくできたツールやな～などと改めて思っていたが、今まで不満に感じなかった自動補完がないことがストレスになってきた。タスクが増え過ぎて名前が覚えられないのだ。</p><p>ｷﾞｯﾊﾌﾞの repo を確認すると、古の<code>TabExpansion</code>版はあれど、今どきの<code>Register-ArgumentCompleter</code>版がない。
-<a href="https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1">psake/PsakeTabExpansion.ps1 at master · psake/psake</a></p><p>今更<code>TabExpansion</code>使いたくないので、<code>Register-ArgumentCompleter</code>用に合わせてこしらえた。</p><p><a href="https://gist.github.com/krymtkts/b2e6742691fdca6ca09567ca146063df">This is Register-ArgumentCompleter version of https://github.com/psake/psake/blob/master/tabexpansion/PsakeTabExpansion.ps1.</a></p><p>使ってみていまんとこ良さそうな感じ。問題なさそうなら本家に PRO ぶん投げてみてもいいかもね。</p><hr /><p>以下は<code>Register-ArgumentCompleter</code>のスクリプトブロックをデバッグするときの個人的メモ。</p><p>その時の入力でトリガーされたスクリプトブロックの引数を確認するのに <code>Write-Host</code> とか使うと厄介だと思うので、ログファイル的なものをこしらえておき、別窓で<code>tail</code>してあげると見易くなる(と思っている)。</p><pre><code class="powershell">Register-ArgumentCompleter -CommandName Invoke-Psake -ParameterName taskList -ScriptBlock {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-    "$commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters" &gt;&gt; test.log
-    if ($commandAst -match '(?&lt;file&gt;[^\.]*\.ps1)') {
-        $file = $Matches.file
-        "YEAH" &gt;&gt; test.log
-    }
-    else {
-        $file = 'psakefile.ps1'
-        "DEFAULT" &gt;&gt; test.log
-    }
-    &amp; $commandName -buildFile $file -docs -nologo | Out-String -Stream | ForEach-Object { if ($_ -match "^[^ ]*") { $matches[0] } } | `
-        Where-Object { $_ -notin ('Name', '----', '') } | Where-Object { !$wordToComplete -or $_ -like "$wordToComplete*" }
-}
-</code></pre><pre><code class="powershell">Get-Content .\test.log -Wait -Tail 10
-# Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
-# Invoke-psake, taskList, In, invoke-psake -taskList In, System.Collections.Hashtable
-# DEFAULT
-# Invoke-psake, taskList, I, invoke-psake -buildFile .\psakefile.ps1 -taskList I, System.Collections.Hashtable
-# YEAH
-</code></pre><p>どーでもいーけどこの日記の deploy をｷﾞｯﾊﾌﾞｱｸｼｮﾝ化したい。</p><hr /><p>追記。</p><p>デバッグ中に気づいたのだが、プロファイル内で <code>$psake</code> という変数を作ると <code>Invoke-psake</code> が壊れるという事に気づいた。</p><pre><code class="powershell">🤖 takatoshi  invoke-psake -nologo
-Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:9
-Line |
-   9 |      if (test-path $psake.config_default.buildFileName -pathType Leaf) …
-     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     | Value cannot be null. (Parameter 'The provided Path argument was null or an empty collection.')
-
-Test-Path: C:\Program Files\PowerShell\Modules\psake\4.9.0\private\Get-DefaultBuildFile.ps1:11
-Line |
-  11 |  …   } elseif (test-path $psake.config_default.legacyBuildFileName -path …
-     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     | Value cannot be null. (Parameter 'The provided Path argument was null or an empty collection.')
-
-InvalidOperation: C:\Program Files\PowerShell\Modules\psake\4.9.0\public\Invoke-psake.ps1:327
-Line |
- 327 |          $psake.build_success = $false
-     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     | The property 'build_success' cannot be found on this object. Verify that the property exists and can be set.
-</code></pre><p>罠すぎる...</p>
-</div>
-
-<div id="post-tags">
-    <b>Tags: </b>
+        <li>
+            <a href="/posts/2022-12-25-bought-ouraring-gen3">2022-12-25 Oura Ring Gen3 を買った</a>
+        </li>
     
-    <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/psake">psake</a>
-    
-</div>
-
-
-    <div id="prev-next">
-        
-        <a href="/posts/2021-08-30-patch-to-vscode-extension">&laquo; 2021-08-30 VS Code の拡張機能に ローカル patch する</a>
-        
-        
-        <a class="right" href="/posts/2021-07-11-my-terminal-icons">2021-07-11 Terminal-Icons のアイコングリフのコードポイントを変えたい &raquo;</a>
-        
-    </div>
-
-    
-
-
+    </ul>
 </div>
 
             </div>
