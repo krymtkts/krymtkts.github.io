@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Clojureでブログを作った</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-01-10-make-blog-with-clojure">
+    <title>krymtkts: 振り返り 2022 年</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-12-31-retrospective2022">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Clojureでブログを作った" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-01-10-make-blog-with-clojure" />
+    <meta property="og:title" content="krymtkts: 振り返り 2022 年" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-12-31-retrospective2022" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -194,61 +194,49 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-01-10</div>
+        <div class="col-lg-6">2022-12-31</div>
         
     </div>
-    <h2>Clojureでブログを作った</h2>
+    <h2>振り返り 2022 年</h2>
 </div>
 <div>
     
-    <p>このブログはClojure製の静的サイトジェネレータ<a href="http://cryogenweb.org/">Cryogen</a>で作った。</p><h3 id="動機">動機</h3><p>現在有給消化中のため暇である。プログラマ的暇潰しが必要だったのだが、ブログを作るのはそれなりに楽しめそうな気がした。</p><p>あと、過去にブログサービスを使ってたときブログが長続きしなかった理由に、わたしは物書きじゃあないので簡単にブログが書けるとかいう部分が琴線に触れない、というようなものが根底にあるような気もする🤔</p><p>自分で作るならその心配はない。</p><p>ついでに折角GitHubのアカウントも持ってるので、GitHub Pagesを使わない手はない。blogのコードをrepoに登録しておけば芝生も青々としてええな！的な。</p><p>また別の観点としてブログサービスを選ぶとなった場合、書く記事の内容が技術的なものだったり単なる趣味の話だったり内容がブレると思うので、利用規約に触れて垢バンされるようなサービスは選び辛い。ちょうど良い選択かも知れない。</p><p>そこで今回はブログ自体を自分で作ってしまおうと決めた。</p><p>因みにClojureを選んだのは個人的な好みである。</p><h3 id="静的サイトジェネレータの選定">静的サイトジェネレータの選定</h3><p>普通にググって調べようと思ってたけど、いまはこんなのクソ便利なんがあるのね...→<a href="https://www.staticgen.com/">StaticGen</a></p><p>LanguageをClojureにしたら3個hitしたのでそれぞれ見てみた。</p><ul><li><a href="https://github.com/cryogen-project/cryogen">Cryogen</a></li><li><a href="https://github.com/liquidz/misaki">Misaki</a></li><li><a href="https://github.com/hashobject/perun">Perun</a></li></ul><p>Misakiは永らくメンテされてないからなし。
-CryogenもPerunも、検索したら日本語の情報にhitするのでやりがいに違いはなさそう。
-単純に⭐が多いのとBootを使ったことがないというだけの理由で<a href="https://github.com/cryogen-project/cryogen">Cryogen</a>を使うことにした。</p><p>(後知恵だが、ここはもっと慎重に考えた方が良かった)</p><h3 id="cryogenを使ってぶろぐを作ろうぜ"><a href="https://github.com/cryogen-project/cryogen">Cryogen</a>を使ってぶろぐを作ろうぜ</h3><p>ドキュメントが充実してるので、書いたてることに従うだけで簡単にできた。</p><p>出来上がったコードはこちら→<a href="https://github.com/krymtkts/blog-cryogen">My personal blog project</a></p><p>以降に記すコマンド例はPowerShellで実行したものである。筆者はWindows10ユーザなので。</p><h4 id="手始めに">手始めに</h4><p>Leiningenでテンプレートを作成する。</p><pre><code class="poershell">lein new cryogen blog
-Retrieving cryogen/lein-template/0.3.7/lein-template-0.3.7.pom from clojars
-Retrieving leinjacker/leinjacker/0.4.2/leinjacker-0.4.2.pom from clojars
-Retrieving org/clojure/core.contracts/0.0.1/core.contracts-0.0.1.pom from central
-Retrieving org/clojure/pom.contrib/0.0.26/pom.contrib-0.0.26.pom from central
-Retrieving org/clojure/core.unify/0.5.3/core.unify-0.5.3.pom from central
-Retrieving cryogen/lein-template/0.3.7/lein-template-0.3.7.jar from clojars
-Retrieving org/clojure/core.contracts/0.0.1/core.contracts-0.0.1.jar from central
-Retrieving org/clojure/core.unify/0.5.3/core.unify-0.5.3.jar from central
-Retrieving org/clojure/clojure/1.4.0/clojure-1.4.0.jar from central
-Retrieving leinjacker/leinjacker/0.4.2/leinjacker-0.4.2.jar from clojars
-Generating fresh 'lein new' Cryogen project.
-</code></pre><p>ブログを動かしてみよう</p><pre><code class="poershell">lein ring server
-</code></pre><p>ブラウザに表示された。OK👍</p><h4 id="コンテンツを整理する">コンテンツを整理する</h4><p>わたしの場合はMarkdownで書くのでAsciiDocのディレクトリは消してしまう。サーバ起動中にこれをやると例外が発生する、止めてからやるのが良いだろう。</p><pre><code class="powershell">Remove-Item -Recurse -Path ./resources/templates/ascii
-</code></pre><p>あとsampleで置いてあるpostやaboutを自分用に書き換えるなど。</p><h4 id="テーマを作る">テーマを作る</h4><p>themeはデフォで<code>blue</code>, <code>blue_centered</code>, <code>lotus</code>, <code>nucleus</code>の4種類置いてある。<code>lotus</code>を使うとエラーになったけど、これを直すのが目的じゃないので無視した🙈</p><p>自分用のテーマとしては何が良いかな？と検討して、お気に入りのSolarizedにしようと決めた。terminalやeditorはSolarized darkを使っているが、ブログはlightでやろうと思う。syntax highlightingについてはいつも通りのdarkを採用することにした。</p><p><a href="https://ethanschoonover.com/solarized/">Solarized</a>を参考に自分でthemeを作る。元にするのは<code>blue_centered</code>にした。ブラウザの開発者ツールで見てみてもレスポンシブデザインになってたし、cssのコード量も少なくてシンプルなのがいい。</p><p><code>resources/templates/themes</code>にファイル名<code>solarized_light</code>でコピって書き換える。</p><p>基本は書いたあるルールに沿うけど一部それとなく変える。カラーコードの編集はsassにしたら楽だろうけどコピった元はそうじゃないので、該当する箇所を書き換えるだけに留めた。</p><p>Cryogenのsyntax highlightingは<code>highlight.js</code>が採用されている。
-デフォの24種だと使わないやつもいるので削って、使いそうな言語を足したものを<a href="https://highlightjs.org/download/">highlight.js</a>で作ってダウンロードする。
-これは手動でダウンロードして、デフォの<code>highlight.pack.js</code>に上書きした。</p><p>スタイルは<code>base.html</code>で<code>default</code>が指定されているので<code>solarized_dark</code>を選ぶ。ついでにhighlight.jsのversionも9.7から9.13.1へ上げちゃう。</p><p>404 Page not foundのときのページがどうやって表示されるのかわからなかったが、GitHub Pagesの機能で提供されるルールに従えば良い様子。</p><p><a href="https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/">Customizing GitHub Pages / Creating a custom 404 page for your GitHub Pages site</a></p><p>デフォの404ページのスタイルが他のページとぜんぜん違うので、スタイルに合わせておいた。</p><p>ページが縦に長くなって垂直スクロールバーが出るとコンテンツのズレが生じるのだけど、これ多分bootstrapに起因する問題か🤔悩ましいが一旦そのままに。</p><p>これでおおよそのデザイン面は完成した。</p><p>作業中のコードは一旦BitBucketのprivate repoにブチ込んでおいたのだけど、GitHubの無償アカウントでもprivate repoが使えるようになって分ける理由がなくなってしまった...まあよし。</p><p>あと、</p><ul><li>Bootstrap3から4に上げたい</li><li>Google Analytics</li></ul><p>など残しているが、一旦はコンテンツの公開を優先して後回しにする予定。</p><h4 id="github-pagesにうｐる">GitHub Pagesにうｐる</h4><p><a href="https://pages.github.com/">GitHub Pages</a>の説明と<a href="http://cryogenweb.org/docs/deploying-to-github-pages.html">Cryogen - GitHub Pages</a>を見たらできる。</p><p>作るのはユーザーのpageなので、まず<code>krymtkts.github.io</code>のrepoを作る。
-中身は空で。Licenseの選択もなし。</p><p>Cryogenのドキュメントに従い、<code>config.edn</code>の<code>blog-prefix</code>キーの値は空にする。</p><p>あとはCryogenが出力した<code>resource/public</code>を先程作ったrepoのmasterブランチにpushするのみ。</p><p>この出力先<code>resource/public</code>を変更する方法がわからなかったので、<code>krymtkts.github.io</code>という名前のシンボリックリンクを作って、あたかもそういう名前のフォルダをGitで管理してる感を醸し出して茶を濁した。</p><pre><code class="poershell">New-Item -Value '.\blog\resources\public\' -Path './' -Name 'krymtkts.github.io' -ItemType SymbolicLink
-cd krymtkts.github.io
-git init
-echo "# krymtkts.github.io" &gt;&gt; README.md
-git add README.md
-git commit -m "First commit"
-git add .
-git commit -m 'Add contents'
-git remote add origin git@github.com:krymtkts/krymtkts.github.io.git
-git push -u origin master
-</code></pre><p>これでわたしのブログがpublishされたのであった🎉</p><p>めでたしめでたし...</p><h3 id="to-be-continued">To be continued</h3><p>で終わらなかった。</p><p>これを作りきって、急激にCryogenに興味がなくなってしまった。</p><p>結局の所、テンプレートエンジンにSelmerを使ってることで、HTMLやスタイルの編集自体にClojure感の薄さがあってなんか楽しみがないのかなと。最初から予想できそうな結果やけどな🤔</p><p>コンテンツ自体はMarkdownで書くし可搬性があるので記事の更新はしつつ、次段階としてPerunで作り直してみようと思う。</p><p>破壊と創造こそが人類の本質ですね(違う</p>
+    <p>2022 年を振り返る。</p><p><a href="/posts/2022-01-09-planning">2022 年のテーマ</a>は「自分の人生は自分で決める」だった。</p><p>手を放れかけた人生の制御権を自分に引き戻すのを目標にしていたところ、おおよそ手元に引き戻せてきたのではないかと感じる。
+ここ数年は、年に 1 回は仕事上インパクトのあるネガティブイベントがあった。今年はそれ程のイベントはなかったので、それが起因しての結果だろう。</p><h3 id="2022-年目標と成果">2022 年目標と成果</h3><p>今年も 50% 超えでぼちぼち。いい加減に完全勝利もほしい。</p><ul><li>❌ 住みたい場所を決める
+<ul><li>理想と利便性など意見が擦り合わず</li></ul></li><li>❌ 積ん読の消化 1 冊/月
+<ul><li>多少ペースを上げたが 0.5 冊 / 月くらいで未達。おしいなあ</li></ul></li><li>⭕ 自作ツールの更新
+<ul><li><a href="https://github.com/krymtkts/mccall-bot">マッコールさん</a>は使う機会がなくて放置してるが、新しく <a href="https://github.com/krymtkts/pocof">pocof</a> 、 <a href="https://github.com/krymtkts/PSJobCanAttendance">PSJobCanAttendance</a> が増えたので -1 + 2 = 1 だし ⭕ にする</li><li>自己満足だが PSJobCanAttendance でパイプラインに対応したことで月々の勤怠入力楽すぎてヤバかった(語彙力)</li></ul></li><li>⭕ ギター練習を 30 分/毎日
+<ul><li>継続危うかったけど、土壇場で <a href="/posts/2022-12-25-bought-ouraring-gen3">Oura Ring を購入した</a>ことで習慣化に成功した</li></ul></li><li>⭕ <a href="https://krymtkts.github.io/">このブログ</a>。毎月の更新リズムを維持する
+<ul><li>毎月どころかリズムを掴んで毎週に発展した</li></ul></li><li>❌ 深酒で怪我をしない
+<ul><li>未達。夏に怪我をした</li></ul></li><li>⭕ 知らない言語を学ぶ F#
+<ul><li>学んだ結果で <a href="https://github.com/krymtkts/pocof">pocof</a> を F# で書いてるので当初の目標は ⭕</li><li>踏み込んだ言語機能を使えてないのとスタイルもまだ身についていないので、今後も継続する</li></ul></li></ul><p>以下、当初の予定になかったことのダイジェストだ。</p><ul><li>転職</li><li>週 1 ブログ</li><li>GitHub の草ストリーク 100 突破</li></ul><p>大きな流れは去年から変わらなかったが、停滞しかけた良い流れを<a href="/posts/2022-04-09-jobchange-2022">今年の 4 月に転職した</a>ことで加速できたかなと感じている。今年の転職はほんと運が良かった。
+GitHub の個人垢を使っていい会社なのもあり、活動を可視化しやすくなった。</p><p>基本的に、自分の目標のうち殆どは自身に制御権があるものだ。
+自身の MP (気力とも) を如何に保ち適切なタイミングで呪文を唱えるか、にかかってる。
+そういう目標は、自身のコンディションを維持さえできればどうにでもなるもんやなあと改めて理解した。
+週 1 ブログ書いたり、毎日コミットしたり、多少 OSS へのコントリしたり、気持ちの余裕があればできるもんやなあというのが今年の大きな気付きだ。</p><p>そりゃ現職でも大変やな～というような仕事は多いが、基本的に自分でどうにかする仕事しかなく、そこが精神衛生上良く働いている気がする。
+新しい何かを決める・調整する・理解するとかは、メンバに頼れるけど頼ったとてそのメンバの仕事が止まるので、結局自分がやるしか無い。腹をくくり自分が責任を持ってやるだけ。
+それによって自分が誰かのボトルネックになることやその逆もないので、とてもシンプルだ。弊害として自分以上のパフォーマンスは望めないけど。</p><p>また現職は、振る舞いや能力のミスマッチに起因してチームメンバが飛ばされるとか「You're fired!」みたいな事故も起こってない。これとても重要。
+去年・一昨年は年に 1 度はそういうのがあったから、それ相応に MP を消費していたのだろう。今年は MP 足りず ≒ 意欲が湧かず何も出来ないようなことが起こらなかった。</p><p>自身に制御権がある目標はこの通りだが、逆に自分だけで決められないこと、例えば家庭に関する目標なんかをうまく進められなかった。
+ここ数年はタイミング的には相当転居やら移住し易いはずやけど、利便性、子供の養育環境、地理的な人間関係とか諸々、この地に縛り付けるものがあり、なかなか進められない。
+座して待ったとしても、そのうち決断の時は必ず来る。それまでにはなんか方向性だけでも出したいなあ。</p><p>あと酒との付き合いは、コントロールが難しく失敗してる。飲酒で怪我をするの、今年は軽いものだったけどやっぱり怪我したので、いい歳だし楽し過ぎて暴走しないようより自制心を持とう。
+健康面の訴求から平日の飲酒は控えめ或いはナシにできてるので、この流れで来年は怪我ゼロにつなげたい。</p><p>今年 Oura Ring を購入したこともあって、自身の身体的なコンディションを可視化するのが容易になった。先述の深酒が睡眠のスコアの低さで可視化されて注意しやすくなったり、また運動やギター練習がアクティビティとして見えるので実績回収的なノリで生活に取り入れやすくなる。意図せず好影響を得た形だ。来年はもしやクソチョロなのでは(油断は禁物)。</p><p>運動というか身体的なメンテナンスに関しては、齢四十を迎えるにあたりすごく重要になってきた。健康診断結果を見てガタが来てる部分を見つけたり「今年の冬は肌の乾燥がひどいな～いや歳やこれ」みたいな日々の気付きから、経年劣化を感じている。
+日本の状況を鑑みるに今後の人生は甘くなくて、人生 100 年その終わりまで働き続けるのは目に見えてるからこそ、自身のハードウェアのメンテナンスも欠かさないのが重要なんやと今更気付いた。まだサイバーパンク的世界観でインスタントにパーツ交換出来ないので、壊れないように注意しないと(はよきて)。
+これまでソフトウェア ≒ 精神の方は相応にメンテしてきてるから、その経験をハードウェア ≒ 肉体の方にも応用できると良いが。</p><h3 id="まとめ">まとめ</h3><p>来年いよいよ本物の不惑なので、自己が揺らがないように集中していこう。
+毎年なんか新しいチャレンジをするのがプログラマの嗜みだと思うけど、ネタをまだ考えついてないので、なんかひねり出したい。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/cryogen">cryogen</a>
-    
-    <a href="/tags/clojure">clojure</a>
+    <a href="/tags/retrospective">retrospective</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-01-14-ortho-linear-keyboard-planck">&laquo; 2019-01-14 Ortho-Linear Keyboard &quot;Planck&quot;</a>
         
-        
-        <a class="right" href="/posts/2019-01-08-first-post">2019-01-08 ブログを始めた &raquo;</a>
+        <a class="right" href="/posts/2022-12-25-bought-ouraring-gen3">2022-12-25 Oura Ring Gen3 を買った &raquo;</a>
         
     </div>
 
