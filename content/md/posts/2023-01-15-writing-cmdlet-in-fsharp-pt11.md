@@ -1,4 +1,4 @@
-{:title "F#でコマンドレットを書いてる pt.10"
+{:title "F#でコマンドレットを書いてる pt.11"
 :layout :post
 :tags ["fsharp","powershell"]}
 
