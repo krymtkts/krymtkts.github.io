@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-01-15-writing-cmdlet-in-fsharp-pt11">F#でコマンドレットを書いてる pt.10</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-01-08-planning">2023</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2022-12-31-retrospective2022">振り返り 2022 年</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-12-25-bought-ouraring-gen3">Oura Ring Gen3 を買った</a></li>
                         
                         
 
@@ -194,31 +194,75 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-01-08</div>
+        <div class="col-lg-6">2023-01-15</div>
         
     </div>
-    <h2>2023</h2>
+    <h2>F#でコマンドレットを書いてる pt.10</h2>
 </div>
 <div>
     
-    <p>例年通り目標をたてる。</p><h3 id="テーマ-不惑">テーマ: 不惑</h3><p>2023 年で遂に本物の四十不惑になる。
-惑わずなので基本的に今までの方向性を維持したまま更に歩みを進めるのみ。</p><p>ただの予想だが、当面は腰を落ち着けて物事に取り組める年となるかな？という感じがしている。 2022 年までに続けていたことを深化させられるタイミングかなと。
-例えば 2022 年から書き始めた F# はまだまだ書いてきた量が少なく手に馴染んでないので、もう少し書く量を増すとか。</p><p>あと人間四十ともなれば経年劣化がそこそこに出てきてるので、それのメンテナンスを本格に開始することに決めた。</p><h3 id="2023-年の目標">2023 年の目標</h3><p>基本は継続するテーマ。
-新しいテーマも去年中に思いついたもので、既に継続中だったりする。</p><ul><li>転居先を決める
-<ul><li>実家のアレコレがあったりしてやっぱ難しいかもなーというのもあるが、ちょっとずつ条件からでも調整する。もう数年もすれば固定資産の整理とか出てきてこれまた手が空かなそうやが</li><li>薪ストーブの生活に憧れてるんやけど薪の調達ルート開拓とか考えると結構重いのが悩み。人脈と軽トラは最低限必須ぽいからなあ...都市圏の場合は廃材をもらったり、田舎であれば森林組合に行く等</li></ul></li><li>積読消化 2022 年 の実績 0.5 冊/月を超える
-<ul><li>2022 年末から(仕事上必要になった)全文検索の本を読んでるので、それを勢いづけに習慣化する</li></ul></li><li>自作ツールの開発
-<ul><li>メインは <a href="https://github.com/krymtkts/pocof">pocof</a> 。 <code>prerelease</code> を外す</li><li>他ネタは余力があればやる。<a href="https://cloud.ouraring.com/v2/docs#section/Authentication">Oura API (2.0)</a> で自分ダッシュボードを作るとか</li></ul></li><li>F# を学ぶ
-<ul><li>pocof も F# だが他にも書く。ブログ乗せ替えたいなあという気持ちがふつふつとあるので <a href="https://fable.io/">Fable</a> 使えないかなーとか検討する</li></ul></li><li>GitHub のストリークを継続する
-<ul><li>commit, issue 何でもいいので継続する。今のまま継続できれば 2023 年中に 180 日、 365 日のストリークを迎えることになるが、その先に何があるか知らん</li></ul></li><li>毎週ブログを書く
-<ul><li>2022 は出来たので 2023 も無理やりにでも書く</li></ul></li><li>ギター練習を 30 分/毎日</li><li>深酒で怪我をしない
-<ul><li>年々減らせてるが、 2022 は 1 回怪我した。今年 2023 は 0 にする</li></ul></li><li>自分メンテナンス開始
-<ul><li>人生 100 年死ぬまで労働時代なので、メンテナンスする。まずは肌。ここ数年で顔にシミが目立ちだしたが、あるだけでめちゃくちゃ年老いて見える。これらを物理的に除去するのを考えている。金がかかるが身体の乗り捨てはまだできそうにないし、やむなし</li><li>神経を抜いた歯もどうにかしておきたいが、どうにかできるのかこれ...</li></ul></li></ul>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>年末年始思ったほど時間取れなかったが、 pocof のプロパティ指定検索はちょっとずつ進んでいる。</p><p><a href="/posts/2022-12-18-writing-cmdlet-in-fsharp-pt10">前</a>は入力できるプロパティの候補が表示されるだけだったが、最近ようやく入力できるプロパティの絞り込みと、プロパティを指定した検索ができるようになった。</p><p>プロパティ名は case insensitive に指定できる。まだ複数条件入れたときが buggy でうまく動いてないけど、あとプロパティ入力候補の表示非表示と Ctrl+space での補完ができたら、
+ほしいものが出揃うかなーというところだ。</p><p>F# でオブジェクトのプロパティを動的に取得する方法としては、リフレクションを利用した。
+これが妥当な実装なのかわからないが、現時点では一番シンプルだ。
+オブジェクトに <code>GetType().GetProperty()</code> してプロパティを特定、 <code>PropertyInfo</code> を介してクエリで指定されたプロパティ名の文字列を使ってプロパティの値を取得している。</p><p>元々 F# のシンボルには動的にプロパティを参照する <code>?</code> が書いてある<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>けど実装は提供されてない。
+そういうモジュール(<a href="https://github.com/fsprojects/FSharp.Interop.Dynamic">fsprojects/FSharp.Interop.Dynamic</a>)はある。
+けど、依存を増やしたくないのと、利用する範囲のコードはすぐ書けるレベルなので自分で実装することにした(使えるか検証してないのもあるし)。</p><p>簡単なはずなんだが、結構自身の F# 力不足に起因して困る場面が多かったので、その内容を記す。</p><hr /><p>結論からいうと、自前の <code>?</code> 演算子を定義しようとしたところ、 <code>?</code> 演算子を中置演算子として使ったときに想定外の挙動があったので、結局 <code>/?</code> みたいな謎の組み合わせの演算子を自作した。</p><p>こういうコードがあるとする。</p><pre><code class="fsharp">let inline (?) (x: 'a) (prop: string) =
+    try
+        let propInfo = x.GetType().GetProperty(prop)
+        Some(propInfo.GetValue(x, null) :?&gt; 'b)
+    with
+    | _ -&gt; None
+</code></pre><p>先述のコードを利用した場合、プロパティ名の変数を中置演算子と共に利用すると、変数の名前が引き渡されたパラメータとして認識されてしまい、変数の値が展開されなかった。
+通常の関数として呼び出すとこのようなことはないのだけど...
+なんか言語仕様を読み落としてる気がする。もうちょっと真面目に追い込んでみる必要があるか。以下は REPL(<code>dotnet fsi</code>) で試してみた結果。</p><pre><code class="fsharp">&gt; let str = "hello";;
+&gt; let p = "Length";;
+
+&gt; let a: int option = str ? p;; // プロパティ p を探しに逝って無いから None
+val a: int option = None
+
+&gt; let a: int option = (?) str p;; // ちゃんと変数 p の値である Length の値を取れる
+val a: int option = Some 5
+</code></pre><p>結局これの解消ができないので <code>?</code> を諦めて <code>/?</code> としたのだが、その前に <code>!?</code> とか使ってみても駄目だったので妥協してこうなった。
+この場合はシンボルの組み合わせに何らかの制限があるようだが、確証を持てるドキュメントが見つけられず。</p><pre><code class="fsharp">&gt; let inline (!?) (x: 'a) (prop: string) =
+-     try
+-         let propInfo = x.GetType().GetProperty(prop)
+-         Some(propInfo.GetValue(x, null) :?&gt; 'b)
+-     with
+-     | _ -&gt; None
+- ;;
+val inline (!?) : x: 'a -&gt; prop: string -&gt; 'b option
+
+&gt; let a: int option = (!?) str p;;
+val a: int option = Some 5
+
+&gt; let a: int option = str !? p;; // なんでエラーになるのかわかってない
+
+  let a: int option = str !? p;;
+  --------------------^^^
+
+stdin(51,21): error FS0003: This value is not a function and cannot be applied.
+
+&gt; let inline (/?) (x: 'a) (prop: string) =
+-     try
+-         let propInfo = x.GetType().GetProperty(prop)
+-         Some(propInfo.GetValue(x, null) :?&gt; 'b)
+-     with
+-     | _ -&gt; None
+-
+- ;;
+val inline (/?) : x: 'a -&gt; prop: string -&gt; 'b option
+
+&gt; let a: int option = str /? p;; // こっちはいける
+val a: int option = Some 5
+</code></pre><p>この辺を理解していってもうちょい pocof の開発をスムースに行いたいところやなー。</p><div class="footnotes"><hr /><ol><li id="fn-1"><p><a href="https://learn.microsoft.com/ja-jp/dotnet/fsharp/language-reference/symbol-and-operator-reference/#dynamic-lookup-operators">シンボルと演算子のリファレンス - F# | Microsoft Learn</a></p><a href="#fnref-1" class="footnote-backref">↩</a></li></ol></div>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/goal">goal</a>
+    <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -228,7 +272,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2022-12-31-retrospective2022">2022-12-31 振り返り 2022 年 &raquo;</a>
+        <a class="right" href="/posts/2023-01-08-planning">2023-01-08 2023 &raquo;</a>
         
     </div>
 </div>

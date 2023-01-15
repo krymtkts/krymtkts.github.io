@@ -1,4 +1,57 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 08 Jan 2023 15:31:30 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-01-08-planning</guid><link>https://krymtkts.github.io/posts/2023-01-08-planning</link><title>2023</title><description>&lt;p&gt;例年通り目標をたてる。&lt;/p&gt;&lt;h3 id="テーマ-不惑"&gt;テーマ: 不惑&lt;/h3&gt;&lt;p&gt;2023 年で遂に本物の四十不惑になる。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 15 Jan 2023 20:40:31 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-01-15-writing-cmdlet-in-fsharp-pt11</guid><link>https://krymtkts.github.io/posts/2023-01-15-writing-cmdlet-in-fsharp-pt11</link><title>F#でコマンドレットを書いてる pt.10</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;年末年始思ったほど時間取れなかったが、 pocof のプロパティ指定検索はちょっとずつ進んでいる。&lt;/p&gt;&lt;p&gt;&lt;a href="/posts/2022-12-18-writing-cmdlet-in-fsharp-pt10"&gt;前&lt;/a&gt;は入力できるプロパティの候補が表示されるだけだったが、最近ようやく入力できるプロパティの絞り込みと、プロパティを指定した検索ができるようになった。&lt;/p&gt;&lt;p&gt;プロパティ名は case insensitive に指定できる。まだ複数条件入れたときが buggy でうまく動いてないけど、あとプロパティ入力候補の表示非表示と Ctrl+space での補完ができたら、
+ほしいものが出揃うかなーというところだ。&lt;/p&gt;&lt;p&gt;F# でオブジェクトのプロパティを動的に取得する方法としては、リフレクションを利用した。
+これが妥当な実装なのかわからないが、現時点では一番シンプルだ。
+オブジェクトに &lt;code&gt;GetType().GetProperty()&lt;/code&gt; してプロパティを特定、 &lt;code&gt;PropertyInfo&lt;/code&gt; を介してクエリで指定されたプロパティ名の文字列を使ってプロパティの値を取得している。&lt;/p&gt;&lt;p&gt;元々 F# のシンボルには動的にプロパティを参照する &lt;code&gt;?&lt;/code&gt; が書いてある&lt;sup id="fnref-1"&gt;&lt;a class="footnote-ref" href="#fn-1"&gt;1&lt;/a&gt;&lt;/sup&gt;けど実装は提供されてない。
+そういうモジュール(&lt;a href="https://github.com/fsprojects/FSharp.Interop.Dynamic"&gt;fsprojects/FSharp.Interop.Dynamic&lt;/a&gt;)はある。
+けど、依存を増やしたくないのと、利用する範囲のコードはすぐ書けるレベルなので自分で実装することにした(使えるか検証してないのもあるし)。&lt;/p&gt;&lt;p&gt;簡単なはずなんだが、結構自身の F# 力不足に起因して困る場面が多かったので、その内容を記す。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;結論からいうと、自前の &lt;code&gt;?&lt;/code&gt; 演算子を定義しようとしたところ、 &lt;code&gt;?&lt;/code&gt; 演算子を中置演算子として使ったときに想定外の挙動があったので、結局 &lt;code&gt;/?&lt;/code&gt; みたいな謎の組み合わせの演算子を自作した。&lt;/p&gt;&lt;p&gt;こういうコードがあるとする。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;let inline (?) (x: 'a) (prop: string) =
+    try
+        let propInfo = x.GetType().GetProperty(prop)
+        Some(propInfo.GetValue(x, null) :?&amp;gt; 'b)
+    with
+    | _ -&amp;gt; None
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;先述のコードを利用した場合、プロパティ名の変数を中置演算子と共に利用すると、変数の名前が引き渡されたパラメータとして認識されてしまい、変数の値が展開されなかった。
+通常の関数として呼び出すとこのようなことはないのだけど...
+なんか言語仕様を読み落としてる気がする。もうちょっと真面目に追い込んでみる必要があるか。以下は REPL(&lt;code&gt;dotnet fsi&lt;/code&gt;) で試してみた結果。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;&amp;gt; let str = "hello";;
+&amp;gt; let p = "Length";;
+
+&amp;gt; let a: int option = str ? p;; // プロパティ p を探しに逝って無いから None
+val a: int option = None
+
+&amp;gt; let a: int option = (?) str p;; // ちゃんと変数 p の値である Length の値を取れる
+val a: int option = Some 5
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;結局これの解消ができないので &lt;code&gt;?&lt;/code&gt; を諦めて &lt;code&gt;/?&lt;/code&gt; としたのだが、その前に &lt;code&gt;!?&lt;/code&gt; とか使ってみても駄目だったので妥協してこうなった。
+この場合はシンボルの組み合わせに何らかの制限があるようだが、確証を持てるドキュメントが見つけられず。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;&amp;gt; let inline (!?) (x: 'a) (prop: string) =
+-     try
+-         let propInfo = x.GetType().GetProperty(prop)
+-         Some(propInfo.GetValue(x, null) :?&amp;gt; 'b)
+-     with
+-     | _ -&amp;gt; None
+- ;;
+val inline (!?) : x: 'a -&amp;gt; prop: string -&amp;gt; 'b option
+
+&amp;gt; let a: int option = (!?) str p;;
+val a: int option = Some 5
+
+&amp;gt; let a: int option = str !? p;; // なんでエラーになるのかわかってない
+
+  let a: int option = str !? p;;
+  --------------------^^^
+
+stdin(51,21): error FS0003: This value is not a function and cannot be applied.
+
+&amp;gt; let inline (/?) (x: 'a) (prop: string) =
+-     try
+-         let propInfo = x.GetType().GetProperty(prop)
+-         Some(propInfo.GetValue(x, null) :?&amp;gt; 'b)
+-     with
+-     | _ -&amp;gt; None
+-
+- ;;
+val inline (/?) : x: 'a -&amp;gt; prop: string -&amp;gt; 'b option
+
+&amp;gt; let a: int option = str /? p;; // こっちはいける
+val a: int option = Some 5
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;この辺を理解していってもうちょい pocof の開発をスムースに行いたいところやなー。&lt;/p&gt;&lt;div class="footnotes"&gt;&lt;hr /&gt;&lt;ol&gt;&lt;li id="fn-1"&gt;&lt;p&gt;&lt;a href="https://learn.microsoft.com/ja-jp/dotnet/fsharp/language-reference/symbol-and-operator-reference/#dynamic-lookup-operators"&gt;シンボルと演算子のリファレンス - F# | Microsoft Learn&lt;/a&gt;&lt;/p&gt;&lt;a href="#fnref-1" class="footnote-backref"&gt;↩&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;</description><pubDate>Sun, 15 Jan 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-01-08-planning</guid><link>https://krymtkts.github.io/posts/2023-01-08-planning</link><title>2023</title><description>&lt;p&gt;例年通り目標をたてる。&lt;/p&gt;&lt;h3 id="テーマ-不惑"&gt;テーマ: 不惑&lt;/h3&gt;&lt;p&gt;2023 年で遂に本物の四十不惑になる。
 惑わずなので基本的に今までの方向性を維持したまま更に歩みを進めるのみ。&lt;/p&gt;&lt;p&gt;ただの予想だが、当面は腰を落ち着けて物事に取り組める年となるかな？という感じがしている。 2022 年までに続けていたことを深化させられるタイミングかなと。
 例えば 2022 年から書き始めた F# はまだまだ書いてきた量が少なく手に馴染んでないので、もう少し書く量を増すとか。&lt;/p&gt;&lt;p&gt;あと人間四十ともなれば経年劣化がそこそこに出てきてるので、それのメンテナンスを本格に開始することに決めた。&lt;/p&gt;&lt;h3 id="2023-年の目標"&gt;2023 年の目標&lt;/h3&gt;&lt;p&gt;基本は継続するテーマ。
 新しいテーマも去年中に思いついたもので、既に継続中だったりする。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;転居先を決める

@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: 師走に向けて PowerShell モジュールの大掃除</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.10</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-01-15-writing-cmdlet-in-fsharp-pt11">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: 師走に向けて PowerShell モジュールの大掃除" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-11-12-clean-up-pwsh-modules" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.10" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-01-15-writing-cmdlet-in-fsharp-pt11" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -194,49 +194,67 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-11-12</div>
+        <div class="col-lg-6">2023-01-15</div>
         
     </div>
-    <h2>師走に向けて PowerShell モジュールの大掃除</h2>
+    <h2>F#でコマンドレットを書いてる pt.10</h2>
 </div>
 <div>
     
-    <p>PowerShell あるあるなのだけど、過去のモジュールが溜まってしまって自分で掃除しないといけない。
-開発中でもない限りモジュールを切り戻することもないので、一気に消す。これが PowerFighter(勝手に作った PowerShell 使いの呼び名)の嗜み。</p><p>ゆーてもこしらえてあるスクリプトを流すだけ。以下の通り。個人的に <code>-Scope AllUsers</code> でモジュールを入れてるからそれに合わせた形となっている。
-簡単のため改行を入れている。</p><pre><code class="powershell"># $PSGetPath.AllUsersModules をロードするために一度流す。
-Get-InstalledModule
-# Uninstall 対象の取り方。 AllUser 向けに入れてる場合。
-Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
-| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
-| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
-| ForEach-Object { [pscustomobject]@{
-        Name = $_.Name;
-        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
-    } }
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>年末年始思ったほど時間取れなかったが、 pocof のプロパティ指定検索はちょっとずつ進んでいる。</p><p><a href="/posts/2022-12-18-writing-cmdlet-in-fsharp-pt10">前</a>は入力できるプロパティの候補が表示されるだけだったが、最近ようやく入力できるプロパティの絞り込みと、プロパティを指定した検索ができるようになった。</p><p>プロパティ名は case insensitive に指定できる。まだ複数条件入れたときが buggy でうまく動いてないけど、あとプロパティ入力候補の表示非表示と Ctrl+space での補完ができたら、
+ほしいものが出揃うかなーというところだ。</p><p>F# でオブジェクトのプロパティを動的に取得する方法としては、リフレクションを利用した。
+これが妥当な実装なのかわからないが、現時点では一番シンプルだ。
+オブジェクトに <code>GetType().GetProperty()</code> してプロパティを特定、 <code>PropertyInfo</code> を介してクエリで指定されたプロパティ名の文字列を使ってプロパティの値を取得している。</p><p>元々 F# のシンボルには動的にプロパティを参照する <code>?</code> が書いてある<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>けど実装は提供されてない。
+そういうモジュール(<a href="https://github.com/fsprojects/FSharp.Interop.Dynamic">fsprojects/FSharp.Interop.Dynamic</a>)はある。
+けど、依存を増やしたくないのと、利用する範囲のコードはすぐ書けるレベルなので自分で実装することにした(使えるか検証してないのもあるし)。</p><p>簡単なはずなんだが、結構自身の F# 力不足に起因して困る場面が多かったので、その内容を記す。</p><hr /><p>結論からいうと、自前の <code>?</code> 演算子を定義しようとしたところ、 <code>?</code> 演算子を中置演算子として使ったときに想定外の挙動があったので、結局 <code>/?</code> みたいな謎の組み合わせの演算子を自作した。</p><p>こういうコードがあるとする。</p><pre><code class="fsharp">let inline (?) (x: 'a) (prop: string) =
+    try
+        let propInfo = x.GetType().GetProperty(prop)
+        Some(propInfo.GetValue(x, null) :?&gt; 'b)
+    with
+    | _ -&gt; None
+</code></pre><p>先述のコードを利用した場合、プロパティ名の変数を中置演算子と共に利用すると、変数の名前が引き渡されたパラメータとして認識されてしまい、変数の値が展開されなかった。
+通常の関数として呼び出すとこのようなことはないのだけど...
+なんか言語仕様を読み落としてる気がする。もうちょっと真面目に追い込んでみる必要があるか。以下は REPL(<code>dotnet fsi</code>) で試してみた結果。</p><pre><code class="fsharp">&gt; let str = "hello";;
+&gt; let p = "Length";;
 
-# 心配なときは以下の出力の最新バージョンが Hit してないことを目検する。
-# Get-Module -ListAvailable | ? -Property Path -like "$($PSGetPath.AllUsersModules)*"
+&gt; let a: int option = str ? p;; // プロパティ p を探しに逝って無いから None
+val a: int option = None
 
-# エグゼキューション。
-# はじめは -WhatIf アリで流し、処理する時心配なら Confirm で一個ずつ確認する。
-Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
-| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
-| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
-| ForEach-Object { [pscustomobject]@{
-        Name = $_.Name
-        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
-    } } | Uninstall-Module -AllowPrerelease
-</code></pre><p>prerelease なモジュールの削除も一緒に含めるため、ごちゃごちゃしている。
-<code>-Version</code> の指定を楽にする場合は <code>Get-InstalledModule</code> を使ったらいいけど、モジュールごとに実行すると遅いし...と思って使ってない。</p><p>これで消しきれるかなと思ったけど、依存関係を忘れてたことでいくつかエラーをもらった。 2 周したらきれいになるかなと思いきや、以下のモジュールに関しては消しきれなかった。</p><ul><li><code>Configuration</code></li><li><code>Metadata</code></li><li><code>PackageManagement</code></li><li><code>PowerShellGet</code></li></ul><p>これらは <code>AWS.Tools.Installer</code> と <code>PowerShellGet</code> が依存しており消せないとのこと。
-先述のスクリプトでは最新版は確保するようになってあるし、壊れても入れ直したらいから、古いものに関してはやや強引に <code>-Force</code> を付与して消し去る。</p><pre><code class="powershell">Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllUsersModules)*" `
-| Group-Object -Property Name | Where-Object -Property Count -GT 1 `
-| ForEach-Object { $_.Group | Sort-Object -Descending -Property Version | Select-Object -Skip 1 } `
-| ForEach-Object { [pscustomobject]@{
-        Name = $_.Name
-        RequiredVersion = "$($_.Version)$(if ($_.PrivateData.Values.PreRelease) {'-'+$_.PrivateData.Values.PreRelease} else {''})"
-    } } | Uninstall-Module -AllowPrerelease -Force
-</code></pre><p>この如何にも PowerFighter な近距離パワー型アプローチ、まさに PowerShell って感じ(いいたいだけ)。
-穢れたモジュールフォルダを綺麗にできた。</p>
+&gt; let a: int option = (?) str p;; // ちゃんと変数 p の値である Length の値を取れる
+val a: int option = Some 5
+</code></pre><p>結局これの解消ができないので <code>?</code> を諦めて <code>/?</code> としたのだが、その前に <code>!?</code> とか使ってみても駄目だったので妥協してこうなった。
+この場合はシンボルの組み合わせに何らかの制限があるようだが、確証を持てるドキュメントが見つけられず。</p><pre><code class="fsharp">&gt; let inline (!?) (x: 'a) (prop: string) =
+-     try
+-         let propInfo = x.GetType().GetProperty(prop)
+-         Some(propInfo.GetValue(x, null) :?&gt; 'b)
+-     with
+-     | _ -&gt; None
+- ;;
+val inline (!?) : x: 'a -&gt; prop: string -&gt; 'b option
+
+&gt; let a: int option = (!?) str p;;
+val a: int option = Some 5
+
+&gt; let a: int option = str !? p;; // なんでエラーになるのかわかってない
+
+  let a: int option = str !? p;;
+  --------------------^^^
+
+stdin(51,21): error FS0003: This value is not a function and cannot be applied.
+
+&gt; let inline (/?) (x: 'a) (prop: string) =
+-     try
+-         let propInfo = x.GetType().GetProperty(prop)
+-         Some(propInfo.GetValue(x, null) :?&gt; 'b)
+-     with
+-     | _ -&gt; None
+-
+- ;;
+val inline (/?) : x: 'a -&gt; prop: string -&gt; 'b option
+
+&gt; let a: int option = str /? p;; // こっちはいける
+val a: int option = Some 5
+</code></pre><p>この辺を理解していってもうちょい pocof の開発をスムースに行いたいところやなー。</p><div class="footnotes"><hr /><ol><li id="fn-1"><p><a href="https://learn.microsoft.com/ja-jp/dotnet/fsharp/language-reference/symbol-and-operator-reference/#dynamic-lookup-operators">シンボルと演算子のリファレンス - F# | Microsoft Learn</a></p><a href="#fnref-1" class="footnote-backref">↩</a></li></ol></div>
 </div>
 
 <div id="post-tags">
@@ -244,15 +262,15 @@ Get-Module -ListAvailable | Where-Object -Property Path -Like "$($PSGetPath.AllU
     
     <a href="/tags/powershell">powershell</a>
     
+    <a href="/tags/fsharp">fsharp</a>
+    
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2022-11-20-writing-cmdlet-in-fsharp-pt7">&laquo; 2022-11-20 F#でコマンドレットを書いてる pt.7</a>
         
-        
-        <a class="right" href="/posts/2022-11-06-publish-psjobcanattendance">2022-11-06 PSJobCanAttendance の公開 &raquo;</a>
+        <a class="right" href="/posts/2023-01-08-planning">2023-01-08 2023 &raquo;</a>
         
     </div>
 
