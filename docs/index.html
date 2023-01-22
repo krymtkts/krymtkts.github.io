@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed">Migu の CVS repo を Git repo に変換したい(そして失敗)</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-01-15-writing-cmdlet-in-fsharp-pt11">F#でコマンドレットを書いてる pt.11</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-01-08-planning">2023</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2022-12-31-retrospective2022">振り返り 2022 年</a></li>
                         
                         
 
@@ -194,75 +194,38 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-01-15</div>
+        <div class="col-lg-6">2023-01-22</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.11</h2>
+    <h2>Migu の CVS repo を Git repo に変換したい(そして失敗)</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>年末年始思ったほど時間取れなかったが、 pocof のプロパティ指定検索はちょっとずつ進んでいる。</p><p><a href="/posts/2022-12-18-writing-cmdlet-in-fsharp-pt10">前</a>は入力できるプロパティの候補が表示されるだけだったが、最近ようやく入力できるプロパティの絞り込みと、プロパティを指定した検索ができるようになった。</p><p>プロパティ名は case insensitive に指定できる。まだ複数条件入れたときが buggy でうまく動いてないけど、あとプロパティ入力候補の表示非表示と Ctrl+space での補完ができたら、
-ほしいものが出揃うかなーというところだ。</p><p>F# でオブジェクトのプロパティを動的に取得する方法としては、リフレクションを利用した。
-これが妥当な実装なのかわからないが、現時点では一番シンプルだ。
-オブジェクトに <code>GetType().GetProperty()</code> してプロパティを特定、 <code>PropertyInfo</code> を介してクエリで指定されたプロパティ名の文字列を使ってプロパティの値を取得している。</p><p>元々 F# のシンボルには動的にプロパティを参照する <code>?</code> が書いてある<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>けど実装は提供されてない。
-そういうモジュール(<a href="https://github.com/fsprojects/FSharp.Interop.Dynamic">fsprojects/FSharp.Interop.Dynamic</a>)はある。
-けど、依存を増やしたくないのと、利用する範囲のコードはすぐ書けるレベルなので自分で実装することにした(使えるか検証してないのもあるし)。</p><p>簡単なはずなんだが、結構自身の F# 力不足に起因して困る場面が多かったので、その内容を記す。</p><hr /><p>結論からいうと、自前の <code>?</code> 演算子を定義しようとしたところ、 <code>?</code> 演算子を中置演算子として使ったときに想定外の挙動があったので、結局 <code>/?</code> みたいな謎の組み合わせの演算子を自作した。</p><p>こういうコードがあるとする。</p><pre><code class="fsharp">let inline (?) (x: 'a) (prop: string) =
-    try
-        let propInfo = x.GetType().GetProperty(prop)
-        Some(propInfo.GetValue(x, null) :?&gt; 'b)
-    with
-    | _ -&gt; None
-</code></pre><p>先述のコードを利用した場合、プロパティ名の変数を中置演算子と共に利用すると、変数の名前が引き渡されたパラメータとして認識されてしまい、変数の値が展開されなかった。
-通常の関数として呼び出すとこのようなことはないのだけど...
-なんか言語仕様を読み落としてる気がする。もうちょっと真面目に追い込んでみる必要があるか。以下は REPL(<code>dotnet fsi</code>) で試してみた結果。</p><pre><code class="fsharp">&gt; let str = "hello";;
-&gt; let p = "Length";;
-
-&gt; let a: int option = str ? p;; // プロパティ p を探しに逝って無いから None
-val a: int option = None
-
-&gt; let a: int option = (?) str p;; // ちゃんと変数 p の値である Length の値を取れる
-val a: int option = Some 5
-</code></pre><p>結局これの解消ができないので <code>?</code> を諦めて <code>/?</code> としたのだが、その前に <code>!?</code> とか使ってみても駄目だったので妥協してこうなった。
-この場合はシンボルの組み合わせに何らかの制限があるようだが、確証を持てるドキュメントが見つけられず。</p><pre><code class="fsharp">&gt; let inline (!?) (x: 'a) (prop: string) =
--     try
--         let propInfo = x.GetType().GetProperty(prop)
--         Some(propInfo.GetValue(x, null) :?&gt; 'b)
--     with
--     | _ -&gt; None
-- ;;
-val inline (!?) : x: 'a -&gt; prop: string -&gt; 'b option
-
-&gt; let a: int option = (!?) str p;;
-val a: int option = Some 5
-
-&gt; let a: int option = str !? p;; // なんでエラーになるのかわかってない
-
-  let a: int option = str !? p;;
-  --------------------^^^
-
-stdin(51,21): error FS0003: This value is not a function and cannot be applied.
-
-&gt; let inline (/?) (x: 'a) (prop: string) =
--     try
--         let propInfo = x.GetType().GetProperty(prop)
--         Some(propInfo.GetValue(x, null) :?&gt; 'b)
--     with
--     | _ -&gt; None
--
-- ;;
-val inline (/?) : x: 'a -&gt; prop: string -&gt; 'b option
-
-&gt; let a: int option = str /? p;; // こっちはいける
-val a: int option = Some 5
-</code></pre><p>この辺を理解していってもうちょい pocof の開発をスムースに行いたいところやなー。</p><div class="footnotes"><hr /><ol><li id="fn-1"><p><a href="https://learn.microsoft.com/ja-jp/dotnet/fsharp/language-reference/symbol-and-operator-reference/#dynamic-lookup-operators">シンボルと演算子のリファレンス - F# | Microsoft Learn</a></p><a href="#fnref-1" class="footnote-backref">↩</a></li></ol></div>
+    <p>Migu フォントが好きでずっと使っている。
+それこそ <a href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font">Migu で PowerLine を使うためにパッチスクリプトを改修する</a>くらいには気に入っている。</p><p><a href="https://mix-mplus-ipa.osdn.jp/migu/">Migu フォント : M+と IPA の合成フォント</a></p><p>今後も使い続けるにあたって、この度 Migu のグリフやコードを読んでみたいと思ったのだけど、 Migu は OSDN の CVS で管理されているので、なかなか読み辛い。
+自分が VCS を使い始めたのは SVN からだったりするので、 CVS わからない事が多い。
+なのでこの度 Git の repo に変換しようと考えている。</p><p>方法を調べているが、もう時代的に cvs → git の変換なんてあまり行われてないようだ。
+情報を調べてみても流石に最近のものはなく、いまんところ 2020 頃の記事が参考になるか。</p><p><a href="https://alpha3166.github.io/blog/20200523.html">CVS リポジトリを Git リポジトリに変換する | アルファのブログ</a></p><p>ひとまず <a href="https://osdn.net/cvs/view/mix-mplus-ipa/">Index of /mix-mplus-ipa - mixfont-mplus-ipa - OSDN</a> にアクセスし repo の tarball を download してある。</p><p>これに対して、 WSL の Ubuntu 20 で <a href="https://gitlab.com/esr/cvs-fast-export">cvs-fast-export</a> をインストールして <code>cvsconvert</code> かけてみたのだけどエラーになってしまった。</p><pre><code class="shell">$ cvsconvert -pvn mix-mplus-ipa/mixfont-mplus-ipa
+2023-01-22T07:25:17Z: Reading file list...done, 0.000KB in 0 files (0.581sec)
+2023-01-22T07:25:17Z: Analyzing masters with 16 threads...done, 0 revisions (0.002sec)
+2023-01-22T07:25:17Z: Make DAG branch heads...done  (0.000sec)
+2023-01-22T07:25:17Z: Sorting...done        after parsing:      0.583   1456KB
+after branch collation: 0.583   1456KB
+               total:   0.583   1456KB
+0 commits/0.000M text, 0 atoms at 0 commits/sec.
+fatal: stream ends early
+fast-import: dumping crash report to .git/fast_import_crash_50
+cvsconvert: cat mix-mplus-ipa-mixfont-mplus-ipa.git.fi | (cd mix-mplus-ipa-mixfont-mplus-ipa-git &gt;/dev/null; git fast-import --quiet --done &amp;&amp; git checkout) returned 128.
+</code></pre><p>さっぱりわからん。</p><p>他にもツールがあるのでを試してみたいが、 <code>cvs2git</code> が同梱される <a href="https://github.com/mhagger/cvs2svn">cvs2svn</a> は Ubuntu 20 で提供されておらず。
+<a href="https://packages.ubuntu.com/search?keywords=cvs2svn">Ubuntu – Package Search Results -- cvs2svn</a></p><p>また <code>git cvsimport</code> はインストール済みの <code>git</code> とバージョン競合してしまった。</p><p>こうなったら Dockerfile 書いて Ubuntu 18 で <code>cvs2git</code> インストールする方が良いか？
+ちゃっちゃと終えられるかと思ったけど全然そうじゃなかった。
+どうでもいい系のタスクをまた積んでしまったけど、一度手を出したからには最後までやらないと気が済まない。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/fsharp">fsharp</a>
+    <a href="/tags/font">font</a>
     
 </div>
 
@@ -272,7 +235,7 @@ val a: int option = Some 5
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-01-08-planning">2023-01-08 2023 &raquo;</a>
+        <a class="right" href="/posts/2023-01-15-writing-cmdlet-in-fsharp-pt11">2023-01-15 F#でコマンドレットを書いてる pt.11 &raquo;</a>
         
     </div>
 </div>

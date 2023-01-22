@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: AWS Tools for PowerShell のビルド素振り</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-07-30-practice-build-aws-tools-for-powrshell">
+    <title>krymtkts: Migu の CVS repo を Git repo に変換したい(そして失敗)</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: AWS Tools for PowerShell のビルド素振り" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-07-30-practice-build-aws-tools-for-powrshell" />
+    <meta property="og:title" content="krymtkts: Migu の CVS repo を Git repo に変換したい(そして失敗)" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -194,50 +194,46 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-07-30</div>
+        <div class="col-lg-6">2023-01-22</div>
         
     </div>
-    <h2>AWS Tools for PowerShell のビルド素振り</h2>
+    <h2>Migu の CVS repo を Git repo に変換したい(そして失敗)</h2>
 </div>
 <div>
     
-    <p>今年は積極的に？ AWS Tools for PowerShell を使ってることもあって、また Issue 書くことあるかなー、なんなら PR 書いて貢献した方がいいよなと考えるに至り、 <a href="https://github.com/aws/aws-tools-for-powershell">aws/aws-tools-for-powershell</a> のビルドを素振りしてみた。
-残念ながら、 contribution 関連でビルドの方法がレクチュアされてる文書とかなかったので、手探りでやってる。</p><p>まず、サービス毎の膨大なプロジェクトがあるし、試しに単体のプロジェクトをビルドしたかったのだけど、関連付く DLL が無くてビルドできなかった。 <code>Amazon.Runtime</code> とかいうやつ？ この repo 内のどれかのプロジェクトでビルドされるんだろうけど。</p><p><code>buildtools/</code> 配下を見ると、どうも CI が CodeBuild らしい(当然のごとく)。この <code>buildtools/ci.buildspec.yml</code> の中に記載されている全体のビルドで使ってるプロジェクトなら上手くいきそうな雰囲気がしたので、これでフルビルドを試した。</p><pre><code class="powershell">dotnet --version
-# 6.0.302
-dotnet build .\buildtools\build.proj
-# めちゃくちゃ大量のビルドログが出力される...
-</code></pre><p>ところがこのフルビルドしだしたらクッソ重い...ビルドが終わらない。
-わたしの Razer blade stealth 2018 モデルだと CPU 使用率が天井に貼り付いて、過去にない位にヒートアップしてて心配な気持ちにさせてくれた。</p><p>結果、 41 分かかってなんとかビルドに成功した。</p><p>で、出力結果を見たら改行コードが変わってしまったみたいでエグい差分が発生してしまった。
-元コードは全部 <code>LF</code> なのだけど、 Windows でのビルドによって <code>CRLF</code> になってしまったみたい。CodeBuild では .NET Core 3.1 でビルドしてるから .NET の関連ツールを使ってても <code>LF</code> になるんやろが、こちとら Windows 。
-どこで変わったか調査して再発を防ぎたいけど、別の機会にする。</p><p>これで基盤的な DLL は生成されたであろうし、サービス個別のプロジェクトのビルドを試すと、うまくいった。</p><pre><code class="powershell">dotnet build .\modules\AWSPowerShell\Cmdlets\Lambda\AWS.Tools.Lambda.csproj
-# ...中略...
-#
-# Build succeeded.
-#     0 Warning(s)
-#     0 Error(s)
-#
-# Time Elapsed 00:00:01.81
-</code></pre><p>テストは PowerShell で Cmdlet に対して行う Pester のやつがあるのみで、かつこれらの内容を見てると当然のごとく AWS リソースがある前提。なので、多分個人では金がかかってできないやつ。デプロイ用の CFn とかもないし。
-PR のワークフローで対処してんのかなー。</p><p>想定以上に時間がかかったけど、とりあえずなんか修正したいときに手元でビルドするための知識は貯まった。
-フルビルドで改行コードが書き換わってしまう、サービス単体のビルドに必要な最小限の依存関係を理解する、辺りが宿題かな。</p>
+    <p>Migu フォントが好きでずっと使っている。
+それこそ <a href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font">Migu で PowerLine を使うためにパッチスクリプトを改修する</a>くらいには気に入っている。</p><p><a href="https://mix-mplus-ipa.osdn.jp/migu/">Migu フォント : M+と IPA の合成フォント</a></p><p>今後も使い続けるにあたって、この度 Migu のグリフやコードを読んでみたいと思ったのだけど、 Migu は OSDN の CVS で管理されているので、なかなか読み辛い。
+自分が VCS を使い始めたのは SVN からだったりするので、 CVS わからない事が多い。
+なのでこの度 Git の repo に変換しようと考えている。</p><p>方法を調べているが、もう時代的に cvs → git の変換なんてあまり行われてないようだ。
+情報を調べてみても流石に最近のものはなく、いまんところ 2020 頃の記事が参考になるか。</p><p><a href="https://alpha3166.github.io/blog/20200523.html">CVS リポジトリを Git リポジトリに変換する | アルファのブログ</a></p><p>ひとまず <a href="https://osdn.net/cvs/view/mix-mplus-ipa/">Index of /mix-mplus-ipa - mixfont-mplus-ipa - OSDN</a> にアクセスし repo の tarball を download してある。</p><p>これに対して、 WSL の Ubuntu 20 で <a href="https://gitlab.com/esr/cvs-fast-export">cvs-fast-export</a> をインストールして <code>cvsconvert</code> かけてみたのだけどエラーになってしまった。</p><pre><code class="shell">$ cvsconvert -pvn mix-mplus-ipa/mixfont-mplus-ipa
+2023-01-22T07:25:17Z: Reading file list...done, 0.000KB in 0 files (0.581sec)
+2023-01-22T07:25:17Z: Analyzing masters with 16 threads...done, 0 revisions (0.002sec)
+2023-01-22T07:25:17Z: Make DAG branch heads...done  (0.000sec)
+2023-01-22T07:25:17Z: Sorting...done        after parsing:      0.583   1456KB
+after branch collation: 0.583   1456KB
+               total:   0.583   1456KB
+0 commits/0.000M text, 0 atoms at 0 commits/sec.
+fatal: stream ends early
+fast-import: dumping crash report to .git/fast_import_crash_50
+cvsconvert: cat mix-mplus-ipa-mixfont-mplus-ipa.git.fi | (cd mix-mplus-ipa-mixfont-mplus-ipa-git &gt;/dev/null; git fast-import --quiet --done &amp;&amp; git checkout) returned 128.
+</code></pre><p>さっぱりわからん。</p><p>他にもツールがあるのでを試してみたいが、 <code>cvs2git</code> が同梱される <a href="https://github.com/mhagger/cvs2svn">cvs2svn</a> は Ubuntu 20 で提供されておらず。
+<a href="https://packages.ubuntu.com/search?keywords=cvs2svn">Ubuntu – Package Search Results -- cvs2svn</a></p><p>また <code>git cvsimport</code> はインストール済みの <code>git</code> とバージョン競合してしまった。</p><p>こうなったら Dockerfile 書いて Ubuntu 18 で <code>cvs2git</code> インストールする方が良いか？
+ちゃっちゃと終えられるかと思ったけど全然そうじゃなかった。
+どうでもいい系のタスクをまた積んでしまったけど、一度手を出したからには最後までやらないと気が済まない。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
-    
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/font">font</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2022-08-06-usecase-of-get-gzipcontent">&laquo; 2022-08-06 Get-GzipContent のユースケース</a>
         
-        
-        <a class="right" href="/posts/2022-07-23-glue-tagging-cmdlet-not-used-by-anyone-in-the-world">2022-07-23 世界中の誰にも使われていない？ Glue のタグ付け Cmdlet &raquo;</a>
+        <a class="right" href="/posts/2023-01-15-writing-cmdlet-in-fsharp-pt11">2023-01-15 F#でコマンドレットを書いてる pt.11 &raquo;</a>
         
     </div>
 
