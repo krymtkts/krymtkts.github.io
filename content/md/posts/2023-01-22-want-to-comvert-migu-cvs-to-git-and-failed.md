@@ -2,6 +2,14 @@
 :layout :post
 :tags ["font"]}
 
+### 2023-01-29 追記
+
+これ上手くいかないの当然で、サーバにある repo 本体に対してこれを実行しないといけない。
+centralized VCS 久しぶりだったので、仕組みをすっかり忘れていた。
+この日記は間違いの記録となった。
+
+---
+
 Migu フォントが好きでずっと使っている。
 それこそ [Migu で PowerLine を使うためにパッチスクリプトを改修する](/posts/2021-05-30-maybe-completed-refining-migu-nerd-font)くらいには気に入っている。
 

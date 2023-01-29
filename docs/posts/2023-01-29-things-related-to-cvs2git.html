@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: PSJobCanAttendance の公開準備</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-10-30-prepare-to-publish-psjobcanattendance">
+    <title>krymtkts: cvs2git にまつわるアレコレ</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-01-29-things-related-to-cvs2git">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: PSJobCanAttendance の公開準備" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-10-30-prepare-to-publish-psjobcanattendance" />
+    <meta property="og:title" content="krymtkts: cvs2git にまつわるアレコレ" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-01-29-things-related-to-cvs2git" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -196,57 +196,53 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-10-30</div>
+        <div class="col-lg-6">2023-01-29</div>
         
     </div>
-    <h2>PSJobCanAttendance の公開準備</h2>
+    <h2>cvs2git にまつわるアレコレ</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/PSJobCanAttendance">krymtkts/PSJobCanAttendance</a> を PowerShell Gallery に公開する準備をしている。
-一括編集機能に若干の改善をした。</p><p>従来は、パイプラインを使った一括編集が可能だったが、出勤とか退勤とかの打刻イベント毎にパイプを分ける必要があった。</p><pre><code class="powershell"># 従来はこんなん
-@(12..16;20..22) | %{get-date "2022-09-$($_) 08:15:00+0900"} | Edit-JobCanAttendance -TimeRecordEvent work_start -AditGroupId 10
-@(12..16;20..22) | %{get-date "2022-09-$($_) 12:00:00+0900"} | Edit-JobCanAttendance -TimeRecordEvent rest_start -AditGroupId 10
-</code></pre><p>これ自分で使ってみて結構面倒に感じて、時刻と打刻イベントをパイプラインで渡せるように調整した。
-この調整により、 1 ヶ月分の出勤・休憩の開始＆終了を一気に登録できる様になってしまった。怠惰が捗る(打刻を必要とする勤怠管理なのは触れてはならない)。</p><pre><code class="powershell"># 1 ~ 31 日の間で 7 日、 10 日、土日を除いた日に出勤と休憩開始・終了を一括登録する。
-1..31 | ? {$_ -notin 7,10 } | % {get-date -Day $_} | ? -Property DayOfWeek -notin 0,6 | % {
-    [PSCustomObject]@{
-        TimeRecordEvent='work_start'
-        RecordTime= Get-Date -Date $_ -Hour 8 -Minute 15 -Second 0
-    }
-    [PSCustomObject]@{
-        TimeRecordEvent='rest_start'
-        RecordTime= Get-Date -Date $_ -Hour 12 -Minute 0 -Second 0
-    }
-    [PSCustomObject]@{
-        TimeRecordEvent='rest_end'
-        RecordTime= Get-Date -Date $_ -Hour 13 -Minute 0 -Second 0
-    }
-} | Edit-JobCanAttendance -AditGroupId 10 -Verbose​
-</code></pre><p>これには <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.management.automation.parameterattribute.valuefrompipelinebypropertyname?view=powershellsdk-1.1.0">ValueFromPipelineByPropertyName</a> を使った。
-Cmdlet のパラメータにパイプラインの入力オブジェクト(<code>hashtable</code> は No)が持つ同名プロパティをマッピングできるので、複数のパラメータをバインドできる。
-これ自分の書いた Cmdlet で使うことなかったので、いい勉強になった。</p><p>その後 PSScriptAnalyzer の指摘を修正して、さて公開しよう、というところで登録済みの勤怠を一覧するところにバグが見つかった。
-登録した日と勤怠の実績がずれるバグで、これは直したいな～というやつなので、公開はまた先送り・未遂に終わった。</p><p>続く。</p><hr /><p>あと別の文脈で、放置していた<a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a>にメンテの予定がないよとアナウンスを追記した。これで Archive する準備も整った(まだしてない)。</p><p>これまた別の文脈で、現職では Slack に日報を投稿してから退勤するようにしてるので、そこから投稿時間を拾って退勤実績を作るようにしたいと考えている。
-そのために Slack からメッセージの一覧を取得し、 PSJobCanAttendance での一括編集にもっていきたい。</p><p>過去に似たようなことをしたとき、 <a href="https://github.com/RamblingCookieMonster/PSSlack">RamblingCookieMonster/PSSlack</a> を使った。
-しかし PSSlack は 2021 年頃の Slack API の変更に追いついてないので、使うには自力でパッチする必要がある。
-(パッチは来てるが適用されていない <a href="https://github.com/RamblingCookieMonster/PSSlack/pull/115">Fix API deprecation 2021-02-24 by simonfagerholm · Pull Request #115 · RamblingCookieMonster/PSSlack</a>)。</p><p>以前使った時はそうしたが、面倒なので .NET の Slack のモジュールとか探してなんとかしたい。
-でも、どのモジュールがいいんか...と調べるのも面倒なので、悩み中。</p>
+    <p>ちょっとだけ CVS から Git に変換するときの事がわかった。</p><p><a href="/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed">先日の日記</a>にも追記したが、 remote repo の本体にファイルアクセスできないと使えない。それはつまり repo 所有者じゃないと git repo への変換ができないんだ。
+もうこれだけで、自分で手を動かしてどうこうする計画は終了やなというところだが、なんか調べたことを供養するために記しておく。</p><hr /><p>cvs2svn は今や GitHub repo を残すのみ。多くのドキュメントに参照されているであろう <code>http://cvs2svn.tigris.org/</code> はもう閉鎖されている。
+<a href="https://github.com/mhagger/cvs2svn">mhagger/cvs2svn: Migrate CVS repositories to Subversion or Git. This site supersedes the old tigris.org site, which has shut down.</a></p><p>で、この GitHub repo に cvs2git 含む cvs2svn を動かすための Dockerfile もある。
+わたしはそれを知る前に、 Ubuntu 18 であればパッケージが提供されてるのを知ったのでとりあえずそれを使う Dockerfile を書いたのだけど、本家を使う方が良いだろう。</p><p>書いた Dockerfile の repo は供養のため public にした。<a href="https://github.com/krymtkts/ubuntu-cvs2git">krymtkts/ubuntu-cvs2git</a></p><p>更に、 PowerShell でこの Docker image をビルドし実行するにあたって、どうでもいい気付きを得た。</p><p>PowerShell で Docker の <code>--mount</code> オプションを使う場合は、オブションに渡すパラメータ全体を文字列にしてやる必要があった。
+昔は <code>--volume</code> 使ってたし、ビルド関係は <code>COPY</code> で済ますし、何なら最近触ってなかったから気づきになって良かったわ。</p><p><a href="https://docs.docker.com/storage/bind-mounts/#start-a-container-with-a-bind-mount">Bind mounts | Docker Documentation</a> には bash かなんかの shell の例があるが、これは PowerShell では NG 。</p><blockquote><pre><code class="sh"> docker run -d \
+  -it \
+  --name devtest \
+  --mount type=bind,source="$(pwd)"/target,target=/app \
+  nginx:latest
+</code></pre></blockquote><p>PowerShell の流儀に従えばこうなる。</p><pre><code class="pwsh">docker run -d `
+  -it `
+  --name devtest `
+  --mount "type=bind,source=$((pwd).Path)/target,target=/app" `
+  nginx:latest
+</code></pre><p>因みに、 Windows の場合は Path の delimiter が <code>\</code> なので <code>/</code> に変換する必要がある、という情報を Web でよく見る。
+のだけど、 <code>\</code> <code>/</code> にかかわらずマウントできた(更新されて変わったのかな)。</p><pre><code class="pwsh"># こうしてもしなくてもどっちでもよい
+docker run -d `
+  -it `
+  --name devtest `
+  --mount "type=bind,source=$((pwd).Path -replace '\\','/')/target,target=/app" `
+  nginx:latest
+</code></pre><hr /><p>今回調べたことで改めて知ったが、CVS/SVN -&gt; Git の変換はもうみんな興味なく、情報は陳腐化してるしツールは放棄されかかってるようだった。
+作ってる人含め誰も使わなくなったらまあそうなるわ、という感じ。
+でもその変換の過渡期に行動を起こさなかった repo てまだありそう。頭の片隅においておこう。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/cvs2git">cvs2git</a>
+    
+    <a href="/tags/docker">docker</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2022-11-06-publish-psjobcanattendance">&laquo; 2022-11-06 PSJobCanAttendance の公開</a>
         
-        
-        <a class="right" href="/posts/2022-10-23-cleaning-my-pwsh-profile">2022-10-23 PowerShell の My Profile を掃除する &raquo;</a>
+        <a class="right" href="/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed">2023-01-22 Migu の CVS repo を Git repo に変換したい(そして失敗) &raquo;</a>
         
     </div>
 

@@ -1,4 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 22 Jan 2023 16:48:20 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed</guid><link>https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed</link><title>Migu の CVS repo を Git repo に変換したい(そして失敗)</title><description>&lt;p&gt;Migu フォントが好きでずっと使っている。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 29 Jan 2023 15:43:18 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-01-29-things-related-to-cvs2git</guid><link>https://krymtkts.github.io/posts/2023-01-29-things-related-to-cvs2git</link><title>cvs2git にまつわるアレコレ</title><description>&lt;p&gt;ちょっとだけ CVS から Git に変換するときの事がわかった。&lt;/p&gt;&lt;p&gt;&lt;a href="/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed"&gt;先日の日記&lt;/a&gt;にも追記したが、 remote repo の本体にファイルアクセスできないと使えない。それはつまり repo 所有者じゃないと git repo への変換ができないんだ。
+もうこれだけで、自分で手を動かしてどうこうする計画は終了やなというところだが、なんか調べたことを供養するために記しておく。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;cvs2svn は今や GitHub repo を残すのみ。多くのドキュメントに参照されているであろう &lt;code&gt;http://cvs2svn.tigris.org/&lt;/code&gt; はもう閉鎖されている。
+&lt;a href="https://github.com/mhagger/cvs2svn"&gt;mhagger/cvs2svn: Migrate CVS repositories to Subversion or Git. This site supersedes the old tigris.org site, which has shut down.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;で、この GitHub repo に cvs2git 含む cvs2svn を動かすための Dockerfile もある。
+わたしはそれを知る前に、 Ubuntu 18 であればパッケージが提供されてるのを知ったのでとりあえずそれを使う Dockerfile を書いたのだけど、本家を使う方が良いだろう。&lt;/p&gt;&lt;p&gt;書いた Dockerfile の repo は供養のため public にした。&lt;a href="https://github.com/krymtkts/ubuntu-cvs2git"&gt;krymtkts/ubuntu-cvs2git&lt;/a&gt;&lt;/p&gt;&lt;p&gt;更に、 PowerShell でこの Docker image をビルドし実行するにあたって、どうでもいい気付きを得た。&lt;/p&gt;&lt;p&gt;PowerShell で Docker の &lt;code&gt;--mount&lt;/code&gt; オプションを使う場合は、オブションに渡すパラメータ全体を文字列にしてやる必要があった。
+昔は &lt;code&gt;--volume&lt;/code&gt; 使ってたし、ビルド関係は &lt;code&gt;COPY&lt;/code&gt; で済ますし、何なら最近触ってなかったから気づきになって良かったわ。&lt;/p&gt;&lt;p&gt;&lt;a href="https://docs.docker.com/storage/bind-mounts/#start-a-container-with-a-bind-mount"&gt;Bind mounts | Docker Documentation&lt;/a&gt; には bash かなんかの shell の例があるが、これは PowerShell では NG 。&lt;/p&gt;&lt;blockquote&gt;&lt;pre&gt;&lt;code class="sh"&gt; docker run -d \
+  -it \
+  --name devtest \
+  --mount type=bind,source="$(pwd)"/target,target=/app \
+  nginx:latest
+&lt;/code&gt;&lt;/pre&gt;&lt;/blockquote&gt;&lt;p&gt;PowerShell の流儀に従えばこうなる。&lt;/p&gt;&lt;pre&gt;&lt;code class="pwsh"&gt;docker run -d `
+  -it `
+  --name devtest `
+  --mount "type=bind,source=$((pwd).Path)/target,target=/app" `
+  nginx:latest
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;因みに、 Windows の場合は Path の delimiter が &lt;code&gt;\&lt;/code&gt; なので &lt;code&gt;/&lt;/code&gt; に変換する必要がある、という情報を Web でよく見る。
+のだけど、 &lt;code&gt;\&lt;/code&gt; &lt;code&gt;/&lt;/code&gt; にかかわらずマウントできた(更新されて変わったのかな)。&lt;/p&gt;&lt;pre&gt;&lt;code class="pwsh"&gt;# こうしてもしなくてもどっちでもよい
+docker run -d `
+  -it `
+  --name devtest `
+  --mount "type=bind,source=$((pwd).Path -replace '\\','/')/target,target=/app" `
+  nginx:latest
+&lt;/code&gt;&lt;/pre&gt;&lt;hr /&gt;&lt;p&gt;今回調べたことで改めて知ったが、CVS/SVN -&amp;gt; Git の変換はもうみんな興味なく、情報は陳腐化してるしツールは放棄されかかってるようだった。
+作ってる人含め誰も使わなくなったらまあそうなるわ、という感じ。
+でもその変換の過渡期に行動を起こさなかった repo てまだありそう。頭の片隅においておこう。&lt;/p&gt;</description><pubDate>Sun, 29 Jan 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed</guid><link>https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed</link><title>Migu の CVS repo を Git repo に変換したい(そして失敗)</title><description>&lt;h3 id="2023-01-29-追記"&gt;2023-01-29 追記&lt;/h3&gt;&lt;p&gt;これ上手くいかないの当然で、サーバにある repo 本体に対してこれを実行しないといけない。
+centralized VCS 久しぶりだったので、仕組みをすっかり忘れていた。
+この日記は間違いの記録となった。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;Migu フォントが好きでずっと使っている。
 それこそ &lt;a href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font"&gt;Migu で PowerLine を使うためにパッチスクリプトを改修する&lt;/a&gt;くらいには気に入っている。&lt;/p&gt;&lt;p&gt;&lt;a href="https://mix-mplus-ipa.osdn.jp/migu/"&gt;Migu フォント : M+と IPA の合成フォント&lt;/a&gt;&lt;/p&gt;&lt;p&gt;今後も使い続けるにあたって、この度 Migu のグリフやコードを読んでみたいと思ったのだけど、 Migu は OSDN の CVS で管理されているので、なかなか読み辛い。
 自分が VCS を使い始めたのは SVN からだったりするので、 CVS わからない事が多い。
 なのでこの度 Git の repo に変換しようと考えている。&lt;/p&gt;&lt;p&gt;方法を調べているが、もう時代的に cvs → git の変換なんてあまり行われてないようだ。

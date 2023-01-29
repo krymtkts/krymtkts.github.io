@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: PSJobCanAttendance の公開準備</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-10-30-prepare-to-publish-psjobcanattendance">
+    <title>krymtkts: Posts Tagged &quot;cvs2git&quot;</title>
+    <link rel="canonical" href="https://krymtkts.github.io/tags/cvs2git">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: PSJobCanAttendance の公開準備" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-10-30-prepare-to-publish-psjobcanattendance" />
+    <meta property="og:title" content="krymtkts: Posts Tagged &quot;cvs2git&quot;" />
+    <meta property="og:url" content="https://krymtkts.github.io/tags/cvs2git" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -193,66 +193,17 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="post">
-    <div class="post-header">
-    <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-10-30</div>
-        
+<div id="posts-by-tag">
+    <div id="page-header">
+        <h2>Posts Tagged &quot;cvs2git&quot;</h2>
     </div>
-    <h2>PSJobCanAttendance の公開準備</h2>
-</div>
-<div>
+    <ul>
     
-    <p><a href="https://github.com/krymtkts/PSJobCanAttendance">krymtkts/PSJobCanAttendance</a> を PowerShell Gallery に公開する準備をしている。
-一括編集機能に若干の改善をした。</p><p>従来は、パイプラインを使った一括編集が可能だったが、出勤とか退勤とかの打刻イベント毎にパイプを分ける必要があった。</p><pre><code class="powershell"># 従来はこんなん
-@(12..16;20..22) | %{get-date "2022-09-$($_) 08:15:00+0900"} | Edit-JobCanAttendance -TimeRecordEvent work_start -AditGroupId 10
-@(12..16;20..22) | %{get-date "2022-09-$($_) 12:00:00+0900"} | Edit-JobCanAttendance -TimeRecordEvent rest_start -AditGroupId 10
-</code></pre><p>これ自分で使ってみて結構面倒に感じて、時刻と打刻イベントをパイプラインで渡せるように調整した。
-この調整により、 1 ヶ月分の出勤・休憩の開始＆終了を一気に登録できる様になってしまった。怠惰が捗る(打刻を必要とする勤怠管理なのは触れてはならない)。</p><pre><code class="powershell"># 1 ~ 31 日の間で 7 日、 10 日、土日を除いた日に出勤と休憩開始・終了を一括登録する。
-1..31 | ? {$_ -notin 7,10 } | % {get-date -Day $_} | ? -Property DayOfWeek -notin 0,6 | % {
-    [PSCustomObject]@{
-        TimeRecordEvent='work_start'
-        RecordTime= Get-Date -Date $_ -Hour 8 -Minute 15 -Second 0
-    }
-    [PSCustomObject]@{
-        TimeRecordEvent='rest_start'
-        RecordTime= Get-Date -Date $_ -Hour 12 -Minute 0 -Second 0
-    }
-    [PSCustomObject]@{
-        TimeRecordEvent='rest_end'
-        RecordTime= Get-Date -Date $_ -Hour 13 -Minute 0 -Second 0
-    }
-} | Edit-JobCanAttendance -AditGroupId 10 -Verbose​
-</code></pre><p>これには <a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.management.automation.parameterattribute.valuefrompipelinebypropertyname?view=powershellsdk-1.1.0">ValueFromPipelineByPropertyName</a> を使った。
-Cmdlet のパラメータにパイプラインの入力オブジェクト(<code>hashtable</code> は No)が持つ同名プロパティをマッピングできるので、複数のパラメータをバインドできる。
-これ自分の書いた Cmdlet で使うことなかったので、いい勉強になった。</p><p>その後 PSScriptAnalyzer の指摘を修正して、さて公開しよう、というところで登録済みの勤怠を一覧するところにバグが見つかった。
-登録した日と勤怠の実績がずれるバグで、これは直したいな～というやつなので、公開はまた先送り・未遂に終わった。</p><p>続く。</p><hr /><p>あと別の文脈で、放置していた<a href="https://github.com/krymtkts/PSMFAttendance">krymtkts/PSMFAttendance</a>にメンテの予定がないよとアナウンスを追記した。これで Archive する準備も整った(まだしてない)。</p><p>これまた別の文脈で、現職では Slack に日報を投稿してから退勤するようにしてるので、そこから投稿時間を拾って退勤実績を作るようにしたいと考えている。
-そのために Slack からメッセージの一覧を取得し、 PSJobCanAttendance での一括編集にもっていきたい。</p><p>過去に似たようなことをしたとき、 <a href="https://github.com/RamblingCookieMonster/PSSlack">RamblingCookieMonster/PSSlack</a> を使った。
-しかし PSSlack は 2021 年頃の Slack API の変更に追いついてないので、使うには自力でパッチする必要がある。
-(パッチは来てるが適用されていない <a href="https://github.com/RamblingCookieMonster/PSSlack/pull/115">Fix API deprecation 2021-02-24 by simonfagerholm · Pull Request #115 · RamblingCookieMonster/PSSlack</a>)。</p><p>以前使った時はそうしたが、面倒なので .NET の Slack のモジュールとか探してなんとかしたい。
-でも、どのモジュールがいいんか...と調べるのも面倒なので、悩み中。</p>
-</div>
-
-<div id="post-tags">
-    <b>Tags: </b>
+        <li>
+            <a href="/posts/2023-01-29-things-related-to-cvs2git">2023-01-29 cvs2git にまつわるアレコレ</a>
+        </li>
     
-    <a href="/tags/powershell">powershell</a>
-    
-</div>
-
-
-    <div id="prev-next">
-        
-        <a href="/posts/2022-11-06-publish-psjobcanattendance">&laquo; 2022-11-06 PSJobCanAttendance の公開</a>
-        
-        
-        <a class="right" href="/posts/2022-10-23-cleaning-my-pwsh-profile">2022-10-23 PowerShell の My Profile を掃除する &raquo;</a>
-        
-    </div>
-
-    
-
-
+    </ul>
 </div>
 
             </div>
