@@ -1,4 +1,40 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 29 Jan 2023 15:43:18 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-01-29-things-related-to-cvs2git</guid><link>https://krymtkts.github.io/posts/2023-01-29-things-related-to-cvs2git</link><title>cvs2git にまつわるアレコレ</title><description>&lt;p&gt;ちょっとだけ CVS から Git に変換するときの事がわかった。&lt;/p&gt;&lt;p&gt;&lt;a href="/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed"&gt;先日の日記&lt;/a&gt;にも追記したが、 remote repo の本体にファイルアクセスできないと使えない。それはつまり repo 所有者じゃないと git repo への変換ができないんだ。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 05 Feb 2023 15:10:58 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12</guid><link>https://krymtkts.github.io/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12</link><title>F#でコマンドレットを書いてる pt.12</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;プロパティ指定検索をおおむね実装できて、バグ取りに勤しんでいる。バグ取りしたので割とまともに動いてるな～という感じ。&lt;/p&gt;&lt;p&gt;また、 &lt;code&gt;Ctrl+Space&lt;/code&gt; で入力候補の表示非表示切り替え、プロパティ名の自動補完もやりたいけど、 &lt;a href="https://github.com/krymtkts/pocof/pull/14"&gt;Pull Request&lt;/a&gt; がずっと開きっぱなしで締まりがないし別の Issue に切り分けた。 &lt;a href="https://github.com/krymtkts/pocof/issues/19"&gt;#19&lt;/a&gt;, &lt;a href="https://github.com/krymtkts/pocof/issues/20"&gt;#20&lt;/a&gt;&lt;/p&gt;&lt;p&gt;一旦プロパティ指定検索が完成したら &lt;code&gt;main&lt;/code&gt; branch に合流する。&lt;/p&gt;&lt;p&gt;手が空いた時しか趣味プロやらないので、小分けにして取り組まないと何やってたかわからなくなる。これは今回デカめの feature にしてしまったことで当初の予定より大幅に長く開発してる。もっと小気味好いリズムを刻みたいので反省点として次に活かす。&lt;/p&gt;&lt;p&gt;...という計画で進めているのでテストケースを書いてたら、エグいバグに気づいた。これ &lt;code&gt;PSCustomObject&lt;/code&gt; 利用した際に描画できないし、何なら戻り値が破壊される。やば。&lt;/p&gt;&lt;p&gt;ちょうどプロパティ指定検索でテストケースを書くときに &lt;code&gt;PSCustomObject&lt;/code&gt; 使ってたら、期待の通り動かず、気づいた。このままやとテスト書けへんやん。&lt;/p&gt;&lt;p&gt;ちょっとショッキングなバグだったので初めからか？いつからか？と混乱したが、よくよく考えると普段自分で作った &lt;code&gt;PSCustomObject&lt;/code&gt; に対してインタラクティブな絞り込みやってないわ...と気づいた。なんで使ってなかったのか？自分で定義するからインタラクティブに調べるほどでもなかったからか。
+普段使ってない＆テストザルで見落としてたのか～かっこ悪う...&lt;/p&gt;&lt;p&gt;とりあえず最低限の原因調査として、PowerShell Gallery から &lt;code&gt;pocof&lt;/code&gt; の旧版をインストールしテストしたところ、 &lt;code&gt;hahstable&lt;/code&gt; をサポートした &lt;a href="https://www.powershellgallery.com/packages/pocof/0.2.0-alpha"&gt;pocof 0.2.0-alpha&lt;/a&gt; でぶっ壊れた模様。
+&lt;code&gt;PSObject&lt;/code&gt; の wrapping を引き剥がすあたりでやってもーてそう。&lt;/p&gt;&lt;p&gt;再現コード。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;$a = [pscustomobject]@{'a'=1;'b'=2}
+$a
+
+# a b
+# - -
+# 1 2
+
+$b = $a | pocof -NonInteractive
+$b
+
+# 虚無が出力される。
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;なんか &lt;code&gt;NoteProperty&lt;/code&gt; が吹っ飛んでるっぽいのよね。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;$a.psobject.Members | ? -Property MemberType -eq NoteProperty | Format-list
+
+# MemberType      : NoteProperty
+# IsSettable      : True
+# IsGettable      : True
+# Value           : 1
+# TypeNameOfValue : System.Int32
+# Name            : a
+# IsInstance      : True
+#
+# MemberType      : NoteProperty
+# IsSettable      : True
+# IsGettable      : True
+# Value           : 2
+# TypeNameOfValue : System.Int32
+# Name            : b
+# IsInstance      : True
+
+$b.psobject.Members | ? -Property MemberType -eq NoteProperty | Format-list
+
+# 無
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;このままだとプロパティ指定検索のテストが書けないので、この bugfix を優先する。
+Issue 立てた。 &lt;a href="https://github.com/krymtkts/pocof/issues/21"&gt;not work with &lt;code&gt;PSCustomObject&lt;/code&gt; · Issue #21 · krymtkts/pocof&lt;/a&gt;&lt;/p&gt;&lt;p&gt;テストに関してももうちょい強化が必要かもな。今のところ &lt;a href="https://github.com/pester/Pester"&gt;Pester&lt;/a&gt; で書いてる E2E テストのみなのだけど、 &lt;code&gt;PSCustomObject&lt;/code&gt; 使ったケースなかったし。&lt;/p&gt;&lt;p&gt;コード自体もグチャァ...としてきたから &lt;a href="https://github.com/fsprojects/FsUnit"&gt;FsUnit&lt;/a&gt; 導入してもう少し丁寧にやったほうが良さげ。
+&lt;a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp"&gt;&lt;code&gt;pocof&lt;/code&gt; 書き始めた頃&lt;/a&gt;に「可能な限りテストを書きたい所存」て書いてたけど有言不実行になってて笑える(笑えない)。&lt;/p&gt;</description><pubDate>Sun, 05 Feb 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-01-29-things-related-to-cvs2git</guid><link>https://krymtkts.github.io/posts/2023-01-29-things-related-to-cvs2git</link><title>cvs2git にまつわるアレコレ</title><description>&lt;p&gt;ちょっとだけ CVS から Git に変換するときの事がわかった。&lt;/p&gt;&lt;p&gt;&lt;a href="/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed"&gt;先日の日記&lt;/a&gt;にも追記したが、 remote repo の本体にファイルアクセスできないと使えない。それはつまり repo 所有者じゃないと git repo への変換ができないんだ。
 もうこれだけで、自分で手を動かしてどうこうする計画は終了やなというところだが、なんか調べたことを供養するために記しておく。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;cvs2svn は今や GitHub repo を残すのみ。多くのドキュメントに参照されているであろう &lt;code&gt;http://cvs2svn.tigris.org/&lt;/code&gt; はもう閉鎖されている。
 &lt;a href="https://github.com/mhagger/cvs2svn"&gt;mhagger/cvs2svn: Migrate CVS repositories to Subversion or Git. This site supersedes the old tigris.org site, which has shut down.&lt;/a&gt;&lt;/p&gt;&lt;p&gt;で、この GitHub repo に cvs2git 含む cvs2svn を動かすための Dockerfile もある。
 わたしはそれを知る前に、 Ubuntu 18 であればパッケージが提供されてるのを知ったのでとりあえずそれを使う Dockerfile を書いたのだけど、本家を使う方が良いだろう。&lt;/p&gt;&lt;p&gt;書いた Dockerfile の repo は供養のため public にした。&lt;a href="https://github.com/krymtkts/ubuntu-cvs2git"&gt;krymtkts/ubuntu-cvs2git&lt;/a&gt;&lt;/p&gt;&lt;p&gt;更に、 PowerShell でこの Docker image をビルドし実行するにあたって、どうでもいい気付きを得た。&lt;/p&gt;&lt;p&gt;PowerShell で Docker の &lt;code&gt;--mount&lt;/code&gt; オプションを使う場合は、オブションに渡すパラメータ全体を文字列にしてやる必要があった。
@@ -21,7 +57,8 @@ docker run -d `
   nginx:latest
 &lt;/code&gt;&lt;/pre&gt;&lt;hr /&gt;&lt;p&gt;今回調べたことで改めて知ったが、CVS/SVN -&amp;gt; Git の変換はもうみんな興味なく、情報は陳腐化してるしツールは放棄されかかってるようだった。
 作ってる人含め誰も使わなくなったらまあそうなるわ、という感じ。
-でもその変換の過渡期に行動を起こさなかった repo てまだありそう。頭の片隅においておこう。&lt;/p&gt;</description><pubDate>Sun, 29 Jan 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed</guid><link>https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed</link><title>Migu の CVS repo を Git repo に変換したい(そして失敗)</title><description>&lt;h3 id="2023-01-29-追記"&gt;2023-01-29 追記&lt;/h3&gt;&lt;p&gt;これ上手くいかないの当然で、サーバにある repo 本体に対してこれを実行しないといけない。
+でもその変換の過渡期に行動を起こさなかった repo てまだありそう。頭の片隅においておこう。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;(2023-02-05 追記)&lt;/p&gt;&lt;p&gt;後でから気づいたが、この Docker の &lt;code&gt;--mount&lt;/code&gt; オプションみたいな回避方法って PowerShell で Maven のオプション使うときにも似たようなのあったわと思い出した。
+最近出くわしてなくてすっかり忘れてたみたい(老化現象か)。&lt;/p&gt;</description><pubDate>Sun, 29 Jan 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed</guid><link>https://krymtkts.github.io/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed</link><title>Migu の CVS repo を Git repo に変換したい(そして失敗)</title><description>&lt;h3 id="2023-01-29-追記"&gt;2023-01-29 追記&lt;/h3&gt;&lt;p&gt;これ上手くいかないの当然で、サーバにある repo 本体に対してこれを実行しないといけない。
 centralized VCS 久しぶりだったので、仕組みをすっかり忘れていた。
 この日記は間違いの記録となった。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;Migu フォントが好きでずっと使っている。
 それこそ &lt;a href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font"&gt;Migu で PowerLine を使うためにパッチスクリプトを改修する&lt;/a&gt;くらいには気に入っている。&lt;/p&gt;&lt;p&gt;&lt;a href="https://mix-mplus-ipa.osdn.jp/migu/"&gt;Migu フォント : M+と IPA の合成フォント&lt;/a&gt;&lt;/p&gt;&lt;p&gt;今後も使い続けるにあたって、この度 Migu のグリフやコードを読んでみたいと思ったのだけど、 Migu は OSDN の CVS で管理されているので、なかなか読み辛い。

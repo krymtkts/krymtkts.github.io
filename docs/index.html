@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12">F#でコマンドレットを書いてる pt.12</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-01-29-things-related-to-cvs2git">cvs2git にまつわるアレコレ</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed">Migu の CVS repo を Git repo に変換したい(そして失敗)</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-01-15-writing-cmdlet-in-fsharp-pt11">F#でコマンドレットを書いてる pt.11</a></li>
                         
                         
 
@@ -196,45 +196,58 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-01-29</div>
+        <div class="col-lg-6">2023-02-05</div>
         
     </div>
-    <h2>cvs2git にまつわるアレコレ</h2>
+    <h2>F#でコマンドレットを書いてる pt.12</h2>
 </div>
 <div>
     
-    <p>ちょっとだけ CVS から Git に変換するときの事がわかった。</p><p><a href="/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed">先日の日記</a>にも追記したが、 remote repo の本体にファイルアクセスできないと使えない。それはつまり repo 所有者じゃないと git repo への変換ができないんだ。
-もうこれだけで、自分で手を動かしてどうこうする計画は終了やなというところだが、なんか調べたことを供養するために記しておく。</p><hr /><p>cvs2svn は今や GitHub repo を残すのみ。多くのドキュメントに参照されているであろう <code>http://cvs2svn.tigris.org/</code> はもう閉鎖されている。
-<a href="https://github.com/mhagger/cvs2svn">mhagger/cvs2svn: Migrate CVS repositories to Subversion or Git. This site supersedes the old tigris.org site, which has shut down.</a></p><p>で、この GitHub repo に cvs2git 含む cvs2svn を動かすための Dockerfile もある。
-わたしはそれを知る前に、 Ubuntu 18 であればパッケージが提供されてるのを知ったのでとりあえずそれを使う Dockerfile を書いたのだけど、本家を使う方が良いだろう。</p><p>書いた Dockerfile の repo は供養のため public にした。<a href="https://github.com/krymtkts/ubuntu-cvs2git">krymtkts/ubuntu-cvs2git</a></p><p>更に、 PowerShell でこの Docker image をビルドし実行するにあたって、どうでもいい気付きを得た。</p><p>PowerShell で Docker の <code>--mount</code> オプションを使う場合は、オブションに渡すパラメータ全体を文字列にしてやる必要があった。
-昔は <code>--volume</code> 使ってたし、ビルド関係は <code>COPY</code> で済ますし、何なら最近触ってなかったから気づきになって良かったわ。</p><p><a href="https://docs.docker.com/storage/bind-mounts/#start-a-container-with-a-bind-mount">Bind mounts | Docker Documentation</a> には bash かなんかの shell の例があるが、これは PowerShell では NG 。</p><blockquote><pre><code class="sh"> docker run -d \
-  -it \
-  --name devtest \
-  --mount type=bind,source="$(pwd)"/target,target=/app \
-  nginx:latest
-</code></pre></blockquote><p>PowerShell の流儀に従えばこうなる。</p><pre><code class="pwsh">docker run -d `
-  -it `
-  --name devtest `
-  --mount "type=bind,source=$((pwd).Path)/target,target=/app" `
-  nginx:latest
-</code></pre><p>因みに、 Windows の場合は Path の delimiter が <code>\</code> なので <code>/</code> に変換する必要がある、という情報を Web でよく見る。
-のだけど、 <code>\</code> <code>/</code> にかかわらずマウントできた(更新されて変わったのかな)。</p><pre><code class="pwsh"># こうしてもしなくてもどっちでもよい
-docker run -d `
-  -it `
-  --name devtest `
-  --mount "type=bind,source=$((pwd).Path -replace '\\','/')/target,target=/app" `
-  nginx:latest
-</code></pre><hr /><p>今回調べたことで改めて知ったが、CVS/SVN -&gt; Git の変換はもうみんな興味なく、情報は陳腐化してるしツールは放棄されかかってるようだった。
-作ってる人含め誰も使わなくなったらまあそうなるわ、という感じ。
-でもその変換の過渡期に行動を起こさなかった repo てまだありそう。頭の片隅においておこう。</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>プロパティ指定検索をおおむね実装できて、バグ取りに勤しんでいる。バグ取りしたので割とまともに動いてるな～という感じ。</p><p>また、 <code>Ctrl+Space</code> で入力候補の表示非表示切り替え、プロパティ名の自動補完もやりたいけど、 <a href="https://github.com/krymtkts/pocof/pull/14">Pull Request</a> がずっと開きっぱなしで締まりがないし別の Issue に切り分けた。 <a href="https://github.com/krymtkts/pocof/issues/19">#19</a>, <a href="https://github.com/krymtkts/pocof/issues/20">#20</a></p><p>一旦プロパティ指定検索が完成したら <code>main</code> branch に合流する。</p><p>手が空いた時しか趣味プロやらないので、小分けにして取り組まないと何やってたかわからなくなる。これは今回デカめの feature にしてしまったことで当初の予定より大幅に長く開発してる。もっと小気味好いリズムを刻みたいので反省点として次に活かす。</p><p>...という計画で進めているのでテストケースを書いてたら、エグいバグに気づいた。これ <code>PSCustomObject</code> 利用した際に描画できないし、何なら戻り値が破壊される。やば。</p><p>ちょうどプロパティ指定検索でテストケースを書くときに <code>PSCustomObject</code> 使ってたら、期待の通り動かず、気づいた。このままやとテスト書けへんやん。</p><p>ちょっとショッキングなバグだったので初めからか？いつからか？と混乱したが、よくよく考えると普段自分で作った <code>PSCustomObject</code> に対してインタラクティブな絞り込みやってないわ...と気づいた。なんで使ってなかったのか？自分で定義するからインタラクティブに調べるほどでもなかったからか。
+普段使ってない＆テストザルで見落としてたのか～かっこ悪う...</p><p>とりあえず最低限の原因調査として、PowerShell Gallery から <code>pocof</code> の旧版をインストールしテストしたところ、 <code>hahstable</code> をサポートした <a href="https://www.powershellgallery.com/packages/pocof/0.2.0-alpha">pocof 0.2.0-alpha</a> でぶっ壊れた模様。
+<code>PSObject</code> の wrapping を引き剥がすあたりでやってもーてそう。</p><p>再現コード。</p><pre><code class="powershell">$a = [pscustomobject]@{'a'=1;'b'=2}
+$a
+
+# a b
+# - -
+# 1 2
+
+$b = $a | pocof -NonInteractive
+$b
+
+# 虚無が出力される。
+</code></pre><p>なんか <code>NoteProperty</code> が吹っ飛んでるっぽいのよね。</p><pre><code class="powershell">$a.psobject.Members | ? -Property MemberType -eq NoteProperty | Format-list
+
+# MemberType      : NoteProperty
+# IsSettable      : True
+# IsGettable      : True
+# Value           : 1
+# TypeNameOfValue : System.Int32
+# Name            : a
+# IsInstance      : True
+#
+# MemberType      : NoteProperty
+# IsSettable      : True
+# IsGettable      : True
+# Value           : 2
+# TypeNameOfValue : System.Int32
+# Name            : b
+# IsInstance      : True
+
+$b.psobject.Members | ? -Property MemberType -eq NoteProperty | Format-list
+
+# 無
+</code></pre><p>このままだとプロパティ指定検索のテストが書けないので、この bugfix を優先する。
+Issue 立てた。 <a href="https://github.com/krymtkts/pocof/issues/21">not work with <code>PSCustomObject</code> · Issue #21 · krymtkts/pocof</a></p><p>テストに関してももうちょい強化が必要かもな。今のところ <a href="https://github.com/pester/Pester">Pester</a> で書いてる E2E テストのみなのだけど、 <code>PSCustomObject</code> 使ったケースなかったし。</p><p>コード自体もグチャァ...としてきたから <a href="https://github.com/fsprojects/FsUnit">FsUnit</a> 導入してもう少し丁寧にやったほうが良さげ。
+<a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp"><code>pocof</code> 書き始めた頃</a>に「可能な限りテストを書きたい所存」て書いてたけど有言不実行になってて笑える(笑えない)。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/cvs2git">cvs2git</a>
+    <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/docker">docker</a>
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -244,7 +257,7 @@ docker run -d `
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed">2023-01-22 Migu の CVS repo を Git repo に変換したい(そして失敗) &raquo;</a>
+        <a class="right" href="/posts/2023-01-29-things-related-to-cvs2git">2023-01-29 cvs2git にまつわるアレコレ &raquo;</a>
         
     </div>
 </div>

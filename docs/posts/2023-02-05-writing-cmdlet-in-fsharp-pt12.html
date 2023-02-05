@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: QUnit で CI したい その 1</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-03-21_want-to-run-qunit-in-cli">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.12</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: QUnit で CI したい その 1" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-03-21_want-to-run-qunit-in-cli" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.12" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -196,85 +196,66 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-03-21</div>
+        <div class="col-lg-6">2023-02-05</div>
         
     </div>
-    <h2>QUnit で CI したい その 1</h2>
+    <h2>F#でコマンドレットを書いてる pt.12</h2>
 </div>
 <div>
     
-    <p>2 月に転職した。</p><p>へーしゃでの初めての仕事はフロントエンド、と言ってもトラッキングに関わる部分である。</p><p>生の ES5 で書かれてて<a href="https://github.com/google/closure-compiler">Google Closure Compiler</a>で minify されてるようなのだけど、困ったことにユニットテストがない様子？
-どこそこのチームで作ってたことがあったらしいという情報は得たので、それを CI に組み込めたらいいかなと思っていた。</p><p>蓋を開けてみると、2 年間ほどメンテされていない死んだユニットテストで、最新のコードベースに対するテストでなかった(テストコードと同ディレクトリにテスト対象のコードがコピられてて)🤔</p><p>CI に組み込まれないテストは陳腐化すると云うが、まさかそれを身をもって実感することになろうとは思わなんだ。</p><p><del>仕方ないので</del>既存の資産を活かすためにも、テスティングフレームワークなど既存のものを利用して少なくとも CI に組み込めるところまでは持っていこうと考えた。CI に組み込まれればビルド失敗の通知を恐れてみんなユニットテストを書くのをサボらなくなる。</p><p>というわけで、許可を取り付けた上で仕事の合間を縫ってユニットテストの整備を行うことにした。</p><h3 id="現状把握と展望">現状把握と展望</h3><p>ユニットテストは<a href="https://qunitjs.com/">QUnit</a>で書かれていて、モッキングフレームワークには<a href="https://sinonjs.org/">Sinon.JS</a>が使われていた。</p><p>linter は<a href="https://eslint.org/">ESLint - Pluggable JavaScript linter</a>を用意してあるようなのだけどどうも長らく利用されてなかったようで、試しに実行すると 41 件の autofix 可能なエラーが...😅</p><p>ブラウザで<code>index.html</code>を開くことでテストが実行されるタイプのやつで、CLI での実行は用意されてなかった。
-プロダクトコードが<code>window</code>オブジェクトに依存してることもあって、QUnit のテストをヘッドレスブラウザで実行するのが良さげかな。</p><p>ここにカバレッジ計測も追加して、最終的にはプルリクをトリガーにした自動テストが CI に組み込まれるのが良さげかなと思う。</p><h3 id="やったことやらなかったこと">やったこと＆やらなかったこと</h3><p>とりあえずカバレッジは置いといて今ある QUnit の CLI 実行を優先した。</p><p>node でのカバレッジ計測に関しては知らないことが多かったので軽く下調べだけした。
-istabul というやつが node 界隈で強かったみたいだが、こいつは 2 年ほどメンテされてなくて、後続の<a href="https://www.npmjs.com/package/nyc">nyc - npm</a>と言うやつがみつかる 👀
-puppeteer もそれ単体でカバレッジが測れるようす ↓</p><ul><li><a href="https://www.philkrie.me/2018/07/04/extracting-coverage.html">Using Puppeteer to Extract Code Coverage Data from Chrome Dev Tools</a></li><li><a href="https://github.com/istanbuljs/puppeteer-to-istanbul">istanbuljs/puppeteer-to-istanbul: given coverage information output by puppeteer's API output a format consumable by Istanbul reports</a></li></ul><h4 id="やったこと">やったこと</h4><p>まず元々ある QUnit もそのまま使えないとブラウザで見つつの開発の利便性も下がっちゃうので、そこは担保したかった。
-(<code>window</code>オブジェクトがないので CommonJS は死ぬ)</p><p><a href="https://www.npmjs.com/package/qunit-puppeteer">qunit-puppeteer - npm</a>は簡単にテスト実行できて楽だったのだけど、テストの url を絶対パスで指定しないといけず＆自分で URL をこねくり回せなくて却下。</p><p>なのでそのへん柔軟な<a href="https://www.npmjs.com/package/node-qunit-puppeteer">node-qunit-puppeteer - npm</a>しか選択肢が残らなかったわけだ。</p><p>とりま<code>eslint</code>だけあるからソイツはそのままに、QUnit を headless browser 実行するための module だけ足す。</p><pre><code class="powershell">npm install --save-dev node-qunit-puppeteer
-</code></pre><p><code>package.json</code>は以下のような感じにした</p><pre><code class="json">  "scripts": {
-    "lint": "eslint --fix ./",
-    "test": "node test/run.js"
-  },
-</code></pre><p><code>lint</code>はメンテされてなかった関係で 40 件くらいの error があるけど、最終的には実行できるようになる(ハズな)ので用意しておく。</p><p><code>test/run.js</code>は以下の通りで、<a href="https://github.com/ameshkov/node-qunit-puppeteer">ameshkov/node-qunit-puppeteer: A simple node module for running qunit tests with headless Chromium</a>の Example とほぼ同じで行ける便利さ。しびれる。</p><pre><code class="js">#! /usr/bin/env node
-// almost the same as the sample code :-p
-// https://github.com/ameshkov/node-qunit-puppeteer
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>プロパティ指定検索をおおむね実装できて、バグ取りに勤しんでいる。バグ取りしたので割とまともに動いてるな～という感じ。</p><p>また、 <code>Ctrl+Space</code> で入力候補の表示非表示切り替え、プロパティ名の自動補完もやりたいけど、 <a href="https://github.com/krymtkts/pocof/pull/14">Pull Request</a> がずっと開きっぱなしで締まりがないし別の Issue に切り分けた。 <a href="https://github.com/krymtkts/pocof/issues/19">#19</a>, <a href="https://github.com/krymtkts/pocof/issues/20">#20</a></p><p>一旦プロパティ指定検索が完成したら <code>main</code> branch に合流する。</p><p>手が空いた時しか趣味プロやらないので、小分けにして取り組まないと何やってたかわからなくなる。これは今回デカめの feature にしてしまったことで当初の予定より大幅に長く開発してる。もっと小気味好いリズムを刻みたいので反省点として次に活かす。</p><p>...という計画で進めているのでテストケースを書いてたら、エグいバグに気づいた。これ <code>PSCustomObject</code> 利用した際に描画できないし、何なら戻り値が破壊される。やば。</p><p>ちょうどプロパティ指定検索でテストケースを書くときに <code>PSCustomObject</code> 使ってたら、期待の通り動かず、気づいた。このままやとテスト書けへんやん。</p><p>ちょっとショッキングなバグだったので初めからか？いつからか？と混乱したが、よくよく考えると普段自分で作った <code>PSCustomObject</code> に対してインタラクティブな絞り込みやってないわ...と気づいた。なんで使ってなかったのか？自分で定義するからインタラクティブに調べるほどでもなかったからか。
+普段使ってない＆テストザルで見落としてたのか～かっこ悪う...</p><p>とりあえず最低限の原因調査として、PowerShell Gallery から <code>pocof</code> の旧版をインストールしテストしたところ、 <code>hahstable</code> をサポートした <a href="https://www.powershellgallery.com/packages/pocof/0.2.0-alpha">pocof 0.2.0-alpha</a> でぶっ壊れた模様。
+<code>PSObject</code> の wrapping を引き剥がすあたりでやってもーてそう。</p><p>再現コード。</p><pre><code class="powershell">$a = [pscustomobject]@{'a'=1;'b'=2}
+$a
 
-const path = require("path");
-const { runQunitPuppeteer, printOutput } = require("node-qunit-puppeteer");
+# a b
+# - -
+# 1 2
 
-const qunitArgs = {
-  targetUrl: `file://${path.join(__dirname, "/index.html")}`,
-  redirectConsole: true,
-};
+$b = $a | pocof -NonInteractive
+$b
 
-runQunitPuppeteer(qunitArgs)
-  .then((result) =&gt; {
-    // Print the test result to the output
-    printOutput(result, console);
-    if (result.stats.failed &gt; 0) {
-      // Handle the failed test run
-      // currently notghing to do.
-    }
-  })
-  .catch((ex) =&gt; {
-    console.error(ex);
-  });
-</code></pre><p>実行結果は以下のような感じで出る。</p><pre><code class="powershell">$ npm run test
+# 虚無が出力される。
+</code></pre><p>なんか <code>NoteProperty</code> が吹っ飛んでるっぽいのよね。</p><pre><code class="powershell">$a.psobject.Members | ? -Property MemberType -eq NoteProperty | Format-list
 
-&gt; qunit@1.0.0 test C:\Users\takatoshi\dev\javascript\qunit
-&gt; node test/run.js
+# MemberType      : NoteProperty
+# IsSettable      : True
+# IsGettable      : True
+# Value           : 1
+# TypeNameOfValue : System.Int32
+# Name            : a
+# IsInstance      : True
+#
+# MemberType      : NoteProperty
+# IsSettable      : True
+# IsGettable      : True
+# Value           : 2
+# TypeNameOfValue : System.Int32
+# Name            : b
+# IsInstance      : True
 
-Module: hello module
-  hello test
-    Status: success
-    Passed assertions: 2 of 2
-    Elapsed: 1ms
+$b.psobject.Members | ? -Property MemberType -eq NoteProperty | Format-list
 
-Test run result: success
-Total tests: 1
-  Assertions: 2
-  Passed assertions: 2
-  Failed assertions: 0
-  Elapsed: 8ms
-</code></pre><p>と、ここまで書いた内容を会社のコードに組み込んだのだけど、会社で作ったものは外に出せないので模倣したゴミプロジェクトを作った ↓</p><p><a href="https://github.com/krymtkts/qunit-trial">krymtkts/qunit-trial: sandbox to enhance legacy QUnit test.</a></p><p>今後いじくり回すときの砂場としても使おうかな。</p><h4 id="あとやりたいこと">あとやりたいこと</h4><p>ユニットテストだけあってカバレッジ計測がないのはちょっとアレなので早々に追加したい所存 🤔</p><p>そもそもユニットテスト書くにしてもどの経路通ったとかわからないのでテスト品質を保証しづらく、コード網羅率 Level C1 を 100%にしたいマンなのもありカバレッジ必須。</p><p>でも事前に調べてた nyc や puppeteer での方法だと、現状の node-qunit-puppeteer を使ったテストのカバレッジ計測できなさそう...</p><p>もう少し調べる必要がありそう 😳</p><p>続く</p>
+# 無
+</code></pre><p>このままだとプロパティ指定検索のテストが書けないので、この bugfix を優先する。
+Issue 立てた。 <a href="https://github.com/krymtkts/pocof/issues/21">not work with <code>PSCustomObject</code> · Issue #21 · krymtkts/pocof</a></p><p>テストに関してももうちょい強化が必要かもな。今のところ <a href="https://github.com/pester/Pester">Pester</a> で書いてる E2E テストのみなのだけど、 <code>PSCustomObject</code> 使ったケースなかったし。</p><p>コード自体もグチャァ...としてきたから <a href="https://github.com/fsprojects/FsUnit">FsUnit</a> 導入してもう少し丁寧にやったほうが良さげ。
+<a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp"><code>pocof</code> 書き始めた頃</a>に「可能な限りテストを書きたい所存」て書いてたけど有言不実行になってて笑える(笑えない)。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/qunit">qunit</a>
+    <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/nodejs">nodejs</a>
-    
-    <a href="/tags/puppeteer">puppeteer</a>
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-03-24_coverage-of-qunt-puppeteer">&laquo; 2019-03-24 QUnit で CI したい その 2</a>
         
-        
-        <a class="right" href="/posts/2019-02-24_lein-ring-server-error">2019-02-24 lein ringでエラーが発生した &raquo;</a>
+        <a class="right" href="/posts/2023-01-29-things-related-to-cvs2git">2023-01-29 cvs2git にまつわるアレコレ &raquo;</a>
         
     </div>
 
