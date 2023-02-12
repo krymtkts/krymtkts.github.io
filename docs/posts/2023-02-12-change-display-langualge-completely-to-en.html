@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Clojureでブログを作った</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-01-10-make-blog-with-clojure">
+    <title>krymtkts: Windows 11 の表示言語を完全に英語にする</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-02-12-change-display-langualge-completely-to-en">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Clojureでブログを作った" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-01-10-make-blog-with-clojure" />
+    <meta property="og:title" content="krymtkts: Windows 11 の表示言語を完全に英語にする" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-02-12-change-display-langualge-completely-to-en" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -196,61 +196,42 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-01-10</div>
+        <div class="col-lg-6">2023-02-12</div>
         
     </div>
-    <h2>Clojureでブログを作った</h2>
+    <h2>Windows 11 の表示言語を完全に英語にする</h2>
 </div>
 <div>
     
-    <p>このブログはClojure製の静的サイトジェネレータ<a href="http://cryogenweb.org/">Cryogen</a>で作った。</p><h3 id="動機">動機</h3><p>現在有給消化中のため暇である。プログラマ的暇潰しが必要だったのだが、ブログを作るのはそれなりに楽しめそうな気がした。</p><p>あと、過去にブログサービスを使ってたときブログが長続きしなかった理由に、わたしは物書きじゃあないので簡単にブログが書けるとかいう部分が琴線に触れない、というようなものが根底にあるような気もする🤔</p><p>自分で作るならその心配はない。</p><p>ついでに折角GitHubのアカウントも持ってるので、GitHub Pagesを使わない手はない。blogのコードをrepoに登録しておけば芝生も青々としてええな！的な。</p><p>また別の観点としてブログサービスを選ぶとなった場合、書く記事の内容が技術的なものだったり単なる趣味の話だったり内容がブレると思うので、利用規約に触れて垢バンされるようなサービスは選び辛い。ちょうど良い選択かも知れない。</p><p>そこで今回はブログ自体を自分で作ってしまおうと決めた。</p><p>因みにClojureを選んだのは個人的な好みである。</p><h3 id="静的サイトジェネレータの選定">静的サイトジェネレータの選定</h3><p>普通にググって調べようと思ってたけど、いまはこんなのクソ便利なんがあるのね...→<a href="https://www.staticgen.com/">StaticGen</a></p><p>LanguageをClojureにしたら3個hitしたのでそれぞれ見てみた。</p><ul><li><a href="https://github.com/cryogen-project/cryogen">Cryogen</a></li><li><a href="https://github.com/liquidz/misaki">Misaki</a></li><li><a href="https://github.com/hashobject/perun">Perun</a></li></ul><p>Misakiは永らくメンテされてないからなし。
-CryogenもPerunも、検索したら日本語の情報にhitするのでやりがいに違いはなさそう。
-単純に⭐が多いのとBootを使ったことがないというだけの理由で<a href="https://github.com/cryogen-project/cryogen">Cryogen</a>を使うことにした。</p><p>(後知恵だが、ここはもっと慎重に考えた方が良かった)</p><h3 id="cryogenを使ってぶろぐを作ろうぜ"><a href="https://github.com/cryogen-project/cryogen">Cryogen</a>を使ってぶろぐを作ろうぜ</h3><p>ドキュメントが充実してるので、書いたてることに従うだけで簡単にできた。</p><p>出来上がったコードはこちら→<a href="https://github.com/krymtkts/blog-cryogen">My personal blog project</a></p><p>以降に記すコマンド例はPowerShellで実行したものである。筆者はWindows10ユーザなので。</p><h4 id="手始めに">手始めに</h4><p>Leiningenでテンプレートを作成する。</p><pre><code class="poershell">lein new cryogen blog
-Retrieving cryogen/lein-template/0.3.7/lein-template-0.3.7.pom from clojars
-Retrieving leinjacker/leinjacker/0.4.2/leinjacker-0.4.2.pom from clojars
-Retrieving org/clojure/core.contracts/0.0.1/core.contracts-0.0.1.pom from central
-Retrieving org/clojure/pom.contrib/0.0.26/pom.contrib-0.0.26.pom from central
-Retrieving org/clojure/core.unify/0.5.3/core.unify-0.5.3.pom from central
-Retrieving cryogen/lein-template/0.3.7/lein-template-0.3.7.jar from clojars
-Retrieving org/clojure/core.contracts/0.0.1/core.contracts-0.0.1.jar from central
-Retrieving org/clojure/core.unify/0.5.3/core.unify-0.5.3.jar from central
-Retrieving org/clojure/clojure/1.4.0/clojure-1.4.0.jar from central
-Retrieving leinjacker/leinjacker/0.4.2/leinjacker-0.4.2.jar from clojars
-Generating fresh 'lein new' Cryogen project.
-</code></pre><p>ブログを動かしてみよう</p><pre><code class="poershell">lein ring server
-</code></pre><p>ブラウザに表示された。OK👍</p><h4 id="コンテンツを整理する">コンテンツを整理する</h4><p>わたしの場合はMarkdownで書くのでAsciiDocのディレクトリは消してしまう。サーバ起動中にこれをやると例外が発生する、止めてからやるのが良いだろう。</p><pre><code class="powershell">Remove-Item -Recurse -Path ./resources/templates/ascii
-</code></pre><p>あとsampleで置いてあるpostやaboutを自分用に書き換えるなど。</p><h4 id="テーマを作る">テーマを作る</h4><p>themeはデフォで<code>blue</code>, <code>blue_centered</code>, <code>lotus</code>, <code>nucleus</code>の4種類置いてある。<code>lotus</code>を使うとエラーになったけど、これを直すのが目的じゃないので無視した🙈</p><p>自分用のテーマとしては何が良いかな？と検討して、お気に入りのSolarizedにしようと決めた。terminalやeditorはSolarized darkを使っているが、ブログはlightでやろうと思う。syntax highlightingについてはいつも通りのdarkを採用することにした。</p><p><a href="https://ethanschoonover.com/solarized/">Solarized</a>を参考に自分でthemeを作る。元にするのは<code>blue_centered</code>にした。ブラウザの開発者ツールで見てみてもレスポンシブデザインになってたし、cssのコード量も少なくてシンプルなのがいい。</p><p><code>resources/templates/themes</code>にファイル名<code>solarized_light</code>でコピって書き換える。</p><p>基本は書いたあるルールに沿うけど一部それとなく変える。カラーコードの編集はsassにしたら楽だろうけどコピった元はそうじゃないので、該当する箇所を書き換えるだけに留めた。</p><p>Cryogenのsyntax highlightingは<code>highlight.js</code>が採用されている。
-デフォの24種だと使わないやつもいるので削って、使いそうな言語を足したものを<a href="https://highlightjs.org/download/">highlight.js</a>で作ってダウンロードする。
-これは手動でダウンロードして、デフォの<code>highlight.pack.js</code>に上書きした。</p><p>スタイルは<code>base.html</code>で<code>default</code>が指定されているので<code>solarized_dark</code>を選ぶ。ついでにhighlight.jsのversionも9.7から9.13.1へ上げちゃう。</p><p>404 Page not foundのときのページがどうやって表示されるのかわからなかったが、GitHub Pagesの機能で提供されるルールに従えば良い様子。</p><p><a href="https://help.github.com/articles/creating-a-custom-404-page-for-your-github-pages-site/">Customizing GitHub Pages / Creating a custom 404 page for your GitHub Pages site</a></p><p>デフォの404ページのスタイルが他のページとぜんぜん違うので、スタイルに合わせておいた。</p><p>ページが縦に長くなって垂直スクロールバーが出るとコンテンツのズレが生じるのだけど、これ多分bootstrapに起因する問題か🤔悩ましいが一旦そのままに。</p><p>これでおおよそのデザイン面は完成した。</p><p>作業中のコードは一旦BitBucketのprivate repoにブチ込んでおいたのだけど、GitHubの無償アカウントでもprivate repoが使えるようになって分ける理由がなくなってしまった...まあよし。</p><p>あと、</p><ul><li>Bootstrap3から4に上げたい</li><li>Google Analytics</li></ul><p>など残しているが、一旦はコンテンツの公開を優先して後回しにする予定。</p><h4 id="github-pagesにうｐる">GitHub Pagesにうｐる</h4><p><a href="https://pages.github.com/">GitHub Pages</a>の説明と<a href="http://cryogenweb.org/docs/deploying-to-github-pages.html">Cryogen - GitHub Pages</a>を見たらできる。</p><p>作るのはユーザーのpageなので、まず<code>krymtkts.github.io</code>のrepoを作る。
-中身は空で。Licenseの選択もなし。</p><p>Cryogenのドキュメントに従い、<code>config.edn</code>の<code>blog-prefix</code>キーの値は空にする。</p><p>あとはCryogenが出力した<code>resource/public</code>を先程作ったrepoのmasterブランチにpushするのみ。</p><p>この出力先<code>resource/public</code>を変更する方法がわからなかったので、<code>krymtkts.github.io</code>という名前のシンボリックリンクを作って、あたかもそういう名前のフォルダをGitで管理してる感を醸し出して茶を濁した。</p><pre><code class="poershell">New-Item -Value '.\blog\resources\public\' -Path './' -Name 'krymtkts.github.io' -ItemType SymbolicLink
-cd krymtkts.github.io
-git init
-echo "# krymtkts.github.io" &gt;&gt; README.md
-git add README.md
-git commit -m "First commit"
-git add .
-git commit -m 'Add contents'
-git remote add origin git@github.com:krymtkts/krymtkts.github.io.git
-git push -u origin master
-</code></pre><p>これでわたしのブログがpublishされたのであった🎉</p><p>めでたしめでたし...</p><h3 id="to-be-continued">To be continued</h3><p>で終わらなかった。</p><p>これを作りきって、急激にCryogenに興味がなくなってしまった。</p><p>結局の所、テンプレートエンジンにSelmerを使ってることで、HTMLやスタイルの編集自体にClojure感の薄さがあってなんか楽しみがないのかなと。最初から予想できそうな結果やけどな🤔</p><p>コンテンツ自体はMarkdownで書くし可搬性があるので記事の更新はしつつ、次段階としてPerunで作り直してみようと思う。</p><p>破壊と創造こそが人類の本質ですね(違う</p>
+    <p>Windows 10 からデフォルト言語が日本の状態の PC でも表示言語を変えられる。
+極力英語 UI を使うようにしているのもあって、今の Razer Blade Stealth を買ったころから英語表示で利用している。 Windows 11 にアップグレードしてからも同じだ。</p><p>設定自体は、ここに書いてる方法で表示言語を日本語から英語に変えられる。
+<a href="https://support.microsoft.com/en-us/windows/manage-the-input-and-display-language-settings-in-windows-12a10cb4-8626-9b77-0ccb-5013e0c7c7a2#WindowsVersion=Windows_10">Manage the input and display language settings in Windows - Microsoft Support</a></p><p>あと重要なのが、 Time &amp; Language → Language &amp; region のところの Preferred languages の順番。ここでちゃんと先頭を英語にしておかないといけない。
+例えば <a href="https://github.com/microsoft/PowerToys">PowerToys</a> や <a href="https://github.com/microsoft/terminal">Windows Terminal</a> といったツール。
+これらは最優先される言語でコマンドパレットや UI を表示したりする仕組みになってるようで<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>、日本語を最優先にしていると部分的に表示言語が日本語になり、使いにくいことこの上なくなる。
+これに従うとデフォルトのキーボードが英語になるデメリットがあるが、インスタントに切り替えられない UI の方を尊重して、 起動後は毎回 Win + Space で英語 → 日本語に切り替えている。</p><p>こんな感じでちまちま英語 UI を使えるように調整していたのだけど、最近困った事が起こった。
+ここ数ヶ月のどっかの Windows Update のタイミング以降、ログイン画面やシャットダウン・再起動時の表示言語が日本語になる事象が発生した。
+先述の表示言語の設定で、英語 → 日本語としたあとで再起動後また英語にするとか、色々やっても解消しないので何なんや...と思っていた。</p><p>ついに先日、その解消方法を見つけた。
+しかも身近な Time &amp; Language → Language &amp; region の中にある。たまたまポチっては画面を眺めてを繰り返していたときに見つけた。</p><p>Administrative language settings だ。</p><p>キーワードさえわかればこのように類似ケースを探すのも容易い。でも Microsoft の文書がヒットしないのはなんでや...
+<a href="https://www.windowscentral.com/how-change-system-language-windows-10">How to change system language on Windows 11 | Windows Central</a></p><p>ここ 2 つのセクションがあって、両方を英語に変えた。</p><ol><li>Welcome screen and new user accounts</li><li>Language for non-Unicode programs</li></ol><p>1 では Current user から Welcome screen, New user accounts の 2 つの言語設定に設定をコピーできて、その内の Welcome screen の言語設定がログイン画面に効いた様子。
+また英語表示が戻ってきて、うれしい。
+更に、 Windows Update 後に足した覚えのないキーボードが復活する現象にも悩まされていた。
+New user accounts にその足した覚えのないキーボードが割あたってたので、多分犯人はこいつ。
+これも解消できそう。</p><p>2 の方は何に効いてるのかわからん。 non-Unicode なアプリがあったらわかるんかな。</p><p>手順がわかってしまえば、もしまた表示言語が日本語に戻ったとしても、この設定をやり直せば良いので安心できる。
+理想はスクリプト化しておきたいが、まだ Registry の該当箇所を調べてない。</p><p>という具体で久しぶりのフル英語表示にできて満足した。</p><div class="footnotes"><hr /><ol><li id="fn-1"><p>要出典。昔 Windows Terminal にコマンドパレットが導入されたときにそんな Issue を見たが忘れた。</p><a href="#fnref-1" class="footnote-backref">↩</a></li></ol></div>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/cryogen">cryogen</a>
-    
-    <a href="/tags/clojure">clojure</a>
+    <a href="/tags/windows">windows</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-01-14-ortho-linear-keyboard-planck">&laquo; 2019-01-14 Ortho-Linear Keyboard &quot;Planck&quot;</a>
         
-        
-        <a class="right" href="/posts/2019-01-08-first-post">2019-01-08 ブログを始めた &raquo;</a>
+        <a class="right" href="/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12">2023-02-05 F#でコマンドレットを書いてる pt.12 &raquo;</a>
         
     </div>
 
