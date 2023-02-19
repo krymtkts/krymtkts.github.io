@@ -1,4 +1,146 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 12 Feb 2023 11:25:25 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-02-12-change-display-langualge-completely-to-en</guid><link>https://krymtkts.github.io/posts/2023-02-12-change-display-langualge-completely-to-en</link><title>Windows 11 の表示言語を完全に英語にする</title><description>&lt;p&gt;Windows 10 からデフォルト言語が日本の状態の PC でも表示言語を変えられる。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 19 Feb 2023 17:09:02 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-02-19-aws-ssm-session-manager-with-powershell</guid><link>https://krymtkts.github.io/posts/2023-02-19-aws-ssm-session-manager-with-powershell</link><title>AWS SSM Session Manager を PowerShell で</title><description>&lt;p&gt;AWS SSM Session Manager を使って EC2 Instance とかに接続するやつがある。
+AWS CLI であれば Session Mangger plugin&lt;sup id="fnref-1"&gt;&lt;a class="footnote-ref" href="#fn-1"&gt;1&lt;/a&gt;&lt;/sup&gt; を入れておけば &lt;code&gt;aws ssm start-session&lt;/code&gt; で SSH 感覚でつなげる。 Security Group に自分とこの外部 IP を含めなくていいし、最高のやつだ。&lt;/p&gt;&lt;p&gt;だが AWS Tools for PowerShell で対になる &lt;code&gt;Start-SSMSession&lt;/code&gt;は &lt;a href="https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_StartSession.html"&gt;StartSession API&lt;/a&gt; の戻り値を返すだけ。
+(公式回答なのか？) AWS dev サポの方が AWS Tools for PowerShell の Issue&lt;sup id="fnref-2"&gt;&lt;a class="footnote-ref" href="#fn-2"&gt;2&lt;/a&gt;&lt;/sup&gt; にて Session Manager plugin に対応してなさそうなコメントしてる。
+また Session Manager plugin 自体、その本丸である WebSocket の URL やらをどのようにこねくり回して渡せばいいかが文書化されてない。&lt;/p&gt;&lt;p&gt;PowerShell では Session Manager 無理かな...半ば諦めていたところに、なんと Remote Desktop で繋げられたという記事を発見した。
+これはマジですごい。 Linux 上で &lt;code&gt;aws ssm start-session&lt;/code&gt; を &lt;code&gt;strace&lt;/code&gt; して解析したらしい。鬼テク。&lt;/p&gt;&lt;p&gt;&lt;a href="https://cloudsoft.io/blog/remote-access-to-windows-ec2-instances-the-easy-and-secure-way"&gt;Remote Access to Windows EC2 instances, the easy (and secure) way&lt;/a&gt;&lt;/p&gt;&lt;p&gt;解析結果から作成され接続確認された PowerShell モジュールが GitHub に公開されている。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/cloudsoft/EC2Access/blob/v1.0.0/EC2Access.psm1#L170-L243"&gt;EC2Access/EC2Access.psm1 at v1.0.0 · cloudsoft/EC2Access&lt;/a&gt;&lt;/p&gt;&lt;p&gt;元記事は RemoteDesktop を対象としているが、ぱっと見 SSH でも同様のことができそう。
+コミットが 1 年半くらい前なので Session Manager の API に変更がなければ、やけど。
+Session Manager plugin にパラメータを渡す部分を参考に、接続を試行してみる。
+&lt;a href="https://github.com/cloudsoft/EC2Access/blob/v1.0.0/LICENSE"&gt;ライセンスは Apache License 2&lt;/a&gt; なので無償利用・改変もヨシ。&lt;/p&gt;&lt;p&gt;試してみる。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;まず AWS CLI の場合だが以下のような感じで使ってた。
+見やすさのために改行成分多く含んでいる。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;Get-EC2Instance -Filter @{
+    Name = 'tag:Name'
+    Values = 'instance-name'
+} | Select-Object -ExpandProperty Instances -First 1 | ForEach-Object {
+    aws ssm start-session --target $_.InstanceId # ここを変えたいんや
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これを一先ずこんな風に使えるような関数を作成してみてはどうか？(&lt;code&gt;ForEach-Object&lt;/code&gt; 要らんが SSH は単発でつなぎたいし一先ず)。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;Get-EC2Instance -Filter @{
+    Name = 'tag:Name'
+    Values = 'instance-name'
+} | Select-Object -ExpandProperty Instances -First 1 | ForEach-Object {
+    Start-SSMSshSession -Instance $_.InstanceId # こういう関数がほしい
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;先述の &lt;a href="https://github.com/cloudsoft/EC2Access/blob/v1.0.0/EC2Access.psm1#L170-L243"&gt;EC2Access.psm1&lt;/a&gt; からコードを拝借する。
+&lt;code&gt;Start-SSMSession&lt;/code&gt; の戻り値をこねくる部分と、 Session Manager plugin を取り扱う箇所が対象だ。
+コメントも処理の解析に有用なのでそのまま残させていただく。&lt;/p&gt;&lt;p&gt;元コードは RemoteDesktop を対象にしているので、認証情報の作成、 port forwarding 、あと最後の接続の箇所だけ SSH 用に書き換える。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;function Start-SSMSshSession {
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $InstanceId,
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Region = 'ap-northeast-1',
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $SshUser = 'ec2-user',
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $CertPath,
+        [Parameter()]
+        [int]
+        $LocalPort = 10022
+    )
+
+    $PortForwardParams = @{ portNumber = (, '22'); localPortNumber = (, $LocalPort.ToString()) }
+    $session = Start-SSMSession -Target $InstanceId -DocumentName 'AWS-StartPortForwardingSession' -Parameters $PortForwardParams
+
+    # We now need to emulate awscli - it invokes session-manager-plugin with the new session information.
+    # AWS Tools for PowerShell don't do this. Also some of the objects seem to look a bit different, and the
+    # plugin is pernickety, so we have to jump through some hoops to get all the objects matching up as close
+    # as we can.
+
+    $SessionData = @{
+        SessionId = $session.SessionID;
+        StreamUrl = $session.StreamUrl;
+        TokenValue = $session.TokenValue;
+        ResponseMetadata = @{
+            RequestId = $session.ResponseMetadata.RequestId;
+            HTTPStatusCode = $session.HttpStatusCode;
+            RetryAttempts = 0;
+            HTTPHeaders = @{
+                server = 'server';
+                'content-type' = 'application/x-amz-json-1.1';
+                'content-length' = $session.ContentLength;
+                connection = 'keep-alive';
+                'x-amzn-requestid' = $session.ResponseMetadata.RequestId;
+            }
+        }
+    }
+
+    $RequestData = @{
+        Target = $InstanceId;
+        DocumentName = 'AWS-StartPortForwardingSession';
+        Parameters = $PortForwardParams
+    }
+
+    $Arguments = (
+        (ConvertTo-Json $SessionData -Compress),
+        $Region,
+        'StartSession',
+        '',
+        (ConvertTo-Json $RequestData -Compress),
+        "https://ssm.$($Region).amazonaws.com"
+    )
+
+    # Now we have to do some PowerShell hacking. Start-Process takes an array of arguments, which is great,
+    # but it doesn't actually do what we expect it to - see https://github.com/PowerShell/PowerShell/issues/5576.
+    # So instead we have to turn it into an escaped string ourselves...
+    $EscapedArguments = $Arguments | ForEach-Object { $escaped = $_ -replace "`"", "\`""; "`"$($escaped)`"" }
+    $ArgumentString = $EscapedArguments -join ' '
+
+    # Start the Session Manager plugin:
+    if ($PSCmdlet.ShouldProcess($session.SessionId, 'Start Session Manager plugin')) {
+        try {
+            $Process = Start-Process -FilePath 'session-manager-plugin.exe' -ArgumentList $ArgumentString -NoNewWindow -PassThru
+        }
+        catch {
+            Write-Error 'Unable to start the process session-manager-plugin.exe. Have you installed the Session Manager Plugin as described in https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html#install-plugin-windows ?'
+            exit
+        }
+
+        # Wait a moment for it to connect to the session and open up the local ports
+        Start-Sleep -Seconds 1
+
+        # The port should be open now - let's connect
+        if ($PSCmdlet.ShouldProcess($InstanceId, 'Start SSH client')) {
+            ssh "${SshUser}@127.0.0.1" -p $LocalPort -i $CertPath
+        }
+
+        # Once the ssh session has finished, kill the session manager plugin
+        $Process.Kill()
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;aws ssm start-session&lt;/code&gt; だと &lt;code&gt;ssm-user&lt;/code&gt; でつなぐことになるが、自前で接続する場合このユーザの認証情報がわからなかった。
+代わりに &lt;code&gt;ec2-user&lt;/code&gt; を使い、合わせて鍵も渡すようにした。
+結果、当初の想定よりパラメータが増えてしまうが、致し方なし。&lt;/p&gt;&lt;p&gt;できたら試す。 IP 等の一部の情報は伏せ字とする。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; Get-EC2Instance -Filter @{
+&amp;gt;     Name = 'tag:Name'
+&amp;gt;     Values = 'instance-name'
+&amp;gt; } | Select-Object -ExpandProperty Instances -First 1 | ForEach-Object {
+&amp;gt;     Start-SSMSshSession -InstanceId $_.InstanceId -CertPath ~/.ssh/instance-name.pem
+&amp;gt; }
+
+Starting session with SessionId: krymtkts-031e957031cdcb25c
+Port 10022 opened for sessionId krymtkts-031e957031cdcb25c.
+Waiting for connections...
+
+Connection accepted for session [krymtkts-031e957031cdcb25c]
+Last login: Sun Feb 19 06:09:45 2023 from localhost
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+22 package(s) needed for security, out of 22 available
+Run "sudo yum update" to apply all updates.
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;見事つなげる事ができた。すーご。&lt;/p&gt;&lt;p&gt;非公式とはいえ、 AWS CLI だけでしかできかなったことが PowerShell でもできるというのがわかるのは、一ユーザとして喜ばしいこっちゃな。
+&lt;a href="https://cloudsoft.io/blog/remote-access-to-windows-ec2-instances-the-easy-and-secure-way"&gt;元記事&lt;/a&gt; の Great work に感謝やな。&lt;/p&gt;&lt;div class="footnotes"&gt;&lt;hr /&gt;&lt;ol&gt;&lt;li id="fn-1"&gt;&lt;p&gt;&lt;a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"&gt;(Optional) Install the Session Manager plugin for the AWS CLI - AWS Systems Manager&lt;/a&gt; 入れておけばというか入れてないと無理&lt;/p&gt;&lt;a href="#fnref-1" class="footnote-backref"&gt;↩&lt;/a&gt;&lt;/li&gt;&lt;li id="fn-2"&gt;&lt;p&gt;&lt;a href="https://github.com/aws/aws-tools-for-powershell/issues/283#issuecomment-1247377153"&gt;Support for interactive Start-SSMSession · Issue #283 · aws/aws-tools-for-powershell&lt;/a&gt; で(AWS Tools for PowerShell は)外部プログラムに依存できないし、 Session Manager plugin は AWS CLI 専用て言ってる&lt;/p&gt;&lt;a href="#fnref-2" class="footnote-backref"&gt;↩&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;</description><pubDate>Sun, 19 Feb 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-02-12-change-display-langualge-completely-to-en</guid><link>https://krymtkts.github.io/posts/2023-02-12-change-display-langualge-completely-to-en</link><title>Windows 11 の表示言語を完全に英語にする</title><description>&lt;p&gt;Windows 10 からデフォルト言語が日本の状態の PC でも表示言語を変えられる。
 極力英語 UI を使うようにしているのもあって、今の Razer Blade Stealth を買ったころから英語表示で利用している。 Windows 11 にアップグレードしてからも同じだ。&lt;/p&gt;&lt;p&gt;設定自体は、ここに書いてる方法で表示言語を日本語から英語に変えられる。
 &lt;a href="https://support.microsoft.com/en-us/windows/manage-the-input-and-display-language-settings-in-windows-12a10cb4-8626-9b77-0ccb-5013e0c7c7a2#WindowsVersion=Windows_10"&gt;Manage the input and display language settings in Windows - Microsoft Support&lt;/a&gt;&lt;/p&gt;&lt;p&gt;あと重要なのが、 Time &amp;amp; Language → Language &amp;amp; region のところの Preferred languages の順番。ここでちゃんと先頭を英語にしておかないといけない。
 例えば &lt;a href="https://github.com/microsoft/PowerToys"&gt;PowerToys&lt;/a&gt; や &lt;a href="https://github.com/microsoft/terminal"&gt;Windows Terminal&lt;/a&gt; といったツール。
