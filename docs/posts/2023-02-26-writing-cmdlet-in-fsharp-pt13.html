@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;vscode&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/vscode">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.13</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;vscode&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/vscode" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.13" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -193,25 +193,51 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;vscode&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2023-02-26</div>
+        
     </div>
-    <ul>
+    <h2>F#でコマンドレットを書いてる pt.13</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2021-08-30-patch-to-vscode-extension">2021-08-30 VS Code の拡張機能に ローカル patch する</a>
-        </li>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。
+<a href="https://www.powershellgallery.com/packages/pocof/0.4.0-alpha">pocof 0.4.0-alpha</a> を公開した。</p><p>諸々の bugfix を主として行った。
+<a href="https://github.com/krymtkts/pocof/issues/28">#28</a> <a href="https://github.com/krymtkts/pocof/issues/25">#25</a> <a href="https://github.com/krymtkts/pocof/issues/23">#23</a> <a href="https://github.com/krymtkts/pocof/issues/21">#21</a> <a href="https://github.com/krymtkts/pocof/issues/20">#20</a> <a href="https://github.com/krymtkts/pocof/issues/18">#18</a></p><p>修正自体は軽微だが、結構使っていてイヤーな感じをもたらす bug が多かったし、直して良かった。
+機能的なところでは入力中のプロパティ候補の表示非表示を切り替えるオプションを付与したのみに留まる。</p><p>正直なところプロパティの TAB 補完できてから公開したかったが、先送りにした。
+こいつをやるには内部的な状態を増やす必要があると思っていて、そのためにはリファクタリングをしてから着手する方が良い。
+要はリファクタリングしだすと、色々気になって手を入れてしまいズルズルとリリースを遅らせがちなので、切の良いタイミングで公開しておいたという算段だ。</p><p>増やす状態は、カーソルがクエリの分かち書きの何個目にいるか、単語の何文字目にいるとかを指す。 TAB 補完したときにクエリの書き換えとカーソル末尾への移動をするが、その計算にこれらの状態があると良い。
+今の実装だと単純にクエリ文字列と検索中のプロパティを保持しているだけなので、そこを小綺麗に整理した後にそれらを付与するようなイメージ。判別共用体を上手く使ってできる感覚を持っている。</p><p>ただしデータ構造の変更に伴いクエリ実行そのものも書き換える必要がある。
+<a href="/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12">前の日記</a> でも触れてたように、やっぱこのタイミングで <a href="https://github.com/fsprojects/FsUnit">FsUnit</a> 導入して動作保証しながらの開発は必須、避けられない。</p><p>話は逸れるが、FsUnit 使うに当たり .NET のテストライブラリを入れる必要があるのだけど、全然知らん。
+<a href="https://fsprojects.github.io/FsUnit/index.html">What is FsUnit?</a> を見るに <a href="https://github.com/xunit/xunit">xunit</a> 、 <a href="https://github.com/nunit/nunit">nunit</a> と <a href="https://github.com/microsoft/testfx">MSTest</a> がある。
+FsUnit からはどれでも使えるけどそれぞれの推しどころわからず、どれを使えばいいかわからんというアレな状態。
+GitHub の star 見るに xUnit が人気ぽいが、 <a href="https://github.com/fsprojects/fantomas/blob/a7ed99fb74fee6db55487f315005c0200d19a0b4/src/Fantomas.Tests/Fantomas.Tests.fsproj">fantomas</a> は FsUnit と NUnit の組み合わせっぽかった。
+FsUnit のドキュメント見てたら、強力な型付きの <a href="https://fsprojects.github.io/FsUnit/FsUnitTyped.html">FsUnitTyped</a> は NUnit か xUnit しかサポートしてないって書いてるし、なんとか二択までは絞れた...こっからがだるい。</p><p>話を戻して、クエリの内部状態以外にも判別共用体で書き直したい箇所があって、それは入力時のキー判定や今は文字列で保持しているキーマップだったりだ。
+キーマップの方は外部保存した設定ファイルを読み込む方式も検討したいのでハマるかわからんけど。入力時のキー判定の方は、いま if 式をこねくっているのもあって、パターンマッチング式に置き換えられるからハマるなという感覚がある。</p><p>また機能追加が滞りそうではあるが、あと 2 ヶ月ほどで pocof の initial commit から 1 年経つのもあり、掃除するにはちょうどいい頃合いではないかと。ちょっとは F# Ninja Level も上がったやろ。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2020-08-31-how-do-i-manage-todos">2020-08-31 TODO の管理どないしてまっか？</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-        <li>
-            <a href="/posts/2019-04-07-lint-my-statement">2019-04-07 下手な文章を Lint する</a>
-        </li>
+    <a href="/tags/fsharp">fsharp</a>
     
-    </ul>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2023-02-19-aws-ssm-session-manager-with-powershell">2023-02-19 AWS SSM Session Manager を PowerShell で &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>
