@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-03-05-writing-cmdlet-in-fsharp-pt14">F#でコマンドレットを書いてる pt.14</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13">F#でコマンドレットを書いてる pt.13</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-02-19-aws-ssm-session-manager-with-powershell">AWS SSM Session Manager を PowerShell で</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-02-12-change-display-langualge-completely-to-en">Windows 11 の表示言語を完全に英語にする</a></li>
                         
                         
 
@@ -196,26 +196,72 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-02-26</div>
+        <div class="col-lg-6">2023-03-05</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.13</h2>
+    <h2>F#でコマンドレットを書いてる pt.14</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。
-<a href="https://www.powershellgallery.com/packages/pocof/0.4.0-alpha">pocof 0.4.0-alpha</a> を公開した。</p><p>諸々の bugfix を主として行った。
-<a href="https://github.com/krymtkts/pocof/issues/28">#28</a> <a href="https://github.com/krymtkts/pocof/issues/25">#25</a> <a href="https://github.com/krymtkts/pocof/issues/23">#23</a> <a href="https://github.com/krymtkts/pocof/issues/21">#21</a> <a href="https://github.com/krymtkts/pocof/issues/20">#20</a> <a href="https://github.com/krymtkts/pocof/issues/18">#18</a></p><p>修正自体は軽微だが、結構使っていてイヤーな感じをもたらす bug が多かったし、直して良かった。
-機能的なところでは入力中のプロパティ候補の表示非表示を切り替えるオプションを付与したのみに留まる。</p><p>正直なところプロパティの TAB 補完できてから公開したかったが、先送りにした。
-こいつをやるには内部的な状態を増やす必要があると思っていて、そのためにはリファクタリングをしてから着手する方が良い。
-要はリファクタリングしだすと、色々気になって手を入れてしまいズルズルとリリースを遅らせがちなので、切の良いタイミングで公開しておいたという算段だ。</p><p>増やす状態は、カーソルがクエリの分かち書きの何個目にいるか、単語の何文字目にいるとかを指す。 TAB 補完したときにクエリの書き換えとカーソル末尾への移動をするが、その計算にこれらの状態があると良い。
-今の実装だと単純にクエリ文字列と検索中のプロパティを保持しているだけなので、そこを小綺麗に整理した後にそれらを付与するようなイメージ。判別共用体を上手く使ってできる感覚を持っている。</p><p>ただしデータ構造の変更に伴いクエリ実行そのものも書き換える必要がある。
-<a href="/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12">前の日記</a> でも触れてたように、やっぱこのタイミングで <a href="https://github.com/fsprojects/FsUnit">FsUnit</a> 導入して動作保証しながらの開発は必須、避けられない。</p><p>話は逸れるが、FsUnit 使うに当たり .NET のテストライブラリを入れる必要があるのだけど、全然知らん。
-<a href="https://fsprojects.github.io/FsUnit/index.html">What is FsUnit?</a> を見るに <a href="https://github.com/xunit/xunit">xunit</a> 、 <a href="https://github.com/nunit/nunit">nunit</a> と <a href="https://github.com/microsoft/testfx">MSTest</a> がある。
-FsUnit からはどれでも使えるけどそれぞれの推しどころわからず、どれを使えばいいかわからんというアレな状態。
-GitHub の star 見るに xUnit が人気ぽいが、 <a href="https://github.com/fsprojects/fantomas/blob/a7ed99fb74fee6db55487f315005c0200d19a0b4/src/Fantomas.Tests/Fantomas.Tests.fsproj">fantomas</a> は FsUnit と NUnit の組み合わせっぽかった。
-FsUnit のドキュメント見てたら、強力な型付きの <a href="https://fsprojects.github.io/FsUnit/FsUnitTyped.html">FsUnitTyped</a> は NUnit か xUnit しかサポートしてないって書いてるし、なんとか二択までは絞れた...こっからがだるい。</p><p>話を戻して、クエリの内部状態以外にも判別共用体で書き直したい箇所があって、それは入力時のキー判定や今は文字列で保持しているキーマップだったりだ。
-キーマップの方は外部保存した設定ファイルを読み込む方式も検討したいのでハマるかわからんけど。入力時のキー判定の方は、いま if 式をこねくっているのもあって、パターンマッチング式に置き換えられるからハマるなという感覚がある。</p><p>また機能追加が滞りそうではあるが、あと 2 ヶ月ほどで pocof の initial commit から 1 年経つのもあり、掃除するにはちょうどいい頃合いではないかと。ちょっとは F# Ninja Level も上がったやろ。</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>以下を参考に xUnit と FsUnit を導入した。</p><ul><li><a href="https://learn.microsoft.com/ja-jp/dotnet/core/testing/unit-testing-fsharp-with-dotnet-test">dotnet テストと xUnit を使用した .NET Core での単体テスト F# - .NET | Microsoft Learn</a></li><li><a href="https://fsprojects.github.io/FsUnit/xUnit.html">FsUnit for xUnit</a></li><li><a href="https://fsprojects.github.io/FsUnit/FsUnitTyped.html">What is FsUnitTyped?</a></li><li><a href="https://learn.microsoft.com/ja-jp/dotnet/core/testing/unit-testing-code-coverage?tabs=windows#code-coverage-tooling">単体テストにコードカバレッジを使用する - .NET | Microsoft Learn</a></li></ul><p>repo ルートを作業ディレクトリとする。</p><pre><code class="powershell">cd (mkdir pocof.Test)
+dotnet new xunit -lang "F#"
+dotnet add reference ../pocof/pocof.fsproj
+dotnet sln ../../pocof.sln add .\pocof.Test.fsproj
+cd ../../
+dotnet build
+</code></pre><p>一応ここでちゃんとテストできるか確認をする。<code>Tests.fs</code> のコードを単純なのに書き換える。</p><pre><code class="fsharp">module Tests
+
+open System
+open Xunit
+
+[&lt;Fact&gt;]
+let ``My test`` () = Assert.True(true)
+</code></pre><p>VS Code からでもよし、 CLI でなら repo のルートで以下の通り。</p><pre><code class="powershell">PS&gt; dotnet test
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  pocof -&gt; C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof\bin\Debug\net6.0\pocof.dll
+C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\Tests.fs(7,39): warning FS0988: Main module of program is empty: noth
+ing will happen when it is run [C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\pocof.Test.fsproj]
+  pocof.Test -&gt; C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\bin\Debug\net6.0\pocof.Test.dll
+Test run for C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\bin\Debug\net6.0\pocof.Test.dll (.NETCoreApp,Version=v6.0)
+Microsoft (R) Test Execution Command Line Tool Version 17.5.0 (x64)
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: &lt; 1 ms - pocof.Test.dll (net6.0)
+</code></pre><p>あと <code>dotnet new xunit -lang "F#"</code> で生成された <code>Program.fs</code> は不要なので削除、 <code>pocof.Text.fsproj</code> からも削除する。</p><p>次に FsUnit を追加する。</p><pre><code class="powershell">dotnet add ./src/pocof.Test/pocof.Test.fsproj package FsUnit.xUnit
+</code></pre><p>テストをこんな感じで書き換え、 <code>dotnet test</code> が成功したら完了。</p><pre><code class="diff"> module Tests
+
+-open System
+ open Xunit
++open FsUnitTyped
+
+-[&lt;Fact&gt;]
+-let ``My test`` () = Assert.True(true)
++module ``Pocof Tests`` =
++
++    [&lt;Fact&gt;]
++    let ``Sample test should equals 1`` () = 1 |&gt; shouldEqual 1
++
++[&lt;EntryPoint&gt;]
++let main argv = 0
+</code></pre><p><a href="https://github.com/dotnet/fsharp/issues/2669">"Main module of program is empty: nothing will happen when it is run" warning when running xunit tests on .net core. · Issue #2669 · dotnet/fsharp</a> で知ったが、 テストプロジェクトはコンソールアプリなので <code>&lt;EntryPoint&gt;</code> を必ず持たないと警告がでる。 xUnit 追加後シンプルにしたテストコードでは <code>&lt;EntryPoint&gt;</code> がなかったので警告が出てた。</p><p>ちょっとわからないのが VS Code からの実行だとハングしてるようだった。
+テストを実行するための DotNet CLI が後ろで実行されるみたいだが、そのプロセスは上手く行ってそうに見える。でも GUI がずっとくるくる止まる。どうも Inonide がエラーしてるっぽい。 xUnit の実行確認のときはいけたので FsUnit 起因か？ちょっと調べる必要ありだが、今回は先送りにする。</p><pre><code class="log">2023-03-04 15:50:47.005 [error] Error:
+    at MapTreeModule_find (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:245:15)
+    at FSharpMap__get_Item (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:1179:12)
+    at f (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:1297:12)
+    at Kt (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Array.js:70:21)
+    at c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\Components\TestExplorer.js:138:27
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async Promise.all (index 0)
+</code></pre><p>コードカバレッジは xUnit のテンプレなら初めから統合されてるらしくて、すぐ出せる。これはめちゃくちゃ楽。</p><pre><code class="powershell">dotnet test --collect:"XPlat Code Coverage"
+</code></pre><p>こんな感じでレポート出力できる。出力しておいたら VS Code の <a href="https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters">Coverage Gutters</a> で取り込めるしこりゃいいな。</p><pre><code class="powershell">reportgenerator -reports:".\src\pocof.Test\TestResults\*\coverage.cobertura.xml" -targetdir:"coverage" -reporttypes:Html
+</code></pre><hr /><p>昔は Visual Studio からしか Solution とか作るしかなかったようなキヲクをがある(無能だっただけやも知れんが)。
+いまの DotNet CLI ある時代めちゃくちゃ便利でびっくりした。</p><p>あと FsUnit 非常によい。
+入力キーから処理を導くところのリファクタするのに役立っている。
+サクサク書けるし、バグってた状態で放置してるとこが見つかったり(<a href="https://github.com/krymtkts/pocof/pull/33">#33</a>)いまのところ良いことしか無い。</p><p>いい感じにテスト揃ってきたら、 GitHub Actions で FsUnit と Pester 実行するようにしよう。</p>
 </div>
 
 <div id="post-tags">
@@ -233,7 +279,7 @@ FsUnit のドキュメント見てたら、強力な型付きの <a href="https:
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-02-19-aws-ssm-session-manager-with-powershell">2023-02-19 AWS SSM Session Manager を PowerShell で &raquo;</a>
+        <a class="right" href="/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13">2023-02-26 F#でコマンドレットを書いてる pt.13 &raquo;</a>
         
     </div>
 </div>

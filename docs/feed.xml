@@ -1,4 +1,62 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 26 Feb 2023 17:31:36 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13</guid><link>https://krymtkts.github.io/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13</link><title>F#でコマンドレットを書いてる pt.13</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 05 Mar 2023 16:06:00 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-03-05-writing-cmdlet-in-fsharp-pt14</guid><link>https://krymtkts.github.io/posts/2023-03-05-writing-cmdlet-in-fsharp-pt14</link><title>F#でコマンドレットを書いてる pt.14</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;以下を参考に xUnit と FsUnit を導入した。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="https://learn.microsoft.com/ja-jp/dotnet/core/testing/unit-testing-fsharp-with-dotnet-test"&gt;dotnet テストと xUnit を使用した .NET Core での単体テスト F# - .NET | Microsoft Learn&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://fsprojects.github.io/FsUnit/xUnit.html"&gt;FsUnit for xUnit&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://fsprojects.github.io/FsUnit/FsUnitTyped.html"&gt;What is FsUnitTyped?&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://learn.microsoft.com/ja-jp/dotnet/core/testing/unit-testing-code-coverage?tabs=windows#code-coverage-tooling"&gt;単体テストにコードカバレッジを使用する - .NET | Microsoft Learn&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;repo ルートを作業ディレクトリとする。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;cd (mkdir pocof.Test)
+dotnet new xunit -lang "F#"
+dotnet add reference ../pocof/pocof.fsproj
+dotnet sln ../../pocof.sln add .\pocof.Test.fsproj
+cd ../../
+dotnet build
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;一応ここでちゃんとテストできるか確認をする。&lt;code&gt;Tests.fs&lt;/code&gt; のコードを単純なのに書き換える。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;module Tests
+
+open System
+open Xunit
+
+[&amp;lt;Fact&amp;gt;]
+let ``My test`` () = Assert.True(true)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;VS Code からでもよし、 CLI でなら repo のルートで以下の通り。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; dotnet test
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  pocof -&amp;gt; C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof\bin\Debug\net6.0\pocof.dll
+C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\Tests.fs(7,39): warning FS0988: Main module of program is empty: noth
+ing will happen when it is run [C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\pocof.Test.fsproj]
+  pocof.Test -&amp;gt; C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\bin\Debug\net6.0\pocof.Test.dll
+Test run for C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\bin\Debug\net6.0\pocof.Test.dll (.NETCoreApp,Version=v6.0)
+Microsoft (R) Test Execution Command Line Tool Version 17.5.0 (x64)
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: &amp;lt; 1 ms - pocof.Test.dll (net6.0)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;あと &lt;code&gt;dotnet new xunit -lang "F#"&lt;/code&gt; で生成された &lt;code&gt;Program.fs&lt;/code&gt; は不要なので削除、 &lt;code&gt;pocof.Text.fsproj&lt;/code&gt; からも削除する。&lt;/p&gt;&lt;p&gt;次に FsUnit を追加する。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;dotnet add ./src/pocof.Test/pocof.Test.fsproj package FsUnit.xUnit
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;テストをこんな感じで書き換え、 &lt;code&gt;dotnet test&lt;/code&gt; が成功したら完了。&lt;/p&gt;&lt;pre&gt;&lt;code class="diff"&gt; module Tests
+
+-open System
+ open Xunit
++open FsUnitTyped
+
+-[&amp;lt;Fact&amp;gt;]
+-let ``My test`` () = Assert.True(true)
++module ``Pocof Tests`` =
++
++    [&amp;lt;Fact&amp;gt;]
++    let ``Sample test should equals 1`` () = 1 |&amp;gt; shouldEqual 1
++
++[&amp;lt;EntryPoint&amp;gt;]
++let main argv = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href="https://github.com/dotnet/fsharp/issues/2669"&gt;"Main module of program is empty: nothing will happen when it is run" warning when running xunit tests on .net core. · Issue #2669 · dotnet/fsharp&lt;/a&gt; で知ったが、 テストプロジェクトはコンソールアプリなので &lt;code&gt;&amp;lt;EntryPoint&amp;gt;&lt;/code&gt; を必ず持たないと警告がでる。 xUnit 追加後シンプルにしたテストコードでは &lt;code&gt;&amp;lt;EntryPoint&amp;gt;&lt;/code&gt; がなかったので警告が出てた。&lt;/p&gt;&lt;p&gt;ちょっとわからないのが VS Code からの実行だとハングしてるようだった。
+テストを実行するための DotNet CLI が後ろで実行されるみたいだが、そのプロセスは上手く行ってそうに見える。でも GUI がずっとくるくる止まる。どうも Inonide がエラーしてるっぽい。 xUnit の実行確認のときはいけたので FsUnit 起因か？ちょっと調べる必要ありだが、今回は先送りにする。&lt;/p&gt;&lt;pre&gt;&lt;code class="log"&gt;2023-03-04 15:50:47.005 [error] Error:
+    at MapTreeModule_find (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:245:15)
+    at FSharpMap__get_Item (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:1179:12)
+    at f (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:1297:12)
+    at Kt (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Array.js:70:21)
+    at c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\Components\TestExplorer.js:138:27
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async Promise.all (index 0)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;コードカバレッジは xUnit のテンプレなら初めから統合されてるらしくて、すぐ出せる。これはめちゃくちゃ楽。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;dotnet test --collect:"XPlat Code Coverage"
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;こんな感じでレポート出力できる。出力しておいたら VS Code の &lt;a href="https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters"&gt;Coverage Gutters&lt;/a&gt; で取り込めるしこりゃいいな。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;reportgenerator -reports:".\src\pocof.Test\TestResults\*\coverage.cobertura.xml" -targetdir:"coverage" -reporttypes:Html
+&lt;/code&gt;&lt;/pre&gt;&lt;hr /&gt;&lt;p&gt;昔は Visual Studio からしか Solution とか作るしかなかったようなキヲクをがある(無能だっただけやも知れんが)。
+いまの DotNet CLI ある時代めちゃくちゃ便利でびっくりした。&lt;/p&gt;&lt;p&gt;あと FsUnit 非常によい。
+入力キーから処理を導くところのリファクタするのに役立っている。
+サクサク書けるし、バグってた状態で放置してるとこが見つかったり(&lt;a href="https://github.com/krymtkts/pocof/pull/33"&gt;#33&lt;/a&gt;)いまのところ良いことしか無い。&lt;/p&gt;&lt;p&gt;いい感じにテスト揃ってきたら、 GitHub Actions で FsUnit と Pester 実行するようにしよう。&lt;/p&gt;</description><pubDate>Sun, 05 Mar 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13</guid><link>https://krymtkts.github.io/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13</link><title>F#でコマンドレットを書いてる pt.13</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。
 &lt;a href="https://www.powershellgallery.com/packages/pocof/0.4.0-alpha"&gt;pocof 0.4.0-alpha&lt;/a&gt; を公開した。&lt;/p&gt;&lt;p&gt;諸々の bugfix を主として行った。
 &lt;a href="https://github.com/krymtkts/pocof/issues/28"&gt;#28&lt;/a&gt; &lt;a href="https://github.com/krymtkts/pocof/issues/25"&gt;#25&lt;/a&gt; &lt;a href="https://github.com/krymtkts/pocof/issues/23"&gt;#23&lt;/a&gt; &lt;a href="https://github.com/krymtkts/pocof/issues/21"&gt;#21&lt;/a&gt; &lt;a href="https://github.com/krymtkts/pocof/issues/20"&gt;#20&lt;/a&gt; &lt;a href="https://github.com/krymtkts/pocof/issues/18"&gt;#18&lt;/a&gt;&lt;/p&gt;&lt;p&gt;修正自体は軽微だが、結構使っていてイヤーな感じをもたらす bug が多かったし、直して良かった。
 機能的なところでは入力中のプロパティ候補の表示非表示を切り替えるオプションを付与したのみに留まる。&lt;/p&gt;&lt;p&gt;正直なところプロパティの TAB 補完できてから公開したかったが、先送りにした。

@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Migu Nerd Font のアイコンフォントを narrow にしたい</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-05-07-i-want-to-resize-migu-icon">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.14</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-03-05-writing-cmdlet-in-fsharp-pt14">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Migu Nerd Font のアイコンフォントを narrow にしたい" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-05-07-i-want-to-resize-migu-icon" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.14" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-03-05-writing-cmdlet-in-fsharp-pt14" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -196,63 +196,88 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-05-07</div>
+        <div class="col-lg-6">2023-03-05</div>
         
     </div>
-    <h2>Migu Nerd Font のアイコンフォントを narrow にしたい</h2>
+    <h2>F#でコマンドレットを書いてる pt.14</h2>
 </div>
 <div>
     
-    <p><a href="/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu">以前</a>、Nerd Fonts の<code>font-patcher</code>で Migu に Narrow サイズの Symbol グリフぶちこみゃええやんけ、まで来てた。
-その後を記す。</p><h3 id="nerd-fonts">Nerd Fonts</h3><p>Nerd Font の font-patcher を試す。事前にパッチ済みの M+を見ると完璧なので期待に胸が高ぶる。実行してみると Python モジュールに Windows のライブラリが含まれていたので WSL2 内の Ubuntu では実行できなかった。Windows で実行する。</p><pre><code class="powershell">fontforge -script font-patcher migu-1m-regular.ttf -s -l -w -c --careful --progressbars -out patched
-</code></pre><p>結果、全然アカン... <code>-s, --mono, --use-single-width-glyphs</code>オプションを有効にすると全グリフが single-width になってしまい日本語フォントとして使いものにならなくなる。</p><p>逆にこの完璧な M+が惚れ惚れする出来なので、こちらに半濁音を移植するだけでいい気がしてきた。</p><h2 id="font-merger-再び">font-merger 再び</h2><p>コードポイントがわからないので、取得するための関数を PowerShell で作る。</p><pre><code class="powershell">function UC {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [ValidateNotNullOrEmpty()]
-        [String[]]$s
-    )
-    process {
-        foreach ($c in $s) {
-            [Convert]::ToInt32($c -as [char]).ToString("x")
-        }
-    }
-}
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>以下を参考に xUnit と FsUnit を導入した。</p><ul><li><a href="https://learn.microsoft.com/ja-jp/dotnet/core/testing/unit-testing-fsharp-with-dotnet-test">dotnet テストと xUnit を使用した .NET Core での単体テスト F# - .NET | Microsoft Learn</a></li><li><a href="https://fsprojects.github.io/FsUnit/xUnit.html">FsUnit for xUnit</a></li><li><a href="https://fsprojects.github.io/FsUnit/FsUnitTyped.html">What is FsUnitTyped?</a></li><li><a href="https://learn.microsoft.com/ja-jp/dotnet/core/testing/unit-testing-code-coverage?tabs=windows#code-coverage-tooling">単体テストにコードカバレッジを使用する - .NET | Microsoft Learn</a></li></ul><p>repo ルートを作業ディレクトリとする。</p><pre><code class="powershell">cd (mkdir pocof.Test)
+dotnet new xunit -lang "F#"
+dotnet add reference ../pocof/pocof.fsproj
+dotnet sln ../../pocof.sln add .\pocof.Test.fsproj
+cd ../../
+dotnet build
+</code></pre><p>一応ここでちゃんとテストできるか確認をする。<code>Tests.fs</code> のコードを単純なのに書き換える。</p><pre><code class="fsharp">module Tests
 
-('がぎぐげござじずぜぞだぢづでどばぱびぴぶぷべぺぼぽゔ'+''+''+'ゞガギグゲゴザジズゼゾダヂヅデドバパビピブプベペボポヴヷヸヹヺ').ToCharArray() | UC
-</code></pre><p>これで置き換えたい文字(Migu のチャーミングな濁音半濁音たち)のコードポイントを取れるよにした。
-特定のコードポイントの移植といえば font-merger 使えるやん！というところではあるが、ほしいコードポイントは連続せず細切れになっているので、これを 1 個ずつ設定に書くのはめんどい...
-ということで font-merger の改造をした。</p><p><a href="https://github.com/krymtkts/fontmerger/commit/33c775ef4f1fd47f90b6359f5ae74529552a87a6">Add codepoint option to copy glyph from specific code points. · krymtkts/fontmerger@33c775e</a></p><pre><code class="sh">/usr/bin/fontforge -script fontmerger/__init__.py -x migu-1m-regular -o patched --suffix=migu -- ./source/M+1mNerdFontCompleteWindowsCompatible.ttf
-</code></pre><p>コードポイントを個別に指定できるようにしまして実行したところ、なんかそれっぽく半濁点が反映されてる。
-いや待てよ...微妙に縦長になってしまった...これは M+と Migu でフォントの縦横比が異なるせいやろな。</p><p>もう FontForge のスクリプティング真面目にやってくしか残された将来はない気がしてきた。😰</p><h2 id="font-merger-再び-再び">font-merger 再び 再び</h2><p>Nerd Fonts の font-patcher を読んでいるときに気づいたのが、<code>--mono</code> オプションを有効にしている場合すべての glyph に narrow 幅を設定するようになっていたこと。</p><p><a href="https://github.com/ryanoasis/nerd-fonts/blob/master/font-patcher#L71-L74">nerd-fonts/font-patcher at master · ryanoasis/nerd-fonts · GitHub</a></p><p>日本語フォントの場合 wide 幅を書き換えてしまうから先述の通り Nerf Fonts はえらいことになってしまっていたので、これをパッチするグリフにのみ適用すれば良いという力技に気づく。
-ということで更に font-merger を改造した。</p><p><a href="https://github.com/krymtkts/fontmerger/commit/25ed2b1dfd547d6599417793fb679ea9fdbe4548">Adds mono command line option that forces glyph to be single width. · krymtkts/fontmerger@25ed2b1</a></p><h2 id="現状">現状</h2><p>これにより全ての追加したアイコングリフが narrow 幅になることで、漸く Windows Terminal でもﾐﾆﾐﾆアイコンフォントにならずに表示できるようになった。</p><p><img src="/img/2021-05-07-terminal/mypowerline.png" alt="現在のpowerline。左向き三角が残念" /></p><p>しかしご覧の通り、右に寄るべきフォントの見た目が非常に残念なので、今後もちょいちょいいじらねばならない。完成はいつになるのか...😪
-(幅 500 以上になってるためずれる)</p><p>なんとなく、次は Powerline グリフの narrow 幅を大きく超過するものを左右の align をつけて変形しないといけない気がしている。
-この辺の頂点の xmax, ymax からどないか計算できんかな →
-<a href="https://fontforge.org/docs/scripting/python/fontforge.html#fontforge.contour.boundingBox">fontforge — FontForge 20201107 documentation</a></p><ul><li>[x] お亡くなりになられた fontmerger を Python3 化して動かす</li><li>[x] 最新の Migu に対して fontmerger で Nerd font patch する</li><li>[x] <code>0xE0B0</code> を始めとした Cascadia でだけうまく表示されるグリフを Migu に移植する
-<ul><li>そして効果なし！</li></ul></li><li>[x] Nerd Fonts の font-patcher で Migu にパッチしてみる
-<ul><li>フォントが使い物にならなくなった</li></ul></li><li>[x] Migu のチャーミングな部分を M+に移植
-<ul><li>縦横比の違いから縦長に...</li></ul></li><li>[x] font-merger がパッチするグリフのみ narrow 幅にしてみる
-<ul><li>おしい！右よりフォントが残念</li></ul></li><li>[ ] 完璧な Migu の完成！
-<ul><li>To Be Continued...</li></ul></li></ul>
+open System
+open Xunit
+
+[&lt;Fact&gt;]
+let ``My test`` () = Assert.True(true)
+</code></pre><p>VS Code からでもよし、 CLI でなら repo のルートで以下の通り。</p><pre><code class="powershell">PS&gt; dotnet test
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  pocof -&gt; C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof\bin\Debug\net6.0\pocof.dll
+C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\Tests.fs(7,39): warning FS0988: Main module of program is empty: noth
+ing will happen when it is run [C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\pocof.Test.fsproj]
+  pocof.Test -&gt; C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\bin\Debug\net6.0\pocof.Test.dll
+Test run for C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\bin\Debug\net6.0\pocof.Test.dll (.NETCoreApp,Version=v6.0)
+Microsoft (R) Test Execution Command Line Tool Version 17.5.0 (x64)
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: &lt; 1 ms - pocof.Test.dll (net6.0)
+</code></pre><p>あと <code>dotnet new xunit -lang "F#"</code> で生成された <code>Program.fs</code> は不要なので削除、 <code>pocof.Text.fsproj</code> からも削除する。</p><p>次に FsUnit を追加する。</p><pre><code class="powershell">dotnet add ./src/pocof.Test/pocof.Test.fsproj package FsUnit.xUnit
+</code></pre><p>テストをこんな感じで書き換え、 <code>dotnet test</code> が成功したら完了。</p><pre><code class="diff"> module Tests
+
+-open System
+ open Xunit
++open FsUnitTyped
+
+-[&lt;Fact&gt;]
+-let ``My test`` () = Assert.True(true)
++module ``Pocof Tests`` =
++
++    [&lt;Fact&gt;]
++    let ``Sample test should equals 1`` () = 1 |&gt; shouldEqual 1
++
++[&lt;EntryPoint&gt;]
++let main argv = 0
+</code></pre><p><a href="https://github.com/dotnet/fsharp/issues/2669">"Main module of program is empty: nothing will happen when it is run" warning when running xunit tests on .net core. · Issue #2669 · dotnet/fsharp</a> で知ったが、 テストプロジェクトはコンソールアプリなので <code>&lt;EntryPoint&gt;</code> を必ず持たないと警告がでる。 xUnit 追加後シンプルにしたテストコードでは <code>&lt;EntryPoint&gt;</code> がなかったので警告が出てた。</p><p>ちょっとわからないのが VS Code からの実行だとハングしてるようだった。
+テストを実行するための DotNet CLI が後ろで実行されるみたいだが、そのプロセスは上手く行ってそうに見える。でも GUI がずっとくるくる止まる。どうも Inonide がエラーしてるっぽい。 xUnit の実行確認のときはいけたので FsUnit 起因か？ちょっと調べる必要ありだが、今回は先送りにする。</p><pre><code class="log">2023-03-04 15:50:47.005 [error] Error:
+    at MapTreeModule_find (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:245:15)
+    at FSharpMap__get_Item (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:1179:12)
+    at f (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:1297:12)
+    at Kt (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Array.js:70:21)
+    at c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\Components\TestExplorer.js:138:27
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async Promise.all (index 0)
+</code></pre><p>コードカバレッジは xUnit のテンプレなら初めから統合されてるらしくて、すぐ出せる。これはめちゃくちゃ楽。</p><pre><code class="powershell">dotnet test --collect:"XPlat Code Coverage"
+</code></pre><p>こんな感じでレポート出力できる。出力しておいたら VS Code の <a href="https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters">Coverage Gutters</a> で取り込めるしこりゃいいな。</p><pre><code class="powershell">reportgenerator -reports:".\src\pocof.Test\TestResults\*\coverage.cobertura.xml" -targetdir:"coverage" -reporttypes:Html
+</code></pre><hr /><p>昔は Visual Studio からしか Solution とか作るしかなかったようなキヲクをがある(無能だっただけやも知れんが)。
+いまの DotNet CLI ある時代めちゃくちゃ便利でびっくりした。</p><p>あと FsUnit 非常によい。
+入力キーから処理を導くところのリファクタするのに役立っている。
+サクサク書けるし、バグってた状態で放置してるとこが見つかったり(<a href="https://github.com/krymtkts/pocof/pull/33">#33</a>)いまのところ良いことしか無い。</p><p>いい感じにテスト揃ってきたら、 GitHub Actions で FsUnit と Pester 実行するようにしよう。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/font">font</a>
+    <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2021-05-30-maybe-completed-refining-migu-nerd-font">&laquo; 2021-05-30 Migu Nerd Font の改善が完了したっぽい</a>
         
-        
-        <a class="right" href="/posts/2021-05-06-simple-way-to-update-pwsh-special-module">2021-05-06 PowerShell の特殊なモジュールを更新する方法 &raquo;</a>
+        <a class="right" href="/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13">2023-02-26 F#でコマンドレットを書いてる pt.13 &raquo;</a>
         
     </div>
 
