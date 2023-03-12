@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-03-12-writing-cmdlet-in-fsharp-pt15">F#でコマンドレットを書いてる pt.15</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-03-05-writing-cmdlet-in-fsharp-pt14">F#でコマンドレットを書いてる pt.14</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13">F#でコマンドレットを書いてる pt.13</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-02-19-aws-ssm-session-manager-with-powershell">AWS SSM Session Manager を PowerShell で</a></li>
                         
                         
 
@@ -196,72 +196,24 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-03-05</div>
+        <div class="col-lg-6">2023-03-12</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.14</h2>
+    <h2>F#でコマンドレットを書いてる pt.15</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>以下を参考に xUnit と FsUnit を導入した。</p><ul><li><a href="https://learn.microsoft.com/ja-jp/dotnet/core/testing/unit-testing-fsharp-with-dotnet-test">dotnet テストと xUnit を使用した .NET Core での単体テスト F# - .NET | Microsoft Learn</a></li><li><a href="https://fsprojects.github.io/FsUnit/xUnit.html">FsUnit for xUnit</a></li><li><a href="https://fsprojects.github.io/FsUnit/FsUnitTyped.html">What is FsUnitTyped?</a></li><li><a href="https://learn.microsoft.com/ja-jp/dotnet/core/testing/unit-testing-code-coverage?tabs=windows#code-coverage-tooling">単体テストにコードカバレッジを使用する - .NET | Microsoft Learn</a></li></ul><p>repo ルートを作業ディレクトリとする。</p><pre><code class="powershell">cd (mkdir pocof.Test)
-dotnet new xunit -lang "F#"
-dotnet add reference ../pocof/pocof.fsproj
-dotnet sln ../../pocof.sln add .\pocof.Test.fsproj
-cd ../../
-dotnet build
-</code></pre><p>一応ここでちゃんとテストできるか確認をする。<code>Tests.fs</code> のコードを単純なのに書き換える。</p><pre><code class="fsharp">module Tests
-
-open System
-open Xunit
-
-[&lt;Fact&gt;]
-let ``My test`` () = Assert.True(true)
-</code></pre><p>VS Code からでもよし、 CLI でなら repo のルートで以下の通り。</p><pre><code class="powershell">PS&gt; dotnet test
-  Determining projects to restore...
-  All projects are up-to-date for restore.
-  pocof -&gt; C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof\bin\Debug\net6.0\pocof.dll
-C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\Tests.fs(7,39): warning FS0988: Main module of program is empty: noth
-ing will happen when it is run [C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\pocof.Test.fsproj]
-  pocof.Test -&gt; C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\bin\Debug\net6.0\pocof.Test.dll
-Test run for C:\Users\takatoshi\dev\github.com\krymtkts\pocof\src\pocof.Test\bin\Debug\net6.0\pocof.Test.dll (.NETCoreApp,Version=v6.0)
-Microsoft (R) Test Execution Command Line Tool Version 17.5.0 (x64)
-Copyright (c) Microsoft Corporation.  All rights reserved.
-
-Starting test execution, please wait...
-A total of 1 test files matched the specified pattern.
-
-Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: &lt; 1 ms - pocof.Test.dll (net6.0)
-</code></pre><p>あと <code>dotnet new xunit -lang "F#"</code> で生成された <code>Program.fs</code> は不要なので削除、 <code>pocof.Text.fsproj</code> からも削除する。</p><p>次に FsUnit を追加する。</p><pre><code class="powershell">dotnet add ./src/pocof.Test/pocof.Test.fsproj package FsUnit.xUnit
-</code></pre><p>テストをこんな感じで書き換え、 <code>dotnet test</code> が成功したら完了。</p><pre><code class="diff"> module Tests
-
--open System
- open Xunit
-+open FsUnitTyped
-
--[&lt;Fact&gt;]
--let ``My test`` () = Assert.True(true)
-+module ``Pocof Tests`` =
-+
-+    [&lt;Fact&gt;]
-+    let ``Sample test should equals 1`` () = 1 |&gt; shouldEqual 1
-+
-+[&lt;EntryPoint&gt;]
-+let main argv = 0
-</code></pre><p><a href="https://github.com/dotnet/fsharp/issues/2669">"Main module of program is empty: nothing will happen when it is run" warning when running xunit tests on .net core. · Issue #2669 · dotnet/fsharp</a> で知ったが、 テストプロジェクトはコンソールアプリなので <code>&lt;EntryPoint&gt;</code> を必ず持たないと警告がでる。 xUnit 追加後シンプルにしたテストコードでは <code>&lt;EntryPoint&gt;</code> がなかったので警告が出てた。</p><p>ちょっとわからないのが VS Code からの実行だとハングしてるようだった。
-テストを実行するための DotNet CLI が後ろで実行されるみたいだが、そのプロセスは上手く行ってそうに見える。でも GUI がずっとくるくる止まる。どうも Inonide がエラーしてるっぽい。 xUnit の実行確認のときはいけたので FsUnit 起因か？ちょっと調べる必要ありだが、今回は先送りにする。</p><pre><code class="log">2023-03-04 15:50:47.005 [error] Error:
-    at MapTreeModule_find (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:245:15)
-    at FSharpMap__get_Item (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:1179:12)
-    at f (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:1297:12)
-    at Kt (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Array.js:70:21)
-    at c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\Components\TestExplorer.js:138:27
-    at processTicksAndRejections (node:internal/process/task_queues:96:5)
-    at async Promise.all (index 0)
-</code></pre><p>コードカバレッジは xUnit のテンプレなら初めから統合されてるらしくて、すぐ出せる。これはめちゃくちゃ楽。</p><pre><code class="powershell">dotnet test --collect:"XPlat Code Coverage"
-</code></pre><p>こんな感じでレポート出力できる。出力しておいたら VS Code の <a href="https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters">Coverage Gutters</a> で取り込めるしこりゃいいな。</p><pre><code class="powershell">reportgenerator -reports:".\src\pocof.Test\TestResults\*\coverage.cobertura.xml" -targetdir:"coverage" -reporttypes:Html
-</code></pre><hr /><p>昔は Visual Studio からしか Solution とか作るしかなかったようなキヲクをがある(無能だっただけやも知れんが)。
-いまの DotNet CLI ある時代めちゃくちゃ便利でびっくりした。</p><p>あと FsUnit 非常によい。
-入力キーから処理を導くところのリファクタするのに役立っている。
-サクサク書けるし、バグってた状態で放置してるとこが見つかったり(<a href="https://github.com/krymtkts/pocof/pull/33">#33</a>)いまのところ良いことしか無い。</p><p>いい感じにテスト揃ってきたら、 GitHub Actions で FsUnit と Pester 実行するようにしよう。</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>前回困ってた Ionide 、理解が難しくあんまわかってないけどこれっぽい。
+<a href="https://github.com/ionide/ionide-vscode-fsharp/issues/1756">Test Explorer doesn't support tests with <code>TestCaseAttribute</code> · Issue #1756 · ionide/ionide-vscode-fsharp</a>
+Subscribe して様子を見る。</p><p>FsUnit を使ったテストコード追加とリファクタをほそぼそと続けている。 <a href="https://github.com/krymtkts/pocof/pull/32">#32</a>, <a href="https://github.com/krymtkts/pocof/pull/37">#37</a></p><p>テストをあとから書いてると、ケアレスミスの bug ポツポツ見つかる。わたしは練習不足なのかテストファーストどうしてもできないのであとがきでもいいかと思ってるが、こう bug が多いとちょっとドキッとする。 main branch へ merge する前にあとがきテストを添えるようにして減らそう。</p><p>いま簡単なところからテストを書いてるので、本丸である <code>Query.fs</code> のところを書けたらかなりいい感じ。 <code>UI.fs</code> に関してはどないしょ...という感じになってるけど。
+いま直で <code>Console.Write</code> へアクセスするような形になってるの、差し替え可能にしておいた方がいいんやろな。</p><p>また、 <code>psakefile.ps1</code> にも unit test や coverage 用のタスクを追加した。というかそれ以外のタスクも見直す必要があった。
+というのも、 <code>src</code> ディレクトリ配下からビルド対象のプロジェクトを見つけるスクリプトが単一のプロジェクトしか想定してなかったので、そのまま使えなかったからだ。この度アプリとテストの 2 プロジェクトができたので、指定のプロジェクトのみ対象とするよう変更した。</p><p>まだ頻出ワードを変数にしておくとかの最適化してなかったり、タスクランナー自体小綺麗にできるんじゃないかなーというのはあるが、無闇に依存関係を増やすのもなと思って手を出せてない。
+<a href="https://github.com/psake/PowerShellBuild">PowerShellBuild</a>, <a href="https://github.com/RamblingCookieMonster/PSDepend">PSDepend</a> あたりの導入できれいになるかも知れんけど、なるべく依存関係をなくす方が結果的にシンプルなプロジェクトになるのを知ってるし。
+現時点でも psake PSScriptAnalyzer Pester PowerShellGet に依存してるから、四の五の言わずに PSDepend だけでもはよ入れろよという感じはある。
+だが、覚悟ができてからやる(先延ばし)。</p><hr /><h3 id="おまけ">おまけ</h3><p>最近になって仕事でも AI チャットを使う流れがきており、練習がてら <a href="https://github.com/dfinke/PowerShellAI">PowerShellAI</a> と一緒に仕事し始めてみた。 VS Code Extension はちょっと種類が多すぎてどれが信頼できるかいちいち調べられてないし、やってない。
+上手く使えて、わたし・ Tabnine ・ OpenAI の三人力な感じを出せると良いが。
+ちょっと使ってみた感覚的に、仕事で使うような特定用途に特化した回答をさせたい時と普段遣いで雑に使う感じでは、 prompt に結構差がある感触。
+これほんま練習になるんかな。</p><p>にしても OpenAI の token がガリガリ消費されるのを見てると「ﾋｪｴ...」となる。</p>
 </div>
 
 <div id="post-tags">
@@ -279,7 +231,7 @@ Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration:
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-02-26-writing-cmdlet-in-fsharp-pt13">2023-02-26 F#でコマンドレットを書いてる pt.13 &raquo;</a>
+        <a class="right" href="/posts/2023-03-05-writing-cmdlet-in-fsharp-pt14">2023-03-05 F#でコマンドレットを書いてる pt.14 &raquo;</a>
         
     </div>
 </div>
