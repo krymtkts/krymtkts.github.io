@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Bootstrap のバージョンを上げる</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-08-27-bump-bootstrap">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.17</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-03-26-writing-cmdlet-in-fsharp-pt17">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Bootstrap のバージョンを上げる" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-08-27-bump-bootstrap" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.17" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-03-26-writing-cmdlet-in-fsharp-pt17" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -196,36 +196,40 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-08-27</div>
+        <div class="col-lg-6">2023-03-26</div>
         
     </div>
-    <h2>Bootstrap のバージョンを上げる</h2>
+    <h2>F#でコマンドレットを書いてる pt.17</h2>
 </div>
 <div>
     
-    <p>先週の記事を書いたあとで、何の気なしに <a href="https://web.dev/measure/">Measure page quality - web.dev</a> で当ブログの測定をした。
-そこで既知の脆弱性があるライブラリ (<code>Bootstrap@3.3.0</code> と <code>jQuery@1.11.0</code>)使うなよ！みたいなレポートがでたので、 Bootstrap の更新を思い立った。</p><p>変更した内容 → <a href="https://github.com/krymtkts/krymtkts.github.io/commit/c4adeacb06fe759b787646bba5fb698c1f688c94">Upgrade bootstrap from 3 to 5. · krymtkts/krymtkts.github.io@c4adeac</a></p><p>ブログ作成当時の記事(<a href="/posts/2019-01-10-make-blog-with-clojure">Clojure でブログを作った</a>)を見ると、このブログのテーマは Cryogen 備え付けのテーマである <code>blue_centered</code> をコピって作ったものだった。
-そのままずっと使ってるので、当然の如くテンプレで利用しているライブラリも古いままだったという訳だ。</p><p>さて、 Bootstrap のマイグレーションは当然ドキュメントがあるわけだが、</p><ul><li><a href="https://getbootstrap.com/docs/4.0/migration/">Migrating to v4 · Bootstrap</a></li><li><a href="https://getbootstrap.com/docs/5.0/migration/">Migrating to v5 · Bootstrap v5.0</a></li></ul><p>今回は<del>手抜きによる</del> v3 → v5 という飛び級であるし、わたし自身は Bootstrap に慣れてないので、とりあえずマイグレーションで対応するのは目で見て影響がある範囲のみとした。マイグレーションとしては正攻法な感じじゃなくて、割りと雑な感じだ。</p><p>それらの変更は例えば CSS のセレクタの変更だったり、 <code>class</code> 属性の変更だったりだ。一応レスポンシブなデザインなので PC とモバイル(ブラウザのエミュレータだけど)も見ている。ちょいちょい以前と違うデザインにした・或いは意図せず変わった箇所もある。</p><p>途中コンテンツを空で更新したままデプロイしてしまうしょーもないミスがあったが、再度コンテンツを生成して事なきを得た。
-これ Cryogen の差分ビルドの影響でちょいちょいやらかすのだけど、普段は人間力でカバーしていたところを今回はできず、デプロイしてしまった次第。この記事の投稿時点で設定を見直した。</p><p>今回の VerUp により Best Practices は 92 -&gt; 100 に、 あと Performance も 93 -&gt; 94 と意図せず微妙な好影響があった。</p><ul><li>before
-<ul><li><img src="/img/2022-08-27-capture/before.png" alt="変更前は Performance 93 Accessibility 97 Best Practices 92 SEO 92" /></li></ul></li><li>after
-<ul><li><img src="/img/2022-08-27-capture/after.png" alt="変更後は Performance 94 Accessibility 97 Best Practices 100 SEO 92" /></li></ul></li></ul><p>Bootstrap 5 では CSS カスタムプロパティでフォントサイズとか色とか変えられるみたいなので、このブログ用に再定義してるスタイルのいくつかは不要になるんじゃないかな。
-これを機にちょっと見直すのもありかも知れない。あるいは別の静的サイトジェネレータに乗り換えるとか。他にやることなくなったらそれも一興か。</p><p>終。</p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>もう 4 月なのでそろそろ Fable Compiler を試してみたいと思ってるが、 pocof のテスト書くのと bugfix が落ち着かず、できていない。
+ちょっと今までのテストを小綺麗にする作業にも取り組んだ。</p><p><a href="/posts/2023-03-19-writing-cmdlet-in-fsharp-pt16">前回</a>、 <code>module</code> を多層化することでテストケースをグルーピングしている話を書いた。
+その時はテストケースを 1 つのファイルにまとめて書いていたのだけど、 <code>PocofQuery.run</code> のテストを書き始めるにあたり、テストケースが爆増するのに備えてファイルを分割したいと思っていた。</p><p>はじめ F# ではどうテストプロジェクトのファイル分割をするのかわからなかったが、 F# の repo をいくつか参照してみて <a href="https://github.com/fsprojects/FSharp.Data.Adaptive">fsprojects/FSharp.Data.Adaptive</a> が参考になりそうとわかった。
+それを pocof に提供したところ、上手く分割できた。要は普通の F# Project と同じようにするだけだった。コミットは <a href="https://github.com/krymtkts/pocof/commit/dff10c89963cdca60cd6ca9e7afeb7f7915e2ff4">krymtkts/pocof@dff10c8</a> 。</p><p><a href="https://github.com/fsprojects/FSharp.Data.Adaptive/tree/5e92ab426e5a438d70986cefff638ecf2acef576/src/Test/FSharp.Data.Adaptive.Tests">FSharp.Data.Adaptive/src/Test/FSharp.Data.Adaptive.Tests</a> がテストプロジェクトのディレクトリ。
+ここに分割されたテストコードのファイルが色々あるのと、テストプロジェクトのエントリポイントになる <code>Program.fs</code> が配置されている。
+プロジェクト <a href="https://github.com/fsprojects/FSharp.Data.Adaptive/blob/5e92ab426e5a438d70986cefff638ecf2acef576/src/Test/FSharp.Data.Adaptive.Tests/FSharp.Data.Adaptive.Tests.fsproj">FSharp.Data.Adaptive.Tests.fsproj</a> を参照するとエントリポイント <code>Program.fs</code> が最後の読み込みなっているのがわかる。
+それ以前のファイルにモジュールを小分けにしたテストを書いたら良い。</p><p>ファイル分割の粒度はモジュール別に 1 ファイルした。
+あまり細かく分けると何処にテストを書くか悩みがちなので、シンプルにモジュールと対にしている。複雑なクエリのテストを書くとまた量が増えて更にファイルを分割したくなるだろうが、今ではない。</p><p>ひとまず満足な形に分解できたのでヨシ。</p><hr /><p>あとこの <a href="https://github.com/fsprojects/FSharp.Data.Adaptive">fsprojects/FSharp.Data.Adaptive</a> を参考にしたとき気づいたのだけど、 <a href="https://github.com/fscheck/FsCheck">FsCheck</a> というモジュールを使ってるようだった。 Property-based Testing をするためのやつだ(今書いてるのは所謂「おなじみ」の Example-based Testing という)。
+<a href="https://fsharpforfunandprofit.com/series/property-based-testing/">The 'Property Based Testing' series | F# for fun and profit</a> が参考になった。</p><p>実際 pocof でもテストケースが貧弱で、テストは成功するがバグってたようなケースがもちらほらあるので、こういうより強力な方法を使うのが良いかもなーと興味深く思っている。
+とはいえ興味の範囲で無限にやること増えていく。
+かなりやってみたいのだけど、キャッチアップのほうが追いついてない感じ。</p><p>まずは所謂「おなじみ」の Example-based Testing である程度カバーしてから、 FsCheck で強化するってステップを踏むのが良さげ。徐々に... ひとまず今ある draft の pull request を merge してから、今後どう取り組んでいくか考えよかな(タスクを未来にブン投げる)。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/cryogen">cryogen</a>
+    <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2022-09-03-the-cui-ver-of-out-grid-view">&laquo; 2022-09-03 Out-GridView の CUI 版 Out-ConsoleGridView</a>
         
-        
-        <a class="right" href="/posts/2022-08-20-osc-133-in-win-term">2022-08-20 Windows Terminal で OSC133 する &raquo;</a>
+        <a class="right" href="/posts/2023-03-19-writing-cmdlet-in-fsharp-pt16">2023-03-19 F#でコマンドレットを書いてる pt.16 &raquo;</a>
         
     </div>
 
