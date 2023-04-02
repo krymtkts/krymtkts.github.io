@@ -1,4 +1,179 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 26 Mar 2023 16:47:41 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-03-26-writing-cmdlet-in-fsharp-pt17</guid><link>https://krymtkts.github.io/posts/2023-03-26-writing-cmdlet-in-fsharp-pt17</link><title>F#でコマンドレットを書いてる pt.17</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;もう 4 月なのでそろそろ Fable Compiler を試してみたいと思ってるが、 pocof のテスト書くのと bugfix が落ち着かず、できていない。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 02 Apr 2023 16:21:01 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-04-02-oauth-with-pwsh-to-download-gss-as-csv</guid><link>https://krymtkts.github.io/posts/2023-04-02-oauth-with-pwsh-to-download-gss-as-csv</link><title>PowerShell で OAuth して Google Sheet を CSV で DL する</title><description>&lt;p&gt;最近役目を終えたスクリプトに、 Google Sheet を CSV でダウンロードするやつがいた。考慮不足等、諸々至らぬ点あろうが、スクリプトを供養するため日記にする。&lt;/p&gt;&lt;p&gt;モジュール導入したくないなーという事情があったので、下記を見てヒイヒイ言いながら実装した記憶がある。
+「Google Sheet から CSV をダウンロードする」には &lt;code&gt;https://www.googleapis.com/auth/drive&lt;/code&gt; のスコープがいるみたい。てっきりスプシのスコープと勘違いして、無駄に時間かかった。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="https://stackoverflow.com/questions/63125283/how-to-connect-api-from-powershell-with-oauth-2-0"&gt;How to connect API from PowerShell with OAUTH 2.0? - Stack Overflow&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://lazyadmin.nl/it/connect-to-google-api-with-powershell/"&gt;Connect to Google API with Powershell — LazyAdmin&lt;/a&gt; して - &lt;a href="https://stackoverflow.com/questions/37705553/how-to-export-a-csv-from-google-sheet-api/61107170#61107170"&gt;r googlesheets - How to export a csv from Google Sheet API? - Stack Overflow&lt;/a&gt; する&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;スクリプトは Gist に登録しておいた。
+それに伴い Comment-Based Help を書いたり、関数の名前を変えたりした。Google Sheets ってサービス名に対してスプシ自体は spreadsheet だったりしてマジでややこしい。&lt;/p&gt;&lt;p&gt;&lt;a href="https://gist.github.com/krymtkts/0618fe495df0d3e567e9fb18ca2e308b"&gt;GoogleSpreadSheetOAuth.ps1&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;&amp;lt;#
+.SYNOPSIS
+Download Google Sheet as CSV.
+.DESCRIPTION
+Download Google Sheet as CSV using GCP OAuth Client.
+.PARAMETER OAuthClientSecretsPath
+The path to the JSON file for the OAuth 2.0 Client Secrets created on GCP.
+.PARAMETER OAuthStorePath
+The path to save authentication tokens.
+.EXAMPLE
+. ./GoogleSheetsOAuth.ps1 `
+    -OAuthClientSecretsPath './client-secrets.json' `
+    -OAuthStorePath './gss-credential'
+Get-GoogleSpreadSheetAsCsv `
+    -SpreadSheet 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' `
+    -SheetId '000000000' `
+    -OutFile './test.csv'
+#&amp;gt;
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory)]
+    [string]
+    $OAuthClientSecretsPath,
+    [Parameter(Mandatory)]
+    [string]
+    $OAuthStorePath
+)
+
+class OAuthCredentialStore {
+    [SecureString] $AccessToken
+    [SecureString] $RefreshToken
+    OAuthCredentialStore(
+        [SecureString] $AccessToken,
+        [SecureString] $RefreshToken
+    ) {
+        $this.AccessToken = $AccessToken
+        $this.RefreshToken = $RefreshToken
+    }
+}
+
+$script:OAuthCredential = $null
+
+function Get-GoogleSheetsAuthInitToken {
+    [CmdletBinding(SupportsShouldProcess)]
+    param ()
+
+    if (-not (Split-Path $OAuthStorePath -Parent | Test-Path)) {
+        throw "${OAuthStorePath} not found."
+    }
+
+    if (-not (Test-Path $OAuthClientSecretsPath)) {
+        throw "${OAuthClientSecretsPath} not found."
+    }
+    $secrets = Get-Content $OAuthClientSecretsPath | ConvertFrom-Json | Select-Object -ExpandProperty installed
+
+    $Scope = [System.Web.HttpUtility]::UrlEncode('https://www.googleapis.com/auth/drive')
+    $ClientID = $secrets.client_id
+    $ClientSecret = $secrets.client_secret
+    $RedirectUri = $secrets.redirect_uris[0]
+    $Uri = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&amp;amp;client_id=${ClientID}&amp;amp;redirect_uri=${RedirectUri}&amp;amp;scope=${Scope}&amp;amp;access_type=offline"
+
+    Start-Process $Uri
+    $AuthorizationCode = Read-Host 'paste auth code here!'
+
+    $AuthData = @{
+        code = $AuthorizationCode;
+        client_id = $ClientID;
+        client_secret = $ClientSecret;
+        redirect_uri = $RedirectUri;
+        grant_type = 'authorization_code';
+        access_type = 'offline';
+    }
+
+    Write-Host 'try to get access token...'
+    $TokenResponse = Invoke-RestMethod -Method Post -Uri 'https://www.googleapis.com/oauth2/v4/token' -Body $AuthData
+    if (-not $?) {
+        throw 'request failed.'
+    }
+
+    Write-Host 'done.'
+
+    $script:OAuthCredential = [OAuthCredentialStore]::new(
+        ($TokenResponse.access_token | ConvertTo-SecureString -AsPlainText),
+        ($TokenResponse.refresh_token | ConvertTo-SecureString -AsPlainText)
+    )
+
+    $store = @{
+        AccessToken = $OAuthCredential.AccessToken | ConvertFrom-SecureString;
+        RefreshToken = $OAuthCredential.RefreshToken | ConvertFrom-SecureString;
+    }
+
+    if ($PSCmdlet.ShouldProcess($OAuthStorePath)) {
+        New-Item -Path $OAuthStorePath -Force | Out-Null
+        $store | ConvertTo-Json -Compress | Set-Content -Path $OAuthStorePath -Force
+    }
+
+    $OAuthCredential.AccessToken, $OAuthCredential.RefreshToken
+}
+
+function Get-GoogleSheetsAuthToken {
+    [CmdletBinding(SupportsShouldProcess)]
+    param ()
+    Write-Verbose "$OAuthStorePath"
+    $content = Get-Content -Path $OAuthStorePath -ErrorAction Ignore
+    if ([String]::IsNullOrEmpty($content)) {
+        $token, $_ = Get-GoogleSheetsAuthInitToken
+        return $token
+    }
+    try {
+        $cred = $content | ConvertFrom-Json
+        $script:OAuthCredential = [OAuthCredentialStore]::new(
+            ($cred.AccessToken | ConvertTo-SecureString),
+            ($cred.RefreshToken | ConvertTo-SecureString)
+        )
+    }
+    catch {
+        throw 'Invalid SecureString stored for this module. Remove gs-credential and try again.'
+    }
+    $RefreshToken = $script:OAuthCredential.RefreshToken | ConvertFrom-SecureString -AsPlainText
+    if (-not $RefreshToken) {
+        $token, $_ = Get-GoogleSheetsAuthInitToken
+        return $token
+    }
+
+    $secrets = Get-Content $OAuthClientSecretsPath | ConvertFrom-Json | Select-Object -ExpandProperty installed
+    $RefreshData = @{
+        refresh_token = $RefreshToken
+        client_id = $secrets.client_id
+        client_secret = $secrets.client_secret
+        grant_type = 'refresh_token'
+        access_type = 'offline'
+    }
+
+    $Response = Invoke-RestMethod -Method Post -Uri 'https://www.googleapis.com/oauth2/v4/token' -Body $RefreshData
+    if (-not $?) {
+        throw 'request failed.'
+    }
+
+    return $Response.access_token | ConvertTo-SecureString -AsPlainText
+}
+
+function Get-GoogleSpreadSheetAsCsv {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [String]
+        $SpreadSheet,
+        [Parameter(Mandatory)]
+        [String]
+        $SheetId,
+        [Parameter(Mandatory)]
+        [String]
+        $OutFile
+    )
+
+    $accessToken, $refreshToken = Get-GoogleSheetsAuthToken
+    if (-not $?) {
+        return
+    }
+
+    $Params = @{
+        Uri = "https://docs.google.com/spreadsheets/d/$SpreadSheet/gviz/tq?tqx=out:csv&amp;amp;gid=$($_.SheetId)"
+        Method = 'GET'
+        Authentication = 'Bearer'
+        Token = $accessToken
+        OutFile = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile)
+    }
+    Invoke-WebRequest @Params | Out-Null
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;このスクリプトでは認証コードを得るのに手でコピってる。
+これを &lt;code&gt;System.Net.HttpListener&lt;/code&gt; で自鯖を立てて取る方式にしたかったけど、コピペするのは初回だけだし放置してたらそのままスクリプトの寿命が来てしまった。
+自動で認証コードを得る方式は以前ググってそれっぽいの見つけてたはずだが、 URL を失念してしまった。
+今なら ChatGPT サンにお願いしたら書いてくれそうな雰囲気するなと思い試したらそれっぽいのが出たが、 OAuth client の Redirect URL を変えるのが手間で検証しなかった。怠けてる。
+次にやる機会が来るその日まで、自鯖で認証コード取る方式は寝かせておく(やる日は来るのか)。&lt;/p&gt;</description><pubDate>Sun, 02 Apr 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-03-26-writing-cmdlet-in-fsharp-pt17</guid><link>https://krymtkts.github.io/posts/2023-03-26-writing-cmdlet-in-fsharp-pt17</link><title>F#でコマンドレットを書いてる pt.17</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; の話。&lt;/p&gt;&lt;p&gt;もう 4 月なのでそろそろ Fable Compiler を試してみたいと思ってるが、 pocof のテスト書くのと bugfix が落ち着かず、できていない。
 ちょっと今までのテストを小綺麗にする作業にも取り組んだ。&lt;/p&gt;&lt;p&gt;&lt;a href="/posts/2023-03-19-writing-cmdlet-in-fsharp-pt16"&gt;前回&lt;/a&gt;、 &lt;code&gt;module&lt;/code&gt; を多層化することでテストケースをグルーピングしている話を書いた。
 その時はテストケースを 1 つのファイルにまとめて書いていたのだけど、 &lt;code&gt;PocofQuery.run&lt;/code&gt; のテストを書き始めるにあたり、テストケースが爆増するのに備えてファイルを分割したいと思っていた。&lt;/p&gt;&lt;p&gt;はじめ F# ではどうテストプロジェクトのファイル分割をするのかわからなかったが、 F# の repo をいくつか参照してみて &lt;a href="https://github.com/fsprojects/FSharp.Data.Adaptive"&gt;fsprojects/FSharp.Data.Adaptive&lt;/a&gt; が参考になりそうとわかった。
 それを pocof に提供したところ、上手く分割できた。要は普通の F# Project と同じようにするだけだった。コミットは &lt;a href="https://github.com/krymtkts/pocof/commit/dff10c89963cdca60cd6ca9e7afeb7f7915e2ff4"&gt;krymtkts/pocof@dff10c8&lt;/a&gt; 。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/fsprojects/FSharp.Data.Adaptive/tree/5e92ab426e5a438d70986cefff638ecf2acef576/src/Test/FSharp.Data.Adaptive.Tests"&gt;FSharp.Data.Adaptive/src/Test/FSharp.Data.Adaptive.Tests&lt;/a&gt; がテストプロジェクトのディレクトリ。
