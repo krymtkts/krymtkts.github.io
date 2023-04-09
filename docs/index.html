@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-04-09-writing-cmdlet-in-fsharp-pt18">F#でコマンドレットを書いてる pt.18</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-04-02-oauth-with-pwsh-to-download-gss-as-csv">PowerShell で OAuth して Google Sheet を CSV で DL する</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-03-26-writing-cmdlet-in-fsharp-pt17">F#でコマンドレットを書いてる pt.17</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-03-19-writing-cmdlet-in-fsharp-pt16">F#でコマンドレットを書いてる pt.16</a></li>
                         
                         
 
@@ -196,195 +196,69 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-04-02</div>
+        <div class="col-lg-6">2023-04-09</div>
         
     </div>
-    <h2>PowerShell で OAuth して Google Sheet を CSV で DL する</h2>
+    <h2>F#でコマンドレットを書いてる pt.18</h2>
 </div>
 <div>
     
-    <p>最近役目を終えたスクリプトに、 Google Sheet を CSV でダウンロードするやつがいた。考慮不足等、諸々至らぬ点あろうが、スクリプトを供養するため日記にする。</p><p>モジュール導入したくないなーという事情があったので、下記を見てヒイヒイ言いながら実装した記憶がある。
-「Google Sheet から CSV をダウンロードする」には <code>https://www.googleapis.com/auth/drive</code> のスコープがいるみたい。てっきりスプシのスコープと勘違いして、無駄に時間かかった。</p><ul><li><a href="https://stackoverflow.com/questions/63125283/how-to-connect-api-from-powershell-with-oauth-2-0">How to connect API from PowerShell with OAUTH 2.0? - Stack Overflow</a></li><li><a href="https://lazyadmin.nl/it/connect-to-google-api-with-powershell/">Connect to Google API with Powershell — LazyAdmin</a> して - <a href="https://stackoverflow.com/questions/37705553/how-to-export-a-csv-from-google-sheet-api/61107170#61107170">r googlesheets - How to export a csv from Google Sheet API? - Stack Overflow</a> する</li></ul><p>スクリプトは Gist に登録しておいた。
-それに伴い Comment-Based Help を書いたり、関数の名前を変えたりした。Google Sheets ってサービス名に対してスプシ自体は spreadsheet だったりしてマジでややこしい。</p><p><a href="https://gist.github.com/krymtkts/0618fe495df0d3e567e9fb18ca2e308b">GoogleSpreadSheetOAuth.ps1</a></p><pre><code class="powershell">&lt;#
-.SYNOPSIS
-Download Google Sheet as CSV.
-.DESCRIPTION
-Download Google Sheet as CSV using GCP OAuth Client.
-.PARAMETER OAuthClientSecretsPath
-The path to the JSON file for the OAuth 2.0 Client Secrets created on GCP.
-.PARAMETER OAuthStorePath
-The path to save authentication tokens.
-.EXAMPLE
-. ./GoogleSheetsOAuth.ps1 `
-    -OAuthClientSecretsPath './client-secrets.json' `
-    -OAuthStorePath './gss-credential'
-Get-GoogleSpreadSheetAsCsv `
-    -SpreadSheet 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' `
-    -SheetId '000000000' `
-    -OutFile './test.csv'
-#&gt;
-[CmdletBinding()]
-param (
-    [Parameter(Mandatory)]
-    [string]
-    $OAuthClientSecretsPath,
-    [Parameter(Mandatory)]
-    [string]
-    $OAuthStorePath
-)
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p><code>PocofQuery.run</code> のテストをそれなりに足した。
+多少テストが増えてきたので CI が欲しくなってきた。ここで以前立てた Issue <a href="https://github.com/krymtkts/pocof/issues/34">#34</a> を回収しておくとことにした。</p><p>Issue にも書いてたけど、基本 GitHub Docs に書いてたやつをなぞるだけ。</p><ul><li><a href="https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net">Building and testing .NET - GitHub Docs</a></li><li><a href="https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-powershell">Building and testing PowerShell - GitHub Docs</a></li></ul><p>runner image は今の開発環境に合わせて <code>windows-latest</code> にしておく。 pocof 自体は今後他の OS でも動くことを保証してみたいけど、最初なのでシンプルにいく。
+この記事を書いた時点の <code>windows-latest</code> に含まれるツール類は以下を参照した。</p><p><a href="https://github.com/actions/runner-images/blob/main/images/win/Windows2022-Readme.md">runner-images/Windows2022-Readme.md at main · actions/runner-images · GitHub</a></p><p><code>dotnet</code> のセットアップは必須のよう。 pocof はまだ 6 なのでそれを使う。</p><p>PowerShell はデフォで 7.2.10 が入ってるらしい。いろんなバージョンで動くことをチェックするのであれば PowerShell の version で <code>matrix</code> 組むのが妥当だが、これも最初なので簡単に。</p><p>pocof のテストに必要な PowerShell モジュール Pester, PSScriptAnalyzer あたりも入ってるが、肝心の <a href="https://github.com/psake/psake">psake</a> が入ってない。ならば workflow で全部ひっくるめで force install するようにしておく。
+このへんも <a href="https://github.com/RamblingCookieMonster/PSDepend">PSDepend</a> を使うようにしておけば YAML にかき分ける必要もないし良さげか。</p><p>ここまでやれば <code>psakefile.ps1</code> に書いた全テストタスクを実行すれば完了する。キャッシュあった方が速いだろうけど、そもそもそんなに時間かからんので対応しないでおく。</p><p>あと一番重要な GitHub Actions の YAML のファイル名と名前の部分、結構いろんな repo みても付け方がバラバラでイケてるパクリ元がない。
+ここは GitHub の Pull Request や Actions の画面で見られることを考えてない名称は避けたかった。
+最終的に、 <a href="https://github.com/fsprojects/FSharp.Formatting/tree/3fdd5b9a186e35798d87ceee4bee692374304bed/.github/workflows">FSharp.Formatting</a> の命名規則が気に入ったのでそれを模した。
+ファイル名は <code>pull-requests.yml</code> を短縮して <code>pr.yml</code> で、名前は <code>Build and Test on Pull Request</code> だ。これなら GitHub の画面で見ても自然だ。</p><p>出来上がった素朴な YAML はこちら。 <a href="https://github.com/krymtkts/pocof/blob/1dda928ff1ae56938a26ae70568a9a05807f0852/.github/workflows/pr.yml">pocof/pr.yml</a></p><pre><code class="yaml">name: Build and Test on Pull Request
 
-class OAuthCredentialStore {
-    [SecureString] $AccessToken
-    [SecureString] $RefreshToken
-    OAuthCredentialStore(
-        [SecureString] $AccessToken,
-        [SecureString] $RefreshToken
-    ) {
-        $this.AccessToken = $AccessToken
-        $this.RefreshToken = $RefreshToken
-    }
-}
+on:
+  pull_request:
+    branches: ["main"]
 
-$script:OAuthCredential = $null
-
-function Get-GoogleSheetsAuthInitToken {
-    [CmdletBinding(SupportsShouldProcess)]
-    param ()
-
-    if (-not (Split-Path $OAuthStorePath -Parent | Test-Path)) {
-        throw "${OAuthStorePath} not found."
-    }
-
-    if (-not (Test-Path $OAuthClientSecretsPath)) {
-        throw "${OAuthClientSecretsPath} not found."
-    }
-    $secrets = Get-Content $OAuthClientSecretsPath | ConvertFrom-Json | Select-Object -ExpandProperty installed
-
-    $Scope = [System.Web.HttpUtility]::UrlEncode('https://www.googleapis.com/auth/drive')
-    $ClientID = $secrets.client_id
-    $ClientSecret = $secrets.client_secret
-    $RedirectUri = $secrets.redirect_uris[0]
-    $Uri = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&amp;client_id=${ClientID}&amp;redirect_uri=${RedirectUri}&amp;scope=${Scope}&amp;access_type=offline"
-
-    Start-Process $Uri
-    $AuthorizationCode = Read-Host 'paste auth code here!'
-
-    $AuthData = @{
-        code = $AuthorizationCode;
-        client_id = $ClientID;
-        client_secret = $ClientSecret;
-        redirect_uri = $RedirectUri;
-        grant_type = 'authorization_code';
-        access_type = 'offline';
-    }
-
-    Write-Host 'try to get access token...'
-    $TokenResponse = Invoke-RestMethod -Method Post -Uri 'https://www.googleapis.com/oauth2/v4/token' -Body $AuthData
-    if (-not $?) {
-        throw 'request failed.'
-    }
-
-    Write-Host 'done.'
-
-    $script:OAuthCredential = [OAuthCredentialStore]::new(
-        ($TokenResponse.access_token | ConvertTo-SecureString -AsPlainText),
-        ($TokenResponse.refresh_token | ConvertTo-SecureString -AsPlainText)
-    )
-
-    $store = @{
-        AccessToken = $OAuthCredential.AccessToken | ConvertFrom-SecureString;
-        RefreshToken = $OAuthCredential.RefreshToken | ConvertFrom-SecureString;
-    }
-
-    if ($PSCmdlet.ShouldProcess($OAuthStorePath)) {
-        New-Item -Path $OAuthStorePath -Force | Out-Null
-        $store | ConvertTo-Json -Compress | Set-Content -Path $OAuthStorePath -Force
-    }
-
-    $OAuthCredential.AccessToken, $OAuthCredential.RefreshToken
-}
-
-function Get-GoogleSheetsAuthToken {
-    [CmdletBinding(SupportsShouldProcess)]
-    param ()
-    Write-Verbose "$OAuthStorePath"
-    $content = Get-Content -Path $OAuthStorePath -ErrorAction Ignore
-    if ([String]::IsNullOrEmpty($content)) {
-        $token, $_ = Get-GoogleSheetsAuthInitToken
-        return $token
-    }
-    try {
-        $cred = $content | ConvertFrom-Json
-        $script:OAuthCredential = [OAuthCredentialStore]::new(
-            ($cred.AccessToken | ConvertTo-SecureString),
-            ($cred.RefreshToken | ConvertTo-SecureString)
-        )
-    }
-    catch {
-        throw 'Invalid SecureString stored for this module. Remove gs-credential and try again.'
-    }
-    $RefreshToken = $script:OAuthCredential.RefreshToken | ConvertFrom-SecureString -AsPlainText
-    if (-not $RefreshToken) {
-        $token, $_ = Get-GoogleSheetsAuthInitToken
-        return $token
-    }
-
-    $secrets = Get-Content $OAuthClientSecretsPath | ConvertFrom-Json | Select-Object -ExpandProperty installed
-    $RefreshData = @{
-        refresh_token = $RefreshToken
-        client_id = $secrets.client_id
-        client_secret = $secrets.client_secret
-        grant_type = 'refresh_token'
-        access_type = 'offline'
-    }
-
-    $Response = Invoke-RestMethod -Method Post -Uri 'https://www.googleapis.com/oauth2/v4/token' -Body $RefreshData
-    if (-not $?) {
-        throw 'request failed.'
-    }
-
-    return $Response.access_token | ConvertTo-SecureString -AsPlainText
-}
-
-function Get-GoogleSpreadSheetAsCsv {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory)]
-        [String]
-        $SpreadSheet,
-        [Parameter(Mandatory)]
-        [String]
-        $SheetId,
-        [Parameter(Mandatory)]
-        [String]
-        $OutFile
-    )
-
-    $accessToken, $refreshToken = Get-GoogleSheetsAuthToken
-    if (-not $?) {
-        return
-    }
-
-    $Params = @{
-        Uri = "https://docs.google.com/spreadsheets/d/$SpreadSheet/gviz/tq?tqx=out:csv&amp;gid=$($_.SheetId)"
-        Method = 'GET'
-        Authentication = 'Bearer'
-        Token = $accessToken
-        OutFile = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutFile)
-    }
-    Invoke-WebRequest @Params | Out-Null
-}
-</code></pre><p>このスクリプトでは認証コードを得るのに手でコピってる。
-これを <code>System.Net.HttpListener</code> で自鯖を立てて取る方式にしたかったけど、コピペするのは初回だけだし放置してたらそのままスクリプトの寿命が来てしまった。
-自動で認証コードを得る方式は以前ググってそれっぽいの見つけてたはずだが、 URL を失念してしまった。
-今なら ChatGPT サンにお願いしたら書いてくれそうな雰囲気するなと思い試したらそれっぽいのが出たが、 OAuth client の Redirect URL を変えるのが手間で検証しなかった。怠けてる。
-次にやる機会が来るその日まで、自鯖で認証コード取る方式は寝かせておく(やる日は来るのか)。</p>
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Install modules from PSGallery
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module Psake,Pester,PSScriptAnalyzer -Scope CurrentUser -Force
+      - name: Execute All Tests
+        shell: pwsh
+        run: Invoke-Psake -taskList TestAll
+</code></pre><p>GitHub Actions の難点としてテストしにくい点があるが、<a href="https://github.com/nektos/act">nektos/act</a> を使えば <code>ubuntu-*</code> の runner に限ればテストできる。
+仕事では act を使ってるが自機には積んでなかったんで、この際に Chocolaty で入れた。</p><pre><code class="dos">choco install act-cli
+</code></pre><p>ではテストとばかりに <code>windows-latest</code> を <code>ubuntu-latest</code> に変えて実行する。</p><pre><code class="powershell">PS&gt; act pull_request --verbose --platform windows-latest=catthehacker/ubuntu:act-latest
+# ...省略
+| OCI runtime exec failed: exec failed: unable to start container process: exec: "pwsh": executable file not found in $PATH: unknown
+# ...省略
+Error: Job 'test' failed
+</code></pre><p>なん...だと...
+<code>pwsh</code> コマンドが無いと言われた... <code>act</code> のセットアップ時に MEDIUM 選んだらどうも入ってないっぽい。
+流石は minority の PowerShell 、参ったね。</p><p>しかし <code>act</code> が使うイメージを見てたら <code>pwsh</code> というキーワード付きの image があるじゃないの。 <a href="https://github.com/catthehacker/docker_images#images-available">catthehacker/docker_images: Docker images</a></p><blockquote><p>/linux/ubuntu/pwsh - ghcr.io/catthehacker/ubuntu:act-* but with pwsh tools and modules installed</p></blockquote><p>こりゃきたな。試す。</p><pre><code class="powershell">PS&gt; act pull_request --verbose --platform windows-latest=ghcr.io/catthehacker/ubuntu:pwsh-latest
+# ...省略
+[Build and Test on Pull Request/test] 🏁  Job succeeded
+</code></pre><p>おーいけた。 6 分超かかったけど。
+これでなんとか PowerShell の場合でもローカルテストできそう。
+Docker Hub に同じイメージ <a href="https://hub.docker.com/layers/catthehacker/ubuntu/pwsh-latest/images/sha256-3b4b83b4458dd875509bc74b9f1d4ecaa57101c65ec529cb463fed2d859228e4?context=explore">catthehacker/ubuntu:pwsh-latest</a> あったので、これを使っていこう。</p><pre><code class="powershell">act pull_request --verbose --platform windows-latest=catthehacker/ubuntu:pwsh-latest
+</code></pre><p>...でもいちいちこのクソながオプション書きたく無いなあ...設定ファイルとかはなさそう。関数にするか psake のタスクにするしかないか。なんか大げさな気がするけど。</p><p>そんなこんなで <a href="https://github.com/krymtkts/pocof/pull/45">#45</a> を作れた。
+matrix はまだ設定してないけど、少なくともテスト類は ubuntu でも動くことわかったし、追々対応していく。</p><hr /><p>おまけ。</p><p>DockerDesktop でログインしてると、 <code>act</code> 実行中にある DockerHub から <code>catthehacker/ubuntu:act-latest</code> を pull するのができなかった。ログアウトしてるといける。↓ このへんの関係ぽいが深く追ってない。</p><p><a href="https://github.com/nektos/act/discussions/1165">m1: act fails to pull with unauthorized: incorrect username or password · nektos/act · Discussion #1165</a></p><p>あとなんか知らんが <code>act</code> 実行後に <code>[45;3R</code> って謎キーワードが terminal の input に出てくる、必ず。 ansi escape sequences ぽいけどよくわからん。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
+    <a href="/tags/github">github</a>
+    
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -394,7 +268,7 @@ function Get-GoogleSpreadSheetAsCsv {
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-03-26-writing-cmdlet-in-fsharp-pt17">2023-03-26 F#でコマンドレットを書いてる pt.17 &raquo;</a>
+        <a class="right" href="/posts/2023-04-02-oauth-with-pwsh-to-download-gss-as-csv">2023-04-02 PowerShell で OAuth して Google Sheet を CSV で DL する &raquo;</a>
         
     </div>
 </div>

@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Get-GzipContent のユースケース</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-08-06-usecase-of-get-gzipcontent">
+    <title>krymtkts: F#でコマンドレットを書いてる pt.18</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-04-09-writing-cmdlet-in-fsharp-pt18">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Get-GzipContent のユースケース" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-08-06-usecase-of-get-gzipcontent" />
+    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.18" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-04-09-writing-cmdlet-in-fsharp-pt18" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -196,58 +196,77 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-08-06</div>
+        <div class="col-lg-6">2023-04-09</div>
         
     </div>
-    <h2>Get-GzipContent のユースケース</h2>
+    <h2>F#でコマンドレットを書いてる pt.18</h2>
 </div>
 <div>
     
-    <p>以前 <a href="https://github.com/krymtkts/Get-GzipContent">krymtkts/Get-GzipContent: Get-Content for gzip files.</a> というのを作って <a href="https://www.powershellgallery.com/packages/Get-GzipContent/0.1.2">PowerShell Gallery</a> に公開した。</p><p>当時 gzip された JSON を扱う機会が多かった。
-その時の職場は bash 文化だったのだけど、自分のローカルでは PowerShell を使うし...ということで、モジュールが欲しかった。
-この PowerShell で gzip を展開するコード自体よく知られてるパターンらしかったけど、登録されてるモジュールがなかったので、自分で作った。ちゃんと探したら似たモジュールはあったのだろうけど、周辺モジュールもドカッと入るのは期待するところでないので、単機能のモジュールを作ったんだ確か。</p><p>最近になってまた gzip されたファイルを扱う機会が増えたので、改めて使う機会が来たのだけど...これちょっとイマイチやなーと思っている。</p><p>CloudFront のアクセスログで<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#LogFileFormat">標準ログ</a>というのがあるのだけど、こいつは gzip された TSV で、これを PowerShell で取り扱うのに以下の関数を作った。</p><pre><code class="powershell">function ConvertFrom-CloudFrontAccessLog {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true,
-            Position = 0,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true,
-            HelpMessage = 'Path to one or more locations.')]
-        [Alias('PSPath')]
-        [ValidateNotNullOrEmpty()]
-        [string[]]
-        $Path
-    )
-    begin {
-        $header = 'date', 'time', 'x-edge-location', 'sc-bytes', 'c-ip', 'cs-method', 'cs(Host)', 'cs-uri-stem', 'sc-status', 'cs(Referer)', 'cs(User-Agent)', 'cs-uri-query', 'cs(Cookie)', 'x-edge-result-type', 'x-edge-request-id', 'x-host-header', 'cs-protocol', 'cs-bytes', 'time-taken', 'x-forwarded-for', 'ssl-protocol', 'ssl-cipher', 'x-edge-response-result-type', 'cs-protocol-version', 'fle-status', 'fle-encrypted-fields', 'c-port', 'time-to-first-byte', 'x-edge-detailed-result-type', 'sc-content-type', 'sc-content-len', 'sc-range-start', 'sc-range-end'
-    }
-    process {
-        $Path | ForEach-Object { (zcat $_) -split "`n" } | ConvertFrom-Csv -Delimiter "`t" -Header $header
-    }
-}
-</code></pre><p><code>ForEach-Object { (zcat $_) -split "`n" }</code> ここがイケてない。まじで使いにくい。
-改行コードずつ <code>Write-Object</code> するようにしてないから、自分で分割しないといけなくなってしまっている。当時は改行なし JSON ばかり取り扱ってたので、全く気づかなかったのかなと思っている(しらん)。</p><p>↓ こうできたらすごくイイ気がする。</p><pre><code class="powershell">$Path | zcat | ConvertFrom-Csv -Delimiter "`t" -Header $header
-</code></pre><p>breaking change なのもあるしバージョン 1 にするかーとか思っている。後方互換のスイッチ要るかな？とか分割単位を指定できるのが良いのかな？とか考え出すと、やる気が...
-ま、 <code>Get-Content</code> と似た動きにしたいってのがあるので、 <code>-Delimiter</code> かなー。</p><p>でも、とりあえず数年後し？のセルフ使用レビューを経てツールを改善しよ...という気になったので、自分のために書いたモジュールでもあるし自分が必要な範囲で直そ。使ってる人がおこになったらちょっと考える。</p><p>さっさと直したらいいのだけど、動機づけとしてこの記事をしたためた。
-あとはやるだけ... <a href="https://github.com/krymtkts/Get-GzipContent/issues/3">Add the <code>-Delimiter</code> option like <code>Get-Content</code>. · Issue #3 · krymtkts/Get-GzipContent</a></p>
+    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p><code>PocofQuery.run</code> のテストをそれなりに足した。
+多少テストが増えてきたので CI が欲しくなってきた。ここで以前立てた Issue <a href="https://github.com/krymtkts/pocof/issues/34">#34</a> を回収しておくとことにした。</p><p>Issue にも書いてたけど、基本 GitHub Docs に書いてたやつをなぞるだけ。</p><ul><li><a href="https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net">Building and testing .NET - GitHub Docs</a></li><li><a href="https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-powershell">Building and testing PowerShell - GitHub Docs</a></li></ul><p>runner image は今の開発環境に合わせて <code>windows-latest</code> にしておく。 pocof 自体は今後他の OS でも動くことを保証してみたいけど、最初なのでシンプルにいく。
+この記事を書いた時点の <code>windows-latest</code> に含まれるツール類は以下を参照した。</p><p><a href="https://github.com/actions/runner-images/blob/main/images/win/Windows2022-Readme.md">runner-images/Windows2022-Readme.md at main · actions/runner-images · GitHub</a></p><p><code>dotnet</code> のセットアップは必須のよう。 pocof はまだ 6 なのでそれを使う。</p><p>PowerShell はデフォで 7.2.10 が入ってるらしい。いろんなバージョンで動くことをチェックするのであれば PowerShell の version で <code>matrix</code> 組むのが妥当だが、これも最初なので簡単に。</p><p>pocof のテストに必要な PowerShell モジュール Pester, PSScriptAnalyzer あたりも入ってるが、肝心の <a href="https://github.com/psake/psake">psake</a> が入ってない。ならば workflow で全部ひっくるめで force install するようにしておく。
+このへんも <a href="https://github.com/RamblingCookieMonster/PSDepend">PSDepend</a> を使うようにしておけば YAML にかき分ける必要もないし良さげか。</p><p>ここまでやれば <code>psakefile.ps1</code> に書いた全テストタスクを実行すれば完了する。キャッシュあった方が速いだろうけど、そもそもそんなに時間かからんので対応しないでおく。</p><p>あと一番重要な GitHub Actions の YAML のファイル名と名前の部分、結構いろんな repo みても付け方がバラバラでイケてるパクリ元がない。
+ここは GitHub の Pull Request や Actions の画面で見られることを考えてない名称は避けたかった。
+最終的に、 <a href="https://github.com/fsprojects/FSharp.Formatting/tree/3fdd5b9a186e35798d87ceee4bee692374304bed/.github/workflows">FSharp.Formatting</a> の命名規則が気に入ったのでそれを模した。
+ファイル名は <code>pull-requests.yml</code> を短縮して <code>pr.yml</code> で、名前は <code>Build and Test on Pull Request</code> だ。これなら GitHub の画面で見ても自然だ。</p><p>出来上がった素朴な YAML はこちら。 <a href="https://github.com/krymtkts/pocof/blob/1dda928ff1ae56938a26ae70568a9a05807f0852/.github/workflows/pr.yml">pocof/pr.yml</a></p><pre><code class="yaml">name: Build and Test on Pull Request
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Install modules from PSGallery
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module Psake,Pester,PSScriptAnalyzer -Scope CurrentUser -Force
+      - name: Execute All Tests
+        shell: pwsh
+        run: Invoke-Psake -taskList TestAll
+</code></pre><p>GitHub Actions の難点としてテストしにくい点があるが、<a href="https://github.com/nektos/act">nektos/act</a> を使えば <code>ubuntu-*</code> の runner に限ればテストできる。
+仕事では act を使ってるが自機には積んでなかったんで、この際に Chocolaty で入れた。</p><pre><code class="dos">choco install act-cli
+</code></pre><p>ではテストとばかりに <code>windows-latest</code> を <code>ubuntu-latest</code> に変えて実行する。</p><pre><code class="powershell">PS&gt; act pull_request --verbose --platform windows-latest=catthehacker/ubuntu:act-latest
+# ...省略
+| OCI runtime exec failed: exec failed: unable to start container process: exec: "pwsh": executable file not found in $PATH: unknown
+# ...省略
+Error: Job 'test' failed
+</code></pre><p>なん...だと...
+<code>pwsh</code> コマンドが無いと言われた... <code>act</code> のセットアップ時に MEDIUM 選んだらどうも入ってないっぽい。
+流石は minority の PowerShell 、参ったね。</p><p>しかし <code>act</code> が使うイメージを見てたら <code>pwsh</code> というキーワード付きの image があるじゃないの。 <a href="https://github.com/catthehacker/docker_images#images-available">catthehacker/docker_images: Docker images</a></p><blockquote><p>/linux/ubuntu/pwsh - ghcr.io/catthehacker/ubuntu:act-* but with pwsh tools and modules installed</p></blockquote><p>こりゃきたな。試す。</p><pre><code class="powershell">PS&gt; act pull_request --verbose --platform windows-latest=ghcr.io/catthehacker/ubuntu:pwsh-latest
+# ...省略
+[Build and Test on Pull Request/test] 🏁  Job succeeded
+</code></pre><p>おーいけた。 6 分超かかったけど。
+これでなんとか PowerShell の場合でもローカルテストできそう。
+Docker Hub に同じイメージ <a href="https://hub.docker.com/layers/catthehacker/ubuntu/pwsh-latest/images/sha256-3b4b83b4458dd875509bc74b9f1d4ecaa57101c65ec529cb463fed2d859228e4?context=explore">catthehacker/ubuntu:pwsh-latest</a> あったので、これを使っていこう。</p><pre><code class="powershell">act pull_request --verbose --platform windows-latest=catthehacker/ubuntu:pwsh-latest
+</code></pre><p>...でもいちいちこのクソながオプション書きたく無いなあ...設定ファイルとかはなさそう。関数にするか psake のタスクにするしかないか。なんか大げさな気がするけど。</p><p>そんなこんなで <a href="https://github.com/krymtkts/pocof/pull/45">#45</a> を作れた。
+matrix はまだ設定してないけど、少なくともテスト類は ubuntu でも動くことわかったし、追々対応していく。</p><hr /><p>おまけ。</p><p>DockerDesktop でログインしてると、 <code>act</code> 実行中にある DockerHub から <code>catthehacker/ubuntu:act-latest</code> を pull するのができなかった。ログアウトしてるといける。↓ このへんの関係ぽいが深く追ってない。</p><p><a href="https://github.com/nektos/act/discussions/1165">m1: act fails to pull with unauthorized: incorrect username or password · nektos/act · Discussion #1165</a></p><p>あとなんか知らんが <code>act</code> 実行後に <code>[45;3R</code> って謎キーワードが terminal の input に出てくる、必ず。 ansi escape sequences ぽいけどよくわからん。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
+    <a href="/tags/github">github</a>
     
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2022-08-07-git-says-the-local-repo-is-not-yours">&laquo; 2022-08-07 git で local repo が自分のものじゃないとなったやつ</a>
         
-        
-        <a class="right" href="/posts/2022-07-30-practice-build-aws-tools-for-powrshell">2022-07-30 AWS Tools for PowerShell のビルド素振り &raquo;</a>
+        <a class="right" href="/posts/2023-04-02-oauth-with-pwsh-to-download-gss-as-csv">2023-04-02 PowerShell で OAuth して Google Sheet を CSV で DL する &raquo;</a>
         
     </div>
 
