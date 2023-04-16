@@ -203,7 +203,7 @@
 </div>
 <div>
     
-    <p>本当は Fable のメモを記録したかった。 Fable の練習を始めようと思って <a href="https://fable.io/docs/2-steps/your-first-fable-project.html">Fable · Start a new project</a> を参考にプロジェクトを作成(以下)した。</p><pre><code class="powershell">dotnet new --install Fable.template
+    <p>本当は Fable のメモを記録したかった。 Fable の練習を始めようと思って <a href="https://fable.io/docs/2-steps/your-first-fable-project.html">Fable · Start a new project</a> を参考にプロジェクトを作成(以下)した。</p><pre><code class="powershell">dotnet new fable --name krymtkts.github.io
 </code></pre><p>その後作成されたプロジェクトを VS Code で開いたら OOM で VS Code がお亡くなりになったので、また今度やるか...という気持ちに切り替わってしまった。</p><hr /><p>閑話休題。</p><p>また <a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>もう 2023-04 も半ばを過ぎ、前回の pocof 0.4.0-alpha から 2 ヶ月経とうとしてるが、粛々とテスト追加と書き直しをしている。</p><p>以前 GitHub Actions の Workflow を作成した時に、 <code>ubuntu_latest</code> つまり非 Windows でも <a href="https://github.com/pester/Pester">Pester</a> のテストが問題なく緑になるんだなというのがわかった。
 これを機に OS の build matrix を組んで Windows, Linux, Mac の 3 つのプラットフォームのテストを有効にしてみた。 <a href="https://github.com/krymtkts/pocof/pull/48">#48</a></p><p>すべてのプラットフォームでテストが成功したのを見て、 .NET 良く出来てるなあと思った(小並感)。
 とはいえ実際に PowerShell on Ubuntu でインタラクティブな動作テストしたわけじゃないし、 .NET はキー周りが大変だと聞く。
