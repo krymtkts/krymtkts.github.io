@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-04-16-writing-cmdlet-in-fsharp-pt19">F#でコマンドレットを書いてる pt.19</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-04-09-writing-cmdlet-in-fsharp-pt18">F#でコマンドレットを書いてる pt.18</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-04-02-oauth-with-pwsh-to-download-gss-as-csv">PowerShell で OAuth して Google Sheet を CSV で DL する</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-03-26-writing-cmdlet-in-fsharp-pt17">F#でコマンドレットを書いてる pt.17</a></li>
                         
                         
 
@@ -196,65 +196,40 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-04-09</div>
+        <div class="col-lg-6">2023-04-16</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.18</h2>
+    <h2>F#でコマンドレットを書いてる pt.19</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p><code>PocofQuery.run</code> のテストをそれなりに足した。
-多少テストが増えてきたので CI が欲しくなってきた。ここで以前立てた Issue <a href="https://github.com/krymtkts/pocof/issues/34">#34</a> を回収しておくとことにした。</p><p>Issue にも書いてたけど、基本 GitHub Docs に書いてたやつをなぞるだけ。</p><ul><li><a href="https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net">Building and testing .NET - GitHub Docs</a></li><li><a href="https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-powershell">Building and testing PowerShell - GitHub Docs</a></li></ul><p>runner image は今の開発環境に合わせて <code>windows-latest</code> にしておく。 pocof 自体は今後他の OS でも動くことを保証してみたいけど、最初なのでシンプルにいく。
-この記事を書いた時点の <code>windows-latest</code> に含まれるツール類は以下を参照した。</p><p><a href="https://github.com/actions/runner-images/blob/main/images/win/Windows2022-Readme.md">runner-images/Windows2022-Readme.md at main · actions/runner-images · GitHub</a></p><p><code>dotnet</code> のセットアップは必須のよう。 pocof はまだ 6 なのでそれを使う。</p><p>PowerShell はデフォで 7.2.10 が入ってるらしい。いろんなバージョンで動くことをチェックするのであれば PowerShell の version で <code>matrix</code> 組むのが妥当だが、これも最初なので簡単に。</p><p>pocof のテストに必要な PowerShell モジュール Pester, PSScriptAnalyzer あたりも入ってるが、肝心の <a href="https://github.com/psake/psake">psake</a> が入ってない。ならば workflow で全部ひっくるめで force install するようにしておく。
-このへんも <a href="https://github.com/RamblingCookieMonster/PSDepend">PSDepend</a> を使うようにしておけば YAML にかき分ける必要もないし良さげか。</p><p>ここまでやれば <code>psakefile.ps1</code> に書いた全テストタスクを実行すれば完了する。キャッシュあった方が速いだろうけど、そもそもそんなに時間かからんので対応しないでおく。</p><p>あと一番重要な GitHub Actions の YAML のファイル名と名前の部分、結構いろんな repo みても付け方がバラバラでイケてるパクリ元がない。
-ここは GitHub の Pull Request や Actions の画面で見られることを考えてない名称は避けたかった。
-最終的に、 <a href="https://github.com/fsprojects/FSharp.Formatting/tree/3fdd5b9a186e35798d87ceee4bee692374304bed/.github/workflows">FSharp.Formatting</a> の命名規則が気に入ったのでそれを模した。
-ファイル名は <code>pull-requests.yml</code> を短縮して <code>pr.yml</code> で、名前は <code>Build and Test on Pull Request</code> だ。これなら GitHub の画面で見ても自然だ。</p><p>出来上がった素朴な YAML はこちら。 <a href="https://github.com/krymtkts/pocof/blob/1dda928ff1ae56938a26ae70568a9a05807f0852/.github/workflows/pr.yml">pocof/pr.yml</a></p><pre><code class="yaml">name: Build and Test on Pull Request
+    <p>本当は Fable のメモを記録したかった。 Fable の練習を始めようと思って <a href="https://fable.io/docs/2-steps/your-first-fable-project.html">Fable · Start a new project</a> を参考にプロジェクトを作成(以下)した。</p><pre><code class="powershell">dotnet new --install Fable.template
+</code></pre><p>その後作成されたプロジェクトを VS Code で開いたら OOM で VS Code がお亡くなりになったので、また今度やるか...という気持ちに切り替わってしまった。</p><hr /><p>閑話休題。</p><p>また <a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>もう 2023-04 も半ばを過ぎ、前回の pocof 0.4.0-alpha から 2 ヶ月経とうとしてるが、粛々とテスト追加と書き直しをしている。</p><p>以前 GitHub Actions の Workflow を作成した時に、 <code>ubuntu_latest</code> つまり非 Windows でも <a href="https://github.com/pester/Pester">Pester</a> のテストが問題なく緑になるんだなというのがわかった。
+これを機に OS の build matrix を組んで Windows, Linux, Mac の 3 つのプラットフォームのテストを有効にしてみた。 <a href="https://github.com/krymtkts/pocof/pull/48">#48</a></p><p>すべてのプラットフォームでテストが成功したのを見て、 .NET 良く出来てるなあと思った(小並感)。
+とはいえ実際に PowerShell on Ubuntu でインタラクティブな動作テストしたわけじゃないし、 .NET はキー周りが大変だと聞く。
+わたしが持っているこの辺の知識はこれしかないけど →
+<a href="https://devblogs.microsoft.com/dotnet/console-readkey-improvements-in-net-7/">Console.ReadKey improvements in .NET 7 - .NET Blog</a></p><p>なので、いつか時間を取って人力で確認しないといけないのではと思っている。
+実際問題、例えば Ubuntu に PowerShell 入れるのって相当動機づけされてないとやらなそうなのだけど、機が熟しつつある。
+良いのか悪いのかは知らん。ただ面白そうではある。</p><p>pocof の機能追加はやってなくて、 CLI の UI をいじるところ以外はテストも揃ってきたので、リファクタリングと称して主に構造変換をそれほど伴わない書き直しをしている。 <a href="https://github.com/krymtkts/pocof/pull/49">#49</a></p><p>pocof は PowerShell で書かれた <a href="https://github.com/jasonmarcher/poco">poco</a> を F# で写経するところから始まっているので、あまり F# ぽくない感じの箇所が多々ある。その環境の中にコードを足していってるので周りに引きづられて F# ぽくない部分も多かった。</p><p>それらは例えば <code>string</code> じゃなくて <code>ToString</code> メソッドを使ってるとか、一番気になってたのは conditional expression の <code>if</code> をいっぱい使ってた点。
+別に <code>if</code> の方が短く済むときもあるし使っても構わんのだけど、式としてじゃなくて制御構文として使ったときの <code>else</code> が必須じゃないのが気になってた。また match expression と違って網羅できてるか人目でわからないのが一番心配で、結局これらを <code>match ... with</code> で書き直すことにした。
+その結果、一部には active pattern も利用したりして、パッと見わかりやすくなった気がする。</p><p><code>if ... then</code> を <code>match ... with</code> に書き換えたら以下のようになって、 <code>true</code> がなんか判然とせんなーという気は多少あるので、自前のロジックに関しては判別共用体に直すとか検討するとより良いのかも知れん。</p><pre><code class="fsharp">// before
+if nanigashi x then
+    Some(x)
+else
+    None
 
-on:
-  pull_request:
-    branches: ["main"]
-
-jobs:
-  test:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.0.x
-      - name: Install modules from PSGallery
-        shell: pwsh
-        run: |
-          Set-PSRepository PSGallery -InstallationPolicy Trusted
-          Install-Module Psake,Pester,PSScriptAnalyzer -Scope CurrentUser -Force
-      - name: Execute All Tests
-        shell: pwsh
-        run: Invoke-Psake -taskList TestAll
-</code></pre><p>GitHub Actions の難点としてテストしにくい点があるが、<a href="https://github.com/nektos/act">nektos/act</a> を使えば <code>ubuntu-*</code> の runner に限ればテストできる。
-仕事では act を使ってるが自機には積んでなかったんで、この際に Chocolaty で入れた。</p><pre><code class="dos">choco install act-cli
-</code></pre><p>ではテストとばかりに <code>windows-latest</code> を <code>ubuntu-latest</code> に変えて実行する。</p><pre><code class="powershell">PS&gt; act pull_request --verbose --platform windows-latest=catthehacker/ubuntu:act-latest
-# ...省略
-| OCI runtime exec failed: exec failed: unable to start container process: exec: "pwsh": executable file not found in $PATH: unknown
-# ...省略
-Error: Job 'test' failed
-</code></pre><p>なん...だと...
-<code>pwsh</code> コマンドが無いと言われた... <code>act</code> のセットアップ時に MEDIUM 選んだらどうも入ってないっぽい。
-流石は minority の PowerShell 、参ったね。</p><p>しかし <code>act</code> が使うイメージを見てたら <code>pwsh</code> というキーワード付きの image があるじゃないの。 <a href="https://github.com/catthehacker/docker_images#images-available">catthehacker/docker_images: Docker images</a></p><blockquote><p>/linux/ubuntu/pwsh - ghcr.io/catthehacker/ubuntu:act-* but with pwsh tools and modules installed</p></blockquote><p>こりゃきたな。試す。</p><pre><code class="powershell">PS&gt; act pull_request --verbose --platform windows-latest=ghcr.io/catthehacker/ubuntu:pwsh-latest
-# ...省略
-[Build and Test on Pull Request/test] 🏁  Job succeeded
-</code></pre><p>おーいけた。 6 分超かかったけど。
-これでなんとか PowerShell の場合でもローカルテストできそう。
-Docker Hub に同じイメージ <a href="https://hub.docker.com/layers/catthehacker/ubuntu/pwsh-latest/images/sha256-3b4b83b4458dd875509bc74b9f1d4ecaa57101c65ec529cb463fed2d859228e4?context=explore">catthehacker/ubuntu:pwsh-latest</a> あったので、これを使っていこう。</p><pre><code class="powershell">act pull_request --verbose --platform windows-latest=catthehacker/ubuntu:pwsh-latest
-</code></pre><p>...でもいちいちこのクソながオプション書きたく無いなあ...設定ファイルとかはなさそう。関数にするか psake のタスクにするしかないか。なんか大げさな気がするけど。</p><p>そんなこんなで <a href="https://github.com/krymtkts/pocof/pull/45">#45</a> を作れた。
-matrix はまだ設定してないけど、少なくともテスト類は ubuntu でも動くことわかったし、追々対応していく。</p><hr /><p>おまけ。</p><p>DockerDesktop でログインしてると、 <code>act</code> 実行中にある DockerHub から <code>catthehacker/ubuntu:act-latest</code> を pull するのができなかった。ログアウトしてるといける。↓ このへんの関係ぽいが深く追ってない。</p><p><a href="https://github.com/nektos/act/discussions/1165">m1: act fails to pull with unauthorized: incorrect username or password · nektos/act · Discussion #1165</a></p><p>あとなんか知らんが <code>act</code> 実行後に <code>[45;3R</code> って謎キーワードが terminal の input に出てくる、必ず。 ansi escape sequences ぽいけどよくわからん。</p>
+// after
+match nanigashi x with
+| true -&gt; Some(x) // この true ってのもなーんか気に食わん
+| _ -&gt;  None
+</code></pre><p>こういうところにも active pattern を積極的に使っていったら良いのかもやけど、今回はまだ使わなかった。
+データの変換・分解を伴うようなパターンだとバッチリハマった感じだったが、単純なケースに使うと記述量だけ増えて表現力変わらないなとい感触だったため(書き方がまずいのか)。
+とはいえ積極的に使いたいものではあった。</p><p>コードの見通しも良くなってきて、そろそろ積み残しタスクにも着手しやすくなってきた感じがする。次やるとしたら <a href="https://github.com/krymtkts/pocof/issues/35">#35</a> あたりかな。</p><p>でもテスト追加とリファクタリングはまだやりたいところが残っていて、悩ましい。 UI のテストを入れて置きたいのと、 <code>PocofQuery</code> をシンプルにするのと、 <code>Library.fs</code> から極力ロジックを引き剥がす点だ。
+なんかダルそうだなというのもあって手が出しにくいので、積み残しタスク減らしてからやると気分転換になるのかも知れん。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
-    
-    <a href="/tags/github">github</a>
     
     <a href="/tags/powershell">powershell</a>
     
@@ -268,7 +243,7 @@ matrix はまだ設定してないけど、少なくともテスト類は ubuntu
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-04-02-oauth-with-pwsh-to-download-gss-as-csv">2023-04-02 PowerShell で OAuth して Google Sheet を CSV で DL する &raquo;</a>
+        <a class="right" href="/posts/2023-04-09-writing-cmdlet-in-fsharp-pt18">2023-04-09 F#でコマンドレットを書いてる pt.18 &raquo;</a>
         
     </div>
 </div>
