@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: PowerShell で大量の HTTP リクエストを送る場合の Tips</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-07-09-tips-for-sending-http-requests-pwsh">
+    <title>krymtkts: Posts Tagged &quot;fable&quot;</title>
+    <link rel="canonical" href="https://krymtkts.github.io/tags/fable">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: PowerShell で大量の HTTP リクエストを送る場合の Tips" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-07-09-tips-for-sending-http-requests-pwsh" />
+    <meta property="og:title" content="krymtkts: Posts Tagged &quot;fable&quot;" />
+    <meta property="og:url" content="https://krymtkts.github.io/tags/fable" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -195,53 +195,17 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="post">
-    <div class="post-header">
-    <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-07-09</div>
-        
+<div id="posts-by-tag">
+    <div id="page-header">
+        <h2>Posts Tagged &quot;fable&quot;</h2>
     </div>
-    <h2>PowerShell で大量の HTTP リクエストを送る場合の Tips</h2>
-</div>
-<div>
+    <ul>
     
-    <p>大量のアクセスログがほしい事情で、テスト環境に大量のリクエストを送りつける必要があった。</p><p>JMeter とか Gatling 使えば済む話なのだけど、すぐに使い回せるものがなかったし、パパっとやってしまいたかったので PowerShell を使ってみたら、エラーになった。</p><pre><code class="powershell">$requests = 'aaa=10&amp;bbb=20', 'aaa=11&amp;bbb=21', 'aaa=12&amp;bbb=22'
-$requests * 100000 | ForEach-Object -Parallel {
-    Invoke-WebRequest -Method Get -Uri "https://$using:testDomaain?$_"
-    $jitter = Get-Random -Minimum 3 -Maximum 23
-    Start-Sleep -Milliseconds (95 + $jitter) # 待ち
-} -ThrottleLimit 100 | ConvertTo-Json | Set-Content ./responses.json
-</code></pre><p>こういうのでタコ殴りにすると...</p><p><code>Only one usage of each socket address (protocol/network address/port) is normally permitted</code></p><p>15000 件を超えた辺りでこうなった。なんだ？ググる。</p><ul><li><a href="https://social.msdn.microsoft.com/Forums/aspnet/en-US/ab5e4f6d-e96a-4bef-bba2-870eda412ea3/systemnetsocketssocketexception-only-one-usage-of-each-socket-address-protocolnetwork?forum=AzureFunctions">System.Net.Sockets.SocketException: Only one usage of each socket address (protocol/network address/port) is normally permitted</a></li></ul><p>ポートが枯渇するんだと。 PowerShell の実装を見た訳じゃないけど、 大量に実行された <code>Invoke-WebRequest</code> で <code>HttpClient</code> を大量作成したのであろうことは、想像するに易い。</p><p>同じ <code>HttpClient</code> を使い回せば良いらしいので、そうした。</p><pre><code class="powershell">$requests = 'aaa=10&amp;bbb=20', 'aaa=11&amp;bbb=21', 'aaa=12&amp;bbb=22'
-$h = New-Object System.Net.Http.HttpClient
-$requests * 100000 | ForEach-Object -Parallel {
-    ($using:h).GetAsync("https://$using:testDomaain?$_").GetAwaiter()
-    $jitter = Get-Random -Minimum 3 -Maximum 23
-    Start-Sleep -Milliseconds (95 + $jitter) # 待ち
-} -ThrottleLimit 100 | ForEach-Object {$_.GetResult()} | ConvertTo-Json | Set-Content ./responses.json
-</code></pre><p>そんだけ。</p><ul><li>参照
-<ul><li><a href="https://github.com/Azure/azure-functions-host/issues/1806">Need Official Guidance On using HttpClient in Functions · Issue #1806 · Azure/azure-functions-host</a></li><li><a href="https://blog.ironmansoftware.com/powershell-async-method/">Calling Async .NET Methods from PowerShell</a></li></ul></li></ul>
-</div>
-
-<div id="post-tags">
-    <b>Tags: </b>
+        <li>
+            <a href="/posts/2023-04-30-rebuild-blog-with-fable">2023-04-30 Fable でブログを再構築する pt.1</a>
+        </li>
     
-    <a href="/tags/powershell">powershell</a>
-    
-</div>
-
-
-    <div id="prev-next">
-        
-        <a href="/posts/2022-07-16-aws-cdk-with-fsharp-pt2">&laquo; 2022-07-16 F# の AWS CDK で EventPattern の記述を無理やり通す</a>
-        
-        
-        <a class="right" href="/posts/2022-07-03-aws-cdk-with-fsharp">2022-07-03 F# で AWS CDK して躓いてる &raquo;</a>
-        
-    </div>
-
-    
-
-
+    </ul>
 </div>
 
             </div>

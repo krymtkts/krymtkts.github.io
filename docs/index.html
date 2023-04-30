@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-04-30-rebuild-blog-with-fable">Fable でブログを再構築する pt.1</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-04-23-1-year-of-pocof">pocof の 1 年間</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-04-16-writing-cmdlet-in-fsharp-pt19">F#でコマンドレットを書いてる pt.19</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-04-09-writing-cmdlet-in-fsharp-pt18">F#でコマンドレットを書いてる pt.18</a></li>
                         
                         
 
@@ -120,6 +120,8 @@
                         <li><a class="dropdown-item" href="/tags/planck">planck</a></li>
                         
                         <li><a class="dropdown-item" href="/tags/acm">acm</a></li>
+                        
+                        <li><a class="dropdown-item" href="/tags/fable">fable</a></li>
                         
                         <li><a class="dropdown-item" href="/tags/php">php</a></li>
                         
@@ -196,136 +198,74 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-04-23</div>
+        <div class="col-lg-6">2023-04-30</div>
         
     </div>
-    <h2>pocof の 1 年間</h2>
+    <h2>Fable でブログを再構築する pt.1</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>明日 2023-04-24 で pocof の開発を始めてから 1 年になるらしい。
-開発しない週があったり、そもそも進捗は亀だが、続けてきたのは我ながらエライ。
-折角なので Git の commit history を基に活動を振り返ってみる。</p><hr /><p>書き捨てのスクリプトは以下。案外役に立ったのでなんか小綺麗にして使える感じにしてもいいな。</p><pre><code class="powershell"># merge commit 除く。
-$logs = git log --pretty=format:"%cd,%s" --date=iso-strict | ConvertFrom-Csv -Header CommitDate, Message | Where-Object -Property Message -NotLike 'Merge pull request*' | ForEach-Object { [PSCustomObject]@{
-        CommitDate = Get-Date $_.CommitDate
-        Message = $_.Message
-    } }
+    <p><a href="https://fable.io/">Fable</a> の練習を始めた。</p><p>Fable にしたのはフロントエンドのエコシステムと統合するのに良さそうだったから。
+いまの Clojure 製 Cryogen はフロントエンドとは切り離された感じで、一応 Bootstrap を使ってりはしてるが module 管理とかしてない。なのでフロントエンドの依存性の管理みたいのも一緒にしたいなーと考えていた。</p><p>今使ってる Clojure 製の <a href="https://cryogenweb.org/">Cryogen</a> と同じ雰囲気を F# で再現するなら <a href="https://github.com/ionide/Fornax">ionide/Fornax</a> が正にそんな感じっぽかった。
+でも折角なので HTML, JavaScript, CSS 共に F# へ統合した感じにしたい。 Fable ならそれができそうに思えた。</p><p>実際のところ Fable は F# を他言語へ変換するトランスパイラなので、静的サイトジェネレーターとして使うにはオーバスペックな感じはある。
+けど、こんな機会でもないと一生触らないテクノロジなので、やるならこっちやろ！と考えた。</p><p>実現したいことは以下の通り。</p><ol><li>Markdown で書いたコンテンツを静的サイトに変換する(Cryogen と同じ使用感)</li><li>RSS feed の XML を出す(Cryogen で出したのと同じやつ)</li></ol><p>ここ 2, 3 週間ほど、子供の寝かしつけ中とかに片手間で Fable やその周辺ツール・モジュールのドキュメントとか諸々の repo を見ていた。けどあんまドキュメント充実しておらず、テンプレプロジェクトを生成して壊してを繰り返してようやく雰囲気がわかってきた。見た目は同じでも中身は違うわ、ってかんじ。</p><p>色々試行錯誤した成果として先述の 1 を最小限に実現できたので、一旦日記にまとめる。
+<a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a></p><hr /><p>実現手段はいくつか調査した。
+まず Fable 作者の Fable で静的サイトを作った例<sup id="fnref-1"><a class="footnote-ref" href="#fn-1">1</a></sup>が既にある。
+でも激古なためかわたしが理解不足なのか、全くもって動かすことができなかった。
+また <a href="https://bulma.io/">Bulma</a> という CSS Framework の Fable wrapper である <a href="https://fulma.github.io/Fulma/#home">Fulma</a> のテンプレ<sup id="fnref-2"><a class="footnote-ref" href="#fn-2">2</a></sup>もあったのだけど、これも同様に動かし方がわからなかった。</p><p><a href="https://github.com/fable-compiler/fable-compiler.github.io">Fable の site</a> で使われている <a href="https://github.com/MangelMaxime/Nacara">MangelMaxime/Nacara</a> を試してみたけど、これ RSS 以外をほぼ自分で組り込むところがなくて F# で書く楽しさなさそうったので却下。</p><p>ここまで来たら、自力で練習がてら Fable の無垢のテンプレに付け足ししていくしかあるまいなとなった。というか周辺ツールの不理解もあって 1 から自分でやらないと無理ゲーと化してた。</p><p>まず <a href="https://fable.io/docs/2-steps/your-first-fable-project.html">Fable · Start a new project</a> で素朴なプロジェクトを作成しする。</p><p>次に <a href="https://github.com/fable-compiler/static-web-generator">fable-compiler/static-web-generator</a> でやってることを移植していく。
+ここではエントリポイントで Markdown などのコンテンツを読み込んでテンプレに埋め込み、 HTML にレンダリングした結果をファイル出力している。
+なので、まずは素朴な手書きの HTML でいいからファイル出力できる状態にし、その後 React の wrapper を追加する形で進める。</p><p>RSS は、 <a href="https://fable.io/docs/dotnet/compatibility.html">Fable · .NET and F# compatibility</a> を見るに .NET の機能はまあ使えないので、 Node.js で xml を出力するやつを移植することになるハズ。
+なんかハードな気配してきた。</p><hr /><p>何度も作っては消しを繰り返して得た確かな手順は以下の通り。</p><ul><li>Fable のプロジェクト作成は <a href="https://fable.io/docs/2-steps/your-first-fable-project.html">Fable · Start a new project</a> を参照</li><li>.NET 系ツールの取り回しは以下を参照
+<ul><li><a href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools">How to manage .NET tools - .NET CLI | Microsoft Learn</a></li><li><a href="https://learn.microsoft.com/en-us/dotnet/core/tools/global-json">global.json overview - .NET CLI | Microsoft Learn</a></li></ul></li><li>(後述する) Femto は <a href="https://fable.io/blog/2019/2019-06-29-Introducing-Femto.html">Fable · Introducing Femto</a> を参照</li></ul><p><a href="https://github.com/fsprojects/Paket">Paket</a> を使うと依存関係の管理が楽になる(project ファイルから外に出せるから)のだけど、今回は導入しなかった。関係するツールが多すぎて腹いっぱいになってる。</p><pre><code class="powershell"># 無垢の Fable project 作成する。
+dotnet new install Fable.template
+dotnet new fable --name blog-fable
+cd blog-fable
+git init
+git commit --allow-empty -m 'Initial commit.'
+git add .
+git commit -m 'Add minimal Fable template.'
 
-# 年月ごとのコミット数。
-$logs | ForEach-Object { $_.CommitDate.ToString('yyyy-MM') } | Group-Object | Select-Object -Property Name, Count
+# dotnet tool を更新する。
+dotnet tool update fable
+dotnet tool update femto
 
-# 追加・削除行数。
-$ret = @{}
-$stats = git log --numstat --pretty="%cd" --date=iso-strict | ForEach-Object {
-    switch ($_) {
-        { $_ -match '\d{4}-\d{2}-\d{2}' } {
-            $key = Get-Date $_
-        }
-        default {
-            $values = $_ -split "`t"
-            if ($values.Count -eq 3) {
-                if ($ret.ContainsKey($key)) {
-                    $entry = $ret[$key]
-                    $ret[$key] = [PSCustomObject]@{
-                        Add = [int]$values[0] + $entry.Add
-                        Remove = [int]$values[1] + $entry.Remove
-                    }
-                }
-                else {
-                    $ret[$key] = [PSCustomObject]@{
-                        Add = [int]$values[0]
-                        Remove = [int]$values[1]
-                    }
-                }
-            }
-        }
-    }
-} -End { $ret }
-$stats.GetEnumerator() | ForEach-Object { [PSCustomObject]@{Add = $_.Value.Add; Remove = $_.value.remove } } | Measure-Object -Property add, remove -Sum | Format-Table
+# 動くことを確認する。
+npm install
+npm run start
 
-# 年月ごとの追加・削除行数。
-$ret = @{}
-$monthly = $stats.GetEnumerator() | ForEach-Object { [PSCustomObject]@{YM = $_.Key.ToString('yyyy-MM'); Add = $_.Value.Add; remove = $_.value.Remove } } | ForEach-Object {
-    if ($ret.ContainsKey($_.YM)) {
-        $entry = $ret[$_.YM]
-        $ret[$_.YM] = [PSCustomObject]@{
-            Add = [int]$_.Add + $entry.Add
-            Remove = [int]$_.Remove + $entry.Remove
-        }
-    }
-    else {
-        $ret[$_.YM] = [PSCustomObject]@{
-            Add = [int]$_.Add
-            Remove = [int]$_.Remove
-        }
-    }
-} -End { $ret }
-$monthly.GetEnumerator() | Sort-Object -Property Key | ForEach-Object { [PSCustomObject]@{YM = $_.Key; Add = $_.Value.Add; Remove = $_.value.remove } }
-
-# ファイルごとの追加・削除行数。
-$ret = @{}
-$fileStats = git log --numstat --pretty="%cd" --date=iso-strict | ForEach-Object {
-    $values = $_ -split "`t"
-    if ($values.Count -eq 3) {
-        $key = $values[2]
-        if ($ret.ContainsKey($key)) {
-            $entry = $ret[$key]
-            $ret[$key] = [PSCustomObject]@{
-                Add = [int]$values[0] + $entry.Add
-                Remove = [int]$values[1] + $entry.Remove
-            }
-        }
-        else {
-            $ret[$key] = [PSCustomObject]@{
-                Add = [int]$values[0]
-                Remove = [int]$values[1]
-            }
-        }
-    }
-} -End { $ret }
-$fileStats.GetEnumerator() | ForEach-Object { [PSCustomObject]@{File = $_.Key; Add = $_.Value.Add; Remove = $_.Value.Remove } } | Sort-Object -Property Add, Remove -Descending
-
-# 年月・ファイルごとの追加・削除行数。
-$ret = @{}
-$fileStats = git log --numstat --pretty="%cd" --date=iso-strict | ForEach-Object {
-    switch ($_) {
-        { $_ -match '\d{4}-\d{2}-\d{2}' } {
-            $date = Get-Date $_
-        }
-        default {
-            $values = $_ -split "`t"
-            if ($values.Count -eq 3) {
-                $key = "$($date.ToString('yyyy-MM')) $($values[2])"
-                if ($ret.ContainsKey($key)) {
-                    $entry = $ret[$key]
-                    $ret[$key] = [PSCustomObject]@{
-                        Add = [int]$values[0] + $entry.Add
-                        Remove = [int]$values[1] + $entry.Remove
-                    }
-                }
-                else {
-                    $ret[$key] = [PSCustomObject]@{
-                        Add = [int]$values[0]
-                        Remove = [int]$values[1]
-                    }
-                }
-            }
-        }
-    }
-} -End { $ret }
-$fileStats.GetEnumerator() | ForEach-Object { [PSCustomObject]@{File = $_.Key; Add = $_.Value.Add; Remove = $_.Value.Remove } } | Sort-Object -Property File, Add, Remove
-</code></pre><p>Merge commit を除いたコミット数が 113 。 2023 年に入ってからは前年より多少活発。</p><p>以下は年月ごとのコミット数。
-開発してない月あるんじゃないかって気がしてたが、ギリギリ毎月開発してた様子。</p><table><thead><tr><th>YM</th><th align="right">Commit</th></tr></thead><tbody><tr><td>2022-04</td><td align="right">4</td></tr><tr><td>2022-05</td><td align="right">16</td></tr><tr><td>2022-06</td><td align="right">4</td></tr><tr><td>2022-07</td><td align="right">2</td></tr><tr><td>2022-08</td><td align="right">1</td></tr><tr><td>2022-09</td><td align="right">11</td></tr><tr><td>2022-10</td><td align="right">4</td></tr><tr><td>2022-11</td><td align="right">7</td></tr><tr><td>2022-12</td><td align="right">2</td></tr><tr><td>2023-01</td><td align="right">7</td></tr><tr><td>2023-02</td><td align="right">15</td></tr><tr><td>2023-03</td><td align="right">24</td></tr><tr><td>2023-04</td><td align="right">16</td></tr></tbody></table><p>コードの変更を伴うコミットが今まで 109 あって、
-追加された行が 6312 、削除された行が 2821 。44% 位を書き直してるのが意外だった。時期的にはテストコード拡充とそれによるリファクタが大きい要因か。</p><p>以下が年月ごとの追加・削除行数。</p><table><thead><tr><th>YM</th><th align="right">Add</th><th align="right">Remove</th></tr></thead><tbody><tr><td>2022-04</td><td align="right">717</td><td align="right">83</td></tr><tr><td>2022-05</td><td align="right">1425</td><td align="right">386</td></tr><tr><td>2022-06</td><td align="right">83</td><td align="right">26</td></tr><tr><td>2022-07</td><td align="right">61</td><td align="right">56</td></tr><tr><td>2022-08</td><td align="right">30</td><td align="right">17</td></tr><tr><td>2022-09</td><td align="right">233</td><td align="right">145</td></tr><tr><td>2022-10</td><td align="right">69</td><td align="right">27</td></tr><tr><td>2022-11</td><td align="right">365</td><td align="right">170</td></tr><tr><td>2022-12</td><td align="right">57</td><td align="right">19</td></tr><tr><td>2023-01</td><td align="right">358</td><td align="right">245</td></tr><tr><td>2023-02</td><td align="right">214</td><td align="right">143</td></tr><tr><td>2023-03</td><td align="right">2163</td><td align="right">1134</td></tr><tr><td>2023-04</td><td align="right">537</td><td align="right">370</td></tr></tbody></table><p>ファイル別の分析はちょっと面倒で、 rename したものやドキュメント類も含まれてしまってる。
-が、 目 grep した感じだと最近テストを頑張って書いてた <code>Action.fs</code>, <code>Data.fs</code> あたりの新陳代謝ができており、それにつられて依存関係の <code>Library.fs</code> の変更も多いと。
-<code>Query.fs</code> はコア部分なので削除少ないのはおっかなびっくりいじってるからかな？
-<code>UI.fs</code> なんかは全然いじれてないので削除行数少なめ。</p><p>以下がファイルごとの追加・削除行数。</p><table><thead><tr><th>File</th><th align="right">Add</th><th align="right">Remove</th></tr></thead><tbody><tr><td>src/pocof.Test/Tests.fs</td><td align="right">798</td><td align="right">798</td></tr><tr><td>src/pocof.Test/PocofData.fs</td><td align="right">705</td><td align="right">145</td></tr><tr><td>src/pocof/Action.fs</td><td align="right">569</td><td align="right">179</td></tr><tr><td>src/pocof/Data.fs</td><td align="right">517</td><td align="right">451</td></tr><tr><td>src/pocof/Library.fs</td><td align="right">470</td><td align="right">282</td></tr><tr><td>src/pocof.Test/PocofQuery.fs</td><td align="right">459</td><td align="right">131</td></tr><tr><td>src/pocof/Query.fs</td><td align="right">430</td><td align="right">261</td></tr><tr><td>.gitignore</td><td align="right">399</td><td align="right">0</td></tr><tr><td>src/pocof/pocof.dll-Help.xml</td><td align="right">382</td><td align="right">60</td></tr><tr><td>tests/pocof.Tests.ps1</td><td align="right">263</td><td align="right">113</td></tr><tr><td>docs/Select-Pocof.md</td><td align="right">260</td><td align="right">31</td></tr><tr><td>src/pocof/UI.fs</td><td align="right">238</td><td align="right">112</td></tr><tr><td>src/pocof/pocof.psd1</td><td align="right">231</td><td align="right">99</td></tr><tr><td>src/pocof.Test/PocofAction.fs</td><td align="right">171</td><td align="right">23</td></tr><tr><td>psakefile.ps1</td><td align="right">134</td><td align="right">31</td></tr><tr><td>src/pocof/{Action.fs =&gt; Data.fs}</td><td align="right">71</td><td align="right">82</td></tr><tr><td>src/pocof/pocof.fsproj</td><td align="right">38</td><td align="right">17</td></tr><tr><td>pocof.sln</td><td align="right">36</td><td align="right">2</td></tr><tr><td>src/pocof.Test/pocof.Test.fsproj</td><td align="right">36</td><td align="right">1</td></tr><tr><td>README.md</td><td align="right">33</td><td align="right">2</td></tr><tr><td>.github/workflows/pr.yml</td><td align="right">30</td><td align="right">1</td></tr><tr><td>LICENSE</td><td align="right">21</td><td align="right">0</td></tr><tr><td>test/pocof.Tests.ps1</td><td align="right">17</td><td align="right">0</td></tr><tr><td>src/pocof.Test/Program.fs</td><td align="right">4</td><td align="right">0</td></tr><tr><td>{test =&gt; tests}/pocof.Tests.ps1</td><td align="right">0</td><td align="right">0</td></tr></tbody></table><p>以下が年月・ファイルごとの追加・削除行数。</p><table><thead><tr><th>File</th><th align="right">Add</th><th align="right">Remove</th></tr></thead><tbody><tr><td>2022-04 .gitignore</td><td align="right">398</td><td align="right">0</td></tr><tr><td>2022-04 pocof.sln</td><td align="right">27</td><td align="right">0</td></tr><tr><td>2022-04 src/pocof/Library.fs</td><td align="right">57</td><td align="right">3</td></tr><tr><td>2022-04 src/pocof/pocof.dll-Help.xml</td><td align="right">1</td><td align="right">0</td></tr><tr><td>2022-04 src/pocof/pocof.fsproj</td><td align="right">22</td><td align="right">0</td></tr><tr><td>2022-04 src/pocof/pocof.psd1</td><td align="right">212</td><td align="right">80</td></tr><tr><td>2022-05 {test =&gt; tests}/pocof.Tests.ps1</td><td align="right">0</td><td align="right">0</td></tr><tr><td>2022-05 docs/Select-Pocof.md</td><td align="right">181</td><td align="right">0</td></tr><tr><td>2022-05 LICENSE</td><td align="right">21</td><td align="right">0</td></tr><tr><td>2022-05 pocof.sln</td><td align="right">1</td><td align="right">1</td></tr><tr><td>2022-05 psakefile.ps1</td><td align="right">90</td><td align="right">13</td></tr><tr><td>2022-05 README.md</td><td align="right">15</td><td align="right">0</td></tr><tr><td>2022-05 src/pocof/{Action.fs =&gt; Data.fs}</td><td align="right">71</td><td align="right">82</td></tr><tr><td>2022-05 src/pocof/Action.fs</td><td align="right">346</td><td align="right">46</td></tr><tr><td>2022-05 src/pocof/Data.fs</td><td align="right">89</td><td align="right">107</td></tr><tr><td>2022-05 src/pocof/Library.fs</td><td align="right">150</td><td align="right">112</td></tr><tr><td>2022-05 src/pocof/pocof.dll-Help.xml</td><td align="right">261</td><td align="right">3</td></tr><tr><td>2022-05 src/pocof/pocof.fsproj</td><td align="right">8</td><td align="right">9</td></tr><tr><td>2022-05 src/pocof/pocof.psd1</td><td align="right">1</td><td align="right">1</td></tr><tr><td>2022-05 src/pocof/Query.fs</td><td align="right">39</td><td align="right">2</td></tr><tr><td>2022-05 src/pocof/UI.fs</td><td align="right">128</td><td align="right">10</td></tr><tr><td>2022-05 test/pocof.Tests.ps1</td><td align="right">17</td><td align="right">0</td></tr><tr><td>2022-05 tests/pocof.Tests.ps1</td><td align="right">7</td><td align="right">0</td></tr><tr><td>2022-06 src/pocof/Library.fs</td><td align="right">3</td><td align="right">3</td></tr><tr><td>2022-06 src/pocof/pocof.fsproj</td><td align="right">3</td><td align="right">3</td></tr><tr><td>2022-06 src/pocof/Query.fs</td><td align="right">43</td><td align="right">11</td></tr><tr><td>2022-06 src/pocof/UI.fs</td><td align="right">34</td><td align="right">9</td></tr><tr><td>2022-07 src/pocof/Data.fs</td><td align="right">7</td><td align="right">4</td></tr><tr><td>2022-07 src/pocof/Library.fs</td><td align="right">4</td><td align="right">11</td></tr><tr><td>2022-07 src/pocof/Query.fs</td><td align="right">41</td><td align="right">38</td></tr><tr><td>2022-07 src/pocof/UI.fs</td><td align="right">9</td><td align="right">3</td></tr><tr><td>2022-08 psakefile.ps1</td><td align="right">3</td><td align="right">3</td></tr><tr><td>2022-08 src/pocof/Library.fs</td><td align="right">27</td><td align="right">14</td></tr><tr><td>2022-09 psakefile.ps1</td><td align="right">17</td><td align="right">8</td></tr><tr><td>2022-09 README.md</td><td align="right">18</td><td align="right">2</td></tr><tr><td>2022-09 src/pocof/Action.fs</td><td align="right">11</td><td align="right">8</td></tr><tr><td>2022-09 src/pocof/Data.fs</td><td align="right">18</td><td align="right">18</td></tr><tr><td>2022-09 src/pocof/Library.fs</td><td align="right">88</td><td align="right">51</td></tr><tr><td>2022-09 src/pocof/pocof.fsproj</td><td align="right">2</td><td align="right">2</td></tr><tr><td>2022-09 src/pocof/pocof.psd1</td><td align="right">15</td><td align="right">15</td></tr><tr><td>2022-09 src/pocof/Query.fs</td><td align="right">18</td><td align="right">17</td></tr><tr><td>2022-09 src/pocof/UI.fs</td><td align="right">8</td><td align="right">12</td></tr><tr><td>2022-09 tests/pocof.Tests.ps1</td><td align="right">38</td><td align="right">12</td></tr><tr><td>2022-10 src/pocof/Library.fs</td><td align="right">19</td><td align="right">12</td></tr><tr><td>2022-10 src/pocof/pocof.fsproj</td><td align="right">1</td><td align="right">1</td></tr><tr><td>2022-10 src/pocof/pocof.psd1</td><td align="right">1</td><td align="right">1</td></tr><tr><td>2022-10 src/pocof/Query.fs</td><td align="right">16</td><td align="right">8</td></tr><tr><td>2022-10 src/pocof/UI.fs</td><td align="right">6</td><td align="right">4</td></tr><tr><td>2022-10 tests/pocof.Tests.ps1</td><td align="right">26</td><td align="right">1</td></tr><tr><td>2022-11 docs/Select-Pocof.md</td><td align="right">58</td><td align="right">26</td></tr><tr><td>2022-11 src/pocof/Action.fs</td><td align="right">1</td><td align="right">0</td></tr><tr><td>2022-11 src/pocof/Data.fs</td><td align="right">29</td><td align="right">0</td></tr><tr><td>2022-11 src/pocof/Library.fs</td><td align="right">6</td><td align="right">1</td></tr><tr><td>2022-11 src/pocof/pocof.dll-Help.xml</td><td align="right">97</td><td align="right">57</td></tr><tr><td>2022-11 src/pocof/pocof.fsproj</td><td align="right">1</td><td align="right">1</td></tr><tr><td>2022-11 src/pocof/pocof.psd1</td><td align="right">1</td><td align="right">1</td></tr><tr><td>2022-11 src/pocof/Query.fs</td><td align="right">66</td><td align="right">53</td></tr><tr><td>2022-11 src/pocof/UI.fs</td><td align="right">0</td><td align="right">1</td></tr><tr><td>2022-11 tests/pocof.Tests.ps1</td><td align="right">106</td><td align="right">30</td></tr><tr><td>2022-12 src/pocof/Data.fs</td><td align="right">13</td><td align="right">0</td></tr><tr><td>2022-12 src/pocof/Library.fs</td><td align="right">23</td><td align="right">9</td></tr><tr><td>2022-12 src/pocof/Query.fs</td><td align="right">5</td><td align="right">5</td></tr><tr><td>2022-12 src/pocof/UI.fs</td><td align="right">16</td><td align="right">5</td></tr><tr><td>2023-01 src/pocof/Action.fs</td><td align="right">3</td><td align="right">3</td></tr><tr><td>2023-01 src/pocof/Data.fs</td><td align="right">204</td><td align="right">154</td></tr><tr><td>2023-01 src/pocof/Library.fs</td><td align="right">14</td><td align="right">7</td></tr><tr><td>2023-01 src/pocof/Query.fs</td><td align="right">124</td><td align="right">50</td></tr><tr><td>2023-01 src/pocof/UI.fs</td><td align="right">13</td><td align="right">31</td></tr><tr><td>2023-02 docs/Select-Pocof.md</td><td align="right">21</td><td align="right">5</td></tr><tr><td>2023-02 src/pocof/Action.fs</td><td align="right">9</td><td align="right">4</td></tr><tr><td>2023-02 src/pocof/Data.fs</td><td align="right">21</td><td align="right">14</td></tr><tr><td>2023-02 src/pocof/Library.fs</td><td align="right">22</td><td align="right">11</td></tr><tr><td>2023-02 src/pocof/pocof.dll-Help.xml</td><td align="right">23</td><td align="right">0</td></tr><tr><td>2023-02 src/pocof/pocof.fsproj</td><td align="right">1</td><td align="right">1</td></tr><tr><td>2023-02 src/pocof/pocof.psd1</td><td align="right">1</td><td align="right">1</td></tr><tr><td>2023-02 src/pocof/Query.fs</td><td align="right">18</td><td align="right">12</td></tr><tr><td>2023-02 src/pocof/UI.fs</td><td align="right">17</td><td align="right">25</td></tr><tr><td>2023-02 tests/pocof.Tests.ps1</td><td align="right">81</td><td align="right">70</td></tr><tr><td>2023-03 .gitignore</td><td align="right">1</td><td align="right">0</td></tr><tr><td>2023-03 pocof.sln</td><td align="right">8</td><td align="right">1</td></tr><tr><td>2023-03 psakefile.ps1</td><td align="right">17</td><td align="right">7</td></tr><tr><td>2023-03 src/pocof.Test/pocof.Test.fsproj</td><td align="right">36</td><td align="right">1</td></tr><tr><td>2023-03 src/pocof.Test/PocofAction.fs</td><td align="right">113</td><td align="right">0</td></tr><tr><td>2023-03 src/pocof.Test/PocofData.fs</td><td align="right">530</td><td align="right">2</td></tr><tr><td>2023-03 src/pocof.Test/PocofQuery.fs</td><td align="right">404</td><td align="right">118</td></tr><tr><td>2023-03 src/pocof.Test/Program.fs</td><td align="right">4</td><td align="right">0</td></tr><tr><td>2023-03 src/pocof.Test/Tests.fs</td><td align="right">798</td><td align="right">798</td></tr><tr><td>2023-03 src/pocof/Action.fs</td><td align="right">161</td><td align="right">91</td></tr><tr><td>2023-03 src/pocof/Data.fs</td><td align="right">81</td><td align="right">112</td></tr><tr><td>2023-03 src/pocof/Library.fs</td><td align="right">2</td><td align="right">2</td></tr><tr><td>2023-03 src/pocof/Query.fs</td><td align="right">7</td><td align="right">2</td></tr><tr><td>2023-03 tests/pocof.Tests.ps1</td><td align="right">1</td><td align="right">0</td></tr><tr><td>2023-04 .github/workflows/pr.yml</td><td align="right">30</td><td align="right">1</td></tr><tr><td>2023-04 psakefile.ps1</td><td align="right">7</td><td align="right">0</td></tr><tr><td>2023-04 src/pocof.Test/PocofAction.fs</td><td align="right">58</td><td align="right">23</td></tr><tr><td>2023-04 src/pocof.Test/PocofData.fs</td><td align="right">175</td><td align="right">143</td></tr><tr><td>2023-04 src/pocof.Test/PocofQuery.fs</td><td align="right">55</td><td align="right">13</td></tr><tr><td>2023-04 src/pocof/Action.fs</td><td align="right">38</td><td align="right">27</td></tr><tr><td>2023-04 src/pocof/Data.fs</td><td align="right">55</td><td align="right">42</td></tr><tr><td>2023-04 src/pocof/Library.fs</td><td align="right">55</td><td align="right">46</td></tr><tr><td>2023-04 src/pocof/Query.fs</td><td align="right">53</td><td align="right">63</td></tr><tr><td>2023-04 src/pocof/UI.fs</td><td align="right">7</td><td align="right">12</td></tr><tr><td>2023-04 tests/pocof.Tests.ps1</td><td align="right">4</td><td align="right">0</td></tr></tbody></table><hr /><p>2 年目も細々と開発を続けていく。他にやることで Fable でブログ再構築する際の調べ物あるけど、直感ではそんなに失速しないんじゃないかなという気がしている(気だけかも)。</p>
+# global.json の更新方法わからないので力づくで書き換えて更新する。
+dotnet new globaljson --sdk-version 7.0.203 --roll-forward latestFeature --force
+dotnet tool restore
+</code></pre><p>build target が .Net Core 2.1 なので .Net 7 にする。
+<code>src\App.fsproj</code> を編集する。</p><pre><code class="patch"> &lt;Project Sdk="Microsoft.NET.Sdk"&gt;
+   &lt;PropertyGroup&gt;
+-    &lt;TargetFramework&gt;netstandard2.0&lt;/TargetFramework&gt;
++    &lt;TargetFramework&gt;net7&lt;/TargetFramework&gt;
+   &lt;/PropertyGroup&gt;
+   &lt;ItemGroup&gt;
+     &lt;Compile Include="App.fs" /&gt;
+</code></pre><p>Fable も最新版の 4 にする。
+これには <a href="https://github.com/Zaid-Ajaj/Femto">Femto</a> という tool を使うみたい。 Femto は packet と npm の仲介役のようなやつで、 Nuget から Fable のモジュールを持ってきたらついでに npm してくれるようなやつっぽい。
+さっぱりわからんが、コマンド打ったら確かに更新された。</p><pre><code class="powershell">femto install Fable.Core .\src
+femto install Fable.Browser.Dom .\src
+</code></pre><p>↓ こうなった。</p><pre><code class="patch">   &lt;ItemGroup&gt;
+-    &lt;PackageReference Include="Fable.Browser.Dom" Version="2.2.0" /&gt;
+-    &lt;PackageReference Include="Fable.Core" Version="3.2.3" /&gt;
++    &lt;PackageReference Include="Fable.Browser.Dom" Version="2.14.0" /&gt;
++    &lt;PackageReference Include="Fable.Core" Version="4.0.0" /&gt;
+   &lt;/ItemGroup&gt;
+</code></pre><p><code>npm run start</code> <code>npm run build</code> あたりが動いてたら大丈夫だろう。
+(<code>dotnet tool restore</code> が <code>postinstall</code> で走る記述になってる)</p><p>webpack も古かったのでとりあえず上げておいたが、 SSG したいだけなのでこれらは後ほど消した。</p><p>ついでに solution も作っとく。</p><pre><code class="powershell">dotnet new sln
+dotnet sln add ./src
+</code></pre><p>ここまでやってまだテンプレが最新化されただけ...</p><p>ここからが本番。
+無味乾燥したテンプレに <a href="https://github.com/fable-compiler/static-web-generator">fable-compiler/static-web-generator</a> の要素を足していく。</p><p>以下の Fable の package が使われており、そのうちいくつかは deprecated されてる。分割されている package を追うのは直に repo でコードを追うしかなく、なかなかハードな道のりだった。
+そして調べた内容で書き換えをした。書き換えの内容は <a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> を直に見るのが良い(書くのめんどい)。</p><ul><li>Fable.PowerPack ← <a href="https://github.com/fable-compiler/fable-powerpack">fable-compiler/fable-powerpack: Utilities for Fable apps</a><ul><li><a href="https://github.com/fable-compiler/fable-powerpack/issues/63">Split Fable.PowerPack in multiple packages? · Issue #63 · fable-compiler/fable-powerpack</a> 分割された</li><li>そもそも使ってなくね？ということで移植しない</li></ul></li><li>Fable.React ← <a href="https://github.com/Zaid-Ajaj/Feliz">Zaid-Ajaj/Feliz</a> 使えと</li><li>Fable.Import 系はデカすぎて repo が分かれた <a href="https://github.com/fable-compiler/fable-import/issues/80">Track repo splits · Issue #80 · fable-compiler/fable-import</a><ul><li>Fable.Import.Browser ← <a href="https://github.com/fable-compiler/fable-browser">fable-browser</a></li><li>Fable.Import.Node ← <a href="https://github.com/fable-compiler/fable-node">fable-compiler/fable-node: Bindings for node.js native modules</a> めちゃ古だがまだ動くらしい？</li></ul></li><li>Fulma ← 今回は使わなかった</li></ul><p>これら新しい package を移植し多少のコードを変更することで、やっと Markdown(今は <code>README.md</code> のみ) → HTML とパースして表示できるようになった。</p><hr /><p>ひとまずここまで。</p><p>まだたった 1 ページを出力できただけで先は長いが、 Fable の雰囲気わかってきてできそうな感触を得ている。</p><p>やっぱ Node.js の変更周り全然わからんことだらけなので、そこは <a href="https://github.com/MangelMaxime/Nacara/blob/master/src/Nacara.Core/Node.Extra.fs#L8">Nacara/Node.Extra.fs at master · MangelMaxime/Nacara</a> のイケてる実装を参照するなどして組んでいけたら良さそう。</p><p>あとやっぱ F# は .NET へ重依存なので .NET を部分的にしか使わない Fable だとかなり書き味が違う。これに慣れるのはちょっとかかりそう。</p><p>続く。</p><div class="footnotes"><hr /><ol><li id="fn-1"><p><a href="https://github.com/fable-compiler/static-web-generator">fable-compiler/static-web-generator: Simple Fable Node.js app to generate static pages</a></p><a href="#fnref-1" class="footnote-backref">↩</a></li><li id="fn-2"><p><a href="https://fulma.github.io/Fulma/#template">Template - Fulma</a></p><a href="#fnref-2" class="footnote-backref">↩</a></li></ol></div>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/fable">fable</a>
     
     <a href="/tags/fsharp">fsharp</a>
     
@@ -337,7 +277,7 @@ $fileStats.GetEnumerator() | ForEach-Object { [PSCustomObject]@{File = $_.Key; A
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-04-16-writing-cmdlet-in-fsharp-pt19">2023-04-16 F#でコマンドレットを書いてる pt.19 &raquo;</a>
+        <a class="right" href="/posts/2023-04-23-1-year-of-pocof">2023-04-23 pocof の 1 年間 &raquo;</a>
         
     </div>
 </div>
