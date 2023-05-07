@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: シェルスクリプトのフォーマッタをCLIでインストールする</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-06-02_install-shfmt-to-win-using-cli">
+    <title>krymtkts: Fable でブログを再構築する pt.2</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-05-07-rebuild-blog-with-fable-pt2">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: シェルスクリプトのフォーマッタをCLIでインストールする" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-06-02_install-shfmt-to-win-using-cli" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.2" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-05-07-rebuild-blog-with-fable-pt2" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -198,34 +198,50 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-06-02</div>
+        <div class="col-lg-6">2023-05-07</div>
         
     </div>
-    <h2>シェルスクリプトのフォーマッタをCLIでインストールする</h2>
+    <h2>Fable でブログを再構築する pt.2</h2>
 </div>
 <div>
     
-    <p>小ネタ。</p><p>へーしゃの仕事では、Bashで書かれたスクリプトの出番がめちゃくちゃ多い。</p><p>Bashが得意じゃないマンのわたしにとっては、そういったスクリプトを読み書きに慣れてないこともあり、結構疲れる仕事である。</p><p>そこでせめて書くのだけは少しでも楽したいと思って、フォーマッタを導入しようと思った。</p><h3 id="ツールを導入する">ツールを導入する</h3><p>shfmtというgolang製のツールがあるので、それを採択。</p><p><a href="https://github.com/mvdan/sh">mvdan/sh: A shell parser, formatter, and interpreter (POSIX/Bash/mksh)</a></p><p>しかし悲しいかな、Windows用に提供されてるパッケージはScoopのみ(リンク切れてるけど)でChocolateyにない様子🤔(筆者はChocolateyユーザである)。</p><p>代わりにCLIでのインストールを使うことにする。</p><pre><code class="sh">cd $(mktemp -d); go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt
-</code></pre><p>でも<code>mktemp</code>コマンドはPowerShellにはないし...そこは<code>mkdir</code>で茶を濁す。あとtmpフォルダの後始末もする。</p><pre><code class="powershell">cd $(mkdir tmp); go mod init tmp; go get mvdan.cc/sh/v3/cmd/shfmt; cd ../; rm -r tmp
-</code></pre><p>ええがな。</p><h3 id="雑記">雑記</h3><p>5月後半はうまく波に乗れずブログを書けなかった。まだアウトプットが習慣化していないようなので、きちんと積み重ねしていきたいもんやで🤔</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> の話。
+Fable でブログを再構築しようとしている。</p><p>repo 公開時点で <code>README.md</code> をレンダリングするだけに留めていたので、ブログらしく post と固定ページ を出力できるように最低限手を加えた。
+<a href="https://github.com/krymtkts/blog-fable/pull/2">#2</a></p><p>あと node module に型を与える Fable bindings を利用しようと思い、 <a href="https://github.com/markedjs/marked">markedjs/marked</a>, <a href="https://github.com/highlightjs/highlight.js">highlightjs/highlight.js</a> でそれを試した。
+これが結構大変で、まだ慣れてない。</p><p>bindings は自動生成できる。それには <a href="https://github.com/fable-compiler/ts2fable">fable-compiler/ts2fable</a> を利用する。</p><pre><code class="powershell"># こんなん。型定義されてない module には使えない。
+npx ts2fable node_modules\@types\marked\index.d.ts src/bindings/Marked.fs
+npx ts2fable node_modules\@types\highlightjs\index.d.ts src/bindings/HighlightJs.fs
+</code></pre><p>で出力された型を Fable の F# コードで利用するのだけど、うまく使うために色々覚えないといけない Fable 独自の型・関数・演算子がある。
+<code>ImportAttribute</code> 、 Union Type の <code>U2</code> その他大勢、動的キャスト演算子 <code>!!</code> と Anonymous record の組み合わせ、 <code>jsOptions&lt;'a&gt;</code> ...
+まだ勉強中だが、早い話 <a href="https://fable.io/docs/communicate/js-from-fable.html">Fable · Call JS from Fable</a> に載ってるの全部知っといた方というか知っとかないとキツイ雰囲気を感じている。
+何故なら Fable の真髄であろう JavaScript と F# の型で守られた相互運用がそこに詰まっており、知らないとうまくできないから。</p><p>寝かしつけ中にこのページ重要そうなの気づいて何度も読んだけど、実際に書いてみると全く活かせてない。また何度も読み直してる。
+何の気なく書かれてる一行のサンプルコードが重要だったり。 JavaScript の Module system に詳しいとピンとくるんかなー。
+このテーマに関しては GPT-4 に聞いたところでホラ吹いてくるので、自力で勉強せなあかん。</p><p>あと ts2fable で自動生成できない場合は自力で bindings を書く必要があるところも、パンチが効いてる。
+今の marked で Syntax Highlighting を使うには<a href="https://github.com/markedjs/marked-highlight">markedjs/marked-highlight: Add code highlighting to marked</a> を使う。
+けどこいつには Type Declarations <code>.d.ts</code> が提供されてないので、今回は <code>Fable.Core.JsInterop</code> の <code>importMember</code> で茶を濁した。
+highlight.js の方も、実は Type Definitions が古くて新しいインタフェースになってない。</p><p>このように Fable の技術スタックは JavaScript のそれの上に乗っかって相互に混ざり合ってるので、両方に対して結構詳しくなるまで辛い気がする。
+ただその頂きを超えたところに Fable の楽しみがあるのかも、しらんけど。
+まあ書いていておもろいのは確かで、色々つまづきながら進めている。</p><p>あとここまでやって気づいたのだけど、 marked 自体には Markdown 中に書かれた <code>title</code> とか <code>tag</code> とかを読み取る機能ないっぽい。
+実現しようとしたらなんか自分で <code>---</code> でファイルコンテンツ区切って YAML にパースするとかしないとだめみたい。
+そもそもこのメタ情報の部分 YAML だとこの機会に初めて知ったわ。
+自力で書いてもいいけど、この際 <a href="https://github.com/remarkjs/remark">remarkjs/remark</a> みたいなプラグインでそれが実現できるやつを使うのもいいかなと思った。
+Markdown のレンダリング部分を換装するのは大変じゃなさそうなので、 navbar 作るとか RSS 作るとかの後に回す。</p><p>他にも、開発用途で問題ないとはいえ <a href="https://github.com/tapio/live-server">tapio/live-server</a> にいちいち脆弱性の警告出るのも煩わしく、ここを F# のスクリプトに置き換えたい。</p><p>やりたいこと盛りだくさん。年内には SSG 乗り換え実施したいな...なんとなく。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/sh">sh</a>
+    <a href="/tags/fable">fable</a>
     
-    <a href="/tags/golang">golang</a>
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-06-23-poco">&laquo; 2019-06-23 Poco</a>
         
-        
-        <a class="right" href="/posts/2019-05-11-pipenv-skeleton">2019-05-11 Pipenvのテンプレを作った &raquo;</a>
+        <a class="right" href="/posts/2023-04-30-rebuild-blog-with-fable">2023-04-30 Fable でブログを再構築する pt.1 &raquo;</a>
         
     </div>
 
