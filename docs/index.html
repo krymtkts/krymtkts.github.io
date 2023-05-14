@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-05-14-rebuild-blog-with-fable-pt3">Fable でブログを再構築する pt.3</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-05-07-rebuild-blog-with-fable-pt2">Fable でブログを再構築する pt.2</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-04-30-rebuild-blog-with-fable">Fable でブログを再構築する pt.1</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-04-23-1-year-of-pocof">pocof の 1 年間</a></li>
                         
                         
 
@@ -198,34 +198,24 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-05-07</div>
+        <div class="col-lg-6">2023-05-14</div>
         
     </div>
-    <h2>Fable でブログを再構築する pt.2</h2>
+    <h2>Fable でブログを再構築する pt.3</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> の話。
-Fable でブログを再構築しようとしている。</p><p>repo 公開時点で <code>README.md</code> をレンダリングするだけに留めていたので、ブログらしく post と固定ページ を出力できるように最低限手を加えた。
-<a href="https://github.com/krymtkts/blog-fable/pull/2">#2</a></p><p>あと node module に型を与える Fable bindings を利用しようと思い、 <a href="https://github.com/markedjs/marked">markedjs/marked</a>, <a href="https://github.com/highlightjs/highlight.js">highlightjs/highlight.js</a> でそれを試した。
-これが結構大変で、まだ慣れてない。</p><p>bindings は自動生成できる。それには <a href="https://github.com/fable-compiler/ts2fable">fable-compiler/ts2fable</a> を利用する。</p><pre><code class="powershell"># こんなん。型定義されてない module には使えない。
-npx ts2fable node_modules\@types\marked\index.d.ts src/bindings/Marked.fs
-npx ts2fable node_modules\@types\highlightjs\index.d.ts src/bindings/HighlightJs.fs
-</code></pre><p>で出力された型を Fable の F# コードで利用するのだけど、うまく使うために色々覚えないといけない Fable 独自の型・関数・演算子がある。
-<code>ImportAttribute</code> 、 Union Type の <code>U2</code> その他大勢、動的キャスト演算子 <code>!!</code> と Anonymous record の組み合わせ、 <code>jsOptions&lt;'a&gt;</code> ...
-まだ勉強中だが、早い話 <a href="https://fable.io/docs/communicate/js-from-fable.html">Fable · Call JS from Fable</a> に載ってるの全部知っといた方というか知っとかないとキツイ雰囲気を感じている。
-何故なら Fable の真髄であろう JavaScript と F# の型で守られた相互運用がそこに詰まっており、知らないとうまくできないから。</p><p>寝かしつけ中にこのページ重要そうなの気づいて何度も読んだけど、実際に書いてみると全く活かせてない。また何度も読み直してる。
-何の気なく書かれてる一行のサンプルコードが重要だったり。 JavaScript の Module system に詳しいとピンとくるんかなー。
-このテーマに関しては GPT-4 に聞いたところでホラ吹いてくるので、自力で勉強せなあかん。</p><p>あと ts2fable で自動生成できない場合は自力で bindings を書く必要があるところも、パンチが効いてる。
-今の marked で Syntax Highlighting を使うには<a href="https://github.com/markedjs/marked-highlight">markedjs/marked-highlight: Add code highlighting to marked</a> を使う。
-けどこいつには Type Declarations <code>.d.ts</code> が提供されてないので、今回は <code>Fable.Core.JsInterop</code> の <code>importMember</code> で茶を濁した。
-highlight.js の方も、実は Type Definitions が古くて新しいインタフェースになってない。</p><p>このように Fable の技術スタックは JavaScript のそれの上に乗っかって相互に混ざり合ってるので、両方に対して結構詳しくなるまで辛い気がする。
-ただその頂きを超えたところに Fable の楽しみがあるのかも、しらんけど。
-まあ書いていておもろいのは確かで、色々つまづきながら進めている。</p><p>あとここまでやって気づいたのだけど、 marked 自体には Markdown 中に書かれた <code>title</code> とか <code>tag</code> とかを読み取る機能ないっぽい。
-実現しようとしたらなんか自分で <code>---</code> でファイルコンテンツ区切って YAML にパースするとかしないとだめみたい。
-そもそもこのメタ情報の部分 YAML だとこの機会に初めて知ったわ。
-自力で書いてもいいけど、この際 <a href="https://github.com/remarkjs/remark">remarkjs/remark</a> みたいなプラグインでそれが実現できるやつを使うのもいいかなと思った。
-Markdown のレンダリング部分を換装するのは大変じゃなさそうなので、 navbar 作るとか RSS 作るとかの後に回す。</p><p>他にも、開発用途で問題ないとはいえ <a href="https://github.com/tapio/live-server">tapio/live-server</a> にいちいち脆弱性の警告出るのも煩わしく、ここを F# のスクリプトに置き換えたい。</p><p>やりたいこと盛りだくさん。年内には SSG 乗り換え実施したいな...なんとなく。</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築しようとしている。
+こちらに手をかけてることで最近 <a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> 触っておらず多少不安になってきたが、もう少し Fable に慣れるまではお預け。</p><p>簡単に Index のページに最新ポストをコピるのと、 投稿一式から Archive ページを作るのをやってみている。 <a href="https://github.com/krymtkts/blog-fable/pull/4">#4</a>
+徐々にコード量が増えることでここは関数にしておいて～とか、コレコレをモジュールにしておいて～とか、楽しくなってきた。
+一緒に Tags のページを作りたかったのだけど、いま Markdown 内のタグはじめとしたメタデータをパースしてないから作れない。
+先に <a href="https://github.com/remarkjs/remark">remark</a> の導入やらないと投稿のメタデータであるタグは(自力で書かない限り)抜けないから、後回しにしておいた。</p><p>今回 Archive ページを作るにあたりコードを書いてると、設定で分ける想定をしてコードを汎化した方がスッキリする雰囲気になってきた。
+元は完全に自分用のイメージで作っているので、設定に基づいて出力をどうこうするというのは考えてなかった。
+現時点ではベタの部分と、設定(というか関数の引数)によって挙動を決める部分が混じり合っているので、徐々に後者に倒していく。</p><p>とはいえまだ Tags ページと RSS ができてないので、今後の予定としては以下かなと。</p><ul><li><a href="https://github.com/markedjs/marked">marked</a> → <a href="https://github.com/remarkjs/remark">remark</a> へ移行する</li><li>Markdown ファイルのメタデータ(YAML)が読めるようになるので Tags ページが作れるようになる</li><li>RSS 機能を作成する</li><li>全体的な汎化で設定の切り出し</li><li>ブログのカラーテーマを作る(今は元コードから引き継いだ <a href="https://bulma.io/">Bulma</a> のスタイルが適用されてるだけ)</li><li>既存ブログとの互換性調整 etc</li></ul><p>いまんとこ毎週末のスキマ時間で亀進捗出してるので、多少作業が多かろうが大丈夫な気がしてきたな。
+最後の互換性のやつだけあんま自信ないけど、リンク切れだけは起こらないように慎重に URL を調整する。
+RSS フィードのは、わたしがリーダー側の仕組みがよくわかってなくて、どうなるかわからん。
+実際過去に自分が購読してるフィードも全部再配信みたいになってることがあった。せめてそういうのはなくしたいが、先述の通りどうなるかわからん。
+わたしの観測範囲ではわたし以外にも一人だけ RSS 購読者がいるっぽいし、たまーに記事が参照されてることもあるので、なるべき気をかけたい。</p><hr /><p>あと GitHub の streak 365 まで 100 日切ってた。残りも淡々と続けてこー。</p>
 </div>
 
 <div id="post-tags">
@@ -243,7 +233,7 @@ Markdown のレンダリング部分を換装するのは大変じゃなさそ�
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-04-30-rebuild-blog-with-fable">2023-04-30 Fable でブログを再構築する pt.1 &raquo;</a>
+        <a class="right" href="/posts/2023-05-07-rebuild-blog-with-fable-pt2">2023-05-07 Fable でブログを再構築する pt.2 &raquo;</a>
         
     </div>
 </div>

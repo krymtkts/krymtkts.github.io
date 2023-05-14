@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Cryogen のカスタマイズ</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-03-05-customize-cryogen">
+    <title>krymtkts: Fable でブログを再構築する pt.3</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Cryogen のカスタマイズ" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-03-05-customize-cryogen" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.3" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -198,36 +198,40 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-03-05</div>
+        <div class="col-lg-6">2023-05-14</div>
         
     </div>
-    <h2>Cryogen のカスタマイズ</h2>
+    <h2>Fable でブログを再構築する pt.3</h2>
 </div>
 <div>
     
-    <p><a href="/posts/2022-02-27-issue-with-cryogen-version-bump">前回の投稿</a>で、 <a href="https://cryogenweb.org/">Cryogen</a> のバージョンアップに伴い Cryogen 自体のカスタマイズが必要だとを書いた。</p><p>カスタマイズ自体はかなり簡単にできたのだが、 Clojure 経験不足だからか正直なところドキュメントの記載だけではピンと来なかった。
-ということで、またわからなくなること必至のため記しておく。</p><p><code>cryogen-core</code> のバージョンは <code>0.4.1</code> だ。</p><p>対象のドキュメント <a href="https://cryogenweb.org/docs/customizing-cryogen.html#customizing-the-code">Cryogen: Customizing/Extending Cryogen</a> を以下に全文引用する。</p><blockquote><p>You can copy the <code>cryogen-core.compiler</code> namespace directly into your project (where it will override the one from the cryogen-core.jar) and modify it to your liking. It is not very long or complicated and is quite easy to modify. That is <a href="https://github.com/cryogen-project/cryogen-docs/blob/fd601c857cc88f7cb633a41c47b4c692e1522ed8/src/cryogen/compiler.clj">what we did for this site</a> (although it uses a much older version of cryogen-core, you may still use the same strategy today).</p></blockquote><p>機械翻訳にリンクを添えた ↓</p><blockquote><p><code>cryogen-core.compiler</code> 名前空間をプロジェクトに直接コピーし（cryogen-core.jar のものを上書きします）、好みに応じて変更することができます。これはそれほど長くもなく、複雑でもなく、非常に簡単に修正することができます。このサイトでは、<a href="https://github.com/cryogen-project/cryogen-docs/blob/fd601c857cc88f7cb633a41c47b4c692e1522ed8/src/cryogen/compiler.clj">このような方法</a>をとっています（かなり古いバージョンの cryogen-core を使用していますが、現在でも同じ方法をとることができます）。</p></blockquote><p>早い話が「Cryogen の公式ページのコードを真似ろ」。</p><p>はじめはナンノコッチャと思ったのだけど、Cryogen の repo のコードを眺めて「<a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj"><code>cryogen_core/compiler.clj</code></a>をコピって自分でサイトジェネレータを書いたらええんやで？」だと理解した。</p><p>Cryogen のエントリポイントは <code>cryogen/core.clj</code> と <code>cryogen/server.clj</code> があるが、いずれもサイトジェネレータは <code>cryogen-core.compiler</code> 名前空間の <code>compile-assets-timed</code> を呼び出してるだけなので、これを <code>cryogen_core/compiler.clj</code> からコピった自分用ジェネレータに変える、という趣旨らしい。</p><p>とった手順は以下の通り。</p><ol><li><a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj"><code>cryogen_core/compiler.clj</code></a> をコピって自分のサイトのコードに <code>src/cryogen/compiler.clj</code> として配置する</li><li><code>src/cryogen/compiler.clj</code> を自分の必要な形に書き換える
-<ul><li>今回デフォルトの Cryogen から変えたかったのは、 RSS フィードの要約機能を取り除いて HTML 全文載せるようにすることだった</li><li><a href="https://github.com/cryogen-project/cryogen-core/blob/31bcbfdad59e8eaed4a6d417682e51ef1e90982c/src/cryogen_core/compiler.clj#L474-L487"><code>add-description</code></a> 関数の中で利用されている <code>util/enlive-&gt;plain-text</code> を <code>util/enlive-&gt;html-text</code> に変更、<code>add-description</code> に依存する関数 <code>compile-assets</code>, <code>compile-assets-timed</code> を <code>cryogen.compiler</code> に定義した</li><li>それ以外の関数は <code>cryogen-core.compiler</code> を参照する</li></ul></li><li><code>cryogen/core.clj</code> と <code>cryogen/server.clj</code> で、 <code>compile-assets-timed</code> の名前空間を <code>cryogen-core.compiler</code> → <code>cryogen.compiler</code> に変える</li><li><code>lein serve</code> してエラーがない＆期待の出力になっていれば完了</li></ol><p>これで概ね自分が期待する出力を得られるようになった(はず)。
-気付かないところで破壊的な変更をしているかも知れないので、それは経過観測していく。この投稿をした後で RSS フィードが本当に届くか心配だ。</p><p>あと既知の問題として、新たに追加された <code>lein serve:fast</code> がちゃんと動いてんのかこれ？ であったり、 Markdown 保存時の再生成が怪しかったりする。
-これらは、ちまちま直していきたい。</p><p>これで repo の統合だったり GitHub Action 化が見えてきた。</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築しようとしている。
+こちらに手をかけてることで最近 <a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> 触っておらず多少不安になってきたが、もう少し Fable に慣れるまではお預け。</p><p>簡単に Index のページに最新ポストをコピるのと、 投稿一式から Archive ページを作るのをやってみている。 <a href="https://github.com/krymtkts/blog-fable/pull/4">#4</a>
+徐々にコード量が増えることでここは関数にしておいて～とか、コレコレをモジュールにしておいて～とか、楽しくなってきた。
+一緒に Tags のページを作りたかったのだけど、いま Markdown 内のタグはじめとしたメタデータをパースしてないから作れない。
+先に <a href="https://github.com/remarkjs/remark">remark</a> の導入やらないと投稿のメタデータであるタグは(自力で書かない限り)抜けないから、後回しにしておいた。</p><p>今回 Archive ページを作るにあたりコードを書いてると、設定で分ける想定をしてコードを汎化した方がスッキリする雰囲気になってきた。
+元は完全に自分用のイメージで作っているので、設定に基づいて出力をどうこうするというのは考えてなかった。
+現時点ではベタの部分と、設定(というか関数の引数)によって挙動を決める部分が混じり合っているので、徐々に後者に倒していく。</p><p>とはいえまだ Tags ページと RSS ができてないので、今後の予定としては以下かなと。</p><ul><li><a href="https://github.com/markedjs/marked">marked</a> → <a href="https://github.com/remarkjs/remark">remark</a> へ移行する</li><li>Markdown ファイルのメタデータ(YAML)が読めるようになるので Tags ページが作れるようになる</li><li>RSS 機能を作成する</li><li>全体的な汎化で設定の切り出し</li><li>ブログのカラーテーマを作る(今は元コードから引き継いだ <a href="https://bulma.io/">Bulma</a> のスタイルが適用されてるだけ)</li><li>既存ブログとの互換性調整 etc</li></ul><p>いまんとこ毎週末のスキマ時間で亀進捗出してるので、多少作業が多かろうが大丈夫な気がしてきたな。
+最後の互換性のやつだけあんま自信ないけど、リンク切れだけは起こらないように慎重に URL を調整する。
+RSS フィードのは、わたしがリーダー側の仕組みがよくわかってなくて、どうなるかわからん。
+実際過去に自分が購読してるフィードも全部再配信みたいになってることがあった。せめてそういうのはなくしたいが、先述の通りどうなるかわからん。
+わたしの観測範囲ではわたし以外にも一人だけ RSS 購読者がいるっぽいし、たまーに記事が参照されてることもあるので、なるべき気をかけたい。</p><hr /><p>あと GitHub の streak 365 まで 100 日切ってた。残りも淡々と続けてこー。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/cryogen">cryogen</a>
+    <a href="/tags/fable">fable</a>
     
-    <a href="/tags/clojure">clojure</a>
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2022-03-13-create-huge-text-file-in-pwsh">&laquo; 2022-03-13 PowerShell でクソデカテキストファイルを作る</a>
         
-        
-        <a class="right" href="/posts/2022-02-27-issue-with-cryogen-version-bump">2022-02-27 Cryogen バージョンアップに伴う困りごと &raquo;</a>
+        <a class="right" href="/posts/2023-05-07-rebuild-blog-with-fable-pt2">2023-05-07 Fable でブログを再構築する pt.2 &raquo;</a>
         
     </div>
 
