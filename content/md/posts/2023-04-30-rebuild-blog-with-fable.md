@@ -81,7 +81,7 @@ dotnet new globaljson --sdk-version 7.0.203 --roll-forward latestFeature --force
 dotnet tool restore
 ```
 
-build target が .Net Core 2.1 なので .Net 7 にする。
+build target が .Net Core 2.0 なので .Net 7 にする。
 `src\App.fsproj` を編集する。
 
 ```patch

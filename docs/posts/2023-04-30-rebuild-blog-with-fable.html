@@ -236,7 +236,7 @@ npm run start
 # global.json の更新方法わからないので力づくで書き換えて更新する。
 dotnet new globaljson --sdk-version 7.0.203 --roll-forward latestFeature --force
 dotnet tool restore
-</code></pre><p>build target が .Net Core 2.1 なので .Net 7 にする。
+</code></pre><p>build target が .Net Core 2.0 なので .Net 7 にする。
 <code>src\App.fsproj</code> を編集する。</p><pre><code class="patch"> &lt;Project Sdk="Microsoft.NET.Sdk"&gt;
    &lt;PropertyGroup&gt;
 -    &lt;TargetFramework&gt;netstandard2.0&lt;/TargetFramework&gt;

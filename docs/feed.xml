@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 14 May 2023 20:15:33 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3</guid><link>https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3</link><title>Fable でブログを再構築する pt.3</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築しようとしている。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Tue, 16 May 2023 15:25:25 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3</guid><link>https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3</link><title>Fable でブログを再構築する pt.3</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築しようとしている。
 こちらに手をかけてることで最近 &lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; 触っておらず多少不安になってきたが、もう少し Fable に慣れるまではお預け。&lt;/p&gt;&lt;p&gt;簡単に Index のページに最新ポストをコピるのと、 投稿一式から Archive ページを作るのをやってみている。 &lt;a href="https://github.com/krymtkts/blog-fable/pull/4"&gt;#4&lt;/a&gt;
 徐々にコード量が増えることでここは関数にしておいて～とか、コレコレをモジュールにしておいて～とか、楽しくなってきた。
 一緒に Tags のページを作りたかったのだけど、いま Markdown 内のタグはじめとしたメタデータをパースしてないから作れない。
@@ -59,7 +59,7 @@ npm run start
 # global.json の更新方法わからないので力づくで書き換えて更新する。
 dotnet new globaljson --sdk-version 7.0.203 --roll-forward latestFeature --force
 dotnet tool restore
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;build target が .Net Core 2.1 なので .Net 7 にする。
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;build target が .Net Core 2.0 なので .Net 7 にする。
 &lt;code&gt;src\App.fsproj&lt;/code&gt; を編集する。&lt;/p&gt;&lt;pre&gt;&lt;code class="patch"&gt; &amp;lt;Project Sdk="Microsoft.NET.Sdk"&amp;gt;
    &amp;lt;PropertyGroup&amp;gt;
 -    &amp;lt;TargetFramework&amp;gt;netstandard2.0&amp;lt;/TargetFramework&amp;gt;
