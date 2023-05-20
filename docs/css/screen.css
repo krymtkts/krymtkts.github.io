@@ -190,6 +190,29 @@ pre, code, .hljs {
     background-color: #002b36;
 }
 
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+
+    --bs-table-border-color: var(--bs-border-color);
+    margin-bottom: 1rem;
+    vertical-align: top;
+    border-color: var(--bs-table-border-color);
+}
+
+table>thead {
+    vertical-align: bottom;
+}
+
+table>tbody {
+    vertical-align: inherit;
+}
+
+table>:not(caption)>*>* {
+    padding: .5rem .5rem;
+    border-bottom-width: 1px;
+}
+
 @media (min-width: 768px) {
     .navbar {
         min-height: 54px;
