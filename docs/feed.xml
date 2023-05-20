@@ -1,4 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Tue, 16 May 2023 15:25:25 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3</guid><link>https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3</link><title>Fable でブログを再構築する pt.3</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築しようとしている。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sat, 20 May 2023 13:32:43 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-05-20-bump-openssh-chocolatey</guid><link>https://krymtkts.github.io/posts/2023-05-20-bump-openssh-chocolatey</link><title>Chocolatey で Portable OpenSSH を更新する 2023</title><description>&lt;p&gt;久しぶりに、 Chocolatey に OpenSSH の β が降ってきてた。&lt;/p&gt;&lt;p&gt;前回は 2019 年だった。 &lt;a href="/posts/2019-03-31-win-openssh-is-gone"&gt;Windows10 の更新で OpenSSH が逝った&lt;/a&gt; &lt;a href="/posts/2019-06-29-season-of-openssh-error"&gt;また OpenSSH が動かなくなる季節がやってきた&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://community.chocolatey.org/packages/openssh#versionhistory"&gt;Chocolatey Software | Win32 OpenSSH (Universal Installer) 9.2.2-beta1&lt;/a&gt;&lt;/p&gt;&lt;p&gt;ので更新してみたところ、以下のエラーログが。&lt;/p&gt;&lt;pre&gt;&lt;code class="log"&gt;ERROR: There is a configured instance of the SSHD service, please specify the /SSHServerFeature to confirm it is OK to shutdown and upgrade the SSHD service at this time.
+The upgrade of openssh was NOT successful.
+Error while running 'C:\ProgramData\chocolatey\lib\openssh\tools\chocolateyinstall.ps1'.
+ See log for details.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;はて？ &lt;code&gt;sshd&lt;/code&gt; 入れてたっけ？と思ったが見たら入ってた。 chocolatey で自動で入ったんやっけ？&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; get-service *ssh*
+
+Status   Name               DisplayName
+------   ----               -----------
+Running  ssh-agent          ssh-agent
+Running  sshd               sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;いる！しかも実行中なのがなんかキモい。&lt;/p&gt;&lt;p&gt;こいつを停止させるのはあとにするとして、ひとまず &lt;code&gt;choco upgrade&lt;/code&gt; を成功させるにはどうしたら良いか。
+こういうときはちゃんとマニュアルを読む。 Chocolatey の Package Source のリンクを辿れば良い。&lt;/p&gt;&lt;p&gt;&lt;a href="https://gitlab.com/DarwinJS/ChocoPackages/-/tree/master/openssh#-params-sshserverfeature-install-and-uninstall"&gt;openssh · master · DarwinJS / ChocoPackages · GitLab&lt;/a&gt;&lt;/p&gt;&lt;blockquote&gt;&lt;h2 id="-params-sshserverfeature-install-and-uninstall"&gt;-params '"/SSHServerFeature"' (Install and Uninstall)&lt;/h2&gt;&lt;p&gt;Also install sshd Windows Service - including opening port 22.
+If this parameter is not included on an upgrade or uninstall and
+the sshd server is installed - an error is generated. You must
+use this switch to indicate you have made preparations for the
+sshd service to be interrupted or removed.&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;どう見てもこれ。以下を実行する。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;choco upgrade openssh -params '"/SSHServerFeature"' -y
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;この後再起動をして Windows Terminal で PowerShell を開くと作業が完了した。
+すっかり忘れていが、わたしの &lt;code&gt;$PROFILE&lt;/code&gt; は「 &lt;code&gt;ssh-agent&lt;/code&gt; のサービスがいない ≒ Windows の OpenSSH が更新された」と判定し、インストールスクリプトを実行するのだった。
+&lt;a href="https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be#file-microsoft-powershell_profile-ps1-L910-L923"&gt;ここ&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# install ssh-agent service if not exists.
+# it will be triggered after updating Windows OpenSSH.
+if (! ($SshAgent = (Get-Service -Name 'ssh-agent' -ErrorAction SilentlyContinue))) {
+    install-sshd.ps1
+    Set-Service -Name 'ssh-agent' -StartupType Automatic
+    Start-Service ssh-agent
+}
+elseif ($SshAgent.StartType -eq 'Disabled') {
+    Set-Service -Name 'ssh-agent' -StartupType Automatic
+    Start-Service ssh-agent
+}
+else {
+    Start-Service ssh-agent
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;インストールスクリプトは Portable OpenSSH に提供されるもので &lt;code&gt;ssh-agent&lt;/code&gt; と &lt;code&gt;sshd&lt;/code&gt; が一緒くたにインストールされてたのね...なんか他にやりようないか考えても良いのかな。&lt;/p&gt;&lt;p&gt;とりあえずこれで事なきを得た。 &lt;code&gt;sshd&lt;/code&gt; の起動タイプも手動になっておりヨシ。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; get-service *ssh* | select -Property Name,Status,StartType
+
+Name       Status StartType
+----       ------ ---------
+ssh-agent Running Automatic
+sshd      Stopped    Manual
+&lt;/code&gt;&lt;/pre&gt;</description><pubDate>Sat, 20 May 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3</guid><link>https://krymtkts.github.io/posts/2023-05-14-rebuild-blog-with-fable-pt3</link><title>Fable でブログを再構築する pt.3</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築しようとしている。
 こちらに手をかけてることで最近 &lt;a href="https://github.com/krymtkts/pocof"&gt;krymtkts/pocof&lt;/a&gt; 触っておらず多少不安になってきたが、もう少し Fable に慣れるまではお預け。&lt;/p&gt;&lt;p&gt;簡単に Index のページに最新ポストをコピるのと、 投稿一式から Archive ページを作るのをやってみている。 &lt;a href="https://github.com/krymtkts/blog-fable/pull/4"&gt;#4&lt;/a&gt;
 徐々にコード量が増えることでここは関数にしておいて～とか、コレコレをモジュールにしておいて～とか、楽しくなってきた。
 一緒に Tags のページを作りたかったのだけど、いま Markdown 内のタグはじめとしたメタデータをパースしてないから作れない。

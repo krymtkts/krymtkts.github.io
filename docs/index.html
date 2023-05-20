@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-05-20-bump-openssh-chocolatey">Chocolatey で Portable OpenSSH を更新する 2023</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-05-14-rebuild-blog-with-fable-pt3">Fable でブログを再構築する pt.3</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-05-07-rebuild-blog-with-fable-pt2">Fable でブログを再構築する pt.2</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-04-30-rebuild-blog-with-fable">Fable でブログを再構築する pt.1</a></li>
                         
                         
 
@@ -198,32 +198,60 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-05-14</div>
+        <div class="col-lg-6">2023-05-20</div>
         
     </div>
-    <h2>Fable でブログを再構築する pt.3</h2>
+    <h2>Chocolatey で Portable OpenSSH を更新する 2023</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築しようとしている。
-こちらに手をかけてることで最近 <a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> 触っておらず多少不安になってきたが、もう少し Fable に慣れるまではお預け。</p><p>簡単に Index のページに最新ポストをコピるのと、 投稿一式から Archive ページを作るのをやってみている。 <a href="https://github.com/krymtkts/blog-fable/pull/4">#4</a>
-徐々にコード量が増えることでここは関数にしておいて～とか、コレコレをモジュールにしておいて～とか、楽しくなってきた。
-一緒に Tags のページを作りたかったのだけど、いま Markdown 内のタグはじめとしたメタデータをパースしてないから作れない。
-先に <a href="https://github.com/remarkjs/remark">remark</a> の導入やらないと投稿のメタデータであるタグは(自力で書かない限り)抜けないから、後回しにしておいた。</p><p>今回 Archive ページを作るにあたりコードを書いてると、設定で分ける想定をしてコードを汎化した方がスッキリする雰囲気になってきた。
-元は完全に自分用のイメージで作っているので、設定に基づいて出力をどうこうするというのは考えてなかった。
-現時点ではベタの部分と、設定(というか関数の引数)によって挙動を決める部分が混じり合っているので、徐々に後者に倒していく。</p><p>とはいえまだ Tags ページと RSS ができてないので、今後の予定としては以下かなと。</p><ul><li><a href="https://github.com/markedjs/marked">marked</a> → <a href="https://github.com/remarkjs/remark">remark</a> へ移行する</li><li>Markdown ファイルのメタデータ(YAML)が読めるようになるので Tags ページが作れるようになる</li><li>RSS 機能を作成する</li><li>全体的な汎化で設定の切り出し</li><li>ブログのカラーテーマを作る(今は元コードから引き継いだ <a href="https://bulma.io/">Bulma</a> のスタイルが適用されてるだけ)</li><li>既存ブログとの互換性調整 etc</li></ul><p>いまんとこ毎週末のスキマ時間で亀進捗出してるので、多少作業が多かろうが大丈夫な気がしてきたな。
-最後の互換性のやつだけあんま自信ないけど、リンク切れだけは起こらないように慎重に URL を調整する。
-RSS フィードのは、わたしがリーダー側の仕組みがよくわかってなくて、どうなるかわからん。
-実際過去に自分が購読してるフィードも全部再配信みたいになってることがあった。せめてそういうのはなくしたいが、先述の通りどうなるかわからん。
-わたしの観測範囲ではわたし以外にも一人だけ RSS 購読者がいるっぽいし、たまーに記事が参照されてることもあるので、なるべき気をかけたい。</p><hr /><p>あと GitHub の streak 365 まで 100 日切ってた。残りも淡々と続けてこー。</p>
+    <p>久しぶりに、 Chocolatey に OpenSSH の β が降ってきてた。</p><p>前回は 2019 年だった。 <a href="/posts/2019-03-31-win-openssh-is-gone">Windows10 の更新で OpenSSH が逝った</a> <a href="/posts/2019-06-29-season-of-openssh-error">また OpenSSH が動かなくなる季節がやってきた</a></p><p><a href="https://community.chocolatey.org/packages/openssh#versionhistory">Chocolatey Software | Win32 OpenSSH (Universal Installer) 9.2.2-beta1</a></p><p>ので更新してみたところ、以下のエラーログが。</p><pre><code class="log">ERROR: There is a configured instance of the SSHD service, please specify the /SSHServerFeature to confirm it is OK to shutdown and upgrade the SSHD service at this time.
+The upgrade of openssh was NOT successful.
+Error while running 'C:\ProgramData\chocolatey\lib\openssh\tools\chocolateyinstall.ps1'.
+ See log for details.
+</code></pre><p>はて？ <code>sshd</code> 入れてたっけ？と思ったが見たら入ってた。 chocolatey で自動で入ったんやっけ？</p><pre><code class="powershell">PS&gt; get-service *ssh*
+
+Status   Name               DisplayName
+------   ----               -----------
+Running  ssh-agent          ssh-agent
+Running  sshd               sshd
+</code></pre><p>いる！しかも実行中なのがなんかキモい。</p><p>こいつを停止させるのはあとにするとして、ひとまず <code>choco upgrade</code> を成功させるにはどうしたら良いか。
+こういうときはちゃんとマニュアルを読む。 Chocolatey の Package Source のリンクを辿れば良い。</p><p><a href="https://gitlab.com/DarwinJS/ChocoPackages/-/tree/master/openssh#-params-sshserverfeature-install-and-uninstall">openssh · master · DarwinJS / ChocoPackages · GitLab</a></p><blockquote><h2 id="-params-sshserverfeature-install-and-uninstall">-params '"/SSHServerFeature"' (Install and Uninstall)</h2><p>Also install sshd Windows Service - including opening port 22.
+If this parameter is not included on an upgrade or uninstall and
+the sshd server is installed - an error is generated. You must
+use this switch to indicate you have made preparations for the
+sshd service to be interrupted or removed.</p></blockquote><p>どう見てもこれ。以下を実行する。</p><pre><code class="powershell">choco upgrade openssh -params '"/SSHServerFeature"' -y
+</code></pre><p>この後再起動をして Windows Terminal で PowerShell を開くと作業が完了した。
+すっかり忘れていが、わたしの <code>$PROFILE</code> は「 <code>ssh-agent</code> のサービスがいない ≒ Windows の OpenSSH が更新された」と判定し、インストールスクリプトを実行するのだった。
+<a href="https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be#file-microsoft-powershell_profile-ps1-L910-L923">ここ</a></p><pre><code class="powershell"># install ssh-agent service if not exists.
+# it will be triggered after updating Windows OpenSSH.
+if (! ($SshAgent = (Get-Service -Name 'ssh-agent' -ErrorAction SilentlyContinue))) {
+    install-sshd.ps1
+    Set-Service -Name 'ssh-agent' -StartupType Automatic
+    Start-Service ssh-agent
+}
+elseif ($SshAgent.StartType -eq 'Disabled') {
+    Set-Service -Name 'ssh-agent' -StartupType Automatic
+    Start-Service ssh-agent
+}
+else {
+    Start-Service ssh-agent
+}
+</code></pre><p>インストールスクリプトは Portable OpenSSH に提供されるもので <code>ssh-agent</code> と <code>sshd</code> が一緒くたにインストールされてたのね...なんか他にやりようないか考えても良いのかな。</p><p>とりあえずこれで事なきを得た。 <code>sshd</code> の起動タイプも手動になっておりヨシ。</p><pre><code class="powershell">PS&gt; get-service *ssh* | select -Property Name,Status,StartType
+
+Name       Status StartType
+----       ------ ---------
+ssh-agent Running Automatic
+sshd      Stopped    Manual
+</code></pre>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/fable">fable</a>
+    <a href="/tags/openssh">openssh</a>
     
-    <a href="/tags/fsharp">fsharp</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -233,7 +261,7 @@ RSS フィードのは、わたしがリーダー側の仕組みがよくわか�
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-05-07-rebuild-blog-with-fable-pt2">2023-05-07 Fable でブログを再構築する pt.2 &raquo;</a>
+        <a class="right" href="/posts/2023-05-14-rebuild-blog-with-fable-pt3">2023-05-14 Fable でブログを再構築する pt.3 &raquo;</a>
         
     </div>
 </div>

@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Pipenvのテンプレを作った</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-05-11-pipenv-skeleton">
+    <title>krymtkts: Chocolatey で Portable OpenSSH を更新する 2023</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-05-20-bump-openssh-chocolatey">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Pipenvのテンプレを作った" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-05-11-pipenv-skeleton" />
+    <meta property="og:title" content="krymtkts: Chocolatey で Portable OpenSSH を更新する 2023" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-05-20-bump-openssh-chocolatey" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -198,31 +198,68 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-05-11</div>
+        <div class="col-lg-6">2023-05-20</div>
         
     </div>
-    <h2>Pipenvのテンプレを作った</h2>
+    <h2>Chocolatey で Portable OpenSSH を更新する 2023</h2>
 </div>
 <div>
     
-    <p><a href="/posts/2019-04-29-bias-amp-2issue">前回</a>の最後に触れた、仕事で経験を得た2019年のイケてそうなPython開発環境構築について。</p><p>この度新し目と思われるPythonのプロジェクト構築について学んだので、次回Pythonを触ることがあったとしてもぱぱっと始められるようにテンプレートを作ろうと思った次第である。</p><p>過去のeasy_installとかpipまでで知識が止まってたが、新たにpipenvを知ってかなり便利に使えるいい感じの印象を得たのもあって、動機付けされた感じ。</p><p>なので、勉強がてらGW中のお楽しみにちょろっと作った。</p><h3 id="作ったもの">作ったもの</h3><p><a href="https://github.com/krymtkts/pipenv-skeleton">krymtkts/pipenv-skeleton</a></p><p>いろいろとググって、pipとかvirtualenvの時代は過ぎ去っており、いまはpienvがイケていると直感を得た。
-なのでpipenvについて以下の記事などを参考にこのテンプレを作った。</p><ul><li><a href="https://pipenv-ja.readthedocs.io/ja/translate-ja/">Pipenv: 人間のためのPython開発ワークフロー — pipenv 2018.11.27.dev0 ドキュメント</a></li><li><a href="https://www.natsukium.com/blog/2019-02-18/python/">Python環境構築ベストプラクティス2019 - ばいおいんふぉっぽいの！</a></li><li><a href="https://qiita.com/youkidkk/items/b6a6e39ee3a109001c75">Windows + Python 3.6 + PipEnv + Visual Studio Code でPython開発環境 - Qiita</a></li><li><a href="https://qiita.com/tonluqclml/items/b09f4a5ed04ebcbd0af1">既存プロジェクトに pipenv を導入した方法 - Qiita</a></li></ul><p>予めLinterやらFormatterやらをdevPackageとして用意している。LinterにはPylintを用意したが、エラーの自動修正がないようなのでautopep8も用意した。</p><p>あと静的型付けに守られた世界で仕事できるように、MyPyも用意している。Better Bashとして使うときは大げさかもしれないけど、その時は単にMyPyを使わなかったらいいだけ。</p><p>このプロジェクトをコピペして、moduleのところをこねこねして使うイメージ。</p><p>Pythonのモジュールシステムについてはまだ理解が浅い。以下を参考にドキュメントをあたって、<code>__init.py__</code>,<code>__main.py__</code>のらへんを定型化した感じ。</p><ul><li><a href="https://stackoverflow.com/questions/448271/what-is-init-py-for">python - What is <strong>init</strong>.py for? - Stack Overflow</a></li><li><a href="https://stackoverflow.com/questions/4042905/what-is-main-py">python - What is <strong>main</strong>.py? - Stack Overflow</a></li></ul><p>ただ、<code>__init.py__</code>は名前空間パッケージではなくていいようだし、よりモダンな方法に寄せたいので再検討するかな。単に今はわたしの知識がそこまで及んでない😭Pythonの言語仕様もちゃんと勉強したいのう。</p><p>いろいろ足りない点があるが、それらは今後改善できれば良いかな。</p><ul><li>moduleの名前をいろいろ変えないといけないのが面倒なので、なんか改善ができれば良。</li><li>テストがないので足したい。</li><li>なんかバッジ足したい。ビルドとか...</li><li>mypyで</li></ul><h3 id="まとめ">まとめ</h3><p>Python3たのしい。</p><p>せっかくテンプレを作ったので、なんかゴミスクリプトでも良いのでちまちま書いていきたい所存🤔</p><p>mypyについてもメモためていこ。</p>
+    <p>久しぶりに、 Chocolatey に OpenSSH の β が降ってきてた。</p><p>前回は 2019 年だった。 <a href="/posts/2019-03-31-win-openssh-is-gone">Windows10 の更新で OpenSSH が逝った</a> <a href="/posts/2019-06-29-season-of-openssh-error">また OpenSSH が動かなくなる季節がやってきた</a></p><p><a href="https://community.chocolatey.org/packages/openssh#versionhistory">Chocolatey Software | Win32 OpenSSH (Universal Installer) 9.2.2-beta1</a></p><p>ので更新してみたところ、以下のエラーログが。</p><pre><code class="log">ERROR: There is a configured instance of the SSHD service, please specify the /SSHServerFeature to confirm it is OK to shutdown and upgrade the SSHD service at this time.
+The upgrade of openssh was NOT successful.
+Error while running 'C:\ProgramData\chocolatey\lib\openssh\tools\chocolateyinstall.ps1'.
+ See log for details.
+</code></pre><p>はて？ <code>sshd</code> 入れてたっけ？と思ったが見たら入ってた。 chocolatey で自動で入ったんやっけ？</p><pre><code class="powershell">PS&gt; get-service *ssh*
+
+Status   Name               DisplayName
+------   ----               -----------
+Running  ssh-agent          ssh-agent
+Running  sshd               sshd
+</code></pre><p>いる！しかも実行中なのがなんかキモい。</p><p>こいつを停止させるのはあとにするとして、ひとまず <code>choco upgrade</code> を成功させるにはどうしたら良いか。
+こういうときはちゃんとマニュアルを読む。 Chocolatey の Package Source のリンクを辿れば良い。</p><p><a href="https://gitlab.com/DarwinJS/ChocoPackages/-/tree/master/openssh#-params-sshserverfeature-install-and-uninstall">openssh · master · DarwinJS / ChocoPackages · GitLab</a></p><blockquote><h2 id="-params-sshserverfeature-install-and-uninstall">-params '"/SSHServerFeature"' (Install and Uninstall)</h2><p>Also install sshd Windows Service - including opening port 22.
+If this parameter is not included on an upgrade or uninstall and
+the sshd server is installed - an error is generated. You must
+use this switch to indicate you have made preparations for the
+sshd service to be interrupted or removed.</p></blockquote><p>どう見てもこれ。以下を実行する。</p><pre><code class="powershell">choco upgrade openssh -params '"/SSHServerFeature"' -y
+</code></pre><p>この後再起動をして Windows Terminal で PowerShell を開くと作業が完了した。
+すっかり忘れていが、わたしの <code>$PROFILE</code> は「 <code>ssh-agent</code> のサービスがいない ≒ Windows の OpenSSH が更新された」と判定し、インストールスクリプトを実行するのだった。
+<a href="https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be#file-microsoft-powershell_profile-ps1-L910-L923">ここ</a></p><pre><code class="powershell"># install ssh-agent service if not exists.
+# it will be triggered after updating Windows OpenSSH.
+if (! ($SshAgent = (Get-Service -Name 'ssh-agent' -ErrorAction SilentlyContinue))) {
+    install-sshd.ps1
+    Set-Service -Name 'ssh-agent' -StartupType Automatic
+    Start-Service ssh-agent
+}
+elseif ($SshAgent.StartType -eq 'Disabled') {
+    Set-Service -Name 'ssh-agent' -StartupType Automatic
+    Start-Service ssh-agent
+}
+else {
+    Start-Service ssh-agent
+}
+</code></pre><p>インストールスクリプトは Portable OpenSSH に提供されるもので <code>ssh-agent</code> と <code>sshd</code> が一緒くたにインストールされてたのね...なんか他にやりようないか考えても良いのかな。</p><p>とりあえずこれで事なきを得た。 <code>sshd</code> の起動タイプも手動になっておりヨシ。</p><pre><code class="powershell">PS&gt; get-service *ssh* | select -Property Name,Status,StartType
+
+Name       Status StartType
+----       ------ ---------
+ssh-agent Running Automatic
+sshd      Stopped    Manual
+</code></pre>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/python">python</a>
+    <a href="/tags/openssh">openssh</a>
+    
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-06-02_install-shfmt-to-win-using-cli">&laquo; 2019-06-02 シェルスクリプトのフォーマッタをCLIでインストールする</a>
         
-        
-        <a class="right" href="/posts/2019-04-29-bias-amp-2issue">2019-04-29 BIAS Amp 2で保存したアンプが消える問題 &raquo;</a>
+        <a class="right" href="/posts/2023-05-14-rebuild-blog-with-fable-pt3">2023-05-14 Fable でブログを再構築する pt.3 &raquo;</a>
         
     </div>
 
