@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-05-28-rebuild-blog-with-fable-pt4">Fable でブログを再構築する pt.4</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-05-20-bump-openssh-chocolatey">Chocolatey で Portable OpenSSH を更新する 2023</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-05-14-rebuild-blog-with-fable-pt3">Fable でブログを再構築する pt.3</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-05-07-rebuild-blog-with-fable-pt2">Fable でブログを再構築する pt.2</a></li>
                         
                         
 
@@ -198,60 +198,35 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-05-20</div>
+        <div class="col-lg-6">2023-05-28</div>
         
     </div>
-    <h2>Chocolatey で Portable OpenSSH を更新する 2023</h2>
+    <h2>Fable でブログを再構築する pt.4</h2>
 </div>
 <div>
     
-    <p>久しぶりに、 Chocolatey に OpenSSH の β が降ってきてた。</p><p>前回は 2019 年だった。 <a href="/posts/2019-03-31-win-openssh-is-gone">Windows10 の更新で OpenSSH が逝った</a> <a href="/posts/2019-06-29-season-of-openssh-error">また OpenSSH が動かなくなる季節がやってきた</a></p><p><a href="https://community.chocolatey.org/packages/openssh#versionhistory">Chocolatey Software | Win32 OpenSSH (Universal Installer) 9.2.2-beta1</a></p><p>ので更新してみたところ、以下のエラーログが。</p><pre><code class="log">ERROR: There is a configured instance of the SSHD service, please specify the /SSHServerFeature to confirm it is OK to shutdown and upgrade the SSHD service at this time.
-The upgrade of openssh was NOT successful.
-Error while running 'C:\ProgramData\chocolatey\lib\openssh\tools\chocolateyinstall.ps1'.
- See log for details.
-</code></pre><p>はて？ <code>sshd</code> 入れてたっけ？と思ったが見たら入ってた。 chocolatey で自動で入ったんやっけ？</p><pre><code class="powershell">PS&gt; get-service *ssh*
-
-Status   Name               DisplayName
-------   ----               -----------
-Running  ssh-agent          ssh-agent
-Running  sshd               sshd
-</code></pre><p>いる！しかも実行中なのがなんかキモい。</p><p>こいつを停止させるのはあとにするとして、ひとまず <code>choco upgrade</code> を成功させるにはどうしたら良いか。
-こういうときはちゃんとマニュアルを読む。 Chocolatey の Package Source のリンクを辿れば良い。</p><p><a href="https://gitlab.com/DarwinJS/ChocoPackages/-/tree/master/openssh#-params-sshserverfeature-install-and-uninstall">openssh · master · DarwinJS / ChocoPackages · GitLab</a></p><blockquote><h2 id="-params-sshserverfeature-install-and-uninstall">-params '"/SSHServerFeature"' (Install and Uninstall)</h2><p>Also install sshd Windows Service - including opening port 22.
-If this parameter is not included on an upgrade or uninstall and
-the sshd server is installed - an error is generated. You must
-use this switch to indicate you have made preparations for the
-sshd service to be interrupted or removed.</p></blockquote><p>どう見てもこれ。以下を実行する。</p><pre><code class="powershell">choco upgrade openssh -params '"/SSHServerFeature"' -y
-</code></pre><p>この後再起動をして Windows Terminal で PowerShell を開くと作業が完了した。
-すっかり忘れていが、わたしの <code>$PROFILE</code> は「 <code>ssh-agent</code> のサービスがいない ≒ Windows の OpenSSH が更新された」と判定し、インストールスクリプトを実行するのだった。
-<a href="https://gist.github.com/krymtkts/f8af667c32b16fc28a815243b316c5be#file-microsoft-powershell_profile-ps1-L910-L923">ここ</a></p><pre><code class="powershell"># install ssh-agent service if not exists.
-# it will be triggered after updating Windows OpenSSH.
-if (! ($SshAgent = (Get-Service -Name 'ssh-agent' -ErrorAction SilentlyContinue))) {
-    install-sshd.ps1
-    Set-Service -Name 'ssh-agent' -StartupType Automatic
-    Start-Service ssh-agent
-}
-elseif ($SshAgent.StartType -eq 'Disabled') {
-    Set-Service -Name 'ssh-agent' -StartupType Automatic
-    Start-Service ssh-agent
-}
-else {
-    Start-Service ssh-agent
-}
-</code></pre><p>インストールスクリプトは Portable OpenSSH に提供されるもので <code>ssh-agent</code> と <code>sshd</code> が一緒くたにインストールされてたのね...なんか他にやりようないか考えても良いのかな。</p><p>とりあえずこれで事なきを得た。 <code>sshd</code> の起動タイプも手動になっておりヨシ。</p><pre><code class="powershell">PS&gt; get-service *ssh* | select -Property Name,Status,StartType
-
-Name       Status StartType
-----       ------ ---------
-ssh-agent Running Automatic
-sshd      Stopped    Manual
-</code></pre>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築しようとしている。</p><p>YAML で書かれたメタデータ(Front Matter というらしい)の抽出を作った。 <a href="https://github.com/krymtkts/blog-fable/pull/5">#5</a></p><p>またそれに伴って記事へのリンクのタイトルに front matter が使えるようになったので諸々手直しした。 <a href="https://github.com/krymtkts/blog-fable/pull/10">#10</a></p><p>front matter 抽出については、まず最初に remark 使ってみた。
+けど、 <a href="https://github.com/fable-compiler/ts2fable">ts2fable</a> で binding を出力したところ <a href="https://github.com/unifiedjs/unified">unified</a> 、 <a href="https://github.com/remarkjs/remark">remark</a> とその Plugin たちの間で型の整合性が取れなかった。
+整合取ろうとしたら自力で調整しないとどうにもならないので、とてもじゃないがすぐには使えないと判断して早々に諦めた。
+remark のパーサを作る部分を JavaScript で書いて、それを import する形でやれば簡単にできるが、そこは F# で書いてこそ意味がある。</p><p>というわけで marked のまま、 front matter の抽出を古典的な方法、つまり正規表現を使って自力でやった。
+front matter 自体は YAML で書くので、 <a href="https://github.com/eemeli/yaml">eemeli/yaml</a> を導入した。 yaml module は ts2fable で Fable の binding が生成されなかったので、雑なやつを手で書いた。</p><p>front matter 抽出ができるようになると、 Archives や Tags で作ってたページリンクにメタデータのタイトルを使えるようになる。
+タグ付けされたページにタグリンクもつけられるし。
+それに伴い諸々の手直しをし、ついでに参照元のコードのまま使ってた CSS とかを最新のものまで更新した。とりまいまは CDN のを借りてる。
+ついでに highlight.js の CSS を足した。
+Index Archives Tags が出揃って、ページにタグが付き、 syntax highlighting も効くようになったから、結構ブログっぽくなってきたのでは？</p><p>諸々のスタイル調整はぜんぜんやってないけど。
+スタイル調整に対する欲求が低くて、どうしようか考えるとのがとてつもなくだるい。とりあえず色味だけは Solarized Dark でいこうと思ってるけど。ただ Solarized Dark のコンテンツに Solarized Dark の syntax highlighting だと境界ワカランのちゃうかな？というのはある。なので現にいまのブログでは Solarized Light をコンテンツに使ってるし。
+スタイルに関してはこのまま Bulma でいくか決めないといけないのだけど、こういう感じの自分であまり考えたくないケースに案外ハマってるかも、しらんけど。</p><p>最近の機能拡充に伴ってエントリーポイントである <code>App.fs</code> と <code>Helpers.fs</code> がむやみに肥大化しているので、そろそろ整理したいところ。
+いまは <code>App.fs</code> に色々書いてるけど、これ多分 <code>render</code> 関数以外はもう module に切り出した方がいいねんよな。</p><p>イメージ的には、 <code>render</code> 関数で用意した関数を組み合わせるだけにする。
+いま navbar に表示するページだったり index に最新のポストを表示するのが固定でやってるけど、こういうのも front matter に寄せたらスッキリするかな。
+設定ファイルとかはなしで、ディレクトリ構造とコンテンツの front matter だけで制御できたら楽かなあ。</p><p>道程は長い。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/openssh">openssh</a>
+    <a href="/tags/fable">fable</a>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -261,7 +236,7 @@ sshd      Stopped    Manual
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-05-14-rebuild-blog-with-fable-pt3">2023-05-14 Fable でブログを再構築する pt.3 &raquo;</a>
+        <a class="right" href="/posts/2023-05-20-bump-openssh-chocolatey">2023-05-20 Chocolatey で Portable OpenSSH を更新する 2023 &raquo;</a>
         
     </div>
 </div>
