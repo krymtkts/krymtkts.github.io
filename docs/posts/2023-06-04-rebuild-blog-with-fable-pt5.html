@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: またOpenSSHが動かなくなる季節がやってきた</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2019-06-29-season-of-openssh-error">
+    <title>krymtkts: Fable でブログを再構築する pt.5</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-06-04-rebuild-blog-with-fable-pt5">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: またOpenSSHが動かなくなる季節がやってきた" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2019-06-29-season-of-openssh-error" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.5" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-06-04-rebuild-blog-with-fable-pt5" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -198,51 +198,45 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2019-06-29</div>
+        <div class="col-lg-6">2023-06-04</div>
         
     </div>
-    <h2>またOpenSSHが動かなくなる季節がやってきた</h2>
+    <h2>Fable でブログを再構築する pt.5</h2>
 </div>
 <div>
     
-    <p>アップデートの度に何かあるので、もはや風物詩と化したOpenSSHのエラー。</p><p><a href="/posts/2019-03-31-win-openssh-is-gone">前回のエラー</a></p><p>きょうChocolateyでパッケージ更新したらWindowsのOpenSSHがアップデートされた様子。<a href="https://github.com/PowerShell/Win32-OpenSSH/releases/tag/v8.0.0.0p1-Beta">Release v8.0.0.0p1-Beta · PowerShell/Win32-OpenSSH</a>かな？</p><p>それに伴い<code>ssh-agent</code>サービスが消え去ってしまった。</p><pre><code class="powershell">$ Get-Service -Name 'ssh-agent'
-Get-Service : Cannot find any service with service name 'ssh-agent'.
-At line:1 char:1
-+ Get-Service -Name 'ssh-agent'
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+ CategoryInfo          : ObjectNotFound: (ssh-agent:String) [Get-Service], ServiceCommandException
-+ FullyQualifiedErrorId : NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.GetServiceCommand
-</code></pre><p>単純に再インストールしても自動でサービス登録はされなかったのだけど、同梱されているファイルを見てみたところそれらしいスクリプト<code>install-sshd.ps1</code>を発見した。Wikiにも記載がある。</p><p><a href="https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH#install-win32-openssh-test-release">Install Win32 OpenSSH · PowerShell/Win32-OpenSSH Wiki</a></p><p>実行してみたところ無事にサービスが作成されたので一安心。サービス自動起動の設定をしておいて完了した。</p><pre><code class="powershell">$ .\install-sshd.ps1
-[SC] SetServiceObjectSecurity SUCCESS
-[SC] ChangeServiceConfig2 SUCCESS
-[SC] ChangeServiceConfig2 SUCCESS
-sshd and ssh-agent services successfully installed
-$ Get-Service 'ssh-agent'
-
-Status   Name               DisplayName
-------   ----               -----------
-Stopped  ssh-agent          OpenSSH Authentication Agent
-
-$ Set-Service -name "ssh-agent" -startuptype "automatic"
-</code></pre><p>ふう🙃</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築しようとしている。</p><p>雑多な更新 <a href="https://github.com/krymtkts/blog-fable/pull/11">#11</a> <a href="https://github.com/krymtkts/blog-fable/pull/12">#12</a> <a href="https://github.com/krymtkts/blog-fable/pull/13">#13</a> 。
+favicon が出てなかったの直したり、 404 ページ作ったり、あとやりたかった module の整理。</p><p>ファイルは雑に 共通系 -&gt; 生成系 -&gt; アプリ の依存関係に切り分けて、それぞれのファイル内に雑多な module が詰まってるようにした。 元は 2 ファイルだったのでこれでもだいぶマシかな。でも module の整理は今結構雑な感じで置いていて、もうちょいと関数を細切れにできるのでその後また見直す。互いに変な依存関係してたり、 生成系関数のインタフェースが不一致だったりするのとか、気になるのが残ってる感じ。
+それより優先して細々した直したい部分があってわざと置いてる。</p><p>細々した直したい部分というのは navbar で、 Bulma (暫定的にこいつで行くことにしたから)の <a href="https://bulma.io/documentation/components/navbar/">Navbar Component</a> 見てみたのだけどこんな複雑に使い分けなあかんの？みたいな div div した感じになってて、これ導入したくないなあと感じてた。
+nav -&gt; ul -&gt; li でだめなんか。
+<a href="https://v1.tailwindcss.com/components/navigation">Tailwind の Navigation</a> だと思ったようなシンプルな感じのものが得られるのだけど、あの大量の class をつけるのもなあという感じだった。
+世の中 Navbar はみんなグリグリ動いたり深ーい階層の div div したやつを、好きでやってんのかな。いやないはずだ。
+とりあえず自分のやつではやりたくないなって感じの奴らなことは確かな感触を持った。
+ちょうど <a href="https://bulma.io/documentation/components/tabs/">Tabs Component</a> というもっとシンプルで ul -&gt; li に被せられるスタイルがあったので、これを適用する感じにし、諸々調整した。 <a href="https://github.com/krymtkts/blog-fable/pull/14">#14</a> <a href="https://github.com/krymtkts/blog-fable/pull/15">#15</a>
+Tailwind の Navigation で得られるシンプルなやつに近い感じ。モバイルなんかでもグリグリ UI が変わらず同じ見た目でスライドするだけなので、この方がいい。</p><p>とはいえこういう div div したくないというのは <a href="https://github.com/Zaid-Ajaj/Feliz">Feliz</a> で HTML を直書きする方向性を選んだから書くのがだるいのも多少ある。
+もちろん生成物が div div してるとキモいなというのが一番だけど。
+ここにきて<a href="https://fulma.github.io/Fulma/#home">Fulma</a>を導入したら楽になるのか？というのを Navbar のくだりで多少試したのだけど、なんか Feliz より書き味良くなかった(慣れの問題かも)ので今は据え置きにしている。
+仮に Fulma を導入するとなると、あの div div した生成物を受け入れるってことやからな。</p><p>div div 書きまくってどれだけあれが好きでないかというのが伝わっただろうが、仕事ではそういう div div した構造を目当てのレイアウトを得るために書くこともあるということは断っておきたい。
+必要な div なら仕方がない。でも自分の趣味プロで書くのであれば、仕事と同じことしても余白が狭すぎるし、極力簡素にしたいということでね。</p><p>もう最近やったことまとめと化してるけど、これも振り返りにちょうどよいので悪くない。
+ひとり(プラス GitHub Copilot サンと ChatGPT サン)で黙々とやってると、フィードバック得られるところも限られるからな。こういうことをダラダラと書き連ねるだけでも、次のアイデアにつながる。
+ちょうどこの記事をしたためいている中で、 footer 要素がないわ...というのに気づけた。
+とりあえずこの記事を push してから、それに取り掛かることとする。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/openssh">openssh</a>
+    <a href="/tags/fable">fable</a>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2019-07-07-cement-the-cli-framework">&laquo; 2019-07-07 CementというCLIフレームワーク</a>
         
-        
-        <a class="right" href="/posts/2019-06-23-poco">2019-06-23 Poco &raquo;</a>
+        <a class="right" href="/posts/2023-05-28-rebuild-blog-with-fable-pt4">2023-05-28 Fable でブログを再構築する pt.4 &raquo;</a>
         
     </div>
 
