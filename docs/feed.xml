@@ -1,4 +1,63 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 04 Jun 2023 15:06:41 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-06-04-rebuild-blog-with-fable-pt5</guid><link>https://krymtkts.github.io/posts/2023-06-04-rebuild-blog-with-fable-pt5</link><title>Fable でブログを再構築する pt.5</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築しようとしている。&lt;/p&gt;&lt;p&gt;雑多な更新 &lt;a href="https://github.com/krymtkts/blog-fable/pull/11"&gt;#11&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/12"&gt;#12&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/13"&gt;#13&lt;/a&gt; 。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 11 Jun 2023 13:37:36 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-06-11-rebuild-blog-with-fable-pt6</guid><link>https://krymtkts.github.io/posts/2023-06-11-rebuild-blog-with-fable-pt6</link><title>Fable でブログを再構築する pt.6</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築しようとしている。&lt;/p&gt;&lt;p&gt;GitHub Actions で GitHub Pages のデプロイするようにした。
+あと個人プロジェクトの repo を deploy したときの root 間違ってたので手直しする必要があった。
+&lt;a href="https://github.com/krymtkts/blog-fable/pull/16"&gt;#16&lt;/a&gt;,
+&lt;a href="https://github.com/krymtkts/blog-fable/pull/18"&gt;#18&lt;/a&gt;&lt;/p&gt;&lt;p&gt;GitHub Pages はこちら → &lt;a href="https://krymtkts.github.io/blog-fable/index.html"&gt;Blog Title - February&lt;/a&gt;&lt;/p&gt;&lt;p&gt;GitHub Actions を使った GitHub Pages の deploy は現行ブログでもやりたかったネタで、長らく放置してた。
+ブログ再構築のタイミングなら導入するのにちょうどよいので以下の記事を参考に導入した。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow"&gt;Publishing with a custom GitHub Actions workflow - Configuring a publishing source for your GitHub Pages site - GitHub Docs&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://developer.mamezou-tech.com/blogs/2022/09/08/github-pages-new-deploy-method/"&gt;カスタムワークフローで GitHub Pages デプロイが可能に | 豆蔵デベロッパーサイト&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;注意点は先述の通り、個人プロジェクトの場合は &lt;code&gt;{account}.github.io/{repo-name}/&lt;/code&gt; がページの root になる点くらい。
+これは自動的に付与されるので、その前提でリンクやら調整する必要がある。
+ただし開発サーバでは自動で付与されないので、 root は &lt;code&gt;docs&lt;/code&gt; にしつつ他は repo name のディレクトリを介すようにする。
+今回のケースでは以下を調整していい感じにした。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;諸々のリンクに repo name のディレクトリを入れる&lt;/li&gt;&lt;li&gt;開発用サーバの index や 404 を repo name のディレクトリを介すよう調整する&lt;/li&gt;&lt;li&gt;&lt;code&gt;actions/upload-pages-artifact&lt;/code&gt; の &lt;code&gt;path&lt;/code&gt; は repo name のディレクトリにする ← 重要&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;いまの workflow と開発サーバの設定を転記しておく。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable/blob/4cb5d81ac8099889dd55e50ae39ebb20935e96f5/.github/workflows/gh-pages.yml"&gt;blog-fable/gh-pages.yml at 4cb5d81ac8099889dd55e50ae39ebb20935e96f5 · krymtkts/blog-fable · GitHub&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class="yaml"&gt;name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm install
+      - name: Build pages
+        run: npm run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: docs/blog-fable/ # ここ重要。 docs/ ではない
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;開発サーバは今暫定的に &lt;a href="https://github.com/tapio/live-server"&gt;live-server&lt;/a&gt; を使っているが、その場合以下のように index と 404 を指定して起動する。&lt;/p&gt;&lt;pre&gt;&lt;code class="sh"&gt;live-server docs --open=blog-fable/index.html --entry-file=blog-fable/404.html
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;長々と書いたが、個人ページを作るなら &lt;code&gt;{account}.github.io/&lt;/code&gt; の repo を使うだろうから、そんなに心配することはない。&lt;/p&gt;&lt;p&gt;今回の GitHub Pages の対応でベタ書きだったパス類をエントリポイントへ全部まとめるようにしたので、幾分設定しやすくなった。
+これでサイトマップとフィードの XML 、開発サーバの置き換えあたりに着手できる。一段落までもうちょいかな。&lt;/p&gt;</description><pubDate>Sun, 11 Jun 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-06-04-rebuild-blog-with-fable-pt5</guid><link>https://krymtkts.github.io/posts/2023-06-04-rebuild-blog-with-fable-pt5</link><title>Fable でブログを再構築する pt.5</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築しようとしている。&lt;/p&gt;&lt;p&gt;雑多な更新 &lt;a href="https://github.com/krymtkts/blog-fable/pull/11"&gt;#11&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/12"&gt;#12&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/13"&gt;#13&lt;/a&gt; 。
 favicon が出てなかったの直したり、 404 ページ作ったり、あとやりたかった module の整理。&lt;/p&gt;&lt;p&gt;ファイルは雑に 共通系 -&amp;gt; 生成系 -&amp;gt; アプリ の依存関係に切り分けて、それぞれのファイル内に雑多な module が詰まってるようにした。 元は 2 ファイルだったのでこれでもだいぶマシかな。でも module の整理は今結構雑な感じで置いていて、もうちょいと関数を細切れにできるのでその後また見直す。互いに変な依存関係してたり、 生成系関数のインタフェースが不一致だったりするのとか、気になるのが残ってる感じ。
 それより優先して細々した直したい部分があってわざと置いてる。&lt;/p&gt;&lt;p&gt;細々した直したい部分というのは navbar で、 Bulma (暫定的にこいつで行くことにしたから)の &lt;a href="https://bulma.io/documentation/components/navbar/"&gt;Navbar Component&lt;/a&gt; 見てみたのだけどこんな複雑に使い分けなあかんの？みたいな div div した感じになってて、これ導入したくないなあと感じてた。
 nav -&amp;gt; ul -&amp;gt; li でだめなんか。
