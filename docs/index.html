@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-06-18-rebuild-blog-with-fable-pt7">Fable でブログを再構築する pt.7</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-06-11-rebuild-blog-with-fable-pt6">Fable でブログを再構築する pt.6</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-06-04-rebuild-blog-with-fable-pt5">Fable でブログを再構築する pt.5</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-05-28-rebuild-blog-with-fable-pt4">Fable でブログを再構築する pt.4</a></li>
                         
                         
 
@@ -198,73 +198,33 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-06-11</div>
+        <div class="col-lg-6">2023-06-18</div>
         
     </div>
-    <h2>Fable でブログを再構築する pt.6</h2>
+    <h2>Fable でブログを再構築する pt.7</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築しようとしている。</p><p>GitHub Actions で GitHub Pages のデプロイするようにした。
-あと個人プロジェクトの repo を deploy したときの root 間違ってたので手直しする必要があった。
-<a href="https://github.com/krymtkts/blog-fable/pull/16">#16</a>,
-<a href="https://github.com/krymtkts/blog-fable/pull/18">#18</a></p><p>GitHub Pages はこちら → <a href="https://krymtkts.github.io/blog-fable/index.html">Blog Title - February</a></p><p>GitHub Actions を使った GitHub Pages の deploy は現行ブログでもやりたかったネタで、長らく放置してた。
-ブログ再構築のタイミングなら導入するのにちょうどよいので以下の記事を参考に導入した。</p><ul><li><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow">Publishing with a custom GitHub Actions workflow - Configuring a publishing source for your GitHub Pages site - GitHub Docs</a></li><li><a href="https://developer.mamezou-tech.com/blogs/2022/09/08/github-pages-new-deploy-method/">カスタムワークフローで GitHub Pages デプロイが可能に | 豆蔵デベロッパーサイト</a></li></ul><p>注意点は先述の通り、個人プロジェクトの場合は <code>{account}.github.io/{repo-name}/</code> がページの root になる点くらい。
-これは自動的に付与されるので、その前提でリンクやら調整する必要がある。
-ただし開発サーバでは自動で付与されないので、 root は <code>docs</code> にしつつ他は repo name のディレクトリを介すようにする。
-今回のケースでは以下を調整していい感じにした。</p><ul><li>諸々のリンクに repo name のディレクトリを入れる</li><li>開発用サーバの index や 404 を repo name のディレクトリを介すよう調整する</li><li><code>actions/upload-pages-artifact</code> の <code>path</code> は repo name のディレクトリにする ← 重要</li></ul><p>いまの workflow と開発サーバの設定を転記しておく。</p><p><a href="https://github.com/krymtkts/blog-fable/blob/4cb5d81ac8099889dd55e50ae39ebb20935e96f5/.github/workflows/gh-pages.yml">blog-fable/gh-pages.yml at 4cb5d81ac8099889dd55e50ae39ebb20935e96f5 · krymtkts/blog-fable · GitHub</a></p><pre><code class="yaml">name: Deploy GitHub Pages
-
-on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 7.0.x
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Install dependencies
-        run: npm install
-      - name: Build pages
-        run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: docs/blog-fable/ # ここ重要。 docs/ ではない
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
-</code></pre><p>開発サーバは今暫定的に <a href="https://github.com/tapio/live-server">live-server</a> を使っているが、その場合以下のように index と 404 を指定して起動する。</p><pre><code class="sh">live-server docs --open=blog-fable/index.html --entry-file=blog-fable/404.html
-</code></pre><p>長々と書いたが、個人ページを作るなら <code>{account}.github.io/</code> の repo を使うだろうから、そんなに心配することはない。</p><p>今回の GitHub Pages の対応でベタ書きだったパス類をエントリポイントへ全部まとめるようにしたので、幾分設定しやすくなった。
-これでサイトマップとフィードの XML 、開発サーバの置き換えあたりに着手できる。一段落までもうちょいかな。</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>当初開発サーバに使ってた <a href="https://github.com/tapio/live-server">tapio/live-server</a> は npm の vulnerability 報告がずっと出てた。
+開発用なので構わないといえばそうだがやっぱいい気分ではないので、自力で開発サーバを立てるように変えていく(現在作業中)。
+<a href="https://github.com/krymtkts/blog-fable/pull/20">#20</a></p><p>F# Weekly の Sergey Tihon 氏がちょうどよい F# script を書いてるのを見つけたので、それをベースにする。
+Web サーバに F# 製の <a href="https://github.com/SuaveIO/suave">SuaveIO/suave</a> を使うようになる。</p><p><a href="https://stackoverflow.com/questions/34603913/suave-in-watch-mode-during-development">f# - Suave in watch mode (during development) - Stack Overflow</a></p><p>これに従うと、変更イベントで WebSocket のメッセージをページに送って、ページはメッセージを受け取ったらリロードする、という流れで live reload をすることになる。</p><ol><li>ファイルの変更検知して変更イベントを発火する</li><li>変更イベントで WebSocket のメッセージ送信する</li><li>ページに差し込んだ JavaScript で WebSocket のメッセージを受け取ったら reload する</li></ol><p>この開発サーバ用 F# スクリプトを開発するにあたり、
+F# Interactive 特有の挙動とかあまりわかってなかったので、以下を参照に勉強した。
+<a href="https://learn.microsoft.com/en-us/dotnet/fsharp/tools/fsharp-interactive/">F# Interactive (dotnet) Reference | Microsoft Learn</a></p><p>今回ファイルの変更を監視するのと、 <code>dotnet</code> コマンド実行するのに <a href="https://fake.build/index.html">FAKE</a> のモジュールがいくつか必要だったので NuGet から取得する形にした。</p><ul><li><a href="https://www.nuget.org/packages/Fake.Core.Trace">NuGet Gallery | Fake.Core.Trace 6.0.0</a></li><li><a href="https://www.nuget.org/packages/Fake.DotNet.Cli">NuGet Gallery | Fake.DotNet.Cli 6.0.0</a></li><li><a href="https://www.nuget.org/packages/Fake.IO.FileSystem">NuGet Gallery | Fake.IO.FileSystem 6.0.0</a></li></ul><p>FAKE はいつか勉強せなあかんなと思っていたが、タイミング良く使う機会が来た。その良さもなんとなく感じており、なんでも F# で書きたくなる気持ちがわかってくる。</p><p>先述の WebSocket でやり取りする JavaScript は、デプロイするブツには不要だ。
+なので今回開発モードをこしらえて、その場合のみ WebSocket 用の JavaScript をロードする <code>script</code> タグを差し込むようにした。
+開発モード自体は SSG 実行時のオプションで渡す形にしている。設定ファイルなしでスクリプトだけで完結する世界観にしたいので。</p><p>この開発用 JavaScript も、そのうち <a href="https://github.com/fable-compiler/fable-browser/tree/master/src/WebSocket">Fable.Browser.WebSocket</a> で書いてトランスパイルしたものを使うようにしたい。</p><p>一通り作ってみて、いい感じに動いてるっぽい。
+ただし強烈に遅いのと、 Suave で 404 ページを表示する方法がわからないので、今後の課題かな。差分ビルドとかできるとかっこよい。</p><p>以下に今回のハマりどころを記載しておく。</p><h3 id="ハマりどころ">ハマりどころ</h3><p>Suave 、 Fable 共にそうだけどドキュメントに書いてないことがチラホラあるので、分からなくてコード読む必要があった。備忘のためいくつかメモを記録しておく。</p><h4 id="suave">Suave</h4><p>Suave で以下のエラーが出たときは、権限じゃなくてサーバの 設定が足りない。</p><pre><code class="log">System.UnauthorizedAccessException: Access to the path 'C:\Program Files\dotnet\sdk\7.0.302\FSharp\_temporary_compressed_files' is denied.
+</code></pre><p>これを解消するには権限を与えるのではなく、 Sauve がデフォルトで使ってる圧縮ファイルのパスを config に指定しないといけない(デフォでなんかやってくれよめんどくせえ)。
+<a href="https://github.com/SuaveIO/suave/blob/8efe4b32ea0dc52f36c10c8d8fec8191c6ae901c/src/Suave/Web.fs#L42">suave/Web.fs at 8efe4b32ea0dc52f36c10c8d8fec8191c6ae901c · SuaveIO/suave</a></p><pre><code class="fs">compressedFilesFolder = Some(home)
+</code></pre><h4 id="fakedotnet">Fake.DotNet</h4><p><code>Fake.DotNet</code> の使い方は <a href="https://github.com/SAFE-Stack/SAFE-template">SAFE-Stack のテンプレ</a> が参考になる。
+<a href="https://github.com/SAFE-Stack/SAFE-template/blob/db892ace1ecd1589a9a03a484e388a97f3b71718/Build.fs#L70-L75">SAFE-template/Build.fs at db892ace1ecd1589a9a03a484e388a97f3b71718 · SAFE-Stack/SAFE-template</a></p><p><code>command</code> と <code>args</code> どう分けるか謎だが、あんまきにしなくていいっぽい。
+現に ↓ のように <code>cmd</code> に引数が混ざっていても動くという。</p><pre><code class="fsharp">let cmd = "fable src"
+let args = "--runScript dev" // NOTE: run script with development mode.
+let result = DotNet.exec (fun x -&gt; { x with DotNetCliPath = "dotnet" }) cmd args
+</code></pre><h4 id="fable">Fable</h4><p>Fable に <code>--runScript</code> をつけて呼び出したときに引数を与えられるのかについては、ドキュメントの記載は見つけられなかったがソースコードを見る限り与えることができる。
+<a href="https://github.com/fable-compiler/Fable/blob/ac4d44997f69d5b1b7109730ccb45e354a4ec368/src/Fable.Cli/Entry.fs#L390">Fable/src/Fable.Cli/Entry.fs at ac4d44997f69d5b1b7109730ccb45e354a4ec368 · fable-compiler/Fable</a></p><p>この形式なので、以下のようにコマンドを打てばよい。</p><pre><code class="sh">dotnet fable src --runScript dev
+</code></pre><p><code>--runScript</code> で実行するスクリプトの方では、 Node.js の引数の取り方を使えば良い。つまり <code>process.argv</code> を使う。</p><p><a href="https://github.com/fable-compiler/fable-node">Fable.Node</a> を使ってたら <code>process.argv</code> が簡単に使える。
+でも <code>process</code> は F# の予約語で警告が出るので、気持ち悪いからそのうち自前で binding するように直すかも。</p>
 </div>
 
 <div id="post-tags">
@@ -282,7 +242,7 @@ jobs:
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-06-04-rebuild-blog-with-fable-pt5">2023-06-04 Fable でブログを再構築する pt.5 &raquo;</a>
+        <a class="right" href="/posts/2023-06-11-rebuild-blog-with-fable-pt6">2023-06-11 Fable でブログを再構築する pt.6 &raquo;</a>
         
     </div>
 </div>
