@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-06-25-rebuild-blog-with-fable-pt8">Fable でブログを再構築する pt.8</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-06-18-rebuild-blog-with-fable-pt7">Fable でブログを再構築する pt.7</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-06-11-rebuild-blog-with-fable-pt6">Fable でブログを再構築する pt.6</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-06-04-rebuild-blog-with-fable-pt5">Fable でブログを再構築する pt.5</a></li>
                         
                         
 
@@ -198,33 +198,55 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-06-18</div>
+        <div class="col-lg-6">2023-06-25</div>
         
     </div>
-    <h2>Fable でブログを再構築する pt.7</h2>
+    <h2>Fable でブログを再構築する pt.8</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>当初開発サーバに使ってた <a href="https://github.com/tapio/live-server">tapio/live-server</a> は npm の vulnerability 報告がずっと出てた。
-開発用なので構わないといえばそうだがやっぱいい気分ではないので、自力で開発サーバを立てるように変えていく(現在作業中)。
-<a href="https://github.com/krymtkts/blog-fable/pull/20">#20</a></p><p>F# Weekly の Sergey Tihon 氏がちょうどよい F# script を書いてるのを見つけたので、それをベースにする。
-Web サーバに F# 製の <a href="https://github.com/SuaveIO/suave">SuaveIO/suave</a> を使うようになる。</p><p><a href="https://stackoverflow.com/questions/34603913/suave-in-watch-mode-during-development">f# - Suave in watch mode (during development) - Stack Overflow</a></p><p>これに従うと、変更イベントで WebSocket のメッセージをページに送って、ページはメッセージを受け取ったらリロードする、という流れで live reload をすることになる。</p><ol><li>ファイルの変更検知して変更イベントを発火する</li><li>変更イベントで WebSocket のメッセージ送信する</li><li>ページに差し込んだ JavaScript で WebSocket のメッセージを受け取ったら reload する</li></ol><p>この開発サーバ用 F# スクリプトを開発するにあたり、
-F# Interactive 特有の挙動とかあまりわかってなかったので、以下を参照に勉強した。
-<a href="https://learn.microsoft.com/en-us/dotnet/fsharp/tools/fsharp-interactive/">F# Interactive (dotnet) Reference | Microsoft Learn</a></p><p>今回ファイルの変更を監視するのと、 <code>dotnet</code> コマンド実行するのに <a href="https://fake.build/index.html">FAKE</a> のモジュールがいくつか必要だったので NuGet から取得する形にした。</p><ul><li><a href="https://www.nuget.org/packages/Fake.Core.Trace">NuGet Gallery | Fake.Core.Trace 6.0.0</a></li><li><a href="https://www.nuget.org/packages/Fake.DotNet.Cli">NuGet Gallery | Fake.DotNet.Cli 6.0.0</a></li><li><a href="https://www.nuget.org/packages/Fake.IO.FileSystem">NuGet Gallery | Fake.IO.FileSystem 6.0.0</a></li></ul><p>FAKE はいつか勉強せなあかんなと思っていたが、タイミング良く使う機会が来た。その良さもなんとなく感じており、なんでも F# で書きたくなる気持ちがわかってくる。</p><p>先述の WebSocket でやり取りする JavaScript は、デプロイするブツには不要だ。
-なので今回開発モードをこしらえて、その場合のみ WebSocket 用の JavaScript をロードする <code>script</code> タグを差し込むようにした。
-開発モード自体は SSG 実行時のオプションで渡す形にしている。設定ファイルなしでスクリプトだけで完結する世界観にしたいので。</p><p>この開発用 JavaScript も、そのうち <a href="https://github.com/fable-compiler/fable-browser/tree/master/src/WebSocket">Fable.Browser.WebSocket</a> で書いてトランスパイルしたものを使うようにしたい。</p><p>一通り作ってみて、いい感じに動いてるっぽい。
-ただし強烈に遅いのと、 Suave で 404 ページを表示する方法がわからないので、今後の課題かな。差分ビルドとかできるとかっこよい。</p><p>以下に今回のハマりどころを記載しておく。</p><h3 id="ハマりどころ">ハマりどころ</h3><p>Suave 、 Fable 共にそうだけどドキュメントに書いてないことがチラホラあるので、分からなくてコード読む必要があった。備忘のためいくつかメモを記録しておく。</p><h4 id="suave">Suave</h4><p>Suave で以下のエラーが出たときは、権限じゃなくてサーバの 設定が足りない。</p><pre><code class="log">System.UnauthorizedAccessException: Access to the path 'C:\Program Files\dotnet\sdk\7.0.302\FSharp\_temporary_compressed_files' is denied.
-</code></pre><p>これを解消するには権限を与えるのではなく、 Sauve がデフォルトで使ってる圧縮ファイルのパスを config に指定しないといけない(デフォでなんかやってくれよめんどくせえ)。
-<a href="https://github.com/SuaveIO/suave/blob/8efe4b32ea0dc52f36c10c8d8fec8191c6ae901c/src/Suave/Web.fs#L42">suave/Web.fs at 8efe4b32ea0dc52f36c10c8d8fec8191c6ae901c · SuaveIO/suave</a></p><pre><code class="fs">compressedFilesFolder = Some(home)
-</code></pre><h4 id="fakedotnet">Fake.DotNet</h4><p><code>Fake.DotNet</code> の使い方は <a href="https://github.com/SAFE-Stack/SAFE-template">SAFE-Stack のテンプレ</a> が参考になる。
-<a href="https://github.com/SAFE-Stack/SAFE-template/blob/db892ace1ecd1589a9a03a484e388a97f3b71718/Build.fs#L70-L75">SAFE-template/Build.fs at db892ace1ecd1589a9a03a484e388a97f3b71718 · SAFE-Stack/SAFE-template</a></p><p><code>command</code> と <code>args</code> どう分けるか謎だが、あんまきにしなくていいっぽい。
-現に ↓ のように <code>cmd</code> に引数が混ざっていても動くという。</p><pre><code class="fsharp">let cmd = "fable src"
-let args = "--runScript dev" // NOTE: run script with development mode.
-let result = DotNet.exec (fun x -&gt; { x with DotNetCliPath = "dotnet" }) cmd args
-</code></pre><h4 id="fable">Fable</h4><p>Fable に <code>--runScript</code> をつけて呼び出したときに引数を与えられるのかについては、ドキュメントの記載は見つけられなかったがソースコードを見る限り与えることができる。
-<a href="https://github.com/fable-compiler/Fable/blob/ac4d44997f69d5b1b7109730ccb45e354a4ec368/src/Fable.Cli/Entry.fs#L390">Fable/src/Fable.Cli/Entry.fs at ac4d44997f69d5b1b7109730ccb45e354a4ec368 · fable-compiler/Fable</a></p><p>この形式なので、以下のようにコマンドを打てばよい。</p><pre><code class="sh">dotnet fable src --runScript dev
-</code></pre><p><code>--runScript</code> で実行するスクリプトの方では、 Node.js の引数の取り方を使えば良い。つまり <code>process.argv</code> を使う。</p><p><a href="https://github.com/fable-compiler/fable-node">Fable.Node</a> を使ってたら <code>process.argv</code> が簡単に使える。
-でも <code>process</code> は F# の予約語で警告が出るので、気持ち悪いからそのうち自前で binding するように直すかも。</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>先日の開発サーバ作成、 404 に生成済み HTML 表示するのもわかったので完了した。<a href="https://github.com/krymtkts/blog-fable/pull/20">#20</a></p><p>再ビルドのパフォ改善は、今やらないと言うかできないと判断した。
+指定のファイル一覧だけを対象に HTML や関連する XML を再生成するって感じの機構を取り入れる必要があって、根本的に変えないとどうにもならんので、一通り必要と考える機能が揃ってから着手したい。</p><p>次に XML の類に取り掛かった。まずはデータ量少ない sitemap.xml のほう。 <a href="https://github.com/krymtkts/blog-fable/pull/22">#22</a></p><p>sitemap.xml に関しては何の XML か知らなかったが検索エンジンのクローラにより正確な情報を与えるためのデータらしいのは理解した。
+今の Cryogen で生成されてる sitemap.xml がめちゃくちゃテキトーに作られてるのも含め。
+こちらを参考に知識を補った。
+<a href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap">Build and Submit a Sitemap | Google Search Central  |  Documentation  |  Google for Developers</a></p><p>我がブログの運用に限れば、計測タグも設置してないし何 1 つ SEO 効果を期待してないけど、 wev.dev の PageSpeed Insights とかで良いスコアは出したい。
+ハイスコア狙いのゲーム感覚なのだ。
+だからこそいま全部同じ <code>loc</code> の全部同じ <code>lastmod</code> が出てるので、 <code>loc</code> を URL 毎にするとか <code>lastmod</code> に最終更新日を反映させるとかちょっとはマシにしたい。</p><p>折角なので <code>priority</code> も定めてみる。とりま index は <code>1.0</code> として Archives, Tags はカテゴリ系なので生成の度更新するし <code>0.9</code> としてみた。
+新しめのページは高い方が良いんか？
+結局全てが生成ファイルなので単純に post は投稿日付降順くらいしかできなそうやけど、ちょっとめんどいなあと思ったので今は控えて全部同じ <code>0.8</code> とした。
+代わりに投稿日付とは別に front matter に日付を持たせて、更新日付ぽい扱いができるよう悪あがきだけしておいた。</p><p>Fable で XML を操作するのには <a href="https://github.com/Zaid-Ajaj/Fable.SimpleXml">Zaid-Ajaj/Fable.SimpleXml</a> を使う。 <a href="https://github.com/Zaid-Ajaj/Feliz">Feliz</a> 作者の作品。
+使いたい機能は大体誰かが用意してくれていてありがたい限りである。</p><p>femto で足したらエラーになった。でも <code>fsproj</code> はちゃんと変更されてたから大丈夫ぽい。 npm モジュールが無いからエラーになる。
+README には <code>paket</code> 使って足せと書いてあった(先に読め)。うちは使ってないから単純に <code>dotnet add</code> で足す。これでも十分シンプルに使えるし。</p><pre><code class="powershell">dotnet add .\src\App.fsproj package Fable.SimpleXml
+</code></pre><p>Fable.SimpleXml は XML 宣言の読み込みは対応してるけど出力は対応してないみたいなので、手書き文字列を添えて出力してやる必要があった。
+それ以外に関しては Feliz で HTML を書くのと同じ感覚で書ける。
+参考として、以下に Fable.SimpleXml を使って sitemap.xml の文字列を作成する箇所を抜粋する。</p><pre><code class="fsharp">    let generateSitemap root locs =
+        let urls =
+            locs
+            |&gt; Seq.map (fun loc -&gt;
+                node
+                    "url"
+                    []
+                    [ node "loc" [] [ text $"{root}{loc.loc}" ]
+                      node "lastmod" [] [ text loc.lastmod ]
+                      //   node "changefreq" [] [ text "monthly" ]
+                      node "priority" [] [ text loc.priority ] ])
+            |&gt; List.ofSeq
+
+        let urlSet =
+            node
+                "urlset"
+                [ attr.value ("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
+                  attr.value ("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance") ]
+                urls
+
+        urlSet
+        |&gt; serializeXml
+        |&gt; (+) @"&lt;?xml version=""1.0"" encoding=""UTF-8""?&gt;"
+</code></pre><p>XML 宣言も文字列なんぞ使わずにサクッと書けるとカッコよいのだけど。</p><p>あとコメントアウトがあってダサいが、これは <code>changefreq</code> も足したいなーと思ってやらなかった残穢だ。
+Index, Archives, Tags は post の投稿間隔から自動算出できるが、いま面倒でやらなかったので戒めとして残している。</p><p>これで次は RSS Feed の XML を作ったら最低限必要なものは揃う。スタイルや前後の post へのリンクみたいな細かな調整は必要だろうけど。
+RSS Feed の仕組み、例えば既存の投稿に変更がある場合にどうなんの？とかもあんま知らんので、これを機に知識を補いたい。
+結構 post 周りのコード手を入れないと Markdown から抽出・生成したタイトル・公開日・ HTML 後続処理に回せんな...
+というのがあるので結構ダルそうではあるが、いい感じの手間がかかる点は最後に越える山としてふさわしい(と自分に言い聞かせる)。</p><p>場当たり的なコードも積もってきたし、細々とした気になってる点を補正する等も着手していこう。</p>
 </div>
 
 <div id="post-tags">
@@ -242,7 +264,7 @@ let result = DotNet.exec (fun x -&gt; { x with DotNetCliPath = "dotnet" }) cmd a
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-06-11-rebuild-blog-with-fable-pt6">2023-06-11 Fable でブログを再構築する pt.6 &raquo;</a>
+        <a class="right" href="/posts/2023-06-18-rebuild-blog-with-fable-pt7">2023-06-18 Fable でブログを再構築する pt.7 &raquo;</a>
         
     </div>
 </div>
