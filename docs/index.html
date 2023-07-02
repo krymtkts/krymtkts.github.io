@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-07-02-rebuild-blog-with-fable-pt9">Fable でブログを再構築する pt.9</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-06-25-rebuild-blog-with-fable-pt8">Fable でブログを再構築する pt.8</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-06-18-rebuild-blog-with-fable-pt7">Fable でブログを再構築する pt.7</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-06-11-rebuild-blog-with-fable-pt6">Fable でブログを再構築する pt.6</a></li>
                         
                         
 
@@ -198,55 +198,64 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-06-25</div>
+        <div class="col-lg-6">2023-07-02</div>
         
     </div>
-    <h2>Fable でブログを再構築する pt.8</h2>
+    <h2>Fable でブログを再構築する pt.9</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>先日の開発サーバ作成、 404 に生成済み HTML 表示するのもわかったので完了した。<a href="https://github.com/krymtkts/blog-fable/pull/20">#20</a></p><p>再ビルドのパフォ改善は、今やらないと言うかできないと判断した。
-指定のファイル一覧だけを対象に HTML や関連する XML を再生成するって感じの機構を取り入れる必要があって、根本的に変えないとどうにもならんので、一通り必要と考える機能が揃ってから着手したい。</p><p>次に XML の類に取り掛かった。まずはデータ量少ない sitemap.xml のほう。 <a href="https://github.com/krymtkts/blog-fable/pull/22">#22</a></p><p>sitemap.xml に関しては何の XML か知らなかったが検索エンジンのクローラにより正確な情報を与えるためのデータらしいのは理解した。
-今の Cryogen で生成されてる sitemap.xml がめちゃくちゃテキトーに作られてるのも含め。
-こちらを参考に知識を補った。
-<a href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap">Build and Submit a Sitemap | Google Search Central  |  Documentation  |  Google for Developers</a></p><p>我がブログの運用に限れば、計測タグも設置してないし何 1 つ SEO 効果を期待してないけど、 wev.dev の PageSpeed Insights とかで良いスコアは出したい。
-ハイスコア狙いのゲーム感覚なのだ。
-だからこそいま全部同じ <code>loc</code> の全部同じ <code>lastmod</code> が出てるので、 <code>loc</code> を URL 毎にするとか <code>lastmod</code> に最終更新日を反映させるとかちょっとはマシにしたい。</p><p>折角なので <code>priority</code> も定めてみる。とりま index は <code>1.0</code> として Archives, Tags はカテゴリ系なので生成の度更新するし <code>0.9</code> としてみた。
-新しめのページは高い方が良いんか？
-結局全てが生成ファイルなので単純に post は投稿日付降順くらいしかできなそうやけど、ちょっとめんどいなあと思ったので今は控えて全部同じ <code>0.8</code> とした。
-代わりに投稿日付とは別に front matter に日付を持たせて、更新日付ぽい扱いができるよう悪あがきだけしておいた。</p><p>Fable で XML を操作するのには <a href="https://github.com/Zaid-Ajaj/Fable.SimpleXml">Zaid-Ajaj/Fable.SimpleXml</a> を使う。 <a href="https://github.com/Zaid-Ajaj/Feliz">Feliz</a> 作者の作品。
-使いたい機能は大体誰かが用意してくれていてありがたい限りである。</p><p>femto で足したらエラーになった。でも <code>fsproj</code> はちゃんと変更されてたから大丈夫ぽい。 npm モジュールが無いからエラーになる。
-README には <code>paket</code> 使って足せと書いてあった(先に読め)。うちは使ってないから単純に <code>dotnet add</code> で足す。これでも十分シンプルに使えるし。</p><pre><code class="powershell">dotnet add .\src\App.fsproj package Fable.SimpleXml
-</code></pre><p>Fable.SimpleXml は XML 宣言の読み込みは対応してるけど出力は対応してないみたいなので、手書き文字列を添えて出力してやる必要があった。
-それ以外に関しては Feliz で HTML を書くのと同じ感覚で書ける。
-参考として、以下に Fable.SimpleXml を使って sitemap.xml の文字列を作成する箇所を抜粋する。</p><pre><code class="fsharp">    let generateSitemap root locs =
-        let urls =
-            locs
-            |&gt; Seq.map (fun loc -&gt;
-                node
-                    "url"
-                    []
-                    [ node "loc" [] [ text $"{root}{loc.loc}" ]
-                      node "lastmod" [] [ text loc.lastmod ]
-                      //   node "changefreq" [] [ text "monthly" ]
-                      node "priority" [] [ text loc.priority ] ])
-            |&gt; List.ofSeq
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>細々とした修正だけやった。 <a href="https://github.com/krymtkts/blog-fable/pull/23">#23</a></p><p>O'reilly の F# 本で勉強してたからか最近まで <a href="https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/interpolated-strings">Interpolated strings - F# | Microsoft Learn</a> わかってなかったのでそれに書き換えたり。あと <a href="https://github.com/fable-compiler/fable-node">Fable.Node</a> の process 予約語で警告が出るやつも自前でかいた binding を使うことで解消した。
+利用する範囲そんなに多くなければ最小の範囲に絞り込んで Node.js の binding を書き Fable.Node 排除するのもよいが、なんとなく先延ばしにした。</p><p>RSS Feed に取り組み始めた。
+まずは RSS feed の構造を知らんかったので、自ブログの出力した <a href="https://krymtkts.github.io/feed.xml">feed.xml</a> と <a href="https://validator.w3.org/feed/docs/rss2.html">RSS 2.0 specification</a> <a href="https://datatracker.ietf.org/doc/html/rfc4287">RFC 4287 - The Atom Syndication Format</a> を学んでる。
+自ブログは RSS 2.0 で書かれていて <code>atom:link</code> セクションを使うことで追加の機能を入れてるらしい。</p><p><a href="https://www.rssboard.org/rss-validator/">RSS Validator</a> なんてのも初めて知ったわ。試しに feed.xml を読ませてみたところ valid な RSS Feed と判定されてるが推奨事項がチラホラあった。
+Fable でやるにあたってこういうのも丁寧に対応できると良いな。</p><p>feed.xml を作るにあたって sitemap.xml を書いたのと同じく自前で <a href="https://github.com/Zaid-Ajaj/Fable.SimpleXml">Fable.SimpleXml</a> を使って書くのか、楽に Node.js のモジュールを使うのかがちょっと悩ましいところ。</p><ul><li><a href="https://github.com/jpmonette/feed">jpmonette/feed: A RSS, Atom and JSON Feed generator for Node.js, making content syndication simple and intuitive! 🚀</a></li><li><a href="https://github.com/dylang/node-rss">dylang/node-rss: RSS feed generator for Node.</a></li></ul><p>この辺りが有名なモジュールのようだけど最後のコミットがちょっと古い。
+<a href="https://github.com/jpmonette/feed">feed</a> の場合以下みたいにオブジェクトをもりもり書いていくだけっぽくて、 Fable.SimpleXml 使って自分で構築するのと変わらんのでは...
+という懸念があり、なんか自分でやったほうが良さそうに思っている。 RSS/Atom の知識乏しいけど、既存の焼き直しであればまあできるやろ的な。</p><pre><code class="ts">// 以下はあくまでサンプルだがこれは書いてて楽しくなさそうな気配
+// feed
+const feed = new Feed({
+  title: "krymtkts",
+  description: "krymtktss blog",
+  id: "http://krymtkts.github.io/",
+  link: "http://krymtkts.github.io/",
+  image: "http://krymtkts.github.io/image.png",
+  favicon: "http://krymtkts.github.io/favicon.ico",
+  copyright: "Copyright © 2019-2023 krymtkts",
+  updated: new Date(2023, 7, 02),
+  feedLinks: {
+    json: "https://krymtkts.github.io/json",
+    atom: "https://krymtkts.github.io/atom",
+  },
+});
 
-        let urlSet =
-            node
-                "urlset"
-                [ attr.value ("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
-                  attr.value ("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance") ]
-                urls
+// node-rss
+var feed = new RSS({
+  title: "krymtkts",
+  description: "krymtktss blog",
+  site_url: "http://krymtkts.github.io",
+  image_url: "http://krymtkts.github.io/icon.png",
+  copyright: "Copyright © 2019-2023 krymtkts",
+  pubDate: "May 20, 2012 04:00:00 GMT",
+  feed_url: "http://krymtkts.github.io/rss.xml",
+});
+</code></pre><pre><code class="fsharp">let generateRssFeed (conf: RssFeed) =
+    let items = ...
 
-        urlSet
-        |&gt; serializeXml
-        |&gt; (+) @"&lt;?xml version=""1.0"" encoding=""UTF-8""?&gt;"
-</code></pre><p>XML 宣言も文字列なんぞ使わずにサクッと書けるとカッコよいのだけど。</p><p>あとコメントアウトがあってダサいが、これは <code>changefreq</code> も足したいなーと思ってやらなかった残穢だ。
-Index, Archives, Tags は post の投稿間隔から自動算出できるが、いま面倒でやらなかったので戒めとして残している。</p><p>これで次は RSS Feed の XML を作ったら最低限必要なものは揃う。スタイルや前後の post へのリンクみたいな細かな調整は必要だろうけど。
-RSS Feed の仕組み、例えば既存の投稿に変更がある場合にどうなんの？とかもあんま知らんので、これを機に知識を補いたい。
-結構 post 周りのコード手を入れないと Markdown から抽出・生成したタイトル・公開日・ HTML 後続処理に回せんな...
-というのがあるので結構ダルそうではあるが、いい感じの手間がかかる点は最後に越える山としてふさわしい(と自分に言い聞かせる)。</p><p>場当たり的なコードも積もってきたし、細々とした気になってる点を補正する等も着手していこう。</p>
+    let rss =
+        {
+            title = conf.title
+            description = conf.description
+            link = conf.link
+            lastBuildDate = now.ToString("yyyy-MM-dd")
+            generator = "blog-fable"
+            items = items
+        } |&gt; convertToSimpleXml
+
+    rss
+    |&gt; serializeXml
+    |&gt; (+) @"&lt;?xml version=""1.0"" encoding=""UTF-8""?&gt;"
+</code></pre><p>イメージ雑いけどこんな感じにならんかな？
+自前でやることによって進捗が鈍化しそうやけど、しゃーないかという感じ。</p>
 </div>
 
 <div id="post-tags">
@@ -264,7 +273,7 @@ RSS Feed の仕組み、例えば既存の投稿に変更がある場合にど�
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-06-18-rebuild-blog-with-fable-pt7">2023-06-18 Fable でブログを再構築する pt.7 &raquo;</a>
+        <a class="right" href="/posts/2023-06-25-rebuild-blog-with-fable-pt8">2023-06-25 Fable でブログを再構築する pt.8 &raquo;</a>
         
     </div>
 </div>

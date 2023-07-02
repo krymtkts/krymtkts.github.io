@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Terminal-Icons のアイコングリフのコードポイントを変えたい</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-07-11-my-terminal-icons">
+    <title>krymtkts: Fable でブログを再構築する pt.9</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-07-02-rebuild-blog-with-fable-pt9">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Terminal-Icons のアイコングリフのコードポイントを変えたい" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-07-11-my-terminal-icons" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.9" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-07-02-rebuild-blog-with-fable-pt9" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -198,41 +198,80 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-07-11</div>
+        <div class="col-lg-6">2023-07-02</div>
         
     </div>
-    <h2>Terminal-Icons のアイコングリフのコードポイントを変えたい</h2>
+    <h2>Fable でブログを再構築する pt.9</h2>
 </div>
 <div>
     
-    <p>先日、<a href="/posts/2021-07-01-i-want-to-change-codepoint">わたしの改造 Migu で Terminal-Icons の見栄えが悪い話</a>を書いた。
-あの後、チマチマ作業を行い、ある程度納得の行くものが出来上がったのでまとめておく。</p><hr /><p>まず、先日の記事に書いていた豆腐は、ありゃー Material Design Icons を改造 Migu に組み込んでいないからであった。無知蒙昧。
-あと Weather Icons もいらねーだろと思ってたしてなかったが、この際なので打ち込んじまえ！と意気込み処置を行うた。</p><ul><li><a href="https://github.com/krymtkts/fontmerger/commit/81681e6de10149ed34dda60e9b6b806374efa472">Add fonts. · krymtkts/fontmerger@81681e6</a></li><li><a href="https://github.com/krymtkts/fontmerger/commit/44c72fc3cc6cbabb44d25c3268d4191f81c78fed">Update font settings. · krymtkts/fontmerger@44c72fc</a></li></ul><p>Weather Icons は、なんか知らんがサイズを調整してパッチすると結構縦長になってしまってた。
-が、ちょっと前に足しといた縦比/横比だけ調整するパラメータがいい感じに使え、我ながら先見の明を感じた(何</p><ul><li><a href="https://github.com/krymtkts/fontmerger/commit/7653e06d1f106b8dbcc01f30dc9ea25c175a3916">Split scale option to x and y scale. Add force_narrow option that for… · krymtkts/fontmerger@7653e06</a></li></ul><p>こうしてまたさらにイイカンジの Migu になったところで、Terminal-Icons の<code>glyphs.ps1</code>を上書きするモンをこしらえて完成とした。
-ブツは Gist に上げた → <a href="https://gist.github.com/krymtkts/4457a23124b2db860a6b32eba6490b03">my Terminal-Icons glyphs.</a></p><p>Material Design Icons はコードポイントがわかりやすくずれるだけなので機械的にずらすだけで OK だった。
-Weather Icons と Octicons あたりは Nerd Fonts ではよくわからん順番に組み替えてるようだった。
-コード読むのめんどかったので、モウ泥臭くヒューマンマニピュレーションにて処置...気が遠くなるかと思いきや割とすぐできた感じではある。
-あと<code>glyphs.ps1</code>を直接上書きするパワースタイルなので、なんか後から差し込めるようにしたい気はする。</p><p><img src="/img/2021-07-11-terminal/icons.png" alt="きれいなアイコンたち" /></p><hr /><p>全く関係ないが最近マイ Iris がやたらとチャタリングするようになてムカつくぜぇぇぇ...
-ホコリが接点に侵入してるんやと思うんやけど、掃除しても掃除しても数日で再発する。
-でもファミコンのカートリッジスタイルでフーッ！！すると割と改善する...そんな日々。</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>細々とした修正だけやった。 <a href="https://github.com/krymtkts/blog-fable/pull/23">#23</a></p><p>O'reilly の F# 本で勉強してたからか最近まで <a href="https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/interpolated-strings">Interpolated strings - F# | Microsoft Learn</a> わかってなかったのでそれに書き換えたり。あと <a href="https://github.com/fable-compiler/fable-node">Fable.Node</a> の process 予約語で警告が出るやつも自前でかいた binding を使うことで解消した。
+利用する範囲そんなに多くなければ最小の範囲に絞り込んで Node.js の binding を書き Fable.Node 排除するのもよいが、なんとなく先延ばしにした。</p><p>RSS Feed に取り組み始めた。
+まずは RSS feed の構造を知らんかったので、自ブログの出力した <a href="https://krymtkts.github.io/feed.xml">feed.xml</a> と <a href="https://validator.w3.org/feed/docs/rss2.html">RSS 2.0 specification</a> <a href="https://datatracker.ietf.org/doc/html/rfc4287">RFC 4287 - The Atom Syndication Format</a> を学んでる。
+自ブログは RSS 2.0 で書かれていて <code>atom:link</code> セクションを使うことで追加の機能を入れてるらしい。</p><p><a href="https://www.rssboard.org/rss-validator/">RSS Validator</a> なんてのも初めて知ったわ。試しに feed.xml を読ませてみたところ valid な RSS Feed と判定されてるが推奨事項がチラホラあった。
+Fable でやるにあたってこういうのも丁寧に対応できると良いな。</p><p>feed.xml を作るにあたって sitemap.xml を書いたのと同じく自前で <a href="https://github.com/Zaid-Ajaj/Fable.SimpleXml">Fable.SimpleXml</a> を使って書くのか、楽に Node.js のモジュールを使うのかがちょっと悩ましいところ。</p><ul><li><a href="https://github.com/jpmonette/feed">jpmonette/feed: A RSS, Atom and JSON Feed generator for Node.js, making content syndication simple and intuitive! 🚀</a></li><li><a href="https://github.com/dylang/node-rss">dylang/node-rss: RSS feed generator for Node.</a></li></ul><p>この辺りが有名なモジュールのようだけど最後のコミットがちょっと古い。
+<a href="https://github.com/jpmonette/feed">feed</a> の場合以下みたいにオブジェクトをもりもり書いていくだけっぽくて、 Fable.SimpleXml 使って自分で構築するのと変わらんのでは...
+という懸念があり、なんか自分でやったほうが良さそうに思っている。 RSS/Atom の知識乏しいけど、既存の焼き直しであればまあできるやろ的な。</p><pre><code class="ts">// 以下はあくまでサンプルだがこれは書いてて楽しくなさそうな気配
+// feed
+const feed = new Feed({
+  title: "krymtkts",
+  description: "krymtktss blog",
+  id: "http://krymtkts.github.io/",
+  link: "http://krymtkts.github.io/",
+  image: "http://krymtkts.github.io/image.png",
+  favicon: "http://krymtkts.github.io/favicon.ico",
+  copyright: "Copyright © 2019-2023 krymtkts",
+  updated: new Date(2023, 7, 02),
+  feedLinks: {
+    json: "https://krymtkts.github.io/json",
+    atom: "https://krymtkts.github.io/atom",
+  },
+});
+
+// node-rss
+var feed = new RSS({
+  title: "krymtkts",
+  description: "krymtktss blog",
+  site_url: "http://krymtkts.github.io",
+  image_url: "http://krymtkts.github.io/icon.png",
+  copyright: "Copyright © 2019-2023 krymtkts",
+  pubDate: "May 20, 2012 04:00:00 GMT",
+  feed_url: "http://krymtkts.github.io/rss.xml",
+});
+</code></pre><pre><code class="fsharp">let generateRssFeed (conf: RssFeed) =
+    let items = ...
+
+    let rss =
+        {
+            title = conf.title
+            description = conf.description
+            link = conf.link
+            lastBuildDate = now.ToString("yyyy-MM-dd")
+            generator = "blog-fable"
+            items = items
+        } |&gt; convertToSimpleXml
+
+    rss
+    |&gt; serializeXml
+    |&gt; (+) @"&lt;?xml version=""1.0"" encoding=""UTF-8""?&gt;"
+</code></pre><p>イメージ雑いけどこんな感じにならんかな？
+自前でやることによって進捗が鈍化しそうやけど、しゃーないかという感じ。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/fable">fable</a>
     
-    <a href="/tags/font">font</a>
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2021-07-18-psake-completion">&laquo; 2021-07-18 psake の Task 名を自動補完する</a>
         
-        
-        <a class="right" href="/posts/2021-07-01-i-want-to-change-codepoint">2021-07-01 Terminal-Icons のアイコングリフのコードポイントを変えたい &raquo;</a>
+        <a class="right" href="/posts/2023-06-25-rebuild-blog-with-fable-pt8">2023-06-25 Fable でブログを再構築する pt.8 &raquo;</a>
         
     </div>
 

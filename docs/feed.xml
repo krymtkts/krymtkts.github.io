@@ -1,4 +1,54 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 25 Jun 2023 16:00:01 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-06-25-rebuild-blog-with-fable-pt8</guid><link>https://krymtkts.github.io/posts/2023-06-25-rebuild-blog-with-fable-pt8</link><title>Fable でブログを再構築する pt.8</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;先日の開発サーバ作成、 404 に生成済み HTML 表示するのもわかったので完了した。&lt;a href="https://github.com/krymtkts/blog-fable/pull/20"&gt;#20&lt;/a&gt;&lt;/p&gt;&lt;p&gt;再ビルドのパフォ改善は、今やらないと言うかできないと判断した。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 02 Jul 2023 16:22:05 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-07-02-rebuild-blog-with-fable-pt9</guid><link>https://krymtkts.github.io/posts/2023-07-02-rebuild-blog-with-fable-pt9</link><title>Fable でブログを再構築する pt.9</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;細々とした修正だけやった。 &lt;a href="https://github.com/krymtkts/blog-fable/pull/23"&gt;#23&lt;/a&gt;&lt;/p&gt;&lt;p&gt;O'reilly の F# 本で勉強してたからか最近まで &lt;a href="https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/interpolated-strings"&gt;Interpolated strings - F# | Microsoft Learn&lt;/a&gt; わかってなかったのでそれに書き換えたり。あと &lt;a href="https://github.com/fable-compiler/fable-node"&gt;Fable.Node&lt;/a&gt; の process 予約語で警告が出るやつも自前でかいた binding を使うことで解消した。
+利用する範囲そんなに多くなければ最小の範囲に絞り込んで Node.js の binding を書き Fable.Node 排除するのもよいが、なんとなく先延ばしにした。&lt;/p&gt;&lt;p&gt;RSS Feed に取り組み始めた。
+まずは RSS feed の構造を知らんかったので、自ブログの出力した &lt;a href="https://krymtkts.github.io/feed.xml"&gt;feed.xml&lt;/a&gt; と &lt;a href="https://validator.w3.org/feed/docs/rss2.html"&gt;RSS 2.0 specification&lt;/a&gt; &lt;a href="https://datatracker.ietf.org/doc/html/rfc4287"&gt;RFC 4287 - The Atom Syndication Format&lt;/a&gt; を学んでる。
+自ブログは RSS 2.0 で書かれていて &lt;code&gt;atom:link&lt;/code&gt; セクションを使うことで追加の機能を入れてるらしい。&lt;/p&gt;&lt;p&gt;&lt;a href="https://www.rssboard.org/rss-validator/"&gt;RSS Validator&lt;/a&gt; なんてのも初めて知ったわ。試しに feed.xml を読ませてみたところ valid な RSS Feed と判定されてるが推奨事項がチラホラあった。
+Fable でやるにあたってこういうのも丁寧に対応できると良いな。&lt;/p&gt;&lt;p&gt;feed.xml を作るにあたって sitemap.xml を書いたのと同じく自前で &lt;a href="https://github.com/Zaid-Ajaj/Fable.SimpleXml"&gt;Fable.SimpleXml&lt;/a&gt; を使って書くのか、楽に Node.js のモジュールを使うのかがちょっと悩ましいところ。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="https://github.com/jpmonette/feed"&gt;jpmonette/feed: A RSS, Atom and JSON Feed generator for Node.js, making content syndication simple and intuitive! 🚀&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://github.com/dylang/node-rss"&gt;dylang/node-rss: RSS feed generator for Node.&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;この辺りが有名なモジュールのようだけど最後のコミットがちょっと古い。
+&lt;a href="https://github.com/jpmonette/feed"&gt;feed&lt;/a&gt; の場合以下みたいにオブジェクトをもりもり書いていくだけっぽくて、 Fable.SimpleXml 使って自分で構築するのと変わらんのでは...
+という懸念があり、なんか自分でやったほうが良さそうに思っている。 RSS/Atom の知識乏しいけど、既存の焼き直しであればまあできるやろ的な。&lt;/p&gt;&lt;pre&gt;&lt;code class="ts"&gt;// 以下はあくまでサンプルだがこれは書いてて楽しくなさそうな気配
+// feed
+const feed = new Feed({
+  title: "krymtkts",
+  description: "krymtktss blog",
+  id: "http://krymtkts.github.io/",
+  link: "http://krymtkts.github.io/",
+  image: "http://krymtkts.github.io/image.png",
+  favicon: "http://krymtkts.github.io/favicon.ico",
+  copyright: "Copyright © 2019-2023 krymtkts",
+  updated: new Date(2023, 7, 02),
+  feedLinks: {
+    json: "https://krymtkts.github.io/json",
+    atom: "https://krymtkts.github.io/atom",
+  },
+});
+
+// node-rss
+var feed = new RSS({
+  title: "krymtkts",
+  description: "krymtktss blog",
+  site_url: "http://krymtkts.github.io",
+  image_url: "http://krymtkts.github.io/icon.png",
+  copyright: "Copyright © 2019-2023 krymtkts",
+  pubDate: "May 20, 2012 04:00:00 GMT",
+  feed_url: "http://krymtkts.github.io/rss.xml",
+});
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;let generateRssFeed (conf: RssFeed) =
+    let items = ...
+
+    let rss =
+        {
+            title = conf.title
+            description = conf.description
+            link = conf.link
+            lastBuildDate = now.ToString("yyyy-MM-dd")
+            generator = "blog-fable"
+            items = items
+        } |&amp;gt; convertToSimpleXml
+
+    rss
+    |&amp;gt; serializeXml
+    |&amp;gt; (+) @"&amp;lt;?xml version=""1.0"" encoding=""UTF-8""?&amp;gt;"
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;イメージ雑いけどこんな感じにならんかな？
+自前でやることによって進捗が鈍化しそうやけど、しゃーないかという感じ。&lt;/p&gt;</description><pubDate>Sun, 02 Jul 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-06-25-rebuild-blog-with-fable-pt8</guid><link>https://krymtkts.github.io/posts/2023-06-25-rebuild-blog-with-fable-pt8</link><title>Fable でブログを再構築する pt.8</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;先日の開発サーバ作成、 404 に生成済み HTML 表示するのもわかったので完了した。&lt;a href="https://github.com/krymtkts/blog-fable/pull/20"&gt;#20&lt;/a&gt;&lt;/p&gt;&lt;p&gt;再ビルドのパフォ改善は、今やらないと言うかできないと判断した。
 指定のファイル一覧だけを対象に HTML や関連する XML を再生成するって感じの機構を取り入れる必要があって、根本的に変えないとどうにもならんので、一通り必要と考える機能が揃ってから着手したい。&lt;/p&gt;&lt;p&gt;次に XML の類に取り掛かった。まずはデータ量少ない sitemap.xml のほう。 &lt;a href="https://github.com/krymtkts/blog-fable/pull/22"&gt;#22&lt;/a&gt;&lt;/p&gt;&lt;p&gt;sitemap.xml に関しては何の XML か知らなかったが検索エンジンのクローラにより正確な情報を与えるためのデータらしいのは理解した。
 今の Cryogen で生成されてる sitemap.xml がめちゃくちゃテキトーに作られてるのも含め。
 こちらを参考に知識を補った。
