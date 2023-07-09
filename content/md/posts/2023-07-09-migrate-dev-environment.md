@@ -109,3 +109,7 @@ AWS Tools for PowerShell が PSResourceGet に移行するまで、当面は v2 
 
 自分用にはこれを回避するために関数を書いてたが、CompatPowerShellGet を使うとこの依存関係が永久に解決できないみたい。
 module 違うからなあ...やはり v2 v3 の並行稼働しかなさそう...だいじょぶかな。
+
+`Get-PSResource` も戻り値の property に変化があって、対処が必要だった。
+
+- `Path` -> `InstalledLocation`
