@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-07-09-migrate-dev-environment">開発環境をプチ移行する</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-07-02-rebuild-blog-with-fable-pt9">Fable でブログを再構築する pt.9</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-06-25-rebuild-blog-with-fable-pt8">Fable でブログを再構築する pt.8</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-06-18-rebuild-blog-with-fable-pt7">Fable でブログを再構築する pt.7</a></li>
                         
                         
 
@@ -198,72 +198,63 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-07-02</div>
+        <div class="col-lg-6">2023-07-09</div>
         
     </div>
-    <h2>Fable でブログを再構築する pt.9</h2>
+    <h2>開発環境をプチ移行する</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>細々とした修正だけやった。 <a href="https://github.com/krymtkts/blog-fable/pull/23">#23</a></p><p>O'reilly の F# 本で勉強してたからか最近まで <a href="https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/interpolated-strings">Interpolated strings - F# | Microsoft Learn</a> わかってなかったのでそれに書き換えたり。あと <a href="https://github.com/fable-compiler/fable-node">Fable.Node</a> の process 予約語で警告が出るやつも自前でかいた binding を使うことで解消した。
-利用する範囲そんなに多くなければ最小の範囲に絞り込んで Node.js の binding を書き Fable.Node 排除するのもよいが、なんとなく先延ばしにした。</p><p>RSS Feed に取り組み始めた。
-まずは RSS feed の構造を知らんかったので、自ブログの出力した <a href="https://krymtkts.github.io/feed.xml">feed.xml</a> と <a href="https://validator.w3.org/feed/docs/rss2.html">RSS 2.0 specification</a> <a href="https://datatracker.ietf.org/doc/html/rfc4287">RFC 4287 - The Atom Syndication Format</a> を学んでる。
-自ブログは RSS 2.0 で書かれていて <code>atom:link</code> セクションを使うことで追加の機能を入れてるらしい。</p><p><a href="https://www.rssboard.org/rss-validator/">RSS Validator</a> なんてのも初めて知ったわ。試しに feed.xml を読ませてみたところ valid な RSS Feed と判定されてるが推奨事項がチラホラあった。
-Fable でやるにあたってこういうのも丁寧に対応できると良いな。</p><p>feed.xml を作るにあたって sitemap.xml を書いたのと同じく自前で <a href="https://github.com/Zaid-Ajaj/Fable.SimpleXml">Fable.SimpleXml</a> を使って書くのか、楽に Node.js のモジュールを使うのかがちょっと悩ましいところ。</p><ul><li><a href="https://github.com/jpmonette/feed">jpmonette/feed: A RSS, Atom and JSON Feed generator for Node.js, making content syndication simple and intuitive! 🚀</a></li><li><a href="https://github.com/dylang/node-rss">dylang/node-rss: RSS feed generator for Node.</a></li></ul><p>この辺りが有名なモジュールのようだけど最後のコミットがちょっと古い。
-<a href="https://github.com/jpmonette/feed">feed</a> の場合以下みたいにオブジェクトをもりもり書いていくだけっぽくて、 Fable.SimpleXml 使って自分で構築するのと変わらんのでは...
-という懸念があり、なんか自分でやったほうが良さそうに思っている。 RSS/Atom の知識乏しいけど、既存の焼き直しであればまあできるやろ的な。</p><pre><code class="ts">// 以下はあくまでサンプルだがこれは書いてて楽しくなさそうな気配
-// feed
-const feed = new Feed({
-  title: "krymtkts",
-  description: "krymtktss blog",
-  id: "http://krymtkts.github.io/",
-  link: "http://krymtkts.github.io/",
-  image: "http://krymtkts.github.io/image.png",
-  favicon: "http://krymtkts.github.io/favicon.ico",
-  copyright: "Copyright © 2019-2023 krymtkts",
-  updated: new Date(2023, 7, 02),
-  feedLinks: {
-    json: "https://krymtkts.github.io/json",
-    atom: "https://krymtkts.github.io/atom",
-  },
-});
-
-// node-rss
-var feed = new RSS({
-  title: "krymtkts",
-  description: "krymtktss blog",
-  site_url: "http://krymtkts.github.io",
-  image_url: "http://krymtkts.github.io/icon.png",
-  copyright: "Copyright © 2019-2023 krymtkts",
-  pubDate: "May 20, 2012 04:00:00 GMT",
-  feed_url: "http://krymtkts.github.io/rss.xml",
-});
-</code></pre><pre><code class="fsharp">let generateRssFeed (conf: RssFeed) =
-    let items = ...
-
-    let rss =
-        {
-            title = conf.title
-            description = conf.description
-            link = conf.link
-            lastBuildDate = now.ToString("yyyy-MM-dd")
-            generator = "blog-fable"
-            items = items
-        } |&gt; convertToSimpleXml
-
-    rss
-    |&gt; serializeXml
-    |&gt; (+) @"&lt;?xml version=""1.0"" encoding=""UTF-8""?&gt;"
-</code></pre><p>イメージ雑いけどこんな感じにならんかな？
-自前でやることによって進捗が鈍化しそうやけど、しゃーないかという感じ。</p>
+    <p>旧聞だが、 PowerShellGet が PSResourceGet に改名した。
+2023 秋の PowerShell 7.4 リリース前には GA するらしいのでそれに移行することとした。</p><p><a href="https://devblogs.microsoft.com/powershell/psresourceget-preview-is-now-available/">PSResourceGet Preview is Now Available - PowerShell Team</a></p><p>ついでに VS Code から VS Code Insiders にも移行したのでメモがてら残す。</p><h3 id="vs-code-insiders">VS Code Insiders</h3><p>VS Code Insiders にする理由はまだ順番待ちの GitHub Copilot Chat が落ちてきたら即使えるようにするためだ。
+もうかなり待っていても来ないが、最新の VS Code じゃないと動かないとかなんとか。</p><p>わたしは chocolatey で入れる。これも以下のコマンドを打つだけだ。
+<a href="https://community.chocolatey.org/packages/vscode-insiders">Chocolatey Software | Visual Studio Code Insiders 1.80.0.20230704</a></p><pre><code class="bat">choco install vscode-insiders -y
+</code></pre><p>VS Code とは別に VS Code Insiders がインストールされる。</p><p>ここで <code>code-insiders .</code> を実行して VS Code Insiders を開くとまっさらになっている。はじめは Setting Sync が有効でないためだ。
+最も簡単に VS Code から VS Code Insiders へ設定を移行する方法は、一時的に VS Code Insiders で Stable の Setting Sync に繋ぐ方法だろう。
+わたしの場合は非公開になってしまった拡張機能以外はこれで問題なく移行できた。
+移行後は Setting Sync を off にして Stable から離脱、再度 Setting Sync を on にして Insiders へ接続するようにすれば良い。
+たまに Stable と Insiders で非互換があるらしいし、自身の利用端末全てで VS Code Insiders に移行するまではリスクがあると見て分けておくのが無難やろな。
+例外的に、認証情報の類は <code>setting.json</code> に token を書くような野蛮なもの以外すべてポチポチ再認証が必要だが、それでも随分楽なもんやな。</p><p>VS Code Insiders ではコマンドも <code>code</code> から <code>code-insiders</code> に変わるので、これまた PowerShell の profile で該当の箇所を変えてやる必要がある。
+普段から <code>code</code> を使う場面は <a href="https://github.com/x-motemen/ghq">ghq</a> で一覧から選択した repo を開くときだけだ。
+面倒なので今回 current directory を開く関数を profile に新設した。さすがに <code>code-insiders</code> って長すぎるので許容できない。</p><pre><code class="powershell"># もとからあるやつ
+function Set-SelectedRepository {
+    ghq list | Select-Pocof | Select-Object -First 1 | ForEach-Object { Set-Location "$(ghq root)/$_" }
+}
+Set-Alias gcd Set-SelectedRepository -Option AllScope
+# 新設
+function Open-SelectedRepository {
+    param(
+        [Parameter()]
+        [ValidateSet('Stable', 'Insider')]
+        [string]
+        $Channel = 'Insider'
+    )
+    $code = switch ($Channel) {
+        'Stable' { 'code' }
+        'Insider' { 'code-insiders' }
+    }
+    Set-SelectedRepository &amp;&amp; &amp; $code .
+}
+Set-Alias gcode Open-SelectedRepository -Option AllScope
+</code></pre><p>これ <code>gcd</code> で選択肢がなかった場合の <code>code-insiders</code> が current directory になるのでなんか改善したほうが良いけど、いったんこれで。</p><h3 id="psresourceget">PSResourceGet</h3><p>PSResourceGet のインストールも大したことない。ブログに示されるコマンドでインストールすれば良い。
+わたしの場合は管理者権限で全ユーザ対象にインストールしてるので、追加でそのオプションだけつける。</p><pre><code class="powershell">Install-Module -Name Microsoft.PowerShell.PSResourceGet -AllowPrerelease -Scope AllUsers
+</code></pre><p>インストールしたら PowerShell の profile で書いてる PowerShellGet のコマンドを PSResourceGet のものに置き換える。
+今回対象になったのは以下だ。基本 <code>Module</code> だった部分が <code>PSResource</code> になるだけだが、オプションも微妙に変わっているところもある。
+profile で使ってるコマンドは以下の感じに置き換わる。意外に多かった。</p><ul><li><code>Get-InstalledModule</code> -&gt; <code>Get-InstalledPSResource</code></li><li><code>Install-Module</code> -&gt; <code>Install-PSResource</code><ul><li><code>-AllowPrerelease</code> -&gt; <code>-Prerelease</code></li><li><code>-AllowClobber</code> -&gt; default 挙動に。 従来の挙動は <code>-NoClobber</code></li></ul></li><li><code>Set-PSRepository</code> -&gt; <code>Set-PSResourceRepository</code></li><li><code>Get-Module</code> -&gt; <code>Get-PSResource</code></li><li><code>Find-Module</code> -&gt; <code>Find-PSResource</code></li><li><code>Update-Module</code> -&gt; <code>Update-PSResource</code></li></ul><p>これらの破壊的変更、どうも repo の CHANGELOG にまとまってないぽくて、すべてを一箇所で見つけることはできなかった。
+<a href="https://devblogs.microsoft.com/powershell/psresourceget-preview-is-now-available/">PowerShell Team のブログ</a> とか追っていったら全貌わかるかもだが、面倒だ。
+<code>NoClobber</code> の挙動とかは以下を参考にした。信頼の Ironman 。
+<a href="https://blog.ironmansoftware.com/powershellget-v3/">What's new in PowerShellGet v3?</a></p><p>これらの変更を profile に施したあとうまく動いてるのが確認できたら仕事機にも反映する。</p><p>個人的にちょっとめんどいのが <a href="https://github.com/aws/aws-tools-for-powershell">AWS Tools for PowerShell</a> との今後の付き合い。
+AWS Tools for PowerShell が PSResourceGet に移行するまで、当面は v2 v3 並行稼働という感じになるのだろうか。うまくいくのだろうか。
+互換モジュールが提供されてるから、そっちを使うのが良さげ。</p><p><a href="https://github.com/PowerShell/CompatPowerShellGet">PowerShell/CompatPowerShellGet: This module provide functions used with PowerShellGet v3 to provide compatibility with scripts expecting PowerShellGet v2</a></p><p>あと開発環境とは別に <a href="https://github.com/krymtkts/pocof/">pocof</a> の方でも PSResourceGet への移行を反映したい。
+具体的にはコマンドの名前が変わったこの辺。これらは Issue にしてればいいかな。未だ .NET 7 にも移行してないから、そういうのもやっていき。</p><ul><li><code>Get-Module</code> -&gt; <code>Get-PSResource</code></li><li><code>Publish-Module</code> -&gt; <code>Publish-PSResource</code></li></ul>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/fable">fable</a>
+    <a href="/tags/vscode">vscode</a>
     
-    <a href="/tags/fsharp">fsharp</a>
+    <a href="/tags/powershell">powershell</a>
     
 </div>
 
@@ -273,7 +264,7 @@ var feed = new RSS({
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-06-25-rebuild-blog-with-fable-pt8">2023-06-25 Fable でブログを再構築する pt.8 &raquo;</a>
+        <a class="right" href="/posts/2023-07-02-rebuild-blog-with-fable-pt9">2023-07-02 Fable でブログを再構築する pt.9 &raquo;</a>
         
     </div>
 </div>

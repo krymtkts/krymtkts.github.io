@@ -1,4 +1,45 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 02 Jul 2023 16:22:05 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-07-02-rebuild-blog-with-fable-pt9</guid><link>https://krymtkts.github.io/posts/2023-07-02-rebuild-blog-with-fable-pt9</link><title>Fable でブログを再構築する pt.9</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;細々とした修正だけやった。 &lt;a href="https://github.com/krymtkts/blog-fable/pull/23"&gt;#23&lt;/a&gt;&lt;/p&gt;&lt;p&gt;O'reilly の F# 本で勉強してたからか最近まで &lt;a href="https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/interpolated-strings"&gt;Interpolated strings - F# | Microsoft Learn&lt;/a&gt; わかってなかったのでそれに書き換えたり。あと &lt;a href="https://github.com/fable-compiler/fable-node"&gt;Fable.Node&lt;/a&gt; の process 予約語で警告が出るやつも自前でかいた binding を使うことで解消した。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 09 Jul 2023 15:42:12 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-07-09-migrate-dev-environment</guid><link>https://krymtkts.github.io/posts/2023-07-09-migrate-dev-environment</link><title>開発環境をプチ移行する</title><description>&lt;p&gt;旧聞だが、 PowerShellGet が PSResourceGet に改名した。
+2023 秋の PowerShell 7.4 リリース前には GA するらしいのでそれに移行することとした。&lt;/p&gt;&lt;p&gt;&lt;a href="https://devblogs.microsoft.com/powershell/psresourceget-preview-is-now-available/"&gt;PSResourceGet Preview is Now Available - PowerShell Team&lt;/a&gt;&lt;/p&gt;&lt;p&gt;ついでに VS Code から VS Code Insiders にも移行したのでメモがてら残す。&lt;/p&gt;&lt;h3 id="vs-code-insiders"&gt;VS Code Insiders&lt;/h3&gt;&lt;p&gt;VS Code Insiders にする理由はまだ順番待ちの GitHub Copilot Chat が落ちてきたら即使えるようにするためだ。
+もうかなり待っていても来ないが、最新の VS Code じゃないと動かないとかなんとか。&lt;/p&gt;&lt;p&gt;わたしは chocolatey で入れる。これも以下のコマンドを打つだけだ。
+&lt;a href="https://community.chocolatey.org/packages/vscode-insiders"&gt;Chocolatey Software | Visual Studio Code Insiders 1.80.0.20230704&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class="bat"&gt;choco install vscode-insiders -y
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;VS Code とは別に VS Code Insiders がインストールされる。&lt;/p&gt;&lt;p&gt;ここで &lt;code&gt;code-insiders .&lt;/code&gt; を実行して VS Code Insiders を開くとまっさらになっている。はじめは Setting Sync が有効でないためだ。
+最も簡単に VS Code から VS Code Insiders へ設定を移行する方法は、一時的に VS Code Insiders で Stable の Setting Sync に繋ぐ方法だろう。
+わたしの場合は非公開になってしまった拡張機能以外はこれで問題なく移行できた。
+移行後は Setting Sync を off にして Stable から離脱、再度 Setting Sync を on にして Insiders へ接続するようにすれば良い。
+たまに Stable と Insiders で非互換があるらしいし、自身の利用端末全てで VS Code Insiders に移行するまではリスクがあると見て分けておくのが無難やろな。
+例外的に、認証情報の類は &lt;code&gt;setting.json&lt;/code&gt; に token を書くような野蛮なもの以外すべてポチポチ再認証が必要だが、それでも随分楽なもんやな。&lt;/p&gt;&lt;p&gt;VS Code Insiders ではコマンドも &lt;code&gt;code&lt;/code&gt; から &lt;code&gt;code-insiders&lt;/code&gt; に変わるので、これまた PowerShell の profile で該当の箇所を変えてやる必要がある。
+普段から &lt;code&gt;code&lt;/code&gt; を使う場面は &lt;a href="https://github.com/x-motemen/ghq"&gt;ghq&lt;/a&gt; で一覧から選択した repo を開くときだけだ。
+面倒なので今回 current directory を開く関数を profile に新設した。さすがに &lt;code&gt;code-insiders&lt;/code&gt; って長すぎるので許容できない。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# もとからあるやつ
+function Set-SelectedRepository {
+    ghq list | Select-Pocof | Select-Object -First 1 | ForEach-Object { Set-Location "$(ghq root)/$_" }
+}
+Set-Alias gcd Set-SelectedRepository -Option AllScope
+# 新設
+function Open-SelectedRepository {
+    param(
+        [Parameter()]
+        [ValidateSet('Stable', 'Insider')]
+        [string]
+        $Channel = 'Insider'
+    )
+    $code = switch ($Channel) {
+        'Stable' { 'code' }
+        'Insider' { 'code-insiders' }
+    }
+    Set-SelectedRepository &amp;amp;&amp;amp; &amp;amp; $code .
+}
+Set-Alias gcode Open-SelectedRepository -Option AllScope
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これ &lt;code&gt;gcd&lt;/code&gt; で選択肢がなかった場合の &lt;code&gt;code-insiders&lt;/code&gt; が current directory になるのでなんか改善したほうが良いけど、いったんこれで。&lt;/p&gt;&lt;h3 id="psresourceget"&gt;PSResourceGet&lt;/h3&gt;&lt;p&gt;PSResourceGet のインストールも大したことない。ブログに示されるコマンドでインストールすれば良い。
+わたしの場合は管理者権限で全ユーザ対象にインストールしてるので、追加でそのオプションだけつける。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;Install-Module -Name Microsoft.PowerShell.PSResourceGet -AllowPrerelease -Scope AllUsers
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;インストールしたら PowerShell の profile で書いてる PowerShellGet のコマンドを PSResourceGet のものに置き換える。
+今回対象になったのは以下だ。基本 &lt;code&gt;Module&lt;/code&gt; だった部分が &lt;code&gt;PSResource&lt;/code&gt; になるだけだが、オプションも微妙に変わっているところもある。
+profile で使ってるコマンドは以下の感じに置き換わる。意外に多かった。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;Get-InstalledModule&lt;/code&gt; -&amp;gt; &lt;code&gt;Get-InstalledPSResource&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;Install-Module&lt;/code&gt; -&amp;gt; &lt;code&gt;Install-PSResource&lt;/code&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;-AllowPrerelease&lt;/code&gt; -&amp;gt; &lt;code&gt;-Prerelease&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;-AllowClobber&lt;/code&gt; -&amp;gt; default 挙動に。 従来の挙動は &lt;code&gt;-NoClobber&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;Set-PSRepository&lt;/code&gt; -&amp;gt; &lt;code&gt;Set-PSResourceRepository&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;Get-Module&lt;/code&gt; -&amp;gt; &lt;code&gt;Get-PSResource&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;Find-Module&lt;/code&gt; -&amp;gt; &lt;code&gt;Find-PSResource&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;Update-Module&lt;/code&gt; -&amp;gt; &lt;code&gt;Update-PSResource&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;これらの破壊的変更、どうも repo の CHANGELOG にまとまってないぽくて、すべてを一箇所で見つけることはできなかった。
+&lt;a href="https://devblogs.microsoft.com/powershell/psresourceget-preview-is-now-available/"&gt;PowerShell Team のブログ&lt;/a&gt; とか追っていったら全貌わかるかもだが、面倒だ。
+&lt;code&gt;NoClobber&lt;/code&gt; の挙動とかは以下を参考にした。信頼の Ironman 。
+&lt;a href="https://blog.ironmansoftware.com/powershellget-v3/"&gt;What's new in PowerShellGet v3?&lt;/a&gt;&lt;/p&gt;&lt;p&gt;これらの変更を profile に施したあとうまく動いてるのが確認できたら仕事機にも反映する。&lt;/p&gt;&lt;p&gt;個人的にちょっとめんどいのが &lt;a href="https://github.com/aws/aws-tools-for-powershell"&gt;AWS Tools for PowerShell&lt;/a&gt; との今後の付き合い。
+AWS Tools for PowerShell が PSResourceGet に移行するまで、当面は v2 v3 並行稼働という感じになるのだろうか。うまくいくのだろうか。
+互換モジュールが提供されてるから、そっちを使うのが良さげ。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/PowerShell/CompatPowerShellGet"&gt;PowerShell/CompatPowerShellGet: This module provide functions used with PowerShellGet v3 to provide compatibility with scripts expecting PowerShellGet v2&lt;/a&gt;&lt;/p&gt;&lt;p&gt;あと開発環境とは別に &lt;a href="https://github.com/krymtkts/pocof/"&gt;pocof&lt;/a&gt; の方でも PSResourceGet への移行を反映したい。
+具体的にはコマンドの名前が変わったこの辺。これらは Issue にしてればいいかな。未だ .NET 7 にも移行してないから、そういうのもやっていき。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;code&gt;Get-Module&lt;/code&gt; -&amp;gt; &lt;code&gt;Get-PSResource&lt;/code&gt;&lt;/li&gt;&lt;li&gt;&lt;code&gt;Publish-Module&lt;/code&gt; -&amp;gt; &lt;code&gt;Publish-PSResource&lt;/code&gt;&lt;/li&gt;&lt;/ul&gt;</description><pubDate>Sun, 09 Jul 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-07-02-rebuild-blog-with-fable-pt9</guid><link>https://krymtkts.github.io/posts/2023-07-02-rebuild-blog-with-fable-pt9</link><title>Fable でブログを再構築する pt.9</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;細々とした修正だけやった。 &lt;a href="https://github.com/krymtkts/blog-fable/pull/23"&gt;#23&lt;/a&gt;&lt;/p&gt;&lt;p&gt;O'reilly の F# 本で勉強してたからか最近まで &lt;a href="https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/interpolated-strings"&gt;Interpolated strings - F# | Microsoft Learn&lt;/a&gt; わかってなかったのでそれに書き換えたり。あと &lt;a href="https://github.com/fable-compiler/fable-node"&gt;Fable.Node&lt;/a&gt; の process 予約語で警告が出るやつも自前でかいた binding を使うことで解消した。
 利用する範囲そんなに多くなければ最小の範囲に絞り込んで Node.js の binding を書き Fable.Node 排除するのもよいが、なんとなく先延ばしにした。&lt;/p&gt;&lt;p&gt;RSS Feed に取り組み始めた。
 まずは RSS feed の構造を知らんかったので、自ブログの出力した &lt;a href="https://krymtkts.github.io/feed.xml"&gt;feed.xml&lt;/a&gt; と &lt;a href="https://validator.w3.org/feed/docs/rss2.html"&gt;RSS 2.0 specification&lt;/a&gt; &lt;a href="https://datatracker.ietf.org/doc/html/rfc4287"&gt;RFC 4287 - The Atom Syndication Format&lt;/a&gt; を学んでる。
 自ブログは RSS 2.0 で書かれていて &lt;code&gt;atom:link&lt;/code&gt; セクションを使うことで追加の機能を入れてるらしい。&lt;/p&gt;&lt;p&gt;&lt;a href="https://www.rssboard.org/rss-validator/"&gt;RSS Validator&lt;/a&gt; なんてのも初めて知ったわ。試しに feed.xml を読ませてみたところ valid な RSS Feed と判定されてるが推奨事項がチラホラあった。

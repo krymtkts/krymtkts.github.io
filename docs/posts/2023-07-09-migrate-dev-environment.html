@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh">
+    <title>krymtkts: 開発環境をプチ移行する</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-07-09-migrate-dev-environment">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-02-06-back-to-old-context-menu-in-win-11-pwsh" />
+    <meta property="og:title" content="krymtkts: 開発環境をプチ移行する" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-07-09-migrate-dev-environment" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -198,37 +198,61 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-02-06</div>
+        <div class="col-lg-6">2023-07-09</div>
         
     </div>
-    <h2>Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)</h2>
+    <h2>開発環境をプチ移行する</h2>
 </div>
 <div>
     
-    <p>Windows11 にてコンテキストメニューの UI が変わった。
-しかし自身は普段コンテキストメニューを使わないのであまり気にならなかった。</p><p>のだが、たまたま 7z 圧縮されたファイルを渡されたことで、右クリックで 7zip で開けないのクソめんどい...と気になり始めた。
-なので前のコンテキストメニューに戻す。PowerShell で。</p><p>レジストリを編集する必要があるらしい。情報元 ↓
-<a href="https://www.tomshardware.com/how-to/windows-11-classic-context-menus">How to Get Full Context Menus in Windows 11 | Tom's Hardware</a></p><pre><code class="powershell">$path = 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32'
-New-Item -Path $path -Force
-Split-Path $path -Parent | Get-ChildItem
-Set-ItemProperty -Path $path -Name '(Default)' -Value ''
-Get-ItemProperty $path
-
-Stop-Process -Name explorer -Force
-</code></pre><p>Gist → <a href="https://gist.github.com/krymtkts/30af31454d510ce0c34cfeb2fefec072">Return to the previous context menu in Windows 11.</a></p><p>↓ キーの名前は case insensitive なのかーい！</p><pre><code class="powershell">PS&gt; Get-ItemProperty $path
-
-(default)    :
-PSPath       : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\In
-               procServer32
-PSParentPath : Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}
-PSChildName  : InprocServer32
-PSDrive      : HKCU
-PSProvider   : Microsoft.PowerShell.Core\Registry
-</code></pre><p>終わり。</p>
+    <p>旧聞だが、 PowerShellGet が PSResourceGet に改名した。
+2023 秋の PowerShell 7.4 リリース前には GA するらしいのでそれに移行することとした。</p><p><a href="https://devblogs.microsoft.com/powershell/psresourceget-preview-is-now-available/">PSResourceGet Preview is Now Available - PowerShell Team</a></p><p>ついでに VS Code から VS Code Insiders にも移行したのでメモがてら残す。</p><h3 id="vs-code-insiders">VS Code Insiders</h3><p>VS Code Insiders にする理由はまだ順番待ちの GitHub Copilot Chat が落ちてきたら即使えるようにするためだ。
+もうかなり待っていても来ないが、最新の VS Code じゃないと動かないとかなんとか。</p><p>わたしは chocolatey で入れる。これも以下のコマンドを打つだけだ。
+<a href="https://community.chocolatey.org/packages/vscode-insiders">Chocolatey Software | Visual Studio Code Insiders 1.80.0.20230704</a></p><pre><code class="bat">choco install vscode-insiders -y
+</code></pre><p>VS Code とは別に VS Code Insiders がインストールされる。</p><p>ここで <code>code-insiders .</code> を実行して VS Code Insiders を開くとまっさらになっている。はじめは Setting Sync が有効でないためだ。
+最も簡単に VS Code から VS Code Insiders へ設定を移行する方法は、一時的に VS Code Insiders で Stable の Setting Sync に繋ぐ方法だろう。
+わたしの場合は非公開になってしまった拡張機能以外はこれで問題なく移行できた。
+移行後は Setting Sync を off にして Stable から離脱、再度 Setting Sync を on にして Insiders へ接続するようにすれば良い。
+たまに Stable と Insiders で非互換があるらしいし、自身の利用端末全てで VS Code Insiders に移行するまではリスクがあると見て分けておくのが無難やろな。
+例外的に、認証情報の類は <code>setting.json</code> に token を書くような野蛮なもの以外すべてポチポチ再認証が必要だが、それでも随分楽なもんやな。</p><p>VS Code Insiders ではコマンドも <code>code</code> から <code>code-insiders</code> に変わるので、これまた PowerShell の profile で該当の箇所を変えてやる必要がある。
+普段から <code>code</code> を使う場面は <a href="https://github.com/x-motemen/ghq">ghq</a> で一覧から選択した repo を開くときだけだ。
+面倒なので今回 current directory を開く関数を profile に新設した。さすがに <code>code-insiders</code> って長すぎるので許容できない。</p><pre><code class="powershell"># もとからあるやつ
+function Set-SelectedRepository {
+    ghq list | Select-Pocof | Select-Object -First 1 | ForEach-Object { Set-Location "$(ghq root)/$_" }
+}
+Set-Alias gcd Set-SelectedRepository -Option AllScope
+# 新設
+function Open-SelectedRepository {
+    param(
+        [Parameter()]
+        [ValidateSet('Stable', 'Insider')]
+        [string]
+        $Channel = 'Insider'
+    )
+    $code = switch ($Channel) {
+        'Stable' { 'code' }
+        'Insider' { 'code-insiders' }
+    }
+    Set-SelectedRepository &amp;&amp; &amp; $code .
+}
+Set-Alias gcode Open-SelectedRepository -Option AllScope
+</code></pre><p>これ <code>gcd</code> で選択肢がなかった場合の <code>code-insiders</code> が current directory になるのでなんか改善したほうが良いけど、いったんこれで。</p><h3 id="psresourceget">PSResourceGet</h3><p>PSResourceGet のインストールも大したことない。ブログに示されるコマンドでインストールすれば良い。
+わたしの場合は管理者権限で全ユーザ対象にインストールしてるので、追加でそのオプションだけつける。</p><pre><code class="powershell">Install-Module -Name Microsoft.PowerShell.PSResourceGet -AllowPrerelease -Scope AllUsers
+</code></pre><p>インストールしたら PowerShell の profile で書いてる PowerShellGet のコマンドを PSResourceGet のものに置き換える。
+今回対象になったのは以下だ。基本 <code>Module</code> だった部分が <code>PSResource</code> になるだけだが、オプションも微妙に変わっているところもある。
+profile で使ってるコマンドは以下の感じに置き換わる。意外に多かった。</p><ul><li><code>Get-InstalledModule</code> -&gt; <code>Get-InstalledPSResource</code></li><li><code>Install-Module</code> -&gt; <code>Install-PSResource</code><ul><li><code>-AllowPrerelease</code> -&gt; <code>-Prerelease</code></li><li><code>-AllowClobber</code> -&gt; default 挙動に。 従来の挙動は <code>-NoClobber</code></li></ul></li><li><code>Set-PSRepository</code> -&gt; <code>Set-PSResourceRepository</code></li><li><code>Get-Module</code> -&gt; <code>Get-PSResource</code></li><li><code>Find-Module</code> -&gt; <code>Find-PSResource</code></li><li><code>Update-Module</code> -&gt; <code>Update-PSResource</code></li></ul><p>これらの破壊的変更、どうも repo の CHANGELOG にまとまってないぽくて、すべてを一箇所で見つけることはできなかった。
+<a href="https://devblogs.microsoft.com/powershell/psresourceget-preview-is-now-available/">PowerShell Team のブログ</a> とか追っていったら全貌わかるかもだが、面倒だ。
+<code>NoClobber</code> の挙動とかは以下を参考にした。信頼の Ironman 。
+<a href="https://blog.ironmansoftware.com/powershellget-v3/">What's new in PowerShellGet v3?</a></p><p>これらの変更を profile に施したあとうまく動いてるのが確認できたら仕事機にも反映する。</p><p>個人的にちょっとめんどいのが <a href="https://github.com/aws/aws-tools-for-powershell">AWS Tools for PowerShell</a> との今後の付き合い。
+AWS Tools for PowerShell が PSResourceGet に移行するまで、当面は v2 v3 並行稼働という感じになるのだろうか。うまくいくのだろうか。
+互換モジュールが提供されてるから、そっちを使うのが良さげ。</p><p><a href="https://github.com/PowerShell/CompatPowerShellGet">PowerShell/CompatPowerShellGet: This module provide functions used with PowerShellGet v3 to provide compatibility with scripts expecting PowerShellGet v2</a></p><p>あと開発環境とは別に <a href="https://github.com/krymtkts/pocof/">pocof</a> の方でも PSResourceGet への移行を反映したい。
+具体的にはコマンドの名前が変わったこの辺。これらは Issue にしてればいいかな。未だ .NET 7 にも移行してないから、そういうのもやっていき。</p><ul><li><code>Get-Module</code> -&gt; <code>Get-PSResource</code></li><li><code>Publish-Module</code> -&gt; <code>Publish-PSResource</code></li></ul>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
+    
+    <a href="/tags/vscode">vscode</a>
     
     <a href="/tags/powershell">powershell</a>
     
@@ -237,10 +261,8 @@ PSProvider   : Microsoft.PowerShell.Core\Registry
 
     <div id="prev-next">
         
-        <a href="/posts/2022-02-12-publish-to-powershell-gallery-etc">&laquo; 2022-02-12 PoweShell Gallery へ公開するためのステップ覚書</a>
         
-        
-        <a class="right" href="/posts/2022-02-05-build-pwsh-2022">2022-02-05 2022-02 版 PowerShell のビルド &raquo;</a>
+        <a class="right" href="/posts/2023-07-02-rebuild-blog-with-fable-pt9">2023-07-02 Fable でブログを再構築する pt.9 &raquo;</a>
         
     </div>
 
