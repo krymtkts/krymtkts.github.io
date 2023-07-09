@@ -77,6 +77,7 @@ profile で使ってるコマンドは以下の感じに置き換わる。意外
   - `-AllowPrerelease` -> `-Prerelease`
   - `-AllowClobber` -> default 挙動に。 従来の挙動は `-NoClobber`
 - `Set-PSRepository` -> `Set-PSResourceRepository`
+  - 追記: こいつもあったわ `-InstallationPolicy Trusted` -> `-Trusted`
 - `Get-Module` -> `Get-PSResource`
 - `Find-Module` -> `Find-PSResource`
 - `Update-Module` -> `Update-PSResource`
@@ -99,3 +100,12 @@ AWS Tools for PowerShell が PSResourceGet に移行するまで、当面は v2 
 
 - `Get-Module` -> `Get-PSResource`
 - `Publish-Module` -> `Publish-PSResource`
+
+### 追記
+
+`Find-AWSToolsModule` が `Find-Module` に依存してて、事前にダミーの `Find-Module` してないとエラーになるやつ未だ直ってないようだ。
+
+> Find-AWSToolsModule: The term 'PowerShellGet\Find-Module' is not recognized as a name of a cmdlet, function, script file, or executable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+
+自分用にはこれを回避するために関数を書いてたが、CompatPowerShellGet を使うとこの依存関係が永久に解決できないみたい。
+module 違うからなあ...やはり v2 v3 の並行稼働しかなさそう...だいじょぶかな。
