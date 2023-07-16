@@ -73,12 +73,16 @@ Install-Module -Name Microsoft.PowerShell.PSResourceGet -AllowPrerelease -Scope 
 profile で使ってるコマンドは以下の感じに置き換わる。意外に多かった。
 
 - `Get-InstalledModule` -> `Get-InstalledPSResource`
+  - `-Scope` の指定がいる
 - `Install-Module` -> `Install-PSResource`
   - `-AllowPrerelease` -> `-Prerelease`
   - `-AllowClobber` -> default 挙動に。 従来の挙動は `-NoClobber`
 - `Set-PSRepository` -> `Set-PSResourceRepository`
   - 追記: こいつもあったわ `-InstallationPolicy Trusted` -> `-Trusted`
-- `Get-Module` -> `Get-PSResource`
+- `Get-Module` -> ~~`Get-PSResource`~~
+  - 追記:
+    - `Get-PSResource` は PowerShellGet v3 にはあったけど PSResourceGet にはない。つまり何に変わったんだこれ？
+    - `Get-Module` は `Microsoft.PowerShell.Core` が Source なのでそのまま使えば良いのか
 - `Find-Module` -> `Find-PSResource`
 - `Update-Module` -> `Update-PSResource`
 
@@ -98,10 +102,11 @@ AWS Tools for PowerShell が PSResourceGet に移行するまで、当面は v2 
 あと開発環境とは別に [pocof](https://github.com/krymtkts/pocof/) の方でも PSResourceGet への移行を反映したい。
 具体的にはコマンドの名前が変わったこの辺。これらは Issue にしてればいいかな。未だ .NET 7 にも移行してないから、そういうのもやっていき。
 
-- `Get-Module` -> `Get-PSResource`
+- `Get-Module` -> ~~`Get-PSResource`~~
+  - 追記: 先述の通り
 - `Publish-Module` -> `Publish-PSResource`
 
-### 追記
+### 追記 1
 
 `Find-AWSToolsModule` が `Find-Module` に依存してて、事前にダミーの `Find-Module` してないとエラーになるやつ未だ直ってないようだ。
 
@@ -113,3 +118,9 @@ module 違うからなあ...やはり v2 v3 の並行稼働しかなさそう...
 `Get-PSResource` も戻り値の property に変化があって、対処が必要だった。
 
 - `Path` -> `InstalledLocation`
+
+### 追記 2
+
+PowerShellGet に `-AllowPrerelease` つけて v3 をインストールしてたがややこしい。
+PSResourceGet にない Cmdlet もあったりして危ない。おまえのことやぞ `Get-PSResource` 。
+PowerShellGet は prerelease 版を入れないようにするのが無難。
