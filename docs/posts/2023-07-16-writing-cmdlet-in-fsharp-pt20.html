@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;clojure&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/clojure">
+    <title>krymtkts: F# でコマンドレットを書いてる pt.20</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;clojure&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/clojure" />
+    <meta property="og:title" content="krymtkts: F# でコマンドレットを書いてる pt.20" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -195,25 +195,55 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;clojure&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2023-07-16</div>
+        
     </div>
-    <ul>
+    <h2>F# でコマンドレットを書いてる pt.20</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2022-03-05-customize-cryogen">2022-03-05 Cryogen のカスタマイズ</a>
-        </li>
+    <p>久しぶりに <a href="https://github.com/krymtkts/pocof">pocof</a> の開発をした。
+ゆーても .NET 6 → .NET 7 と、 PowerShellGet → PSResourceGet だけ。</p><h3 id="net-6--net-7-53">.NET 6 → .NET 7 <a href="https://github.com/krymtkts/pocof/pull/53">#53</a></h3><p>ASP.NET じゃないけどこれがやることわかりやすくまとまってたので参考にした。
+<a href="https://learn.microsoft.com/en-us/aspnet/core/migration/60-70?view=aspnetcore-7.0&amp;tabs=visual-studio-code">Migrate from ASP.NET Core 6.0 to 7.0 | Microsoft Learn</a></p><p>SDK を <code>global.json</code> で固定するようにした。</p><pre><code class="powershell">dotnet new globaljson --sdk-version 7.0.306 --roll-forward latestFeature
+</code></pre><p>その後 <code>*.fsproj</code> の <code>TargetFramework</code> を net6.0 → net7.0 にする。
+<code>global.json</code> の作成に先んじて <code>TargetFramework</code> を変更してビルドするとうまくいかなかったが、変えるとすんなりいった。キャッシュの影響？</p><p><a href="https://www.nuget.org/packages/Microsoft.PowerShell.SDK/7.3.6">NuGet Gallery | Microsoft.PowerShell.SDK 7.3.6</a>
+を見て .NET 7 と互換性がある Microsoft.PowerShell.SDK に変える。
+<code>7.2.4</code> → <code>7.3.6</code> にした。</p><p>これでビルドが通るようになる。</p><p>ビルド後に <code>Regex</code> 周りでエラーが出るようになった。
+<code>Regex.IsMatch</code>メソッドで型推論できなくなった箇所があったので、型注釈して通るようにする。
+<code>IsMatch(ReadOnlySpan&lt;Char&gt;)</code> が .NET 7 から増えたっぽいのでこの影響かなあ。
+<a href="https://learn.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.ismatch?view=net-7.0#system-text-regularexpressions-regex-ismatch(system-readonlyspan((system-char)))">Regex.IsMatch Method (System.Text.RegularExpressions) | Microsoft Learn</a></p><p>また例外の文面も変わったらしくて、 1 つのテストケースで期待値を新しいものに合わせた。</p><p>GitHub Actions の job で <code>actions/setup-dotnet@v3</code> に指定してるバージョンも <code>6.0.x</code> → <code>7.0.x</code> に変える。</p><p>この際 act 使った GitHub Actions の workflow テスト中に Docker が死んでしまった。
+最近 disk 容量少なくなってて、 Docker image が pull されたタイミングで枯渇したの原因(一時的に残 100KB くらいになってた。やば)。</p><p>解消するために以下を参考にしたが、 dockerd の再起動だけでは解決しなかった。
+<a href="https://stackoverflow.com/questions/68218291/docker-error-with-read-only-file-system-unknown/70071216#70071216">dockerfile - Docker error with read-only file system unknown - Stack Overflow</a></p><p>結果的に空き容量確保後に PC 再起動したら直った。</p><p>これにて .NET 7 化は完了。</p><h3 id="powershellget--psresourceget-54">PowerShellGet → PSResourceGet <a href="https://github.com/krymtkts/pocof/pull/54">#54</a></h3><p>変えたのは <code>Publish-Module</code> → <code>Publish-PSResource</code> だけ。
+<a href="http://localhost:3000/posts/2023-07-09-migrate-dev-environment">前回の日記</a> にも追記したが、 <code>Get-Module</code> は <code>Microsoft.PowerShell.Core</code> の持ち物だったので変える必要なかった。</p><p><code>WhatIf</code> までの確認に留めている。
+というのも、結構パラメータが変わっておりホンマにうまく動くんかこれ...というのがあるため。
+<a href="https://github.com/PowerShell/PSResourceGet/issues?q=is%3Aissue+is%3Aopen+Publish-PSResource">PSResourceGet の Issues</a> 見て <code>Publish-PSResource</code> の状況をつかもうとしてるがまだまだあんまわからない。
+それに <code>Publish-PSResource</code> の前例を検索してもほぼない。</p><p>既存モジュールでいきなりやるのはちょい不安。やるならまずテスト用の module 作ってそれで試すが吉とみた。
+が、作るのめんどくせええええ、というのは否めない。</p><h3 id="おわり">おわり</h3><p><a href="/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8">昔の日記</a> で書いてた platyPS の prerelease 使うとエラーになる件忘れていてまた引っかかったが、久しぶりの pocof 開発なんとかできてよかった。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-        <li>
-            <a href="/posts/2022-02-27-issue-with-cryogen-version-bump">2022-02-27 Cryogen バージョンアップに伴う困りごと</a>
-        </li>
+    <a href="/tags/powershell">powershell</a>
     
-        <li>
-            <a href="/posts/2019-01-10-make-blog-with-clojure">2019-01-10 Clojureでブログを作った</a>
-        </li>
+    <a href="/tags/fsharp">fsharp</a>
     
-    </ul>
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2023-07-09-migrate-dev-environment">2023-07-09 開発環境をプチ移行する &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>
