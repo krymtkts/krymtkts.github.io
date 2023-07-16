@@ -47,7 +47,7 @@ GitHub Actions の job で `actions/setup-dotnet@v3` に指定してるバージ
 ### PowerShellGet → PSResourceGet [#54](https://github.com/krymtkts/pocof/pull/54)
 
 変えたのは `Publish-Module` → `Publish-PSResource` だけ。
-[前回の日記](http://localhost:3000/posts/2023-07-09-migrate-dev-environment) にも追記したが、 `Get-Module` は `Microsoft.PowerShell.Core` の持ち物だったので変える必要なかった。
+[前回の日記](/posts/2023-07-09-migrate-dev-environment) にも追記したが、 `Get-Module` は `Microsoft.PowerShell.Core` の持ち物だったので変える必要なかった。
 
 `WhatIf` までの確認に留めている。
 というのも、結構パラメータが変わっておりホンマにうまく動くんかこれ...というのがあるため。
