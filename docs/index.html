@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-07-23-psresourceget">PSResourceGet メモ</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20">F# でコマンドレットを書いてる pt.20</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-07-09-migrate-dev-environment">開発環境をプチ移行する</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-07-02-rebuild-blog-with-fable-pt9">Fable でブログを再構築する pt.9</a></li>
                         
                         
 
@@ -198,38 +198,37 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-07-16</div>
+        <div class="col-lg-6">2023-07-23</div>
         
     </div>
-    <h2>F# でコマンドレットを書いてる pt.20</h2>
+    <h2>PSResourceGet メモ</h2>
 </div>
 <div>
     
-    <p>久しぶりに <a href="https://github.com/krymtkts/pocof">pocof</a> の開発をした。
-ゆーても .NET 6 → .NET 7 と、 PowerShellGet → PSResourceGet だけ。</p><h3 id="net-6--net-7-53">.NET 6 → .NET 7 <a href="https://github.com/krymtkts/pocof/pull/53">#53</a></h3><p>ASP.NET じゃないけどこれがやることわかりやすくまとまってたので参考にした。
-<a href="https://learn.microsoft.com/en-us/aspnet/core/migration/60-70?view=aspnetcore-7.0&amp;tabs=visual-studio-code">Migrate from ASP.NET Core 6.0 to 7.0 | Microsoft Learn</a></p><p>SDK を <code>global.json</code> で固定するようにした。</p><pre><code class="powershell">dotnet new globaljson --sdk-version 7.0.306 --roll-forward latestFeature
-</code></pre><p>その後 <code>*.fsproj</code> の <code>TargetFramework</code> を net6.0 → net7.0 にする。
-<code>global.json</code> の作成に先んじて <code>TargetFramework</code> を変更してビルドするとうまくいかなかったが、変えるとすんなりいった。キャッシュの影響？</p><p><a href="https://www.nuget.org/packages/Microsoft.PowerShell.SDK/7.3.6">NuGet Gallery | Microsoft.PowerShell.SDK 7.3.6</a>
-を見て .NET 7 と互換性がある Microsoft.PowerShell.SDK に変える。
-<code>7.2.4</code> → <code>7.3.6</code> にした。</p><p>これでビルドが通るようになる。</p><p>ビルド後に <code>Regex</code> 周りでエラーが出るようになった。
-<code>Regex.IsMatch</code>メソッドで型推論できなくなった箇所があったので、型注釈して通るようにする。
-<code>IsMatch(ReadOnlySpan&lt;Char&gt;)</code> が .NET 7 から増えたっぽいのでこの影響かなあ。
-<a href="https://learn.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.ismatch?view=net-7.0#system-text-regularexpressions-regex-ismatch(system-readonlyspan((system-char)))">Regex.IsMatch Method (System.Text.RegularExpressions) | Microsoft Learn</a></p><p>また例外の文面も変わったらしくて、 1 つのテストケースで期待値を新しいものに合わせた。</p><p>GitHub Actions の job で <code>actions/setup-dotnet@v3</code> に指定してるバージョンも <code>6.0.x</code> → <code>7.0.x</code> に変える。</p><p>この際 act 使った GitHub Actions の workflow テスト中に Docker が死んでしまった。
-最近 disk 容量少なくなってて、 Docker image が pull されたタイミングで枯渇したの原因(一時的に残 100KB くらいになってた。やば)。</p><p>解消するために以下を参考にしたが、 dockerd の再起動だけでは解決しなかった。
-<a href="https://stackoverflow.com/questions/68218291/docker-error-with-read-only-file-system-unknown/70071216#70071216">dockerfile - Docker error with read-only file system unknown - Stack Overflow</a></p><p>結果的に空き容量確保後に PC 再起動したら直った。</p><p>これにて .NET 7 化は完了。</p><h3 id="powershellget--psresourceget-54">PowerShellGet → PSResourceGet <a href="https://github.com/krymtkts/pocof/pull/54">#54</a></h3><p>変えたのは <code>Publish-Module</code> → <code>Publish-PSResource</code> だけ。
-<a href="/posts/2023-07-09-migrate-dev-environment">前回の日記</a> にも追記したが、 <code>Get-Module</code> は <code>Microsoft.PowerShell.Core</code> の持ち物だったので変える必要なかった。</p><p><code>WhatIf</code> までの確認に留めている。
-というのも、結構パラメータが変わっておりホンマにうまく動くんかこれ...というのがあるため。
-<a href="https://github.com/PowerShell/PSResourceGet/issues?q=is%3Aissue+is%3Aopen+Publish-PSResource">PSResourceGet の Issues</a> 見て <code>Publish-PSResource</code> の状況をつかもうとしてるがまだまだあんまわからない。
-それに <code>Publish-PSResource</code> の前例を検索してもほぼない。</p><p>既存モジュールでいきなりやるのはちょい不安。やるならまずテスト用の module 作ってそれで試すが吉とみた。
-が、作るのめんどくせええええ、というのは否めない。</p><h3 id="おわり">おわり</h3><p><a href="/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8">昔の日記</a> で書いてた platyPS の prerelease 使うとエラーになる件忘れていてまた引っかかったが、久しぶりの pocof 開発なんとかできてよかった。</p>
+    <p><a href="https://github.com/PowerShell/PSResourceGet">PSResourceGet</a> を使い始めてまだちょっとだが、明らかに変わったことがある。
+これ PowerShellGet v2 より圧倒的に速いな。
+PowerShellGet v3 時代からインストールするようにはしてたけど日々使ってなかったから気づいてなかった。</p><p>ただ <a href="/posts/2023-07-09-migrate-dev-environment#PSResourceGet">開発環境をプチ移行する</a> にも追記したように、 v3 には <code>Get-PSResource</code> みたいなややこしい Cmdlet もいる。
+PSResourceGet を入れてるなら v3 の方は消しとくのが無難。</p><p>なのでこの度普段定期的にしかやってなかった古いモジュールの整理をした。既に誰でもやってそうだが習慣的に行えるよう関数にした。
+なおこの関数、モジュール依存関係を壊すようなのがあればエラーになるだろう。
+それを回避したければ <code>-SkipDependencyCheck</code> 足してもいいかもだが、とりあえず壊れたときめんどいのでやめた(壊れたモジュール使うまで気づけなさそう)。</p><pre><code class="powershell">function Uninstall-OutdatedModules {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+    Get-InstalledPSResource -Scope AllUsers | Group-Object -Property Name | Where-Object -Property Count -GT 1 | ForEach-Object {
+        $_.Group | Sort-Object -Property Version -Descending | Select-Object -Skip 1
+    } | Uninstall-PSResource -Scope AllUsers
+}
+</code></pre><p>上記の関数の通り、 <code>Get-InstalledPSResource</code> は複数 ver 入ってるとそのままあるだけ返してくれる。
+v2 時代は <code>Get-Module</code> しないとダメだったのは <a href="/posts/2022-11-12-clean-up-pwsh-modules">以前書いた PowerShell モジュールの大掃除日記</a> でのこと。時代は変わったな。</p><p>また、こういう処理も v2 であれば <code>Get-InstalledModule</code> は結構遅かったのが、 PSResourceGet になってとても速くなった。</p><p>AllUsers の scope に 30 位のモジュールがある。
+実行するのは自環境、 Razer Blade Stealth 13 Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz 2.00 GHz, Windows 11 22H2, PowerShell 7.3.6 にて。
+初回の実行で v2 だと 1 秒くらい、 PSResourceGet だと 50ms 未満。
+ショボマシンでこの差は結構でかいな。何らかのローカルなデータストアにキャッシュでもしてんのかな PSResourceGet は。</p><p>MS の PowerShell Team の blog 読んだらここに書いたようなこと書いてたかもだが、改めて自分で試してみて新しいツールの利用が身体化されてる感じはするな。</p><p>あと <a href="https://github.com/krymtkts/pocof/">pocof</a> で気になってる <code>Publish-PSResource</code> のテストモジュール使った動作確認は未だやってない(めんどくて)。
+のでそろそろ手を付けないといけないけど、 web のどっかで情報出てきたらうれしいのだけど。</p><p>そういや勤怠スクリプト類などの他の PowerShell モジュールのこと忘れてた。今年の秋には PSResourceGet 対応しとかないとあかんか。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
     <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -239,7 +238,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-07-09-migrate-dev-environment">2023-07-09 開発環境をプチ移行する &raquo;</a>
+        <a class="right" href="/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20">2023-07-16 F# でコマンドレットを書いてる pt.20 &raquo;</a>
         
     </div>
 </div>
