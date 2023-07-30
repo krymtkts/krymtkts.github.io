@@ -1,4 +1,71 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 23 Jul 2023 16:38:40 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-07-23-psresourceget</guid><link>https://krymtkts.github.io/posts/2023-07-23-psresourceget</link><title>PSResourceGet メモ</title><description>&lt;p&gt;&lt;a href="https://github.com/PowerShell/PSResourceGet"&gt;PSResourceGet&lt;/a&gt; を使い始めてまだちょっとだが、明らかに変わったことがある。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 30 Jul 2023 11:56:16 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-07-30-rebuild-blog-with-fable-pt10</guid><link>https://krymtkts.github.io/posts/2023-07-30-rebuild-blog-with-fable-pt10</link><title>Fable でブログを再構築する pt.10</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;最近日記には書いてなかったが諸々の Issue を解決してた。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/24"&gt;#24&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/27"&gt;#27&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/32"&gt;#32&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/34"&gt;#34&lt;/a&gt; RSS の実装。&lt;/li&gt;&lt;li&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/31"&gt;#31&lt;/a&gt; 出力パス構築を整理するために、手始めとしてエントリポイントの設定を整理。&lt;/li&gt;&lt;li&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/37"&gt;#37&lt;/a&gt; 生 JS の排除。&lt;/li&gt;&lt;li&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/25"&gt;#25&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/28"&gt;#28&lt;/a&gt; あと雑多な更新。&lt;/li&gt;&lt;/ul&gt;&lt;hr /&gt;&lt;p&gt;RSS はやっぱわたしがほぼ素人だったのもあってわからないことが多かった。
+はじめは普段遣いしている &lt;a href="https://feedly.com/"&gt;feedly&lt;/a&gt; で購読してみて目視で変なところを直した。
+最終的には &lt;a href="https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fkrymtkts.github.io%2Fblog-fable%2Ffeed.xml"&gt;Feed Validator Results: https://krymtkts.github.io/blog-fable/feed.xml&lt;/a&gt; でエラーを解消する形にした。こんな便利なものがあるとは。とても役に立った。&lt;/p&gt;&lt;p&gt;RSS 周りの実装で改めて Fable が割る言い訳じゃないけど Fable のツラみを感じた。それは JavaScript の API がモロに出てくるところだ。
+今回は feed の &lt;code&gt;pubDate&lt;/code&gt; の表記を RFC 822 date format にする必要があって、 &lt;code&gt;Intl.DateTimeFormat&lt;/code&gt; を使った。
+こういうとき素直に .NET が使えるととても楽やのに...と思わざるを得ない。&lt;/p&gt;&lt;p&gt;いったんこういう ↓ 激薄 binding を書いて、 &lt;code&gt;obj&lt;/code&gt; を引き回すことで無理くり使っている。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;module Intl =
+    [&amp;lt;Emit "new Intl.DateTimeFormat([$0], $1)"&amp;gt;]
+    let DateTimeFormat lang options = jsNative
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;module DateTime =
+    open System
+
+    let options: obj =
+        !!{| weekday = "short"
+             year = "numeric"
+             month = "short"
+             day = "2-digit"
+             hour = "numeric"
+             minute = "numeric"
+             second = "numeric"
+             hourCycle = "h23"
+             timeZone = "Asia/Tokyo" // TODO: parametarize it.
+             timeZoneName = "short" |}
+
+    // TODO: write binding.
+    let formatter: obj = Intl.DateTimeFormat "en-US" options
+    let zonePattern = new Regex(@"GMT([+-])(\d+)")
+
+    let toRFC822DateTime (d: DateTime) =
+        let parts: obj [] = formatter?formatToParts (d)
+        let p: string [] = parts |&amp;gt; Array.map (fun x -&amp;gt; x?value)
+        let d = $"{p.[0]}{p.[1]}{p.[4]} {p.[2]} {p.[6]}"
+        let t = (p.[8..12] |&amp;gt; String.concat "")
+
+        let z =
+            match p.[14] with
+            | "UTC" -&amp;gt; "+0000"
+            | z -&amp;gt;
+                let item = zonePattern.Matches(z)
+                let group = item.Item 0
+                let op = (group.Groups.Item 1).Value
+                let offset = int (group.Groups.Item 2).Value
+
+                $"{op}%02d{offset}00"
+
+        $"{d} {t} {z}"
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;日付操作のための module 入れればいいってだけでもあるけど、このためだけに module いれるのもなあ...となるべく自力で解決する方向。&lt;/p&gt;&lt;p&gt;ただ TODO 残してるのもあるけど、それより Dynamic typing で危なっかしいしちゃんと binding を書きたいところ。
+あと添字でアクセスしまくるしか方法思いつかんかったけどもっとマシなのないのかな...&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/37"&gt;#37&lt;/a&gt; で開発モードでの live reloading するために使ってた生 JavaScript を Fable が出力したやつを使うように変えた。&lt;/p&gt;&lt;p&gt;普通であれば webpack とかで bundling するんやろけど、開発モード以外で JavaScript を使う予定がないので、出力された js ファイルを出力先ディレクトリにコピることで実現している。
+他に方法あるかわからん。
+ただブラウザでもそのまま使える js ファイルを出力する豆知識は得られた。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;open Browser.Dom
+open Browser.WebSocket
+
+let private init _ =
+    let ws = WebSocket.Create $"ws://{window.location.host}/websocket"
+    ws.onmessage &amp;lt;- fun _ -&amp;gt; window.location.reload ()
+
+window.addEventListener ("load", init)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;これ ↑ がこう ↓ なる。 &lt;code&gt;private&lt;/code&gt; をつけておいたら &lt;code&gt;export&lt;/code&gt; されない。&lt;/p&gt;&lt;pre&gt;&lt;code class="js"&gt;function init(_arg) {
+  const ws = new WebSocket(`ws://${window.location.host}/websocket`);
+  ws.onmessage = (_arg_1) =&amp;gt; {
+    window.location.reload();
+  };
+}
+
+window.addEventListener("load", (arg00$0040) =&amp;gt; {
+  init(arg00$0040);
+});
+&lt;/code&gt;&lt;/pre&gt;&lt;hr /&gt;&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/31"&gt;#31&lt;/a&gt; でエントリポイントの render 関数で諸々の設定をするように変えた。
+元々好きに関数を組み合わせて出力を作れたらいいかなと思ってたけど、それぞれの関数で整合性を取らないといけない点があってめんどい、というのが設定を導入した理由。&lt;/p&gt;&lt;p&gt;ひとまずこれで外向きのインタフェースは固定して、あとは内側の重複したパス構築部分をまとめていけたら、楽に整合性取れるんじゃないかな。&lt;/p&gt;&lt;p&gt;8 月くらいにできるかなーって思ってたけど、使わない CSS を読んでるやつとかも使ってるやつだけビルドして出せるようにしたいとか、諸々考え出すと実際のところ無理かな。
+気長にいこ。&lt;/p&gt;</description><pubDate>Sun, 30 Jul 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-07-23-psresourceget</guid><link>https://krymtkts.github.io/posts/2023-07-23-psresourceget</link><title>PSResourceGet メモ</title><description>&lt;p&gt;&lt;a href="https://github.com/PowerShell/PSResourceGet"&gt;PSResourceGet&lt;/a&gt; を使い始めてまだちょっとだが、明らかに変わったことがある。
 これ PowerShellGet v2 より圧倒的に速いな。
 PowerShellGet v3 時代からインストールするようにはしてたけど日々使ってなかったから気づいてなかった。&lt;/p&gt;&lt;p&gt;ただ &lt;a href="/posts/2023-07-09-migrate-dev-environment#PSResourceGet"&gt;開発環境をプチ移行する&lt;/a&gt; にも追記したように、 v3 には &lt;code&gt;Get-PSResource&lt;/code&gt; みたいなややこしい Cmdlet もいる。
 PSResourceGet を入れてるなら v3 の方は消しとくのが無難。&lt;/p&gt;&lt;p&gt;なのでこの度普段定期的にしかやってなかった古いモジュールの整理をした。既に誰でもやってそうだが習慣的に行えるよう関数にした。

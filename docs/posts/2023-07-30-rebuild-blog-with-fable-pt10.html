@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: AWS.Tools.Installer で入れたモジュールの更新は気をつけろよ</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-01-30-beware-to-update-aws-tools">
+    <title>krymtkts: Fable でブログを再構築する pt.10</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-07-30-rebuild-blog-with-fable-pt10">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: AWS.Tools.Installer で入れたモジュールの更新は気をつけろよ" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-01-30-beware-to-update-aws-tools" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.10" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-07-30-rebuild-blog-with-fable-pt10" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -198,71 +198,97 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-01-30</div>
+        <div class="col-lg-6">2023-07-30</div>
         
     </div>
-    <h2>AWS.Tools.Installer で入れたモジュールの更新は気をつけろよ</h2>
+    <h2>Fable でブログを再構築する pt.10</h2>
 </div>
 <div>
     
-    <pre><code class="powershell">Install-Package: C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1:13069
- Line |
-13069 |  …           $sid = PackageManagement\Install-Package @PSBoundParameters
-      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      | Unable to find repository 'C:\Users\takatoshi\AppData\Local\Temp\xeqcnbnp.pgl'. Use Get-PSRepository to see all available repositories.
-</code></pre><p>普段 PowerShell Module を一括更新しているのだけど、変なエラーが出るよになった。</p><p>一括更新は、 <code>Get-InstalledModule | Update-Module -AllowPrerelease</code> で。</p><p>ちょうど最近、 <a href="https://github.com/PowerShell/PowerShellGetv2/issues/303">Publish-Module うまくいかない問題</a> を解消したり Win10 の更新したりしてたので、そのへんかなーと思い NuGet の Provider の登録し直しとか色々やっても直らず 😥</p><p>初心に帰って、↑ のログを見てみたら「何やねんこの謎 repo」というのに気づき、 改めて<code>Get-InstalledModule</code>。</p><pre><code class="PowerShell"> ⚡ takatoshi  ~  Get-InstalledModule
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>最近日記には書いてなかったが諸々の Issue を解決してた。</p><ul><li><a href="https://github.com/krymtkts/blog-fable/pull/24">#24</a> <a href="https://github.com/krymtkts/blog-fable/pull/27">#27</a> <a href="https://github.com/krymtkts/blog-fable/pull/32">#32</a> <a href="https://github.com/krymtkts/blog-fable/pull/34">#34</a> RSS の実装。</li><li><a href="https://github.com/krymtkts/blog-fable/pull/31">#31</a> 出力パス構築を整理するために、手始めとしてエントリポイントの設定を整理。</li><li><a href="https://github.com/krymtkts/blog-fable/pull/37">#37</a> 生 JS の排除。</li><li><a href="https://github.com/krymtkts/blog-fable/pull/25">#25</a> <a href="https://github.com/krymtkts/blog-fable/pull/28">#28</a> あと雑多な更新。</li></ul><hr /><p>RSS はやっぱわたしがほぼ素人だったのもあってわからないことが多かった。
+はじめは普段遣いしている <a href="https://feedly.com/">feedly</a> で購読してみて目視で変なところを直した。
+最終的には <a href="https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fkrymtkts.github.io%2Fblog-fable%2Ffeed.xml">Feed Validator Results: https://krymtkts.github.io/blog-fable/feed.xml</a> でエラーを解消する形にした。こんな便利なものがあるとは。とても役に立った。</p><p>RSS 周りの実装で改めて Fable が割る言い訳じゃないけど Fable のツラみを感じた。それは JavaScript の API がモロに出てくるところだ。
+今回は feed の <code>pubDate</code> の表記を RFC 822 date format にする必要があって、 <code>Intl.DateTimeFormat</code> を使った。
+こういうとき素直に .NET が使えるととても楽やのに...と思わざるを得ない。</p><p>いったんこういう ↓ 激薄 binding を書いて、 <code>obj</code> を引き回すことで無理くり使っている。</p><pre><code class="fsharp">module Intl =
+    [&lt;Emit "new Intl.DateTimeFormat([$0], $1)"&gt;]
+    let DateTimeFormat lang options = jsNative
+</code></pre><pre><code class="fsharp">module DateTime =
+    open System
 
-Version              Name                                Repository           Description
--------              ----                                ----------           -----------
-4.1.7.0              AWS.Tools.Amplify                   C:\Users\takatoshi\… The Amplify module of AWS Tools for PowerShell lets developers and administrators manage AWS Amplify from the PowerShell scripting environment. In order to manage each AWS service, install th…
-4.1.7.0              AWS.Tools.CloudFormation            C:\Users\takatoshi\… The CloudFormation module of AWS Tools for PowerShell lets developers and administrators manage AWS CloudFormation from the PowerShell scripting environment. In order to manage each AWS servi…
-4.1.7.0              AWS.Tools.Common                    C:\Users\takatoshi\… The AWS Tools for PowerShell lets developers and administrators manage their AWS services from the PowerShell scripting environment. In order to manage each AWS service, install the correspon…
-4.1.7.0              AWS.Tools.EC2                       C:\Users\takatoshi\… The EC2 module of AWS Tools for PowerShell lets developers and administrators manage Amazon Elastic Compute Cloud (EC2) from the PowerShell scripting environment. In order to manage each AWS …
-4.1.7.0              AWS.Tools.IdentityManagement        C:\Users\takatoshi\… The IdentityManagement module of AWS Tools for PowerShell lets developers and administrators manage AWS Identity and Access Management from the PowerShell scripting environment. In order to m…
-1.0.2.0              AWS.Tools.Installer                 PSGallery            The AWS.Tools.Installer module makes it easier to install, update and uninstall other AWS.Tools modules (see https://www.powershellgallery.com/packages/AWS.Tools.Common/).…
-4.1.7.0              AWS.Tools.Lambda                    C:\Users\takatoshi\… The Lambda module of AWS Tools for PowerShell lets developers and administrators manage AWS Lambda from the PowerShell scripting environment. In order to manage each AWS service, install the …
-4.1.7.0              AWS.Tools.S3                        C:\Users\takatoshi\… The S3 module of AWS Tools for PowerShell lets developers and administrators manage Amazon Simple Storage Service (S3) from the PowerShell scripting environment. In order to manage each AWS s…
-4.1.7.0              AWS.Tools.SecretsManager            C:\Users\takatoshi\… The SecretsManager module of AWS Tools for PowerShell lets developers and administrators manage AWS Secrets Manager from the PowerShell scripting environment. In order to manage each AWS serv…
-0.1.8                ClipboardText                       PSGallery            Support for text-based clipboard operations for PowerShell Core (cross-platform) and older versions of Windows PowerShell
-1.3.1                Configuration                       PSGallery            A module for storing and reading configuration values, with full PS Data serialization, automatic configuration for modules and scripts, etc.
-1.2010.0.201211      DockerCompletion                    PSGallery            Docker command completion for PowerShell.
-1.27.0.200908        DockerComposeCompletion             PSGallery            Docker Compose command completion for PowerShell.
-0.16.2.190903        DockerMachineCompletion             PSGallery            Docker Machine command completion for PowerShell.
-0.2                  MavenAutoCompletion                 PSGallery            Maven Auto Completion provides a simple auto completion of Maven 3 to PowerShell.
-3.75.0-beta          oh-my-posh                          PSGallery            A prompt theme engine for any shell
-1.4.7                PackageManagement                   PSGallery            PackageManagement (a.k.a. OneGet) is a new way to discover and install software packages from around the web.…
-5.1.0-rc1            Pester                              PSGallery            Pester provides a framework for running BDD style Tests to execute and validate PowerShell commands inside of PowerShell and offers a powerful set of Mocking Functions that allow tests to mim…
-1.1.0                poco                                PSGallery            Interactive filtering command based on peco
-1.0.0-beta3          posh-git                            PSGallery            Provides prompt with Git status summary information and tab completion for Git commands, parameters, remotes and branch names.
-0.16.0               PowerShellForGitHub                 PSGallery            PowerShell wrapper for GitHub API
-3.0.0-beta10         PowerShellGet                       PSGallery            PowerShell module with commands for discovering, installing, updating and publishing the PowerShell artifacts like Modules, DSC Resources, Role Capabilities and Scripts.
-4.9.0                psake                               PSGallery            psake is a build automation tool written in PowerShell.
-2.2.0-beta1          PSReadLine                          PSGallery            Great command line editing in the PowerShell console host
-1.19.1               PSScriptAnalyzer                    PSGallery            PSScriptAnalyzer provides script analysis and checks for potential code defects in the scripts by applying a group of built-in or customized rules on the scripts being analyzed.
-0.2.2                Terminal-Icons                      PSGallery            PowerShell module to add file icons to terminal based on file extension
-2.2.0                Get-ChildItemColor                  PSGallery            Get-ChildItemColor provides colored versions of Get-ChildItem Cmdlet and Get-ChildItem | Format-Wide (ls equivalent)
-0.1.2                Get-GzipContent                     PSGallery            Gets the content of the gzip archive at the specified location.
-1.0.1.10             GoogleCloud                         PSGallery            PowerShell cmdlets for the Google Cloud Platform.
-</code></pre><p>ﾌｷﾞｬｰ、AWS.Tools.Installer で入れたモジュールは全て repo が一時ファイルになっとるやんけ！😇</p><p>これは事案ですね。ということでとりま暫定対処として Repository が PSGallery のやつだけにした。</p><pre><code class="powershell">Get-InstalledModule | Where-Object -Property Repository -eq 'PSGallery' | Update-Module -AllowPrerelease
-</code></pre><p><a href="https://github.com/aws/aws-tools-for-powershell/issues?q=is%3Aissue+is%3Aopen+unable+to+find+repository">AWS Tools の GitHub</a> を見てみても誰も同じような話はしてないし、みんな真面目に<code>Update-AWSToolsModule</code>と<code>Update-Module</code>使い分けれてんねな～エライ！というのに気づいた一日であった。</p><p>ﾁｬﾝﾁｬﾝ。</p>
+    let options: obj =
+        !!{| weekday = "short"
+             year = "numeric"
+             month = "short"
+             day = "2-digit"
+             hour = "numeric"
+             minute = "numeric"
+             second = "numeric"
+             hourCycle = "h23"
+             timeZone = "Asia/Tokyo" // TODO: parametarize it.
+             timeZoneName = "short" |}
+
+    // TODO: write binding.
+    let formatter: obj = Intl.DateTimeFormat "en-US" options
+    let zonePattern = new Regex(@"GMT([+-])(\d+)")
+
+    let toRFC822DateTime (d: DateTime) =
+        let parts: obj [] = formatter?formatToParts (d)
+        let p: string [] = parts |&gt; Array.map (fun x -&gt; x?value)
+        let d = $"{p.[0]}{p.[1]}{p.[4]} {p.[2]} {p.[6]}"
+        let t = (p.[8..12] |&gt; String.concat "")
+
+        let z =
+            match p.[14] with
+            | "UTC" -&gt; "+0000"
+            | z -&gt;
+                let item = zonePattern.Matches(z)
+                let group = item.Item 0
+                let op = (group.Groups.Item 1).Value
+                let offset = int (group.Groups.Item 2).Value
+
+                $"{op}%02d{offset}00"
+
+        $"{d} {t} {z}"
+</code></pre><p>日付操作のための module 入れればいいってだけでもあるけど、このためだけに module いれるのもなあ...となるべく自力で解決する方向。</p><p>ただ TODO 残してるのもあるけど、それより Dynamic typing で危なっかしいしちゃんと binding を書きたいところ。
+あと添字でアクセスしまくるしか方法思いつかんかったけどもっとマシなのないのかな...</p><hr /><p><a href="https://github.com/krymtkts/blog-fable/pull/37">#37</a> で開発モードでの live reloading するために使ってた生 JavaScript を Fable が出力したやつを使うように変えた。</p><p>普通であれば webpack とかで bundling するんやろけど、開発モード以外で JavaScript を使う予定がないので、出力された js ファイルを出力先ディレクトリにコピることで実現している。
+他に方法あるかわからん。
+ただブラウザでもそのまま使える js ファイルを出力する豆知識は得られた。</p><pre><code class="fsharp">open Browser.Dom
+open Browser.WebSocket
+
+let private init _ =
+    let ws = WebSocket.Create $"ws://{window.location.host}/websocket"
+    ws.onmessage &lt;- fun _ -&gt; window.location.reload ()
+
+window.addEventListener ("load", init)
+</code></pre><p>これ ↑ がこう ↓ なる。 <code>private</code> をつけておいたら <code>export</code> されない。</p><pre><code class="js">function init(_arg) {
+  const ws = new WebSocket(`ws://${window.location.host}/websocket`);
+  ws.onmessage = (_arg_1) =&gt; {
+    window.location.reload();
+  };
+}
+
+window.addEventListener("load", (arg00$0040) =&gt; {
+  init(arg00$0040);
+});
+</code></pre><hr /><p><a href="https://github.com/krymtkts/blog-fable/pull/31">#31</a> でエントリポイントの render 関数で諸々の設定をするように変えた。
+元々好きに関数を組み合わせて出力を作れたらいいかなと思ってたけど、それぞれの関数で整合性を取らないといけない点があってめんどい、というのが設定を導入した理由。</p><p>ひとまずこれで外向きのインタフェースは固定して、あとは内側の重複したパス構築部分をまとめていけたら、楽に整合性取れるんじゃないかな。</p><p>8 月くらいにできるかなーって思ってたけど、使わない CSS を読んでるやつとかも使ってるやつだけビルドして出せるようにしたいとか、諸々考え出すと実際のところ無理かな。
+気長にいこ。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/aws">aws</a>
+    <a href="/tags/fable">fable</a>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2021-02-01-go-map-key-tips">&laquo; 2021-02-01 go の map のキーの Tips</a>
         
-        
-        <a class="right" href="/posts/2021-01-04-planning">2021-01-04 2021 &raquo;</a>
+        <a class="right" href="/posts/2023-07-23-psresourceget">2023-07-23 PSResourceGet メモ &raquo;</a>
         
     </div>
 
