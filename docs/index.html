@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-08-06-disassemble-and-clean-keyswitches">キースイッチを分解して掃除する</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-07-30-rebuild-blog-with-fable-pt10">Fable でブログを再構築する pt.10</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-07-23-psresourceget">PSResourceGet メモ</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20">F# でコマンドレットを書いてる pt.20</a></li>
                         
                         
 
@@ -198,89 +198,39 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-07-30</div>
+        <div class="col-lg-6">2023-08-06</div>
         
     </div>
-    <h2>Fable でブログを再構築する pt.10</h2>
+    <h2>キースイッチを分解して掃除する</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>最近日記には書いてなかったが諸々の Issue を解決してた。</p><ul><li><a href="https://github.com/krymtkts/blog-fable/pull/24">#24</a> <a href="https://github.com/krymtkts/blog-fable/pull/27">#27</a> <a href="https://github.com/krymtkts/blog-fable/pull/32">#32</a> <a href="https://github.com/krymtkts/blog-fable/pull/34">#34</a> RSS の実装。</li><li><a href="https://github.com/krymtkts/blog-fable/pull/31">#31</a> 出力パス構築を整理するために、手始めとしてエントリポイントの設定を整理。</li><li><a href="https://github.com/krymtkts/blog-fable/pull/37">#37</a> 生 JS の排除。</li><li><a href="https://github.com/krymtkts/blog-fable/pull/25">#25</a> <a href="https://github.com/krymtkts/blog-fable/pull/28">#28</a> あと雑多な更新。</li></ul><hr /><p>RSS はやっぱわたしがほぼ素人だったのもあってわからないことが多かった。
-はじめは普段遣いしている <a href="https://feedly.com/">feedly</a> で購読してみて目視で変なところを直した。
-最終的には <a href="https://validator.w3.org/feed/check.cgi?url=https%3A%2F%2Fkrymtkts.github.io%2Fblog-fable%2Ffeed.xml">Feed Validator Results: https://krymtkts.github.io/blog-fable/feed.xml</a> でエラーを解消する形にした。こんな便利なものがあるとは。とても役に立った。</p><p>RSS 周りの実装で改めて Fable が割る言い訳じゃないけど Fable のツラみを感じた。それは JavaScript の API がモロに出てくるところだ。
-今回は feed の <code>pubDate</code> の表記を RFC 822 date format にする必要があって、 <code>Intl.DateTimeFormat</code> を使った。
-こういうとき素直に .NET が使えるととても楽やのに...と思わざるを得ない。</p><p>いったんこういう ↓ 激薄 binding を書いて、 <code>obj</code> を引き回すことで無理くり使っている。</p><pre><code class="fsharp">module Intl =
-    [&lt;Emit "new Intl.DateTimeFormat([$0], $1)"&gt;]
-    let DateTimeFormat lang options = jsNative
-</code></pre><pre><code class="fsharp">module DateTime =
-    open System
-
-    let options: obj =
-        !!{| weekday = "short"
-             year = "numeric"
-             month = "short"
-             day = "2-digit"
-             hour = "numeric"
-             minute = "numeric"
-             second = "numeric"
-             hourCycle = "h23"
-             timeZone = "Asia/Tokyo" // TODO: parametarize it.
-             timeZoneName = "short" |}
-
-    // TODO: write binding.
-    let formatter: obj = Intl.DateTimeFormat "en-US" options
-    let zonePattern = new Regex(@"GMT([+-])(\d+)")
-
-    let toRFC822DateTime (d: DateTime) =
-        let parts: obj [] = formatter?formatToParts (d)
-        let p: string [] = parts |&gt; Array.map (fun x -&gt; x?value)
-        let d = $"{p.[0]}{p.[1]}{p.[4]} {p.[2]} {p.[6]}"
-        let t = (p.[8..12] |&gt; String.concat "")
-
-        let z =
-            match p.[14] with
-            | "UTC" -&gt; "+0000"
-            | z -&gt;
-                let item = zonePattern.Matches(z)
-                let group = item.Item 0
-                let op = (group.Groups.Item 1).Value
-                let offset = int (group.Groups.Item 2).Value
-
-                $"{op}%02d{offset}00"
-
-        $"{d} {t} {z}"
-</code></pre><p>日付操作のための module 入れればいいってだけでもあるけど、このためだけに module いれるのもなあ...となるべく自力で解決する方向。</p><p>ただ TODO 残してるのもあるけど、それより Dynamic typing で危なっかしいしちゃんと binding を書きたいところ。
-あと添字でアクセスしまくるしか方法思いつかんかったけどもっとマシなのないのかな...</p><hr /><p><a href="https://github.com/krymtkts/blog-fable/pull/37">#37</a> で開発モードでの live reloading するために使ってた生 JavaScript を Fable が出力したやつを使うように変えた。</p><p>普通であれば webpack とかで bundling するんやろけど、開発モード以外で JavaScript を使う予定がないので、出力された js ファイルを出力先ディレクトリにコピることで実現している。
-他に方法あるかわからん。
-ただブラウザでもそのまま使える js ファイルを出力する豆知識は得られた。</p><pre><code class="fsharp">open Browser.Dom
-open Browser.WebSocket
-
-let private init _ =
-    let ws = WebSocket.Create $"ws://{window.location.host}/websocket"
-    ws.onmessage &lt;- fun _ -&gt; window.location.reload ()
-
-window.addEventListener ("load", init)
-</code></pre><p>これ ↑ がこう ↓ なる。 <code>private</code> をつけておいたら <code>export</code> されない。</p><pre><code class="js">function init(_arg) {
-  const ws = new WebSocket(`ws://${window.location.host}/websocket`);
-  ws.onmessage = (_arg_1) =&gt; {
-    window.location.reload();
-  };
-}
-
-window.addEventListener("load", (arg00$0040) =&gt; {
-  init(arg00$0040);
-});
-</code></pre><hr /><p><a href="https://github.com/krymtkts/blog-fable/pull/31">#31</a> でエントリポイントの render 関数で諸々の設定をするように変えた。
-元々好きに関数を組み合わせて出力を作れたらいいかなと思ってたけど、それぞれの関数で整合性を取らないといけない点があってめんどい、というのが設定を導入した理由。</p><p>ひとまずこれで外向きのインタフェースは固定して、あとは内側の重複したパス構築部分をまとめていけたら、楽に整合性取れるんじゃないかな。</p><p>8 月くらいにできるかなーって思ってたけど、使わない CSS を読んでるやつとかも使ってるやつだけビルドして出せるようにしたいとか、諸々考え出すと実際のところ無理かな。
-気長にいこ。</p>
+    <p>ビルドログを書いた記憶ないけど、今は <a href="https://keeb.io/collections/iris-split-ergonomic-keyboard">Keebio の Iris</a> Rev. 3 を 3 年くらい使ってる。</p><p>キースイッチは <a href="https://zealpc.net/products/zilent?variant=5894832357414">Zealios Zilent 78g</a>。買った当時はそこそこ高級品の部類に入ってた記憶で、そのスムースさとタクタイル感の強いタッチがとても気に入っている。</p><p>だけど 3 年もすると結構チャタリングを起こすようになってきてる。
+どうも利用環境のホコリがスイッチに混入してるのと、 Zilent のキースイッチ内で削りカスみたいなのが発生するぽくて、そいつが接点周りで悪さしてることに拠るみたい。</p><p>ホコリというのは一般的な毛ぼこりで、これが打鍵のときに軸の隙間から入り込んだり、 LED 用に開いている穴から侵入してるみたい。キースイッチを分解するとスプリングにホコリが付着していることがママある。</p><p>Zilent は軸の側面にスムースさと静音を目的としたシリコン的な緩衝材が埋め込まれてるのだけど、こいつがよく使うキーだとはみ出した部分が徐々に擦れて削りカスになる。
+あとこれは Zilent 以外でも起こると思うけど、打鍵が垂直でないことでボトムハウジングと軸が擦れることでプラスチックの粉？が発生する。
+こういった削りカスが接点の隙間に挟まって感度が悪くなってる様子。</p><p>これらはいずれも実際に自機を分解して目視確認したものだけど、現象が自分の利用環境によるのか一般的なものかはわからない。</p><p>こういう具合でなのでよくチャタリングしたキーを自分流で分解して掃除しているのだけど、なんか日記にでも残そうかなと思った次第だ。</p><p>分解掃除の道具は以下の通り。</p><ul><li>Filco のキープラー
+<ul><li>キーキャップを取るのに使う</li></ul></li><li>ダブルクリップの針金部分で自作したキースイッチオープナー
+<ul><li>ダブルクリップの針金部分を適度に曲げると MX Compatible キースイッチに適したオープナーができる。結構使いにくい</li></ul></li><li>尼で買った先端の精度が甘い精密ピンセット
+<ul><li>分解時の部品取扱とか、接点の掃除に使う</li></ul></li><li>SuperMax っていうインド製の両刃カミソリの替刃についてた謎の樹脂製ヒゲブラシ
+<ul><li>これで顔を洗う気に離れなかったが、キーボードのような細かい隙間があるものの簡単な掃除に便利</li></ul></li></ul><p>自作キーオープナーは何処かで誰かのアイデアを見かけて試したら上手くいったので長らく使っている。
+キーキャップを外し、キースイッチのツメの部分の穴に合わせて左右にキーオープナーを差し込み、適度につまんで適度にひねりを入れるとトップハウジングがパカっと外せる。
+今日日みんなキースイッチは hot swappable だろうからこんな苦しんでキースイッチを分解掃除することないんじゃなかろうか。
+このように結構面倒なので、最適なキーオープナーあれば買いたい気持ち。</p><p>また、わたしは RSA プロファイルのキーキャップを好んで使っているので、キーオープナーでトップハウジングを外そうとしたら左右のキーキャップが干渉する。なので分解するキースイッチの左右のキーキャップも外しておく必要がある。</p><p>なんとかしてキースイッチを分解したら、ピンセットでトップハウジング、軸、スプリングを取り出して、先述のヒゲブラシでボトム含めささっと掃除する。スプリングやボトムのホコリはこれでほぼ取れる。</p><p>軸が擦れてできるホコリはピンセットで丁寧に取り除くのが良い(めんどい)。特に毛羽立って取れかかってるシリコン的緩衝材などはブラシで取れない。
+また接点部分も同様でにピンセットで丁寧に取り除く。取り除くと言ってもピンセットの先端で何回か接点部分を擦ってやる感じ。</p><p>この作業をスイッチの数だけ繰り返す。気が狂いそう。
+しかしこれで大体のスイッチは元通りの挙動に直せる。時が経てばまた再発するけど。</p><p>注意点すべきは、接点部分の掃除とトップをはめ込む際。あまり無理にピンセットでガシガシやると板バネ部分が曲がって死ぬ。
+特にトップをはめ込む向きを間違うと板バネが大変なことになる。わたしの 1 キーはそれでほぼ死んでる。キーマップ的に 1 の代替キーがあってそっちをメインで使ってるからそれほど困らないけど、普通は壊さない方がいい。
+板バネが死んだキーははんだを外してキースイッチ自体取り替えるしかない。</p><p>この様な作業には集中力を要するし、キースイッチ 1 つ調整するのに数分かかる。
+ド近眼の不惑ともなると老眼で細かいものも見にくいので、多少チャタっても打鍵角度や押し込む量を調整してなるべく作業しなくていいように誤魔化してしまうのが現状。</p><p>ぐだぐだ文句を書き連ねたけど、調整後のスイッチは概ね素晴らしいタイピング体験を提供してくれるから満足。単にだるくて何度もやりたくないのだ。
+つい先日左手側を 7 キーほど掃除した(最高)けど、右手側もまたやらないといけなくてほんとだるい。</p><p>もっと簡単にキースイッチのメンテナンスをできるようにキーボード自体や整備環境をアップグレードする方がいいかもと感じる。
+けど、次のキーボード何がいいかな～という最大の選択をクリアできないからなんとも進まない。
+やるならワイヤレスにしたいとか、 Iris よりキー少なくていいなとか、 lube したらホコリカバーできたりするかな？とか。
+そういった試行錯誤を色々考えるだけでも時間かかってるからいつかは着手するやろうけど。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/fable">fable</a>
-    
-    <a href="/tags/fsharp">fsharp</a>
+    <a href="/tags/mechanicalkeyboard">mechanicalkeyboard</a>
     
 </div>
 
@@ -290,7 +240,7 @@ window.addEventListener("load", (arg00$0040) =&gt; {
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-07-23-psresourceget">2023-07-23 PSResourceGet メモ &raquo;</a>
+        <a class="right" href="/posts/2023-07-30-rebuild-blog-with-fable-pt10">2023-07-30 Fable でブログを再構築する pt.10 &raquo;</a>
         
     </div>
 </div>
