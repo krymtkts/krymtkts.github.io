@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: F#でコマンドレットを書いてる pt.19</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-04-16-writing-cmdlet-in-fsharp-pt19">
+    <title>krymtkts: Publish-PSResource を試す</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.19" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-04-16-writing-cmdlet-in-fsharp-pt19" />
+    <meta property="og:title" content="krymtkts: Publish-PSResource を試す" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -198,36 +198,36 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-04-16</div>
+        <div class="col-lg-6">2023-08-13</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.19</h2>
+    <h2>Publish-PSResource を試す</h2>
 </div>
 <div>
     
-    <p>本当は Fable のメモを記録したかった。 Fable の練習を始めようと思って <a href="https://fable.io/docs/2-steps/your-first-fable-project.html">Fable · Start a new project</a> を参考にプロジェクトを作成(以下)した。</p><pre><code class="powershell">dotnet new fable --name krymtkts.github.io
-</code></pre><p>その後作成されたプロジェクトを VS Code で開いたら OOM で VS Code がお亡くなりになったので、また今度やるか...という気持ちに切り替わってしまった。</p><hr /><p>閑話休題。</p><p>また <a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>もう 2023-04 も半ばを過ぎ、前回の pocof 0.4.0-alpha から 2 ヶ月経とうとしてるが、粛々とテスト追加と書き直しをしている。</p><p>以前 GitHub Actions の Workflow を作成した時に、 <code>ubuntu_latest</code> つまり非 Windows でも <a href="https://github.com/pester/Pester">Pester</a> のテストが問題なく緑になるんだなというのがわかった。
-これを機に OS の build matrix を組んで Windows, Linux, Mac の 3 つのプラットフォームのテストを有効にしてみた。 <a href="https://github.com/krymtkts/pocof/pull/48">#48</a></p><p>すべてのプラットフォームでテストが成功したのを見て、 .NET 良く出来てるなあと思った(小並感)。
-とはいえ実際に PowerShell on Ubuntu でインタラクティブな動作テストしたわけじゃないし、 .NET はキー周りが大変だと聞く。
-わたしが持っているこの辺の知識はこれしかないけど →
-<a href="https://devblogs.microsoft.com/dotnet/console-readkey-improvements-in-net-7/">Console.ReadKey improvements in .NET 7 - .NET Blog</a></p><p>なので、いつか時間を取って人力で確認しないといけないのではと思っている。
-実際問題、例えば Ubuntu に PowerShell 入れるのって相当動機づけされてないとやらなそうなのだけど、機が熟しつつある。
-良いのか悪いのかは知らん。ただ面白そうではある。</p><p>pocof の機能追加はやってなくて、 CLI の UI をいじるところ以外はテストも揃ってきたので、リファクタリングと称して主に構造変換をそれほど伴わない書き直しをしている。 <a href="https://github.com/krymtkts/pocof/pull/49">#49</a></p><p>pocof は PowerShell で書かれた <a href="https://github.com/jasonmarcher/poco">poco</a> を F# で写経するところから始まっているので、あまり F# ぽくない感じの箇所が多々ある。その環境の中にコードを足していってるので周りに引きづられて F# ぽくない部分も多かった。</p><p>それらは例えば <code>string</code> じゃなくて <code>ToString</code> メソッドを使ってるとか、一番気になってたのは conditional expression の <code>if</code> をいっぱい使ってた点。
-別に <code>if</code> の方が短く済むときもあるし使っても構わんのだけど、式としてじゃなくて制御構文として使ったときの <code>else</code> が必須じゃないのが気になってた。また match expression と違って網羅できてるか人目でわからないのが一番心配で、結局これらを <code>match ... with</code> で書き直すことにした。
-その結果、一部には active pattern も利用したりして、パッと見わかりやすくなった気がする。</p><p><code>if ... then</code> を <code>match ... with</code> に書き換えたら以下のようになって、 <code>true</code> がなんか判然とせんなーという気は多少あるので、自前のロジックに関しては判別共用体に直すとか検討するとより良いのかも知れん。</p><pre><code class="fsharp">// before
-if nanigashi x then
-    Some(x)
-else
-    None
-
-// after
-match nanigashi x with
-| true -&gt; Some(x) // この true ってのもなーんか気に食わん
-| _ -&gt;  None
-</code></pre><p>こういうところにも active pattern を積極的に使っていったら良いのかもやけど、今回はまだ使わなかった。
-データの変換・分解を伴うようなパターンだとバッチリハマった感じだったが、単純なケースに使うと記述量だけ増えて表現力変わらないなとい感触だったため(書き方がまずいのか)。
-とはいえ積極的に使いたいものではあった。</p><p>コードの見通しも良くなってきて、そろそろ積み残しタスクにも着手しやすくなってきた感じがする。次やるとしたら <a href="https://github.com/krymtkts/pocof/issues/35">#35</a> あたりかな。</p><p>でもテスト追加とリファクタリングはまだやりたいところが残っていて、悩ましい。 UI のテストを入れて置きたいのと、 <code>PocofQuery</code> をシンプルにするのと、 <code>Library.fs</code> から極力ロジックを引き剥がす点だ。
-なんかダルそうだなというのもあって手が出しにくいので、積み残しタスク減らしてからやると気分転換になるのかも知れん。</p>
+    <p><a href="/posts/2023-07-23-psresourceget">以前から気になってた</a> PSResourceGet の <code>Publish-PSResource</code> を試す機会があったので試した。
+試したと書いてるけど、自分の利用ケースで問題なく使えるか見ただけ。</p><p><a href="https://github.com/krymtkts/PSJobCanAttendance/">krymtkts/PSJobCanAttendance</a> を修正する機会があったので、ついでに <code>Publish-PSResource</code> へ切り替えた。上手くいってた。
+<a href="https://github.com/krymtkts/PSJobCanAttendance/pull/9">#9</a></p><p><a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/publish-psresource?view=powershellget-3.x">Publish-PSResource (Microsoft.PowerShell.PSResourceGet) - PowerShell | Microsoft Learn</a> を参照して、
+<code>Path</code>, <code>ApiKey</code>, <code>Verbose</code>, <code>WhatIf</code> を使った。
+<code>Verbose</code>, <code>WhatIf</code> は確認用なのでなくても良い。
+<code>Repository</code> も省略できて、省略した場合は優先度が高い repository に公開される。自分の場合は PowerShell Gallery 。</p><p>PSJobCanAttendance の場合は公開するファイルが少ないからか、実行したら一瞬で公開された。 PSResourceGet になったら公開まで高速化されるんや。</p><p>これでいけそうな感触を得たので、 pocof でも試す。 <a href="https://github.com/krymtkts/pocof/pull/54">krymtkts/pocof#54</a></p><p><code>AllowPrerelease</code> とか <code>RequiredVersion</code> とかのオプションで指定していたところがなくなって、 <code>*.psd1</code> から読み取るように変わってるぽい。
+ただ <code>ModuleName</code> とかの指定どうなるんやと思ったけど、ディレクトリ名ぽいな。</p><p>ということなので、従来の pocof の公開方法である <code>(Get-Module).Path</code> を渡す方法は無理だってこと。これだと ddl のパスが得られるのだけどこれは弾かれたし、 <code>*.psd1</code> のパスを渡す方法だと親ディレクトリがバージョン番号になってモジュール名にならない。 API Key にモジュール名の制限をかけてたから権限で弾かれて変な数字の名前をしたモジュールの公開を免れた。
+そこんところを公開用のディレクトリにモジュール類をコピーして、その中の <code>pocof.psd1</code> を <code>Publish-PSResource</code> するようにしてみた。</p><pre><code>+---.github
++---coverage
++---docs
++---publish
+|   \---pocof &lt;- ここへこぴる
+|       \---pocof.psd1
++---src
+|   \---pocof
+        \---bin
+            \---Release
+                \---*
+                    \---pocof.psd1 &lt;- コピー元
+\---tests
+</code></pre><p>が、以下のようなエラーでまだ上手くいってない。</p><pre><code>Error: 2023-08-13 18:59:25:
+At C:\Users\takatoshi\dev\github.com\krymtkts\pocof\psakefile.ps1:108 char:5 +     Publish-PSResource @Params +     ~~~~~~~~~~~~~~~~~~~~~~~~~~ [&lt;&lt;==&gt;&gt;] Exception: Repository 'PSGallery': Response status code does not indicate success: 403 (The specified API key is invalid, has expired, or does not have permission to access the specified package.).
+</code></pre><p>公開対象のディレクトリ名がモジュール名になるって判断が間違ってるのか...いけそうな感触を持ったけどあかんのかな、挑戦は続く。</p>
 </div>
 
 <div id="post-tags">
@@ -235,17 +235,13 @@ match nanigashi x with
     
     <a href="/tags/powershell">powershell</a>
     
-    <a href="/tags/fsharp">fsharp</a>
-    
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2023-04-23-1-year-of-pocof">&laquo; 2023-04-23 pocof の 1 年間</a>
         
-        
-        <a class="right" href="/posts/2023-04-09-writing-cmdlet-in-fsharp-pt18">2023-04-09 F#でコマンドレットを書いてる pt.18 &raquo;</a>
+        <a class="right" href="/posts/2023-08-06-disassemble-and-clean-keyswitches">2023-08-06 キースイッチを分解して掃除する &raquo;</a>
         
     </div>
 

@@ -1,0 +1,49 @@
+{:title "Publish-PSResource を試す"
+:layout :post
+:tags ["powershell"]}
+
+[以前から気になってた](/posts/2023-07-23-psresourceget) PSResourceGet の `Publish-PSResource` を試す機会があったので試した。
+試したと書いてるけど、自分の利用ケースで問題なく使えるか見ただけ。
+
+[krymtkts/PSJobCanAttendance](https://github.com/krymtkts/PSJobCanAttendance/) を修正する機会があったので、ついでに `Publish-PSResource` へ切り替えた。上手くいってた。
+[#9](https://github.com/krymtkts/PSJobCanAttendance/pull/9)
+
+[Publish-PSResource (Microsoft.PowerShell.PSResourceGet) - PowerShell | Microsoft Learn](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/publish-psresource?view=powershellget-3.x) を参照して、
+`Path`, `ApiKey`, `Verbose`, `WhatIf` を使った。
+`Verbose`, `WhatIf` は確認用なのでなくても良い。
+`Repository` も省略できて、省略した場合は優先度が高い repository に公開される。自分の場合は PowerShell Gallery 。
+
+PSJobCanAttendance の場合は公開するファイルが少ないからか、実行したら一瞬で公開された。 PSResourceGet になったら公開まで高速化されるんや。
+
+これでいけそうな感触を得たので、 pocof でも試す。 [krymtkts/pocof#54](https://github.com/krymtkts/pocof/pull/54)
+
+`AllowPrerelease` とか `RequiredVersion` とかのオプションで指定していたところがなくなって、 `*.psd1` から読み取るように変わってるぽい。
+ただ `ModuleName` とかの指定どうなるんやと思ったけど、ディレクトリ名ぽいな。
+
+ということなので、従来の pocof の公開方法である `(Get-Module).Path` を渡す方法は無理だってこと。これだと ddl のパスが得られるのだけどこれは弾かれたし、 `*.psd1` のパスを渡す方法だと親ディレクトリがバージョン番号になってモジュール名にならない。 API Key にモジュール名の制限をかけてたから権限で弾かれて変な数字の名前をしたモジュールの公開を免れた。
+そこんところを公開用のディレクトリにモジュール類をコピーして、その中の `pocof.psd1` を `Publish-PSResource` するようにしてみた。
+
+```
++---.github
++---coverage
++---docs
++---publish
+|   \---pocof <- ここへこぴる
+|       \---pocof.psd1
++---src
+|   \---pocof
+        \---bin
+            \---Release
+                \---*
+                    \---pocof.psd1 <- コピー元
+\---tests
+```
+
+が、以下のようなエラーでまだ上手くいってない。
+
+```
+Error: 2023-08-13 18:59:25:
+At C:\Users\takatoshi\dev\github.com\krymtkts\pocof\psakefile.ps1:108 char:5 +     Publish-PSResource @Params +     ~~~~~~~~~~~~~~~~~~~~~~~~~~ [<<==>>] Exception: Repository 'PSGallery': Response status code does not indicate success: 403 (The specified API key is invalid, has expired, or does not have permission to access the specified package.).
+```
+
+公開対象のディレクトリ名がモジュール名になるって判断が間違ってるのか...いけそうな感触を持ったけどあかんのかな、挑戦は続く。
