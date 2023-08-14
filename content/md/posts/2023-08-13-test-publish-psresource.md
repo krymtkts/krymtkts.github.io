@@ -47,3 +47,18 @@ At C:\Users\takatoshi\dev\github.com\krymtkts\pocof\psakefile.ps1:108 char:5 +  
 ```
 
 公開対象のディレクトリ名がモジュール名になるって判断が間違ってるのか...いけそうな感触を持ったけどあかんのかな、挑戦は続く。
+
+### 追記 2023-08-14
+
+その後、 PowerShell Gallery の API Key を作り直したり、 pocof のみ更新可能に絞っていた package を `*` にして全権与えてみたりしたがダメだった。
+DDL の Module に対応してないような旨はどこにもなかった気がするけど。
+
+Issue で気になるものとしては、 prerelease の依存関係を持つケースに対応してないというのがある。
+[PSResourceGet module prerelease version scheme issues · Issue #1251 · PowerShell/PSResourceGet](https://github.com/PowerShell/PSResourceGet/issues/1251)
+けど pocof 自身はそういう依存関係を持ってないので該当しないはず。
+他の可能性があるとしたら、 prerelease のみのバージョン履歴を持つ場合に未知のバグがあるとかかな。
+
+いかんせん条件が定かでないので、一通り他の PSResourceGet の Cmdlet も試してみるとかが妥当だろうけど、めんどくせえええ...
+でも解決しないと pocof のプルリク永久に生き続けるし、事象を調べるか誰かが解決するのを待つか、面倒な選択しかない。
+
+なんかいい感じにサクッとできるつもりだったがそうならなかったのは、我ながら「持ってる」な。しらんけど。
