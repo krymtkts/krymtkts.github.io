@@ -1,6 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Mon, 14 Aug 2023 17:36:55 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource</guid><link>https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource</link><title>Publish-PSResource を試す</title><description>&lt;p&gt;&lt;a href="/posts/2023-07-23-psresourceget"&gt;以前から気になってた&lt;/a&gt; PSResourceGet の &lt;code&gt;Publish-PSResource&lt;/code&gt; を試す機会があったので試した。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Tue, 15 Aug 2023 09:54:54 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource</guid><link>https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource</link><title>Publish-PSResource を試す</title><description>&lt;p&gt;&lt;a href="/posts/2023-07-23-psresourceget"&gt;以前から気になってた&lt;/a&gt; PSResourceGet の &lt;code&gt;Publish-PSResource&lt;/code&gt; を試す機会があったので試した。
 試したと書いてるけど、自分の利用ケースで問題なく使えるか見ただけ。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/krymtkts/PSJobCanAttendance/"&gt;krymtkts/PSJobCanAttendance&lt;/a&gt; を修正する機会があったので、ついでに &lt;code&gt;Publish-PSResource&lt;/code&gt; へ切り替えた。上手くいってた。
-&lt;a href="https://github.com/krymtkts/PSJobCanAttendance/pull/9"&gt;#9&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/publish-psresource?view=powershellget-3.x"&gt;Publish-PSResource (Microsoft.PowerShell.PSResourceGet) - PowerShell | Microsoft Learn&lt;/a&gt; を参照して、
+&lt;a href="https://github.com/krymtkts/PSJobCanAttendance/pull/9"&gt;#9&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(追記 2023-08-15)
+試したバージョンは以下の通り。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; Get-Module *PSResourceGet; $PSVersionTable | Format-Table
+
+ModuleType Version    PreRelease Name                                ExportedCommands
+---------- -------    ---------- ----                                ----------------
+Binary     0.5.23     beta23     Microsoft.PowerShell.PSResourceGet  {Find-PSResource, Get-InstalledPSResource, Get-PS…
+
+
+Name                           Value
+----                           -----
+PSVersion                      7.3.6
+PSEdition                      Core
+GitCommitId                    7.3.6
+OS                             Microsoft Windows 10.0.22621
+Platform                       Win32NT
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0…}
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+WSManStackVersion              3.0
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/publish-psresource?view=powershellget-3.x"&gt;Publish-PSResource (Microsoft.PowerShell.PSResourceGet) - PowerShell | Microsoft Learn&lt;/a&gt; を参照して、
 &lt;code&gt;Path&lt;/code&gt;, &lt;code&gt;ApiKey&lt;/code&gt;, &lt;code&gt;Verbose&lt;/code&gt;, &lt;code&gt;WhatIf&lt;/code&gt; を使った。
 &lt;code&gt;Verbose&lt;/code&gt;, &lt;code&gt;WhatIf&lt;/code&gt; は確認用なのでなくても良い。
 &lt;code&gt;Repository&lt;/code&gt; も省略できて、省略した場合は優先度が高い repository に公開される。自分の場合は PowerShell Gallery 。&lt;/p&gt;&lt;p&gt;PSJobCanAttendance の場合は公開するファイルが少ないからか、実行したら一瞬で公開された。 PSResourceGet になったら公開まで高速化されるんや。&lt;/p&gt;&lt;p&gt;これでいけそうな感触を得たので、 pocof でも試す。 &lt;a href="https://github.com/krymtkts/pocof/pull/54"&gt;krymtkts/pocof#54&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;code&gt;AllowPrerelease&lt;/code&gt; とか &lt;code&gt;RequiredVersion&lt;/code&gt; とかのオプションで指定していたところがなくなって、 &lt;code&gt;*.psd1&lt;/code&gt; から読み取るように変わってるぽい。

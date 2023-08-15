@@ -8,6 +8,30 @@
 [krymtkts/PSJobCanAttendance](https://github.com/krymtkts/PSJobCanAttendance/) を修正する機会があったので、ついでに `Publish-PSResource` へ切り替えた。上手くいってた。
 [#9](https://github.com/krymtkts/PSJobCanAttendance/pull/9)
 
+(追記 2023-08-15)
+試したバージョンは以下の通り。
+
+```powershell
+PS> Get-Module *PSResourceGet; $PSVersionTable | Format-Table
+
+ModuleType Version    PreRelease Name                                ExportedCommands
+---------- -------    ---------- ----                                ----------------
+Binary     0.5.23     beta23     Microsoft.PowerShell.PSResourceGet  {Find-PSResource, Get-InstalledPSResource, Get-PS…
+
+
+Name                           Value
+----                           -----
+PSVersion                      7.3.6
+PSEdition                      Core
+GitCommitId                    7.3.6
+OS                             Microsoft Windows 10.0.22621
+Platform                       Win32NT
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0…}
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+WSManStackVersion              3.0
+```
+
 [Publish-PSResource (Microsoft.PowerShell.PSResourceGet) - PowerShell | Microsoft Learn](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/publish-psresource?view=powershellget-3.x) を参照して、
 `Path`, `ApiKey`, `Verbose`, `WhatIf` を使った。
 `Verbose`, `WhatIf` は確認用なのでなくても良い。
