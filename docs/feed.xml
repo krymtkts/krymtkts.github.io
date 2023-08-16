@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Tue, 15 Aug 2023 09:54:54 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource</guid><link>https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource</link><title>Publish-PSResource を試す</title><description>&lt;p&gt;&lt;a href="/posts/2023-07-23-psresourceget"&gt;以前から気になってた&lt;/a&gt; PSResourceGet の &lt;code&gt;Publish-PSResource&lt;/code&gt; を試す機会があったので試した。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Wed, 16 Aug 2023 10:59:39 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource</guid><link>https://krymtkts.github.io/posts/2023-08-13-test-publish-psresource</link><title>Publish-PSResource を試す</title><description>&lt;p&gt;&lt;a href="/posts/2023-07-23-psresourceget"&gt;以前から気になってた&lt;/a&gt; PSResourceGet の &lt;code&gt;Publish-PSResource&lt;/code&gt; を試す機会があったので試した。
 試したと書いてるけど、自分の利用ケースで問題なく使えるか見ただけ。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/krymtkts/PSJobCanAttendance/"&gt;krymtkts/PSJobCanAttendance&lt;/a&gt; を修正する機会があったので、ついでに &lt;code&gt;Publish-PSResource&lt;/code&gt; へ切り替えた。上手くいってた。
 &lt;a href="https://github.com/krymtkts/PSJobCanAttendance/pull/9"&gt;#9&lt;/a&gt;&lt;/p&gt;&lt;p&gt;(追記 2023-08-15)
 試したバージョンは以下の通り。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;PS&amp;gt; Get-Module *PSResourceGet; $PSVersionTable | Format-Table
@@ -43,8 +43,29 @@ At C:\Users\takatoshi\dev\github.com\krymtkts\pocof\psakefile.ps1:108 char:5 +  
 DDL の Module に対応してないような旨はどこにもなかった気がするけど。&lt;/p&gt;&lt;p&gt;Issue で気になるものとしては、 prerelease の依存関係を持つケースに対応してないというのがある。
 &lt;a href="https://github.com/PowerShell/PSResourceGet/issues/1251"&gt;PSResourceGet module prerelease version scheme issues · Issue #1251 · PowerShell/PSResourceGet&lt;/a&gt;
 けど pocof 自身はそういう依存関係を持ってないので該当しないはず。
-他の可能性があるとしたら、 prerelease のみのバージョン履歴を持つ場合に未知のバグがあるとかかな。&lt;/p&gt;&lt;p&gt;いかんせん条件が定かでないので、一通り他の PSResourceGet の Cmdlet も試してみるとかが妥当だろうけど、めんどくせえええ...
-でも解決しないと pocof のプルリク永久に生き続けるし、事象を調べるか誰かが解決するのを待つか、面倒な選択しかない。&lt;/p&gt;&lt;p&gt;なんかいい感じにサクッとできるつもりだったがそうならなかったのは、我ながら「持ってる」な。しらんけど。&lt;/p&gt;</description><pubDate>Sun, 13 Aug 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-08-06-disassemble-and-clean-keyswitches</guid><link>https://krymtkts.github.io/posts/2023-08-06-disassemble-and-clean-keyswitches</link><title>キースイッチを分解して掃除する</title><description>&lt;p&gt;ビルドログを書いた記憶ないけど、今は &lt;a href="https://keeb.io/collections/iris-split-ergonomic-keyboard"&gt;Keebio の Iris&lt;/a&gt; Rev. 3 を 3 年くらい使ってる。&lt;/p&gt;&lt;p&gt;キースイッチは &lt;a href="https://zealpc.net/products/zilent?variant=5894832357414"&gt;Zealios Zilent 78g&lt;/a&gt;。買った当時はそこそこ高級品の部類に入ってた記憶で、そのスムースさとタクタイル感の強いタッチがとても気に入っている。&lt;/p&gt;&lt;p&gt;だけど 3 年もすると結構チャタリングを起こすようになってきてる。
+&lt;del&gt;他の可能性があるとしたら、 prerelease のみのバージョン履歴を持つ場合に未知のバグがあるとかかな。&lt;/del&gt;
+普通に自家製バグ、見当外れ。&lt;/p&gt;&lt;p&gt;いかんせん条件が定かでないので、一通り他の PSResourceGet の Cmdlet も試してみるとかが妥当だろうけど、めんどくせえええ...
+&lt;del&gt;でも解決しないと pocof のプルリク永久に生き続けるし、事象を調べるか誰かが解決するのを待つか、面倒な選択しかない。&lt;/del&gt;
+自家製バグが原因なので時間かけてでも調査して当たり前。&lt;/p&gt;&lt;p&gt;&lt;del&gt;なんかいい感じにサクッとできるつもりだったがそうならなかったのは、我ながら「持ってる」な。しらんけど。&lt;/del&gt;
+単に休みボケのケアレスミス発動しただけ。&lt;/p&gt;&lt;h3 id="追記-2023-08-16"&gt;追記 2023-08-16&lt;/h3&gt;&lt;p&gt;昨日この件を調べるためのテストモジュールを書いた。
+F# で空のモジュールをサクッと書いて PSResourceGet と PowerShellGet の両方で公開できるようなのを。
+でも PowerShellGet でも同じような権限のエラーになった。&lt;/p&gt;&lt;p&gt;それもそのはず普通に自分が書いた psake タスクのバグだったわ...恥ずかし。
+API Key を &lt;code&gt;string&lt;/code&gt; で取り出さなあかんとこ &lt;code&gt;PSCredential&lt;/code&gt; がそのまま渡ってた...(&lt;code&gt;SecureString&lt;/code&gt; じゃないんやというのは置いといて)&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/krymtkts/pocof/blob/83e3bf2691a8485a6b2595934845204d21b885a2/psakefile.ps1#L101-L108"&gt;pocof/psakefile.ps1 at 83e3bf2691a8485a6b2595934845204d21b885a2 · krymtkts/pocof&lt;/a&gt;&lt;/p&gt;&lt;p&gt;間違いそのママの差分はこんな感じ。&lt;/p&gt;&lt;pre&gt;&lt;code class="diff"&gt;     $Params = @{
+-        Name = $ModuleName
+-        NugetAPIKey = (Get-Credential API-key -Message 'Enter your API key as the password').GetNetworkCredential().Password
++        Path = $p.FullName
++        Repository = 'PSGallery'
++        ApiKey = (Get-Credential API-key -Message 'Enter your API key as the password') # ここが終わってる
+         WhatIf = $DryRun
+         Verbose = $true
+-        AllowPrerelease = $true
+-        RequiredVersion = $RequiredVersion
+     }
+-    Publish-Module @Params
++    Publish-PSResource @Params
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;正しいのはこう。&lt;/p&gt;&lt;pre&gt;&lt;code class="diff"&gt;-        ApiKey = (Get-Credential API-key -Message 'Enter your API key as the password')
++        ApiKey = (Get-Credential API-key -Message 'Enter your API key as the password').GetNetworkCredential().Password
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;2 日浪費したけど解決してよかったわ。&lt;/p&gt;</description><pubDate>Sun, 13 Aug 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-08-06-disassemble-and-clean-keyswitches</guid><link>https://krymtkts.github.io/posts/2023-08-06-disassemble-and-clean-keyswitches</link><title>キースイッチを分解して掃除する</title><description>&lt;p&gt;ビルドログを書いた記憶ないけど、今は &lt;a href="https://keeb.io/collections/iris-split-ergonomic-keyboard"&gt;Keebio の Iris&lt;/a&gt; Rev. 3 を 3 年くらい使ってる。&lt;/p&gt;&lt;p&gt;キースイッチは &lt;a href="https://zealpc.net/products/zilent?variant=5894832357414"&gt;Zealios Zilent 78g&lt;/a&gt;。買った当時はそこそこ高級品の部類に入ってた記憶で、そのスムースさとタクタイル感の強いタッチがとても気に入っている。&lt;/p&gt;&lt;p&gt;だけど 3 年もすると結構チャタリングを起こすようになってきてる。
 どうも利用環境のホコリがスイッチに混入してるのと、 Zilent のキースイッチ内で削りカスみたいなのが発生するぽくて、そいつが接点周りで悪さしてることに拠るみたい。&lt;/p&gt;&lt;p&gt;ホコリというのは一般的な毛ぼこりで、これが打鍵のときに軸の隙間から入り込んだり、 LED 用に開いている穴から侵入してるみたい。キースイッチを分解するとスプリングにホコリが付着していることがママある。&lt;/p&gt;&lt;p&gt;Zilent は軸の側面にスムースさと静音を目的としたシリコン的な緩衝材が埋め込まれてるのだけど、こいつがよく使うキーだとはみ出した部分が徐々に擦れて削りカスになる。
 あとこれは Zilent 以外でも起こると思うけど、打鍵が垂直でないことでボトムハウジングと軸が擦れることでプラスチックの粉？が発生する。
 こういった削りカスが接点の隙間に挟まって感度が悪くなってる様子。&lt;/p&gt;&lt;p&gt;これらはいずれも実際に自機を分解して目視確認したものだけど、現象が自分の利用環境によるのか一般的なものかはわからない。&lt;/p&gt;&lt;p&gt;こういう具合でなのでよくチャタリングしたキーを自分流で分解して掃除しているのだけど、なんか日記にでも残そうかなと思った次第だ。&lt;/p&gt;&lt;p&gt;分解掃除の道具は以下の通り。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Filco のキープラー

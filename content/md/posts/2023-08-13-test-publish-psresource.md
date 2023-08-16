@@ -80,9 +80,50 @@ DDL の Module に対応してないような旨はどこにもなかった気�
 Issue で気になるものとしては、 prerelease の依存関係を持つケースに対応してないというのがある。
 [PSResourceGet module prerelease version scheme issues · Issue #1251 · PowerShell/PSResourceGet](https://github.com/PowerShell/PSResourceGet/issues/1251)
 けど pocof 自身はそういう依存関係を持ってないので該当しないはず。
-他の可能性があるとしたら、 prerelease のみのバージョン履歴を持つ場合に未知のバグがあるとかかな。
+~~他の可能性があるとしたら、 prerelease のみのバージョン履歴を持つ場合に未知のバグがあるとかかな。~~
+普通に自家製バグ、見当外れ。
 
 いかんせん条件が定かでないので、一通り他の PSResourceGet の Cmdlet も試してみるとかが妥当だろうけど、めんどくせえええ...
-でも解決しないと pocof のプルリク永久に生き続けるし、事象を調べるか誰かが解決するのを待つか、面倒な選択しかない。
+~~でも解決しないと pocof のプルリク永久に生き続けるし、事象を調べるか誰かが解決するのを待つか、面倒な選択しかない。~~
+自家製バグが原因なので時間かけてでも調査して当たり前。
 
-なんかいい感じにサクッとできるつもりだったがそうならなかったのは、我ながら「持ってる」な。しらんけど。
+~~なんかいい感じにサクッとできるつもりだったがそうならなかったのは、我ながら「持ってる」な。しらんけど。~~
+単に休みボケのケアレスミス発動しただけ。
+
+### 追記 2023-08-16
+
+昨日この件を調べるためのテストモジュールを書いた。
+F# で空のモジュールをサクッと書いて PSResourceGet と PowerShellGet の両方で公開できるようなのを。
+でも PowerShellGet でも同じような権限のエラーになった。
+
+それもそのはず普通に自分が書いた psake タスクのバグだったわ...恥ずかし。
+API Key を `string` で取り出さなあかんとこ `PSCredential` がそのまま渡ってた...(`SecureString` じゃないんやというのは置いといて)
+
+[pocof/psakefile.ps1 at 83e3bf2691a8485a6b2595934845204d21b885a2 · krymtkts/pocof](https://github.com/krymtkts/pocof/blob/83e3bf2691a8485a6b2595934845204d21b885a2/psakefile.ps1#L101-L108)
+
+間違いそのママの差分はこんな感じ。
+
+```diff
+     $Params = @{
+-        Name = $ModuleName
+-        NugetAPIKey = (Get-Credential API-key -Message 'Enter your API key as the password').GetNetworkCredential().Password
++        Path = $p.FullName
++        Repository = 'PSGallery'
++        ApiKey = (Get-Credential API-key -Message 'Enter your API key as the password') # ここが終わってる
+         WhatIf = $DryRun
+         Verbose = $true
+-        AllowPrerelease = $true
+-        RequiredVersion = $RequiredVersion
+     }
+-    Publish-Module @Params
++    Publish-PSResource @Params
+```
+
+正しいのはこう。
+
+```diff
+-        ApiKey = (Get-Credential API-key -Message 'Enter your API key as the password')
++        ApiKey = (Get-Credential API-key -Message 'Enter your API key as the password').GetNetworkCredential().Password
+```
+
+2 日浪費したけど解決してよかったわ。
