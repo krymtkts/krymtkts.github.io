@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Posts Tagged &quot;nyc&quot;</title>
-    <link rel="canonical" href="https://krymtkts.github.io/tags/nyc">
+    <title>krymtkts: F# でコマンドレットを書いてる pt.21</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-08-20-writing-cmdlet-in-fsharp-pt21">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Posts Tagged &quot;nyc&quot;" />
-    <meta property="og:url" content="https://krymtkts.github.io/tags/nyc" />
+    <meta property="og:title" content="krymtkts: F# でコマンドレットを書いてる pt.21" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-08-20-writing-cmdlet-in-fsharp-pt21" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -195,17 +195,52 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="posts-by-tag">
-    <div id="page-header">
-        <h2>Posts Tagged &quot;nyc&quot;</h2>
+<div id="post">
+    <div class="post-header">
+    <div id="post-meta" class="row">
+        <div class="col-lg-6">2023-08-20</div>
+        
     </div>
-    <ul>
+    <h2>F# でコマンドレットを書いてる pt.21</h2>
+</div>
+<div>
     
-        <li>
-            <a href="/posts/2019-03-24_coverage-of-qunt-puppeteer">2019-03-24 QUnit で CI したい その 2</a>
-        </li>
+    <p><a href="https://github.com/krymtkts/pocof">pocof</a> の開発をした。
+<a href="/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20">pocof のコンパイルを .NET 7 にした</a> こともあってなんかテンション的に触りやすくなった(逆に Fable でブログ書き直す方を放置)。
+<a href="/posts/2023-08-13-test-publish-psresource">PSResourceGet への乗り換え</a> もできたのだけど、その時気になることがあった。</p><p>いつかはやらないといけないと考えていたが、配布 DLL が多すぎる。
+<a href="https://www.powershellgallery.com/packages/pocof/0.5.0-alpha">PowerShell Gallery | pocof 0.5.0-alpha</a> の FileList 見たらわかるけどめちゃくちゃ DLL がある。
+pocof で使ってない DLL もいっぱい含まれている。</p><p>これは...解決したい。</p><p>.NET では実行可能ファイルであれば自己完結型と言われる単一バイナリの生成ができるのだけど、 DLL ではそういうのはない様子。
+PowerShell モジュールの場合どういう手段が取れるのかちゃんと理解してなかったが、こういうこと ↓ で大量の DLL 全部ぶちまけられてた。</p><ul><li><a href="https://www.nuget.org/packages/Microsoft.PowerShell.SDK/#versions-body-tab">Microsoft.PowerShell.SDK</a> を参照してる</li><li>F# の各言語に localize されたリソースの DLL が出力される</li></ul><p>これらに対処してバンドルに含まれる DLL を減らしてみた。 <a href="https://github.com/krymtkts/pocof/pull/57">#57</a></p><h3 id="microsoftpowershellsdk">Microsoft.PowerShell.SDK</h3><p>pocof のような PowerShell モジュールは PowerShell のランタイム内で動く。
+また pocof では PowerShell の機能をモリモリ使って出力結果を生成するようなことがない。
+このようなケースでは、 <a href="https://github.com/PowerShell/PowerShellStandard">PowerShell/PowerShellStandard</a> のリファレンスライブラリだけでいいみたい。</p><p>pocof で <code>Microsoft.PowerShell.SDK</code> を <code>PowerShellStandard.Library</code> に入れ替えて全テスト実行してみた。
+テストデータ作成のために <code>PSObject</code> を作成しているところだけ影響があった。
+つまり pocof 本体に影響はないので、テストプロジェクトで <code>Microsoft.PowerShell.SDK</code> を参照してれば OK ということ。</p><p><a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">一番初めに pocof を書き始めた</a>ころの記事では <code>PowerShellStandard.Library</code> を参照してたのだけどなんか途中で変えてみたい。
+初回リリースでは既に <code>Microsoft.PowerShell.SDK</code> に変わってたのだけど、この頃は <a href="https://fsprojects.github.io/FsUnit/">FsUnit</a> 使ったテストなかった気がするし、違う理由かなんか分からず変えてそう。コミットログ追えばわかるかな。</p><h3 id="f-の-localize-されたリソースの-dlls">F# の localize されたリソースの DLLs</h3><p>pocof では localize されたリソースの DLL 要らない。なんか F# のリソースが使われるとしても英語でいいし。
+これらの各言語リソースの DLL を取り除くには <code>SatelliteResourceLanguages</code> という MSBuild プロパティを指定すれば良いようだ。言語を指定せずに空(<code>null</code>)だと全言語対象のママになるので、英語を指定しないといけない。</p><ul><li><a href="https://forums.fsharp.org/t/what-is-the-purpose-of-the-fsharp-core-resource-dll-files/1402">What is the purpose of the FSharp.Core.resource.dll files? - General - F# Software Foundation Community Forums</a></li><li><a href="https://learn.microsoft.com/ja-jp/dotnet/core/project-sdk/msbuild-props#satelliteresourcelanguages">SatelliteResourceLanguages | Microsoft.NET.Sdk の MSBuild プロパティ - .NET | Microsoft Learn</a></li></ul><h3 id="終わり">終わり</h3><p>MUSBuild の世界は難しいなー。でもこれでかなり DDL が減った。
+ただ最後に <code>System.Management.Automation.dll</code> が残ってる。</p><p>これって PowerShell 環境ならかならずあるのでは...という気がするのだけど。
+open してる名前空間の関係で消えないのかな？もうちょい検証してみないとわからん。</p>
+</div>
+
+<div id="post-tags">
+    <b>Tags: </b>
     
-    </ul>
+    <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
+    
+</div>
+
+
+    <div id="prev-next">
+        
+        
+        <a class="right" href="/posts/2023-08-13-test-publish-psresource">2023-08-13 Publish-PSResource を試す &raquo;</a>
+        
+    </div>
+
+    
+
+
 </div>
 
             </div>

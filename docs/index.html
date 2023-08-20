@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-08-20-writing-cmdlet-in-fsharp-pt21">F# でコマンドレットを書いてる pt.21</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-08-13-test-publish-psresource">Publish-PSResource を試す</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-08-06-disassemble-and-clean-keyswitches">キースイッチを分解して掃除する</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-07-30-rebuild-blog-with-fable-pt10">Fable でブログを再構築する pt.10</a></li>
                         
                         
 
@@ -198,87 +198,35 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-08-13</div>
+        <div class="col-lg-6">2023-08-20</div>
         
     </div>
-    <h2>Publish-PSResource を試す</h2>
+    <h2>F# でコマンドレットを書いてる pt.21</h2>
 </div>
 <div>
     
-    <p><a href="/posts/2023-07-23-psresourceget">以前から気になってた</a> PSResourceGet の <code>Publish-PSResource</code> を試す機会があったので試した。
-試したと書いてるけど、自分の利用ケースで問題なく使えるか見ただけ。</p><p><a href="https://github.com/krymtkts/PSJobCanAttendance/">krymtkts/PSJobCanAttendance</a> を修正する機会があったので、ついでに <code>Publish-PSResource</code> へ切り替えた。上手くいってた。
-<a href="https://github.com/krymtkts/PSJobCanAttendance/pull/9">#9</a></p><p>(追記 2023-08-15)
-試したバージョンは以下の通り。</p><pre><code class="powershell">PS&gt; Get-Module *PSResourceGet; $PSVersionTable | Format-Table
-
-ModuleType Version    PreRelease Name                                ExportedCommands
----------- -------    ---------- ----                                ----------------
-Binary     0.5.23     beta23     Microsoft.PowerShell.PSResourceGet  {Find-PSResource, Get-InstalledPSResource, Get-PS…
-
-
-Name                           Value
-----                           -----
-PSVersion                      7.3.6
-PSEdition                      Core
-GitCommitId                    7.3.6
-OS                             Microsoft Windows 10.0.22621
-Platform                       Win32NT
-PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0…}
-PSRemotingProtocolVersion      2.3
-SerializationVersion           1.1.0.1
-WSManStackVersion              3.0
-</code></pre><p><a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/publish-psresource?view=powershellget-3.x">Publish-PSResource (Microsoft.PowerShell.PSResourceGet) - PowerShell | Microsoft Learn</a> を参照して、
-<code>Path</code>, <code>ApiKey</code>, <code>Verbose</code>, <code>WhatIf</code> を使った。
-<code>Verbose</code>, <code>WhatIf</code> は確認用なのでなくても良い。
-<code>Repository</code> も省略できて、省略した場合は優先度が高い repository に公開される。自分の場合は PowerShell Gallery 。</p><p>PSJobCanAttendance の場合は公開するファイルが少ないからか、実行したら一瞬で公開された。 PSResourceGet になったら公開まで高速化されるんや。</p><p>これでいけそうな感触を得たので、 pocof でも試す。 <a href="https://github.com/krymtkts/pocof/pull/54">krymtkts/pocof#54</a></p><p><code>AllowPrerelease</code> とか <code>RequiredVersion</code> とかのオプションで指定していたところがなくなって、 <code>*.psd1</code> から読み取るように変わってるぽい。
-ただ <code>ModuleName</code> とかの指定どうなるんやと思ったけど、ディレクトリ名ぽいな。</p><p>ということなので、従来の pocof の公開方法である <code>(Get-Module).Path</code> を渡す方法は無理だってこと。これだと ddl のパスが得られるのだけどこれは弾かれたし、 <code>*.psd1</code> のパスを渡す方法だと親ディレクトリがバージョン番号になってモジュール名にならない。 API Key にモジュール名の制限をかけてたから権限で弾かれて変な数字の名前をしたモジュールの公開を免れた。
-そこんところを公開用のディレクトリにモジュール類をコピーして、その中の <code>pocof.psd1</code> を <code>Publish-PSResource</code> するようにしてみた。</p><pre><code>+---.github
-+---coverage
-+---docs
-+---publish
-|   \---pocof &lt;- ここへこぴる
-|       \---pocof.psd1
-+---src
-|   \---pocof
-        \---bin
-            \---Release
-                \---*
-                    \---pocof.psd1 &lt;- コピー元
-\---tests
-</code></pre><p>が、以下のようなエラーでまだ上手くいってない。</p><pre><code>Error: 2023-08-13 18:59:25:
-At C:\Users\takatoshi\dev\github.com\krymtkts\pocof\psakefile.ps1:108 char:5 +     Publish-PSResource @Params +     ~~~~~~~~~~~~~~~~~~~~~~~~~~ [&lt;&lt;==&gt;&gt;] Exception: Repository 'PSGallery': Response status code does not indicate success: 403 (The specified API key is invalid, has expired, or does not have permission to access the specified package.).
-</code></pre><p>公開対象のディレクトリ名がモジュール名になるって判断が間違ってるのか...いけそうな感触を持ったけどあかんのかな、挑戦は続く。</p><h3 id="追記-2023-08-14">追記 2023-08-14</h3><p>その後、 PowerShell Gallery の API Key を作り直したり、 pocof のみ更新可能に絞っていた package を <code>*</code> にして全権与えてみたりしたがダメだった。
-DDL の Module に対応してないような旨はどこにもなかった気がするけど。</p><p>Issue で気になるものとしては、 prerelease の依存関係を持つケースに対応してないというのがある。
-<a href="https://github.com/PowerShell/PSResourceGet/issues/1251">PSResourceGet module prerelease version scheme issues · Issue #1251 · PowerShell/PSResourceGet</a>
-けど pocof 自身はそういう依存関係を持ってないので該当しないはず。
-<del>他の可能性があるとしたら、 prerelease のみのバージョン履歴を持つ場合に未知のバグがあるとかかな。</del>
-普通に自家製バグ、見当外れ。</p><p>いかんせん条件が定かでないので、一通り他の PSResourceGet の Cmdlet も試してみるとかが妥当だろうけど、めんどくせえええ...
-<del>でも解決しないと pocof のプルリク永久に生き続けるし、事象を調べるか誰かが解決するのを待つか、面倒な選択しかない。</del>
-自家製バグが原因なので時間かけてでも調査して当たり前。</p><p><del>なんかいい感じにサクッとできるつもりだったがそうならなかったのは、我ながら「持ってる」な。しらんけど。</del>
-単に休みボケのケアレスミス発動しただけ。</p><h3 id="追記-2023-08-16">追記 2023-08-16</h3><p>昨日この件を調べるためのテストモジュールを書いた。
-F# で空のモジュールをサクッと書いて PSResourceGet と PowerShellGet の両方で公開できるようなのを。
-でも PowerShellGet でも同じような権限のエラーになった。</p><p>それもそのはず普通に自分が書いた psake タスクのバグだったわ...恥ずかし。
-API Key を <code>string</code> で取り出さなあかんとこ <code>PSCredential</code> がそのまま渡ってた...(<code>SecureString</code> じゃないんやというのは置いといて)</p><p><a href="https://github.com/krymtkts/pocof/blob/83e3bf2691a8485a6b2595934845204d21b885a2/psakefile.ps1#L101-L108">pocof/psakefile.ps1 at 83e3bf2691a8485a6b2595934845204d21b885a2 · krymtkts/pocof</a></p><p>間違いそのママの差分はこんな感じ。</p><pre><code class="diff">     $Params = @{
--        Name = $ModuleName
--        NugetAPIKey = (Get-Credential API-key -Message 'Enter your API key as the password').GetNetworkCredential().Password
-+        Path = $p.FullName
-+        Repository = 'PSGallery'
-+        ApiKey = (Get-Credential API-key -Message 'Enter your API key as the password') # ここが終わってる
-         WhatIf = $DryRun
-         Verbose = $true
--        AllowPrerelease = $true
--        RequiredVersion = $RequiredVersion
-     }
--    Publish-Module @Params
-+    Publish-PSResource @Params
-</code></pre><p>正しいのはこう。</p><pre><code class="diff">-        ApiKey = (Get-Credential API-key -Message 'Enter your API key as the password')
-+        ApiKey = (Get-Credential API-key -Message 'Enter your API key as the password').GetNetworkCredential().Password
-</code></pre><p>2 日浪費したけど解決してよかったわ。</p>
+    <p><a href="https://github.com/krymtkts/pocof">pocof</a> の開発をした。
+<a href="/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20">pocof のコンパイルを .NET 7 にした</a> こともあってなんかテンション的に触りやすくなった(逆に Fable でブログ書き直す方を放置)。
+<a href="/posts/2023-08-13-test-publish-psresource">PSResourceGet への乗り換え</a> もできたのだけど、その時気になることがあった。</p><p>いつかはやらないといけないと考えていたが、配布 DLL が多すぎる。
+<a href="https://www.powershellgallery.com/packages/pocof/0.5.0-alpha">PowerShell Gallery | pocof 0.5.0-alpha</a> の FileList 見たらわかるけどめちゃくちゃ DLL がある。
+pocof で使ってない DLL もいっぱい含まれている。</p><p>これは...解決したい。</p><p>.NET では実行可能ファイルであれば自己完結型と言われる単一バイナリの生成ができるのだけど、 DLL ではそういうのはない様子。
+PowerShell モジュールの場合どういう手段が取れるのかちゃんと理解してなかったが、こういうこと ↓ で大量の DLL 全部ぶちまけられてた。</p><ul><li><a href="https://www.nuget.org/packages/Microsoft.PowerShell.SDK/#versions-body-tab">Microsoft.PowerShell.SDK</a> を参照してる</li><li>F# の各言語に localize されたリソースの DLL が出力される</li></ul><p>これらに対処してバンドルに含まれる DLL を減らしてみた。 <a href="https://github.com/krymtkts/pocof/pull/57">#57</a></p><h3 id="microsoftpowershellsdk">Microsoft.PowerShell.SDK</h3><p>pocof のような PowerShell モジュールは PowerShell のランタイム内で動く。
+また pocof では PowerShell の機能をモリモリ使って出力結果を生成するようなことがない。
+このようなケースでは、 <a href="https://github.com/PowerShell/PowerShellStandard">PowerShell/PowerShellStandard</a> のリファレンスライブラリだけでいいみたい。</p><p>pocof で <code>Microsoft.PowerShell.SDK</code> を <code>PowerShellStandard.Library</code> に入れ替えて全テスト実行してみた。
+テストデータ作成のために <code>PSObject</code> を作成しているところだけ影響があった。
+つまり pocof 本体に影響はないので、テストプロジェクトで <code>Microsoft.PowerShell.SDK</code> を参照してれば OK ということ。</p><p><a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">一番初めに pocof を書き始めた</a>ころの記事では <code>PowerShellStandard.Library</code> を参照してたのだけどなんか途中で変えてみたい。
+初回リリースでは既に <code>Microsoft.PowerShell.SDK</code> に変わってたのだけど、この頃は <a href="https://fsprojects.github.io/FsUnit/">FsUnit</a> 使ったテストなかった気がするし、違う理由かなんか分からず変えてそう。コミットログ追えばわかるかな。</p><h3 id="f-の-localize-されたリソースの-dlls">F# の localize されたリソースの DLLs</h3><p>pocof では localize されたリソースの DLL 要らない。なんか F# のリソースが使われるとしても英語でいいし。
+これらの各言語リソースの DLL を取り除くには <code>SatelliteResourceLanguages</code> という MSBuild プロパティを指定すれば良いようだ。言語を指定せずに空(<code>null</code>)だと全言語対象のママになるので、英語を指定しないといけない。</p><ul><li><a href="https://forums.fsharp.org/t/what-is-the-purpose-of-the-fsharp-core-resource-dll-files/1402">What is the purpose of the FSharp.Core.resource.dll files? - General - F# Software Foundation Community Forums</a></li><li><a href="https://learn.microsoft.com/ja-jp/dotnet/core/project-sdk/msbuild-props#satelliteresourcelanguages">SatelliteResourceLanguages | Microsoft.NET.Sdk の MSBuild プロパティ - .NET | Microsoft Learn</a></li></ul><h3 id="終わり">終わり</h3><p>MUSBuild の世界は難しいなー。でもこれでかなり DDL が減った。
+ただ最後に <code>System.Management.Automation.dll</code> が残ってる。</p><p>これって PowerShell 環境ならかならずあるのでは...という気がするのだけど。
+open してる名前空間の関係で消えないのかな？もうちょい検証してみないとわからん。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
     <a href="/tags/powershell">powershell</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -288,7 +236,7 @@ API Key を <code>string</code> で取り出さなあかんとこ <code>PSCreden
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-08-06-disassemble-and-clean-keyswitches">2023-08-06 キースイッチを分解して掃除する &raquo;</a>
+        <a class="right" href="/posts/2023-08-13-test-publish-psresource">2023-08-13 Publish-PSResource を試す &raquo;</a>
         
     </div>
 </div>
