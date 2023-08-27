@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-08-27-github-streak-a-year">GitHub streak a year</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-08-20-writing-cmdlet-in-fsharp-pt21">F# でコマンドレットを書いてる pt.21</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-08-13-test-publish-psresource">Publish-PSResource を試す</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-08-06-disassemble-and-clean-keyswitches">キースイッチを分解して掃除する</a></li>
                         
                         
 
@@ -198,35 +198,26 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-08-20</div>
+        <div class="col-lg-6">2023-08-27</div>
         
     </div>
-    <h2>F# でコマンドレットを書いてる pt.21</h2>
+    <h2>GitHub streak a year</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">pocof</a> の開発をした。
-<a href="/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20">pocof のコンパイルを .NET 7 にした</a> こともあってなんかテンション的に触りやすくなった(逆に Fable でブログ書き直す方を放置)。
-<a href="/posts/2023-08-13-test-publish-psresource">PSResourceGet への乗り換え</a> もできたのだけど、その時気になることがあった。</p><p>いつかはやらないといけないと考えていたが、配布 DLL が多すぎる。
-<a href="https://www.powershellgallery.com/packages/pocof/0.5.0-alpha">PowerShell Gallery | pocof 0.5.0-alpha</a> の FileList 見たらわかるけどめちゃくちゃ DLL がある。
-pocof で使ってない DLL もいっぱい含まれている。</p><p>これは...解決したい。</p><p>.NET では実行可能ファイルであれば自己完結型と言われる単一バイナリの生成ができるのだけど、 DLL ではそういうのはない様子。
-PowerShell モジュールの場合どういう手段が取れるのかちゃんと理解してなかったが、こういうこと ↓ で大量の DLL 全部ぶちまけられてた。</p><ul><li><a href="https://www.nuget.org/packages/Microsoft.PowerShell.SDK/#versions-body-tab">Microsoft.PowerShell.SDK</a> を参照してる</li><li>F# の各言語に localize されたリソースの DLL が出力される</li></ul><p>これらに対処してバンドルに含まれる DLL を減らしてみた。 <a href="https://github.com/krymtkts/pocof/pull/57">#57</a></p><h3 id="microsoftpowershellsdk">Microsoft.PowerShell.SDK</h3><p>pocof のような PowerShell モジュールは PowerShell のランタイム内で動く。
-また pocof では PowerShell の機能をモリモリ使って出力結果を生成するようなことがない。
-このようなケースでは、 <a href="https://github.com/PowerShell/PowerShellStandard">PowerShell/PowerShellStandard</a> のリファレンスライブラリだけでいいみたい。</p><p>pocof で <code>Microsoft.PowerShell.SDK</code> を <code>PowerShellStandard.Library</code> に入れ替えて全テスト実行してみた。
-テストデータ作成のために <code>PSObject</code> を作成しているところだけ影響があった。
-つまり pocof 本体に影響はないので、テストプロジェクトで <code>Microsoft.PowerShell.SDK</code> を参照してれば OK ということ。</p><p><a href="/posts/2022-05-07-start-to-write-cmdlet-by-fsharp">一番初めに pocof を書き始めた</a>ころの記事では <code>PowerShellStandard.Library</code> を参照してたのだけどなんか途中で変えてみたい。
-初回リリースでは既に <code>Microsoft.PowerShell.SDK</code> に変わってたのだけど、この頃は <a href="https://fsprojects.github.io/FsUnit/">FsUnit</a> 使ったテストなかった気がするし、違う理由かなんか分からず変えてそう。コミットログ追えばわかるかな。</p><h3 id="f-の-localize-されたリソースの-dlls">F# の localize されたリソースの DLLs</h3><p>pocof では localize されたリソースの DLL 要らない。なんか F# のリソースが使われるとしても英語でいいし。
-これらの各言語リソースの DLL を取り除くには <code>SatelliteResourceLanguages</code> という MSBuild プロパティを指定すれば良いようだ。言語を指定せずに空(<code>null</code>)だと全言語対象のママになるので、英語を指定しないといけない。</p><ul><li><a href="https://forums.fsharp.org/t/what-is-the-purpose-of-the-fsharp-core-resource-dll-files/1402">What is the purpose of the FSharp.Core.resource.dll files? - General - F# Software Foundation Community Forums</a></li><li><a href="https://learn.microsoft.com/ja-jp/dotnet/core/project-sdk/msbuild-props#satelliteresourcelanguages">SatelliteResourceLanguages | Microsoft.NET.Sdk の MSBuild プロパティ - .NET | Microsoft Learn</a></li></ul><h3 id="終わり">終わり</h3><p>MUSBuild の世界は難しいなー。でもこれでかなり DDL が減った。
-ただ最後に <code>System.Management.Automation.dll</code> が残ってる。</p><p>これって PowerShell 環境ならかならずあるのでは...という気がするのだけど。
-open してる名前空間の関係で消えないのかな？もうちょい検証してみないとわからん。</p>
+    <p><a href="/posts/2023-05-14-rebuild-blog-with-fable-pt3">5 月の日記で触れた</a> GitHub Streak が 2023-08-21 ようやく 365 日に到達した。やったね。
+次は 730 日を目指すのだけど、マイルストンとしてまずキリよい 400 を置き、次に 500, 600 と目指していく。</p><p>Streak にこだわりだしたのは、生涯プログラマであろうとしたらやっぱり日々の鍛錬というか毎日コード書いて感覚を保ちたいよな、というのが根底にある。</p><p>とはいえコードを書いてない日、例えばにこの日記のような文章を書くだけのコミットもあるし、 GitHub Streak って Issue や review でも数えられるので厳密ではないのだけど。
+でもそのくらいの緩さじゃないと初めから続けられなかっただろうし、ちょうど良い落とし所であろう。</p><p>Streak が途絶えたとて何ら困ることないのだけど、途絶えると取り戻すのに同等の時間がかかるものは、続ける方向に適度にプレッシャーが発生して良い。
+特にゲーマー脳を少なからず持っていれば、トロコン感覚を持って臨める。
+積み重ねてきたものって割と簡単にやめる事ができるので、このような強制力を持って習慣を維持するのは良い案だと感じている。</p><p>しかしながら Streak を始めてから今に至るまで、仕事や私生活において日々の生活リズムが狂うようなインパクトの大きい出来事が一度も起こってない。
+つまるところそういったインパクトがあったときにも続けられるというサンプルが無いわけだから、もしものときに上手く続けられるかは定かではない。
+今の自分ならそういう状況でも淡々とこなせそうな気配は薄っすら感じるが、これも Streak を続けてきたことで得た感触だろう。ゆーても油断は禁物やけど。</p><p>次の目標 400 はもうすぐなので、堅実に次につなげていこう。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
-    
-    <a href="/tags/fsharp">fsharp</a>
+    <a href="/tags/diary">diary</a>
     
 </div>
 
@@ -236,7 +227,7 @@ open してる名前空間の関係で消えないのかな？もうちょい検
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-08-13-test-publish-psresource">2023-08-13 Publish-PSResource を試す &raquo;</a>
+        <a class="right" href="/posts/2023-08-20-writing-cmdlet-in-fsharp-pt21">2023-08-20 F# でコマンドレットを書いてる pt.21 &raquo;</a>
         
     </div>
 </div>
