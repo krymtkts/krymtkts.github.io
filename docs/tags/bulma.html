@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: PowerShell のパラメータバインディングは &quot;3 時&quot; を Datetime 型にパースする</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-01-30-pwsh-parameter-binding-parse-datetime">
+    <title>krymtkts: Posts Tagged &quot;bulma&quot;</title>
+    <link rel="canonical" href="https://krymtkts.github.io/tags/bulma">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: PowerShell のパラメータバインディングは &quot;3 時&quot; を Datetime 型にパースする" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-01-30-pwsh-parameter-binding-parse-datetime" />
+    <meta property="og:title" content="krymtkts: Posts Tagged &quot;bulma&quot;" />
+    <meta property="og:url" content="https://krymtkts.github.io/tags/bulma" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -197,111 +197,17 @@
         <div class="col-lg-12">
             <div id="content">
                 
-<div id="post">
-    <div class="post-header">
-    <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-01-30</div>
-        
+<div id="posts-by-tag">
+    <div id="page-header">
+        <h2>Posts Tagged &quot;bulma&quot;</h2>
     </div>
-    <h2>PowerShell のパラメータバインディングは &quot;3 時&quot; を Datetime 型にパースする</h2>
-</div>
-<div>
+    <ul>
     
-    <h3 id="いきなりまとめ">いきなりまとめ</h3><p>PowerShell の関数なりコマンドレットがパラメータを受け取る場合、パラメータバインディングの仕組みで型ごとの変換処理をしており、日付型のパラメータでは<code>DateTime.Parse</code> しているのがわかった。</p><hr /><h3 id="経緯">経緯</h3><p>先日 <a href="/posts/2022-01-23-scheduled-task-in-powershell">ScheduledTask を設定した</a>くだりで初めて知った。</p><p><a href="https://docs.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtasktrigger?view=windowsserver2022-ps#example-1--register-a-scheduled-task-that-starts-a-task-once">New-ScheduledTaskTrigger (ScheduledTasks) | Microsoft Docs</a></p><p>を見ていて、 <code>-At 3pm</code> て何これ？と思って日本語も試した。
-使い所がわかりかねるが、以下のようなジャパナイズされた入力でも OK!
-ただし漢数字、曜日や午前/午後は <code>Parse</code> できないので無理な。</p><p>参照: <a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/parsing-datetime">Convert strings to DateTime | Microsoft Docs</a></p><pre><code class="powershell">PS&gt; Get-Date 15時
-
-Wednesday, January 16, 2022 03:00:00
-
-PS&gt; Get-Date 6年6月6日
-
-Monday, June 6, 2006 00:00:00
-
-PS&gt; Get-Date 3じ
-Get-Date: Cannot bind parameter 'Date'. Cannot convert value "3じ" to type "System.DateTime". Error: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-</code></pre><p>どういう仕組や。</p><h4 id="大まかな予測">大まかな予測</h4><p>コマンドレットや関数に渡す前、引数の型 <code>DateTime</code> の時点で捏ねくっている様子。</p><pre><code class="powershell">function hiduke() {
-  param(
-    [datetime]
-    $d
-  )
-  $d
-}
-</code></pre><pre><code class="powershell">PS&gt; hiduke -d 3時
-
-Wednesday, January 16, 2022 03:00:00
-</code></pre><p>キャストとパースの違いを見る。</p><pre><code class="powershell">PS&gt; [DateTime]::Parse('3時')
-
-Wednesday, January 16, 2022 03:00:00
-
-PS&gt; [DateTime]::Parse('3じ')
-MethodInvocationException: Exception calling "Parse" with "1" argument(s): "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-
-PS&gt; [DateTime]'3時'
-
-Wednesday, January 16, 2022 03:00:00
-
-PS&gt; [DateTime]'3じ'
-InvalidArgument: Cannot convert value "3じ" to type "System.DateTime". Error: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-</code></pre><p>同じエラーメッセージ出てるので、 PowerShell が指定の型に評価するのに <code>DateTime.Parse</code> を呼んでる。
-真面目に考えたことなかったが、PowerShell 自体の機能でパラメーターバインディングというらしい。
-<a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parameters?view=powershell-7.2">about Parameters - PowerShell | Microsoft Docs</a></p><p>(今更ながら)また一つ学んでしまったようだな...</p><p>パラメーターバインディングの処理内容を知るには <code>Trace-Command</code> が使える。</p><pre><code class="powershell">PS&gt; Trace-Command -PSHost -Name ParameterBinding {Get-Date 3じ}
-DEBUG: 2022-01-30 14:47:05.5488 ParameterBinding Information: 0 : BIND NAMED cmd line args [Get-Date]
-DEBUG: 2022-01-30 14:47:05.5491 ParameterBinding Information: 0 : BIND POSITIONAL cmd line args [Get-Date]
-DEBUG: 2022-01-30 14:47:05.5493 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 14:47:05.5495 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 14:47:05.5496 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 14:47:05.5497 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 14:47:05.5499 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 14:47:05.5501 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 14:47:05.5503 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 14:47:05.5504 ParameterBinding Information: 0 :         COERCE arg to [System.DateTime]
-DEBUG: 2022-01-30 14:47:05.5506 ParameterBinding Information: 0 :             Trying to convert argument value from System.String to System.DateTime
-DEBUG: 2022-01-30 14:47:05.5509 ParameterBinding Information: 0 :             CONVERT arg type to param type using LanguagePrimitives.ConvertTo
-DEBUG: 2022-01-30 14:47:05.5519 ParameterBinding Information: 0 :             ERROR: ERROR: COERCE FAILED: arg [3じ] could not be converted to the parameter type [System.DateTime]
-(...端折る...)
-Get-Date: Cannot bind parameter 'Date'. Cannot convert value "3じ" to type "System.DateTime". Error: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-</code></pre><p>パラメータバインディング時によしなにしてるのがわかってきたところで、力尽きた。
-PowerShell のパラメータバインディングの仕組みに関しては宿題やな。気長に見ていくしかない。</p><h4 id="潜る">潜る</h4><p>ここまで来れたので、次は PowerShell のパラメータバインディングのコードに潜り込む。</p><p><code>Trace-Command</code> の ParameterBinding Information に出てた</p><ul><li><code>"COERCE FAILED: arg .+ could not be converted to the parameter type "</code></li><li><code>"CONVERT arg type to param type using LanguagePrimitives.ConvertTo"</code></li></ul><p>から、 <a href="https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/ParameterBinderBase.cs#L1262"><code>ParameterBinderBase.cs</code></a>にたどり着いた。</p><p>例外がスローされたのがどこか <code>LanguagePrimitives.ConvertTo</code> から先を探るのにはちょっと情報が足りなかったので、<code>Trace-Command</code> に TypeConversion を足して出力した。</p><p>TypeConversion が有用なのがわかったのは、<a href="https://github.com/PowerShell/PowerShell/blob/0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b/src/System.Management.Automation/engine/LanguagePrimitives.cs#L4837"><code>LanguagePrimitives.cs</code> 内の <code>ConvertTo</code></a>を追ってたらトレース情報にまんまその名前が出てきたから。</p><pre><code class="powershell">PS&gt; Trace-Command -PSHost -Name ParameterBinding,TypeConversion {Get-Date 3じ}
-DEBUG: 2022-01-30 15:36:52.2304 ParameterBinding Information: 0 : BIND NAMED cmd line args [Get-Date]
-DEBUG: 2022-01-30 15:36:52.2309 ParameterBinding Information: 0 : BIND POSITIONAL cmd line args [Get-Date]
-DEBUG: 2022-01-30 15:36:52.2312 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 15:36:52.2314 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 15:36:52.2315 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 15:36:52.2318 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 15:36:52.2320 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 15:36:52.2322 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 15:36:52.2325 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 15:36:52.2326 ParameterBinding Information: 0 :         COERCE arg to [System.DateTime]
-DEBUG: 2022-01-30 15:36:52.2329 ParameterBinding Information: 0 :             Trying to convert argument value from System.String to System.DateTime
-DEBUG: 2022-01-30 15:36:52.2331 ParameterBinding Information: 0 :             CONVERT arg type to param type using LanguagePrimitives.ConvertTo
-DEBUG: 2022-01-30 15:36:52.2336 TypeConversion Information: 0 :             Converting "3じ" to "System.DateTime".
-DEBUG: 2022-01-30 15:36:52.2346 TypeConversion Information: 0 :                 Exception calling Parse method with CultureInfo: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'.".
-DEBUG: 2022-01-30 15:36:52.2350 ParameterBinding Information: 0 :             ERROR: ERROR: COERCE FAILED: arg [3じ] could not be converted to the parameter type [System.DateTime]
-(...端折る...)
-Get-Date: Cannot bind parameter 'Date'. Cannot convert value "3じ" to type "System.DateTime". Error: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-</code></pre><p>ParameterBinding Information のエラー出力までに TypeConversion Information が足されたのがわかる。いい感じじゃないか。</p><p>このキーワードを元にコードを探ると、</p><ul><li><a href="https://github.com/PowerShell/PowerShell/blob/0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b/src/System.Management.Automation/engine/LanguagePrimitives.cs#L5226-L5287"><code>LanguagePrimitives.cs</code> 内の <code>FigureParseConversion</code></a> でパースに使うメソッドをリフレクションで取得している</li><li><a href="https://github.com/PowerShell/PowerShell/blob/0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b/src/System.Management.Automation/engine/LanguagePrimitives.cs#L3747-L3780"><code>LanguagePrimitives.cs</code> 内の <code>ConvertViaParseMethod</code></a> で取得したメソッドを使ったパースが行われてる</li></ul><p>というのがわかった。</p><p>やっぱり <code>Datetime.Parse</code> を使ってたんや。あー、スッキリした！</p><p>というか PowerShell 使ってる割にちゃんと勉強してないから、せなあかんな。</p>
-</div>
-
-<div id="post-tags">
-    <b>Tags: </b>
+        <li>
+            <a href="/posts/2023-09-03-rebuild-blog-with-fable-pt11">2023-09-03 Fable でブログを再構築する pt.11</a>
+        </li>
     
-    <a href="/tags/powershell">powershell</a>
-    
-</div>
-
-
-    <div id="prev-next">
-        
-        <a href="/posts/2022-02-05-build-pwsh-2022">&laquo; 2022-02-05 2022-02 版 PowerShell のビルド</a>
-        
-        
-        <a class="right" href="/posts/2022-01-23-scheduled-task-in-powershell">2022-01-23 Windows のタスクを操作する(PowerShell で) &raquo;</a>
-        
-    </div>
-
-    
-
-
+    </ul>
 </div>
 
             </div>

@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-09-03-rebuild-blog-with-fable-pt11">Fable でブログを再構築する pt.11</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-08-27-github-streak-a-year">GitHub streak a year</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-08-20-writing-cmdlet-in-fsharp-pt21">F# でコマンドレットを書いてる pt.21</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-08-13-test-publish-psresource">Publish-PSResource を試す</a></li>
                         
                         
 
@@ -102,6 +102,8 @@
                         <li><a class="dropdown-item" href="/tags/boto3">boto3</a></li>
                         
                         <li><a class="dropdown-item" href="/tags/job">job</a></li>
+                        
+                        <li><a class="dropdown-item" href="/tags/bulma">bulma</a></li>
                         
                         <li><a class="dropdown-item" href="/tags/oh-my-posh">oh-my-posh</a></li>
                         
@@ -198,26 +200,125 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-08-27</div>
+        <div class="col-lg-6">2023-09-03</div>
         
     </div>
-    <h2>GitHub streak a year</h2>
+    <h2>Fable でブログを再構築する pt.11</h2>
 </div>
 <div>
     
-    <p><a href="/posts/2023-05-14-rebuild-blog-with-fable-pt3">5 月の日記で触れた</a> GitHub Streak が 2023-08-21 ようやく 365 日に到達した。やったね。
-次は 730 日を目指すのだけど、マイルストンとしてまずキリよい 400 を置き、次に 500, 600 と目指していく。</p><p>Streak にこだわりだしたのは、生涯プログラマであろうとしたらやっぱり日々の鍛錬というか毎日コード書いて感覚を保ちたいよな、というのが根底にある。</p><p>とはいえコードを書いてない日、例えばにこの日記のような文章を書くだけのコミットもあるし、 GitHub Streak って Issue や review でも数えられるので厳密ではないのだけど。
-でもそのくらいの緩さじゃないと初めから続けられなかっただろうし、ちょうど良い落とし所であろう。</p><p>Streak が途絶えたとて何ら困ることないのだけど、途絶えると取り戻すのに同等の時間がかかるものは、続ける方向に適度にプレッシャーが発生して良い。
-特にゲーマー脳を少なからず持っていれば、トロコン感覚を持って臨める。
-積み重ねてきたものって割と簡単にやめる事ができるので、このような強制力を持って習慣を維持するのは良い案だと感じている。</p><p>しかしながら Streak を始めてから今に至るまで、仕事や私生活において日々の生活リズムが狂うようなインパクトの大きい出来事が一度も起こってない。
-つまるところそういったインパクトがあったときにも続けられるというサンプルが無いわけだから、もしものときに上手く続けられるかは定かではない。
-今の自分ならそういう状況でも淡々とこなせそうな気配は薄っすら感じるが、これも Streak を続けてきたことで得た感触だろう。ゆーても油断は禁物やけど。</p><p>次の目標 400 はもうすぐなので、堅実に次につなげていこう。</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>ここ 1 ヶ月ほどでやりたかったことを 3 つ進められた。エライ(低ハードル)。</p><ul><li>ややこしくなってた入出力パスの構築 <a href="https://github.com/krymtkts/blog-fable/pull/38">#38</a> <a href="https://github.com/krymtkts/blog-fable/pull/39">#39</a></li><li><a href="https://pagespeed.web.dev/analysis/https-krymtkts-github-io-blog-fable/vfo1picz8u?form_factor=mobile">PageSpeed Insights</a> のスコア改善 <a href="https://github.com/krymtkts/blog-fable/pull/42">#42</a></li><li>カラースキームの導入 <a href="https://github.com/krymtkts/blog-fable/pull/43">#43</a></li></ul><p>以下のとおり結果的に結構良いスコア叩き出すようになった。</p><table><thead><tr><th>platform</th><th align="right">Performance</th><th align="right">Accessibility</th><th align="right">Best Practices</th><th align="right">SEO</th></tr></thead><tbody><tr><td>Mobile</td><td align="right">99</td><td align="right">93</td><td align="right">100</td><td align="right">100</td></tr><tr><td>Desktop</td><td align="right">100</td><td align="right">93</td><td align="right">100</td><td align="right">100</td></tr></tbody></table><p><a href="https://ethanschoonover.com/solarized/">Solarized</a> が好きなのだけど今回は Dark にしてみた。エディタやターミナルなんでも Solarized Dark にして 10 年近いのでついにブログも Dark に。
+まだいい感じに色調整できてないから Accessibility をちょい下げてしまってるが、後ほど調整する。</p><p>今回やった中には、初体験でちょっと調べる必要があるものもあった。
+これらはメモがてら以下に記しておく。全然 F# ネタではないけど。</p><p>いずれも上手く拡張できる様になっており楽だった。感心するわ。</p><hr /><h3 id="marked-の-renderer-を拡張する">Marked の Renderer を拡張する</h3><p><a href="https://marked.js.org/using_pro#renderer">The Renderer - Marked Documentation</a> に示されるように <code>Renderer</code> オブジェクトにわたすオプションで拡張できる。</p><p><code>listitem(string text, boolean task, boolean checked)</code> と <code>checkbox(boolean checked)</code> の組み合わせにちょっと癖があった。
+どっちも定義しているとどっちも呼ばれてチェックボックスが 2 個になってしまう。
+<code>checkbox(boolean checked)</code> 側を無効化するような書き方をして <code>checkbox</code> 要素を <code>label</code> 要素で包み込んだ。
+シグネチャが <code>checkbox(boolean checked)</code> なもんで、こっち側は <code>label</code> 要素書こうにもテキスト不明でできないねんよな。
+ブログの場合 <code>checkbox</code> 要素が単独で使用されることまずないからこうしたけど、なんかもっと良い方法がないのかは気になるところ。</p><pre><code class="fsharp">            let listitem =
+                fun text task check -&gt;
+                    let checkState =
+                        match check with
+                        | true -&gt; "checked"
+                        | false -&gt; ""
+
+                    // NOTE: input を label で包んで関連を持たせる
+                    match task with
+                    | true -&gt;
+                        $"""&lt;li&gt;&lt;label class="checkbox"&gt;&lt;input type="checkbox" class="checkbox" disabled {checkState} /&gt;{text}&lt;/label&gt;&lt;/li&gt;"""
+                    | false -&gt; $"""&lt;li&gt;{text}&lt;/li&gt;"""
+
+            let checkbox =
+                fun _ -&gt;
+                    // NOTE: checkbox は list と一緒に使われる前提と考えて何も返さない
+                    ""
+
+            let mops =
+                !!{| heading = heading
+                     link = link
+                     listitem = listitem
+                     checkbox = checkbox |}
+
+
+            jsOptions&lt;Marked.MarkedExtension&gt; (fun o -&gt;
+                o.renderer &lt;- Some &lt;| U2.Case2 mops
+                o.gfm &lt;- Some true
+                o.headerIds &lt;- Some true)
+</code></pre><h3 id="bulma-の自前-style-をビルドする">Bulma の自前 style をビルドする</h3><p><a href="https://bulma.io/documentation/customize/with-node-sass/">With node-sass | Bulma: Free, open source, and modern CSS framework based on Flexbox</a></p><p>概ねこの手順の通りにやればいい。</p><p>ただし以下の非推奨があって、それらは自前で最新のものに置き換える必要があった。</p><ul><li><a href="https://www.npmjs.com/package/node-sass"><code>node-sass</code></a> は非推奨、 Dart 製の <a href="https://www.npmjs.com/package/sass"><code>sass</code></a> に変える</li><li>Sass では <code>@import</code> は非推奨、 <code>@use</code> に書き換える
+<ul><li>余談だが commit message には backquote で囲わずにこれらのキーワードを書いてたら GitHub 上でホバーしたときにその ID の方々がポップアップされて笑ってしまった</li></ul></li></ul><p>これらは Sass の最新仕様に追随するよう自前でこしらえた。</p><h3 id="node-sass-を-sass-に"><code>node-sass</code> を <code>sass</code> に</h3><p>変えるのは大したことないけど、 cli インタフェースのオプションも変わってるので、そこはケアする必要がある。
+ついでに出力される CSS を圧縮するオプション <code>--style=compressed</code> もつける。今回のケースでは空白が消えたことで 3KB くらい節約できた。</p><pre><code class="patch">   "scripts": {
+     "postinstall": "dotnet tool restore",
+-    "css-build": "node-sass --omit-source-map-url ./sass/style.scss ./docs/blog-fable/css/style.css",
++    "css-build": "sass --style=compressed --no-source-map ./sass/style.scss ./docs/blog-fable/css/style.css",
+     "serve": "dotnet fsi ./dev-server.fsx",
+     "build": "dotnet fable src --runScript",
+     "dev": "npm run build dev &amp;&amp; npm run serve"
+</code></pre><h3 id="import-を-use-に"><code>@import</code> を <code>@use</code> に</h3><p><code>@use</code> を使う場合は、変数のデフォルト値を書き換えるには先述の手順のとおりにはできない。
+<a href="https://sass-lang.com/documentation/variables/#default-values">Default Values | Sass: Variables</a> の示す通り <code>@use &lt;url&gt; with (&lt;variable&gt;: &lt;value&gt;, &lt;variable&gt;: &lt;value&gt;)</code> を使う。以下書き換えイメージ。</p><pre><code class="patch"> @charset "utf-8";
+
+ // NOTE: based on https://ethanschoonover.com/solarized/
+ $base03 :#002b36;
+ $base02 :#073642;
+ $base01 :#586e75;
+ $base00 :#657b83;
+ $base0 :#839496;
+ $base1 :#93a1a1;
+ $base2 :#eee8d5;
+ $base3 :#fdf6e3;
+ $yellow :#b58900;
+ $orange :#cb4b16;
+ $red :#dc322f;
+ $magenta :#d33682;
+ $violet :#6c71c4;
+ $blue :#268bd2;
+ $cyan :#2aa198;
+ $green :#859900;
+
+-@import "../node_modules/bulma/bulma.sass";
+-// NOTE: Solarized Dark.
+-$black: $base3;
+-$black-bis: $base2;
+-$black-ter: $base2;
+-$grey-darker: $base1;
+-$grey-dark: $base1;
+-$grey: $base0;
+-$grey-light: $base00;
+-$grey-lighter: $base01;
+-$grey-lightest: $base01;
+-$white-ter: $base02;
+-$white-bis: $base02;
+-$white: $base03;
+-// NOTE: set alternative colors.
+-$turquoise: $cyan;
+-$purple: $violet;
++@use "../node_modules/bulma/bulma.sass" with (
++    // NOTE: Solarized Dark.
++    $black: $base3,
++    $black-bis: $base2,
++    $black-ter: $base2,
++    $grey-darker: $base1,
++    $grey-dark: $base1,
++    $grey: $base0,
++    $grey-light: $base00,
++    $grey-lighter: $base01,
++    $grey-lightest: $base01,
++    $white-ter: $base02,
++    $white-bis: $base02,
++    $white: $base03,
++    // NOTE: set alternative colors.
++    $turquoise: $cyan,
++    $purple: $violet,
++);
+</code></pre><hr /><p>もうちょっと PageSpeed Insights のスコア上げられる雰囲気はあるので、そこだけ粘ってみる。
+結構 Fable 製ブログも出来上がってきたし、いよいよ自ブログ移行に向けた試行をはじめられそう。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/diary">diary</a>
+    <a href="/tags/bulma">bulma</a>
+    
+    <a href="/tags/fable">fable</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
@@ -227,7 +328,7 @@
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-08-20-writing-cmdlet-in-fsharp-pt21">2023-08-20 F# でコマンドレットを書いてる pt.21 &raquo;</a>
+        <a class="right" href="/posts/2023-08-27-github-streak-a-year">2023-08-27 GitHub streak a year &raquo;</a>
         
     </div>
 </div>

@@ -1,4 +1,105 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 27 Aug 2023 11:52:11 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-08-27-github-streak-a-year</guid><link>https://krymtkts.github.io/posts/2023-08-27-github-streak-a-year</link><title>GitHub streak a year</title><description>&lt;p&gt;&lt;a href="/posts/2023-05-14-rebuild-blog-with-fable-pt3"&gt;5 月の日記で触れた&lt;/a&gt; GitHub Streak が 2023-08-21 ようやく 365 日に到達した。やったね。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 03 Sep 2023 11:18:46 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-09-03-rebuild-blog-with-fable-pt11</guid><link>https://krymtkts.github.io/posts/2023-09-03-rebuild-blog-with-fable-pt11</link><title>Fable でブログを再構築する pt.11</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;ここ 1 ヶ月ほどでやりたかったことを 3 つ進められた。エライ(低ハードル)。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;ややこしくなってた入出力パスの構築 &lt;a href="https://github.com/krymtkts/blog-fable/pull/38"&gt;#38&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/39"&gt;#39&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="https://pagespeed.web.dev/analysis/https-krymtkts-github-io-blog-fable/vfo1picz8u?form_factor=mobile"&gt;PageSpeed Insights&lt;/a&gt; のスコア改善 &lt;a href="https://github.com/krymtkts/blog-fable/pull/42"&gt;#42&lt;/a&gt;&lt;/li&gt;&lt;li&gt;カラースキームの導入 &lt;a href="https://github.com/krymtkts/blog-fable/pull/43"&gt;#43&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;以下のとおり結果的に結構良いスコア叩き出すようになった。&lt;/p&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;platform&lt;/th&gt;&lt;th align="right"&gt;Performance&lt;/th&gt;&lt;th align="right"&gt;Accessibility&lt;/th&gt;&lt;th align="right"&gt;Best Practices&lt;/th&gt;&lt;th align="right"&gt;SEO&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Mobile&lt;/td&gt;&lt;td align="right"&gt;99&lt;/td&gt;&lt;td align="right"&gt;93&lt;/td&gt;&lt;td align="right"&gt;100&lt;/td&gt;&lt;td align="right"&gt;100&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Desktop&lt;/td&gt;&lt;td align="right"&gt;100&lt;/td&gt;&lt;td align="right"&gt;93&lt;/td&gt;&lt;td align="right"&gt;100&lt;/td&gt;&lt;td align="right"&gt;100&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;&lt;a href="https://ethanschoonover.com/solarized/"&gt;Solarized&lt;/a&gt; が好きなのだけど今回は Dark にしてみた。エディタやターミナルなんでも Solarized Dark にして 10 年近いのでついにブログも Dark に。
+まだいい感じに色調整できてないから Accessibility をちょい下げてしまってるが、後ほど調整する。&lt;/p&gt;&lt;p&gt;今回やった中には、初体験でちょっと調べる必要があるものもあった。
+これらはメモがてら以下に記しておく。全然 F# ネタではないけど。&lt;/p&gt;&lt;p&gt;いずれも上手く拡張できる様になっており楽だった。感心するわ。&lt;/p&gt;&lt;hr /&gt;&lt;h3 id="marked-の-renderer-を拡張する"&gt;Marked の Renderer を拡張する&lt;/h3&gt;&lt;p&gt;&lt;a href="https://marked.js.org/using_pro#renderer"&gt;The Renderer - Marked Documentation&lt;/a&gt; に示されるように &lt;code&gt;Renderer&lt;/code&gt; オブジェクトにわたすオプションで拡張できる。&lt;/p&gt;&lt;p&gt;&lt;code&gt;listitem(string text, boolean task, boolean checked)&lt;/code&gt; と &lt;code&gt;checkbox(boolean checked)&lt;/code&gt; の組み合わせにちょっと癖があった。
+どっちも定義しているとどっちも呼ばれてチェックボックスが 2 個になってしまう。
+&lt;code&gt;checkbox(boolean checked)&lt;/code&gt; 側を無効化するような書き方をして &lt;code&gt;checkbox&lt;/code&gt; 要素を &lt;code&gt;label&lt;/code&gt; 要素で包み込んだ。
+シグネチャが &lt;code&gt;checkbox(boolean checked)&lt;/code&gt; なもんで、こっち側は &lt;code&gt;label&lt;/code&gt; 要素書こうにもテキスト不明でできないねんよな。
+ブログの場合 &lt;code&gt;checkbox&lt;/code&gt; 要素が単独で使用されることまずないからこうしたけど、なんかもっと良い方法がないのかは気になるところ。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;            let listitem =
+                fun text task check -&amp;gt;
+                    let checkState =
+                        match check with
+                        | true -&amp;gt; "checked"
+                        | false -&amp;gt; ""
+
+                    // NOTE: input を label で包んで関連を持たせる
+                    match task with
+                    | true -&amp;gt;
+                        $"""&amp;lt;li&amp;gt;&amp;lt;label class="checkbox"&amp;gt;&amp;lt;input type="checkbox" class="checkbox" disabled {checkState} /&amp;gt;{text}&amp;lt;/label&amp;gt;&amp;lt;/li&amp;gt;"""
+                    | false -&amp;gt; $"""&amp;lt;li&amp;gt;{text}&amp;lt;/li&amp;gt;"""
+
+            let checkbox =
+                fun _ -&amp;gt;
+                    // NOTE: checkbox は list と一緒に使われる前提と考えて何も返さない
+                    ""
+
+            let mops =
+                !!{| heading = heading
+                     link = link
+                     listitem = listitem
+                     checkbox = checkbox |}
+
+
+            jsOptions&amp;lt;Marked.MarkedExtension&amp;gt; (fun o -&amp;gt;
+                o.renderer &amp;lt;- Some &amp;lt;| U2.Case2 mops
+                o.gfm &amp;lt;- Some true
+                o.headerIds &amp;lt;- Some true)
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="bulma-の自前-style-をビルドする"&gt;Bulma の自前 style をビルドする&lt;/h3&gt;&lt;p&gt;&lt;a href="https://bulma.io/documentation/customize/with-node-sass/"&gt;With node-sass | Bulma: Free, open source, and modern CSS framework based on Flexbox&lt;/a&gt;&lt;/p&gt;&lt;p&gt;概ねこの手順の通りにやればいい。&lt;/p&gt;&lt;p&gt;ただし以下の非推奨があって、それらは自前で最新のものに置き換える必要があった。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="https://www.npmjs.com/package/node-sass"&gt;&lt;code&gt;node-sass&lt;/code&gt;&lt;/a&gt; は非推奨、 Dart 製の &lt;a href="https://www.npmjs.com/package/sass"&gt;&lt;code&gt;sass&lt;/code&gt;&lt;/a&gt; に変える&lt;/li&gt;&lt;li&gt;Sass では &lt;code&gt;@import&lt;/code&gt; は非推奨、 &lt;code&gt;@use&lt;/code&gt; に書き換える
+&lt;ul&gt;&lt;li&gt;余談だが commit message には backquote で囲わずにこれらのキーワードを書いてたら GitHub 上でホバーしたときにその ID の方々がポップアップされて笑ってしまった&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;これらは Sass の最新仕様に追随するよう自前でこしらえた。&lt;/p&gt;&lt;h3 id="node-sass-を-sass-に"&gt;&lt;code&gt;node-sass&lt;/code&gt; を &lt;code&gt;sass&lt;/code&gt; に&lt;/h3&gt;&lt;p&gt;変えるのは大したことないけど、 cli インタフェースのオプションも変わってるので、そこはケアする必要がある。
+ついでに出力される CSS を圧縮するオプション &lt;code&gt;--style=compressed&lt;/code&gt; もつける。今回のケースでは空白が消えたことで 3KB くらい節約できた。&lt;/p&gt;&lt;pre&gt;&lt;code class="patch"&gt;   "scripts": {
+     "postinstall": "dotnet tool restore",
+-    "css-build": "node-sass --omit-source-map-url ./sass/style.scss ./docs/blog-fable/css/style.css",
++    "css-build": "sass --style=compressed --no-source-map ./sass/style.scss ./docs/blog-fable/css/style.css",
+     "serve": "dotnet fsi ./dev-server.fsx",
+     "build": "dotnet fable src --runScript",
+     "dev": "npm run build dev &amp;amp;&amp;amp; npm run serve"
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id="import-を-use-に"&gt;&lt;code&gt;@import&lt;/code&gt; を &lt;code&gt;@use&lt;/code&gt; に&lt;/h3&gt;&lt;p&gt;&lt;code&gt;@use&lt;/code&gt; を使う場合は、変数のデフォルト値を書き換えるには先述の手順のとおりにはできない。
+&lt;a href="https://sass-lang.com/documentation/variables/#default-values"&gt;Default Values | Sass: Variables&lt;/a&gt; の示す通り &lt;code&gt;@use &amp;lt;url&amp;gt; with (&amp;lt;variable&amp;gt;: &amp;lt;value&amp;gt;, &amp;lt;variable&amp;gt;: &amp;lt;value&amp;gt;)&lt;/code&gt; を使う。以下書き換えイメージ。&lt;/p&gt;&lt;pre&gt;&lt;code class="patch"&gt; @charset "utf-8";
+
+ // NOTE: based on https://ethanschoonover.com/solarized/
+ $base03 :#002b36;
+ $base02 :#073642;
+ $base01 :#586e75;
+ $base00 :#657b83;
+ $base0 :#839496;
+ $base1 :#93a1a1;
+ $base2 :#eee8d5;
+ $base3 :#fdf6e3;
+ $yellow :#b58900;
+ $orange :#cb4b16;
+ $red :#dc322f;
+ $magenta :#d33682;
+ $violet :#6c71c4;
+ $blue :#268bd2;
+ $cyan :#2aa198;
+ $green :#859900;
+
+-@import "../node_modules/bulma/bulma.sass";
+-// NOTE: Solarized Dark.
+-$black: $base3;
+-$black-bis: $base2;
+-$black-ter: $base2;
+-$grey-darker: $base1;
+-$grey-dark: $base1;
+-$grey: $base0;
+-$grey-light: $base00;
+-$grey-lighter: $base01;
+-$grey-lightest: $base01;
+-$white-ter: $base02;
+-$white-bis: $base02;
+-$white: $base03;
+-// NOTE: set alternative colors.
+-$turquoise: $cyan;
+-$purple: $violet;
++@use "../node_modules/bulma/bulma.sass" with (
++    // NOTE: Solarized Dark.
++    $black: $base3,
++    $black-bis: $base2,
++    $black-ter: $base2,
++    $grey-darker: $base1,
++    $grey-dark: $base1,
++    $grey: $base0,
++    $grey-light: $base00,
++    $grey-lighter: $base01,
++    $grey-lightest: $base01,
++    $white-ter: $base02,
++    $white-bis: $base02,
++    $white: $base03,
++    // NOTE: set alternative colors.
++    $turquoise: $cyan,
++    $purple: $violet,
++);
+&lt;/code&gt;&lt;/pre&gt;&lt;hr /&gt;&lt;p&gt;もうちょっと PageSpeed Insights のスコア上げられる雰囲気はあるので、そこだけ粘ってみる。
+結構 Fable 製ブログも出来上がってきたし、いよいよ自ブログ移行に向けた試行をはじめられそう。&lt;/p&gt;</description><pubDate>Sun, 03 Sep 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-08-27-github-streak-a-year</guid><link>https://krymtkts.github.io/posts/2023-08-27-github-streak-a-year</link><title>GitHub streak a year</title><description>&lt;p&gt;&lt;a href="/posts/2023-05-14-rebuild-blog-with-fable-pt3"&gt;5 月の日記で触れた&lt;/a&gt; GitHub Streak が 2023-08-21 ようやく 365 日に到達した。やったね。
 次は 730 日を目指すのだけど、マイルストンとしてまずキリよい 400 を置き、次に 500, 600 と目指していく。&lt;/p&gt;&lt;p&gt;Streak にこだわりだしたのは、生涯プログラマであろうとしたらやっぱり日々の鍛錬というか毎日コード書いて感覚を保ちたいよな、というのが根底にある。&lt;/p&gt;&lt;p&gt;とはいえコードを書いてない日、例えばにこの日記のような文章を書くだけのコミットもあるし、 GitHub Streak って Issue や review でも数えられるので厳密ではないのだけど。
 でもそのくらいの緩さじゃないと初めから続けられなかっただろうし、ちょうど良い落とし所であろう。&lt;/p&gt;&lt;p&gt;Streak が途絶えたとて何ら困ることないのだけど、途絶えると取り戻すのに同等の時間がかかるものは、続ける方向に適度にプレッシャーが発生して良い。
 特にゲーマー脳を少なからず持っていれば、トロコン感覚を持って臨める。

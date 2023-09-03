@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: PowerShell のパラメータバインディングは &quot;3 時&quot; を Datetime 型にパースする</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-01-30-pwsh-parameter-binding-parse-datetime">
+    <title>krymtkts: Fable でブログを再構築する pt.11</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-09-03-rebuild-blog-with-fable-pt11">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: PowerShell のパラメータバインディングは &quot;3 時&quot; を Datetime 型にパースする" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-01-30-pwsh-parameter-binding-parse-datetime" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.11" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-09-03-rebuild-blog-with-fable-pt11" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -200,102 +200,133 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-01-30</div>
+        <div class="col-lg-6">2023-09-03</div>
         
     </div>
-    <h2>PowerShell のパラメータバインディングは &quot;3 時&quot; を Datetime 型にパースする</h2>
+    <h2>Fable でブログを再構築する pt.11</h2>
 </div>
 <div>
     
-    <h3 id="いきなりまとめ">いきなりまとめ</h3><p>PowerShell の関数なりコマンドレットがパラメータを受け取る場合、パラメータバインディングの仕組みで型ごとの変換処理をしており、日付型のパラメータでは<code>DateTime.Parse</code> しているのがわかった。</p><hr /><h3 id="経緯">経緯</h3><p>先日 <a href="/posts/2022-01-23-scheduled-task-in-powershell">ScheduledTask を設定した</a>くだりで初めて知った。</p><p><a href="https://docs.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtasktrigger?view=windowsserver2022-ps#example-1--register-a-scheduled-task-that-starts-a-task-once">New-ScheduledTaskTrigger (ScheduledTasks) | Microsoft Docs</a></p><p>を見ていて、 <code>-At 3pm</code> て何これ？と思って日本語も試した。
-使い所がわかりかねるが、以下のようなジャパナイズされた入力でも OK!
-ただし漢数字、曜日や午前/午後は <code>Parse</code> できないので無理な。</p><p>参照: <a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/parsing-datetime">Convert strings to DateTime | Microsoft Docs</a></p><pre><code class="powershell">PS&gt; Get-Date 15時
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>ここ 1 ヶ月ほどでやりたかったことを 3 つ進められた。エライ(低ハードル)。</p><ul><li>ややこしくなってた入出力パスの構築 <a href="https://github.com/krymtkts/blog-fable/pull/38">#38</a> <a href="https://github.com/krymtkts/blog-fable/pull/39">#39</a></li><li><a href="https://pagespeed.web.dev/analysis/https-krymtkts-github-io-blog-fable/vfo1picz8u?form_factor=mobile">PageSpeed Insights</a> のスコア改善 <a href="https://github.com/krymtkts/blog-fable/pull/42">#42</a></li><li>カラースキームの導入 <a href="https://github.com/krymtkts/blog-fable/pull/43">#43</a></li></ul><p>以下のとおり結果的に結構良いスコア叩き出すようになった。</p><table><thead><tr><th>platform</th><th align="right">Performance</th><th align="right">Accessibility</th><th align="right">Best Practices</th><th align="right">SEO</th></tr></thead><tbody><tr><td>Mobile</td><td align="right">99</td><td align="right">93</td><td align="right">100</td><td align="right">100</td></tr><tr><td>Desktop</td><td align="right">100</td><td align="right">93</td><td align="right">100</td><td align="right">100</td></tr></tbody></table><p><a href="https://ethanschoonover.com/solarized/">Solarized</a> が好きなのだけど今回は Dark にしてみた。エディタやターミナルなんでも Solarized Dark にして 10 年近いのでついにブログも Dark に。
+まだいい感じに色調整できてないから Accessibility をちょい下げてしまってるが、後ほど調整する。</p><p>今回やった中には、初体験でちょっと調べる必要があるものもあった。
+これらはメモがてら以下に記しておく。全然 F# ネタではないけど。</p><p>いずれも上手く拡張できる様になっており楽だった。感心するわ。</p><hr /><h3 id="marked-の-renderer-を拡張する">Marked の Renderer を拡張する</h3><p><a href="https://marked.js.org/using_pro#renderer">The Renderer - Marked Documentation</a> に示されるように <code>Renderer</code> オブジェクトにわたすオプションで拡張できる。</p><p><code>listitem(string text, boolean task, boolean checked)</code> と <code>checkbox(boolean checked)</code> の組み合わせにちょっと癖があった。
+どっちも定義しているとどっちも呼ばれてチェックボックスが 2 個になってしまう。
+<code>checkbox(boolean checked)</code> 側を無効化するような書き方をして <code>checkbox</code> 要素を <code>label</code> 要素で包み込んだ。
+シグネチャが <code>checkbox(boolean checked)</code> なもんで、こっち側は <code>label</code> 要素書こうにもテキスト不明でできないねんよな。
+ブログの場合 <code>checkbox</code> 要素が単独で使用されることまずないからこうしたけど、なんかもっと良い方法がないのかは気になるところ。</p><pre><code class="fsharp">            let listitem =
+                fun text task check -&gt;
+                    let checkState =
+                        match check with
+                        | true -&gt; "checked"
+                        | false -&gt; ""
 
-Wednesday, January 16, 2022 03:00:00
+                    // NOTE: input を label で包んで関連を持たせる
+                    match task with
+                    | true -&gt;
+                        $"""&lt;li&gt;&lt;label class="checkbox"&gt;&lt;input type="checkbox" class="checkbox" disabled {checkState} /&gt;{text}&lt;/label&gt;&lt;/li&gt;"""
+                    | false -&gt; $"""&lt;li&gt;{text}&lt;/li&gt;"""
 
-PS&gt; Get-Date 6年6月6日
+            let checkbox =
+                fun _ -&gt;
+                    // NOTE: checkbox は list と一緒に使われる前提と考えて何も返さない
+                    ""
 
-Monday, June 6, 2006 00:00:00
+            let mops =
+                !!{| heading = heading
+                     link = link
+                     listitem = listitem
+                     checkbox = checkbox |}
 
-PS&gt; Get-Date 3じ
-Get-Date: Cannot bind parameter 'Date'. Cannot convert value "3じ" to type "System.DateTime". Error: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-</code></pre><p>どういう仕組や。</p><h4 id="大まかな予測">大まかな予測</h4><p>コマンドレットや関数に渡す前、引数の型 <code>DateTime</code> の時点で捏ねくっている様子。</p><pre><code class="powershell">function hiduke() {
-  param(
-    [datetime]
-    $d
-  )
-  $d
-}
-</code></pre><pre><code class="powershell">PS&gt; hiduke -d 3時
 
-Wednesday, January 16, 2022 03:00:00
-</code></pre><p>キャストとパースの違いを見る。</p><pre><code class="powershell">PS&gt; [DateTime]::Parse('3時')
+            jsOptions&lt;Marked.MarkedExtension&gt; (fun o -&gt;
+                o.renderer &lt;- Some &lt;| U2.Case2 mops
+                o.gfm &lt;- Some true
+                o.headerIds &lt;- Some true)
+</code></pre><h3 id="bulma-の自前-style-をビルドする">Bulma の自前 style をビルドする</h3><p><a href="https://bulma.io/documentation/customize/with-node-sass/">With node-sass | Bulma: Free, open source, and modern CSS framework based on Flexbox</a></p><p>概ねこの手順の通りにやればいい。</p><p>ただし以下の非推奨があって、それらは自前で最新のものに置き換える必要があった。</p><ul><li><a href="https://www.npmjs.com/package/node-sass"><code>node-sass</code></a> は非推奨、 Dart 製の <a href="https://www.npmjs.com/package/sass"><code>sass</code></a> に変える</li><li>Sass では <code>@import</code> は非推奨、 <code>@use</code> に書き換える
+<ul><li>余談だが commit message には backquote で囲わずにこれらのキーワードを書いてたら GitHub 上でホバーしたときにその ID の方々がポップアップされて笑ってしまった</li></ul></li></ul><p>これらは Sass の最新仕様に追随するよう自前でこしらえた。</p><h3 id="node-sass-を-sass-に"><code>node-sass</code> を <code>sass</code> に</h3><p>変えるのは大したことないけど、 cli インタフェースのオプションも変わってるので、そこはケアする必要がある。
+ついでに出力される CSS を圧縮するオプション <code>--style=compressed</code> もつける。今回のケースでは空白が消えたことで 3KB くらい節約できた。</p><pre><code class="patch">   "scripts": {
+     "postinstall": "dotnet tool restore",
+-    "css-build": "node-sass --omit-source-map-url ./sass/style.scss ./docs/blog-fable/css/style.css",
++    "css-build": "sass --style=compressed --no-source-map ./sass/style.scss ./docs/blog-fable/css/style.css",
+     "serve": "dotnet fsi ./dev-server.fsx",
+     "build": "dotnet fable src --runScript",
+     "dev": "npm run build dev &amp;&amp; npm run serve"
+</code></pre><h3 id="import-を-use-に"><code>@import</code> を <code>@use</code> に</h3><p><code>@use</code> を使う場合は、変数のデフォルト値を書き換えるには先述の手順のとおりにはできない。
+<a href="https://sass-lang.com/documentation/variables/#default-values">Default Values | Sass: Variables</a> の示す通り <code>@use &lt;url&gt; with (&lt;variable&gt;: &lt;value&gt;, &lt;variable&gt;: &lt;value&gt;)</code> を使う。以下書き換えイメージ。</p><pre><code class="patch"> @charset "utf-8";
 
-Wednesday, January 16, 2022 03:00:00
+ // NOTE: based on https://ethanschoonover.com/solarized/
+ $base03 :#002b36;
+ $base02 :#073642;
+ $base01 :#586e75;
+ $base00 :#657b83;
+ $base0 :#839496;
+ $base1 :#93a1a1;
+ $base2 :#eee8d5;
+ $base3 :#fdf6e3;
+ $yellow :#b58900;
+ $orange :#cb4b16;
+ $red :#dc322f;
+ $magenta :#d33682;
+ $violet :#6c71c4;
+ $blue :#268bd2;
+ $cyan :#2aa198;
+ $green :#859900;
 
-PS&gt; [DateTime]::Parse('3じ')
-MethodInvocationException: Exception calling "Parse" with "1" argument(s): "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-
-PS&gt; [DateTime]'3時'
-
-Wednesday, January 16, 2022 03:00:00
-
-PS&gt; [DateTime]'3じ'
-InvalidArgument: Cannot convert value "3じ" to type "System.DateTime". Error: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-</code></pre><p>同じエラーメッセージ出てるので、 PowerShell が指定の型に評価するのに <code>DateTime.Parse</code> を呼んでる。
-真面目に考えたことなかったが、PowerShell 自体の機能でパラメーターバインディングというらしい。
-<a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parameters?view=powershell-7.2">about Parameters - PowerShell | Microsoft Docs</a></p><p>(今更ながら)また一つ学んでしまったようだな...</p><p>パラメーターバインディングの処理内容を知るには <code>Trace-Command</code> が使える。</p><pre><code class="powershell">PS&gt; Trace-Command -PSHost -Name ParameterBinding {Get-Date 3じ}
-DEBUG: 2022-01-30 14:47:05.5488 ParameterBinding Information: 0 : BIND NAMED cmd line args [Get-Date]
-DEBUG: 2022-01-30 14:47:05.5491 ParameterBinding Information: 0 : BIND POSITIONAL cmd line args [Get-Date]
-DEBUG: 2022-01-30 14:47:05.5493 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 14:47:05.5495 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 14:47:05.5496 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 14:47:05.5497 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 14:47:05.5499 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 14:47:05.5501 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 14:47:05.5503 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 14:47:05.5504 ParameterBinding Information: 0 :         COERCE arg to [System.DateTime]
-DEBUG: 2022-01-30 14:47:05.5506 ParameterBinding Information: 0 :             Trying to convert argument value from System.String to System.DateTime
-DEBUG: 2022-01-30 14:47:05.5509 ParameterBinding Information: 0 :             CONVERT arg type to param type using LanguagePrimitives.ConvertTo
-DEBUG: 2022-01-30 14:47:05.5519 ParameterBinding Information: 0 :             ERROR: ERROR: COERCE FAILED: arg [3じ] could not be converted to the parameter type [System.DateTime]
-(...端折る...)
-Get-Date: Cannot bind parameter 'Date'. Cannot convert value "3じ" to type "System.DateTime". Error: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-</code></pre><p>パラメータバインディング時によしなにしてるのがわかってきたところで、力尽きた。
-PowerShell のパラメータバインディングの仕組みに関しては宿題やな。気長に見ていくしかない。</p><h4 id="潜る">潜る</h4><p>ここまで来れたので、次は PowerShell のパラメータバインディングのコードに潜り込む。</p><p><code>Trace-Command</code> の ParameterBinding Information に出てた</p><ul><li><code>"COERCE FAILED: arg .+ could not be converted to the parameter type "</code></li><li><code>"CONVERT arg type to param type using LanguagePrimitives.ConvertTo"</code></li></ul><p>から、 <a href="https://github.com/PowerShell/PowerShell/blob/master/src/System.Management.Automation/engine/ParameterBinderBase.cs#L1262"><code>ParameterBinderBase.cs</code></a>にたどり着いた。</p><p>例外がスローされたのがどこか <code>LanguagePrimitives.ConvertTo</code> から先を探るのにはちょっと情報が足りなかったので、<code>Trace-Command</code> に TypeConversion を足して出力した。</p><p>TypeConversion が有用なのがわかったのは、<a href="https://github.com/PowerShell/PowerShell/blob/0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b/src/System.Management.Automation/engine/LanguagePrimitives.cs#L4837"><code>LanguagePrimitives.cs</code> 内の <code>ConvertTo</code></a>を追ってたらトレース情報にまんまその名前が出てきたから。</p><pre><code class="powershell">PS&gt; Trace-Command -PSHost -Name ParameterBinding,TypeConversion {Get-Date 3じ}
-DEBUG: 2022-01-30 15:36:52.2304 ParameterBinding Information: 0 : BIND NAMED cmd line args [Get-Date]
-DEBUG: 2022-01-30 15:36:52.2309 ParameterBinding Information: 0 : BIND POSITIONAL cmd line args [Get-Date]
-DEBUG: 2022-01-30 15:36:52.2312 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 15:36:52.2314 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 15:36:52.2315 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 15:36:52.2318 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 15:36:52.2320 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 15:36:52.2322 ParameterBinding Information: 0 :         BIND arg [3じ] to param [Date] SKIPPED
-DEBUG: 2022-01-30 15:36:52.2325 ParameterBinding Information: 0 :     BIND arg [3じ] to parameter [Date]
-DEBUG: 2022-01-30 15:36:52.2326 ParameterBinding Information: 0 :         COERCE arg to [System.DateTime]
-DEBUG: 2022-01-30 15:36:52.2329 ParameterBinding Information: 0 :             Trying to convert argument value from System.String to System.DateTime
-DEBUG: 2022-01-30 15:36:52.2331 ParameterBinding Information: 0 :             CONVERT arg type to param type using LanguagePrimitives.ConvertTo
-DEBUG: 2022-01-30 15:36:52.2336 TypeConversion Information: 0 :             Converting "3じ" to "System.DateTime".
-DEBUG: 2022-01-30 15:36:52.2346 TypeConversion Information: 0 :                 Exception calling Parse method with CultureInfo: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'.".
-DEBUG: 2022-01-30 15:36:52.2350 ParameterBinding Information: 0 :             ERROR: ERROR: COERCE FAILED: arg [3じ] could not be converted to the parameter type [System.DateTime]
-(...端折る...)
-Get-Date: Cannot bind parameter 'Date'. Cannot convert value "3じ" to type "System.DateTime". Error: "The string '3じ' was not recognized as a valid DateTime. There is an unknown word starting at index '1'."
-</code></pre><p>ParameterBinding Information のエラー出力までに TypeConversion Information が足されたのがわかる。いい感じじゃないか。</p><p>このキーワードを元にコードを探ると、</p><ul><li><a href="https://github.com/PowerShell/PowerShell/blob/0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b/src/System.Management.Automation/engine/LanguagePrimitives.cs#L5226-L5287"><code>LanguagePrimitives.cs</code> 内の <code>FigureParseConversion</code></a> でパースに使うメソッドをリフレクションで取得している</li><li><a href="https://github.com/PowerShell/PowerShell/blob/0ef30e54c70b9d5d69a35d1aeecdf2820cc1ab3b/src/System.Management.Automation/engine/LanguagePrimitives.cs#L3747-L3780"><code>LanguagePrimitives.cs</code> 内の <code>ConvertViaParseMethod</code></a> で取得したメソッドを使ったパースが行われてる</li></ul><p>というのがわかった。</p><p>やっぱり <code>Datetime.Parse</code> を使ってたんや。あー、スッキリした！</p><p>というか PowerShell 使ってる割にちゃんと勉強してないから、せなあかんな。</p>
+-@import "../node_modules/bulma/bulma.sass";
+-// NOTE: Solarized Dark.
+-$black: $base3;
+-$black-bis: $base2;
+-$black-ter: $base2;
+-$grey-darker: $base1;
+-$grey-dark: $base1;
+-$grey: $base0;
+-$grey-light: $base00;
+-$grey-lighter: $base01;
+-$grey-lightest: $base01;
+-$white-ter: $base02;
+-$white-bis: $base02;
+-$white: $base03;
+-// NOTE: set alternative colors.
+-$turquoise: $cyan;
+-$purple: $violet;
++@use "../node_modules/bulma/bulma.sass" with (
++    // NOTE: Solarized Dark.
++    $black: $base3,
++    $black-bis: $base2,
++    $black-ter: $base2,
++    $grey-darker: $base1,
++    $grey-dark: $base1,
++    $grey: $base0,
++    $grey-light: $base00,
++    $grey-lighter: $base01,
++    $grey-lightest: $base01,
++    $white-ter: $base02,
++    $white-bis: $base02,
++    $white: $base03,
++    // NOTE: set alternative colors.
++    $turquoise: $cyan,
++    $purple: $violet,
++);
+</code></pre><hr /><p>もうちょっと PageSpeed Insights のスコア上げられる雰囲気はあるので、そこだけ粘ってみる。
+結構 Fable 製ブログも出来上がってきたし、いよいよ自ブログ移行に向けた試行をはじめられそう。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/bulma">bulma</a>
+    
+    <a href="/tags/fable">fable</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2022-02-05-build-pwsh-2022">&laquo; 2022-02-05 2022-02 版 PowerShell のビルド</a>
         
-        
-        <a class="right" href="/posts/2022-01-23-scheduled-task-in-powershell">2022-01-23 Windows のタスクを操作する(PowerShell で) &raquo;</a>
+        <a class="right" href="/posts/2023-08-27-github-streak-a-year">2023-08-27 GitHub streak a year &raquo;</a>
         
     </div>
 
