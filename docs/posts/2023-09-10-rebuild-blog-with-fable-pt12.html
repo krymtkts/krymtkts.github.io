@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: PowerShell の特殊なモジュールを更新する方法</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2021-05-06-simple-way-to-update-pwsh-special-module">
+    <title>krymtkts: Fable でブログを再構築する pt.11</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-09-10-rebuild-blog-with-fable-pt12">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: PowerShell の特殊なモジュールを更新する方法" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2021-05-06-simple-way-to-update-pwsh-special-module" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.11" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-09-10-rebuild-blog-with-fable-pt12" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -200,33 +200,37 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2021-05-06</div>
+        <div class="col-lg-6">2023-09-10</div>
         
     </div>
-    <h2>PowerShell の特殊なモジュールを更新する方法</h2>
+    <h2>Fable でブログを再構築する pt.11</h2>
 </div>
 <div>
     
-    <p><code>PSReadLine</code> のような特殊な PowerShell モジュールを更新する術として、以下の方法を使うようにしている。</p><ul><li>管理者権限で起動したコマンドプロンプトから</li><li>非対話モードで</li><li>PSReadline を読み込んでるプロファイルを読み込まずに</li><li>プレリリース許可＆全ユーザ＆サイドバイサイド でインストール</li></ul><pre><code class="bat">REM 、かつ、-NonInteractive でPowerShell Coreを実行
-pwsh -NonInteractive -NoProfile -Command "Install-Module PSReadLine -AllowPrerelease -Scope AllUsers -Force"
-</code></pre><p><code>Remove-Module</code> さえちゃんとできてたら更新できると思うんやけど、プロファイルとの組み合わせで意図せず<code>Import-Module</code>してしまい、しょっちゅうエラーしてしまうので上記手順が楽。
-ほんとは pwsh 内からいい感じに処理できればよいのだけどトラシューの時間をこんなとこに割きたくない関係で、更新の都度初手一発でうまくいく手順をやりがち。</p><p>エラーになりがちな奴ら。ワイの profile が依存してる関係でエラーになりがち。</p><ul><li>PSReadLine</li><li>PowerShellGet</li><li>posh-git</li><li>Pester</li></ul><p><a href="https://docs.microsoft.com/ja-jp/powershell/module/microsoft.powershell.core/about/about_pwsh?view=powershell-7.1">about_Pwsh - PowerShell | Microsoft Docs</a></p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>色調整して Accessibility 上げたかったけど Solarized Dark を使おうとしたらどうにもならんので諦めた。</p><p><a href="https://dequeuniversity.com/rules/axe/4.7/color-contrast">Elements must meet minimum color contrast ratio thresholds | Axe Rules | Deque University | Deque Systems</a></p><p>ここで Foreground と Background を色比較してコントラスト比を見ることができる。
+AAA に合格する比率まで色を明るくしたらもう印象が違い過ぎるから、やめた。</p><p>コードブロックやリンクがあると、それだけで Accessibility のスコアが下がるのでどうにもならん。</p><p>あと以下にも抵触してるみたい。</p><p><a href="https://dequeuniversity.com/rules/axe/4.7/link-in-text-block">Links must be distinguishable without relying on color | Axe Rules | Deque University | Deque Systems</a></p><p>今はリンクと本文の違いが色しかないから、これに下線を足したりすればましになる気配はある。</p><p>Accessibility て難しいなーと改めて思う。</p><hr /><p>他には、本格的な乗り換えに備えて以下を行った。</p><ul><li>公開日や更新日の表示忘れ対応とドキュメント更新 <a href="https://github.com/krymtkts/blog-fable/pull/48">#48</a></li><li>サンプルの更新 <a href="https://github.com/krymtkts/blog-fable/pull/49">49</a></li></ul><p>初めから乗り換えを目的にやってるけど、いざ手をつける段階になったらこれまた色々気になってくるので、なるべく処理してからやろうとしてる。
+やれ dev server が反応しなくなる時があるとか、 TODO は乗り換えまでに解消しておきたいなとか。</p><p>乗り換え時には <a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> と <a href="https://github.com/krymtkts/krymtkts.github.io">krymtkts/krymtkts.github.io</a> の歴史を合流するつもりやから、先にできるだけ課題を潰しておきたいというのがある。
+頻繁に両方メンテとかはやりたくなくて、なんか改善や変えたいことがあったら <a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> の方で試してからブログの方に投入するみたいなフローでやりたい。</p><p>歴史を合流する方法以外にコードを統合するマトモな術は、 Fable Module とか dotnet のテンプレ化あたり。
+けどその辺に手を出すと注力するところが主目的から外れるので、やらないつもり。</p><p>npm package を含んだ Fable Module の作成は色々気を使うことがあり、ここに力割くのもどうかなって。
+<a href="https://fable.io/docs/your-fable-project/author-a-fable-library.html">Fable · Author a Fable library</a></p><p>dotnet のテンプレ化に関しても、仮に誰か奇特な人が Fable でブログを作りたくて repo に辿り着いたとき便利だなとかその程度かな？
+template repository になってても同じ感じか。</p><p>私的ブログの新しいコードを書いてるだけなので、機能を公開することに重きを置かず、一番楽にコードを統合できる歴史を合流する術で進めるという感じ。</p><p>まだやっときたいこと諸々あれど、ひとまず <a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> を作り始めた当初の目標である年内乗り換えは現実味を帯びてきた気がする。
+2023-10 末で期間としては半年になるから、その辺から年末の間でいい感じに移行したいなー。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/fable">fable</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2021-05-07-i-want-to-resize-migu-icon">&laquo; 2021-05-07 Migu Nerd Font のアイコンフォントを narrow にしたい</a>
         
-        
-        <a class="right" href="/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu">2021-04-11 Cascadia Code PL と Migu Nerd Font の違い &raquo;</a>
+        <a class="right" href="/posts/2023-09-03-rebuild-blog-with-fable-pt11">2023-09-03 Fable でブログを再構築する pt.11 &raquo;</a>
         
     </div>
 
