@@ -1,4 +1,4 @@
-{:title "Fable でブログを再構築する pt.11"
+{:title "Fable でブログを再構築する pt.12"
 :layout :post
 :tags ["fsharp", "fable"]}
 
