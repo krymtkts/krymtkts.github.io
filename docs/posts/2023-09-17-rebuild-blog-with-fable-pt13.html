@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: F#でコマンドレットを書いてる pt.8</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8">
+    <title>krymtkts: Fable でブログを再構築する pt.13</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-09-17-rebuild-blog-with-fable-pt13">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: F#でコマンドレットを書いてる pt.8" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.13" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-09-17-rebuild-blog-with-fable-pt13" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -200,29 +200,65 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-11-27</div>
+        <div class="col-lg-6">2023-09-17</div>
         
     </div>
-    <h2>F#でコマンドレットを書いてる pt.8</h2>
+    <h2>Fable でブログを再構築する pt.13</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/pocof">krymtkts/pocof</a> の話。</p><p>前回書いた、 composite query の実装をした。 <a href="https://github.com/krymtkts/pocof/issues/9">#9</a></p><p>デフォルトでは and で複数のクエリを合成するようにしてる。
-一応理由がある。
-最初から or だと絞り込む前の状態を覚えていて、追加でほしい候補のためにクエリを書くような使い方になる。
-そういう使い方もできるが、ちょっと上級者感がするので、まずは見える範囲で徐々に候補を絞り込めるような and をデフォルトとすることにした。</p><p>そのうちショートカット含めた初期値の変更にも対応したいと思ってたし、起動時から or にしたい場合はそこに盛り込めたらいい。</p><p>ただこの and での合成は hashtable を絞り込むときに出来が悪くて、まだ思ったような絞り込みになっていない。現状 hashtable は or でのみ気持ちよく絞り込むのができなかった。</p><p>これは、 <code>List.allPairs</code> した複合クエリの List × エントリの List に and の場合は <code>List.forall</code> or の場合は <code>List.exists</code> してることで、 hashtable はエントリ Key-Value の二要素あるので and だと両方に共通の文字がないと釣れない...となっているため。
-正しくは、 エントリ内の検索候補プロパティは or で、各エントリ毎は and / or のモードを適用できるようにするのが良いか。
-プロパティ指定の絞り込みするときにこの問題対処するの必須。</p><p>あと like matcher のときだけクエリが空の状態でもフィルタリングされて表示が 0 件になる挙動を直した。 <a href="https://github.com/krymtkts/pocof/issues/10">#10</a></p><p>流石に初期表示が 0 件だとはじめ何で絞り込んだらいいんや...(wildcard 埋めたらいいだけやけど)と困惑するので、はじめは全件表示する。</p><p>最後に、今回 PowerShell Gallery に公開する時手間取ったのが、 <a href="https://github.com/PowerShell/platyPS">platyPS</a> 。</p><p><a href="/posts/2022-11-12-clean-up-pwsh-modules">前にモジュールの掃除した</a>影響で <a href="https://github.com/PowerShell/platyPS/tree/v2">platyPS</a> の version 2 preview より前のモジュールを消し去ってた。
-コレにより <code>New-ExternalHelp</code> Cmdlet がなくなっていて、 psake のリリーススクリプトがエラーするようになってた。
-全く想定外。 v2 で消えるのかこの Cmdlet ？？て感じ。
-まだ <a href="https://github.com/PowerShell/platyPS/blob/8ca28935c376ae8dc36ac142e4960fc6d3b725e5/README.md">README.md</a> に消えるような話書いてないし、対応待ってたらいだけなんかな ↓↓</p><blockquote><p>Create external help xml files (MAML) from platyPS Markdown.</p></blockquote><p>とりあえず preview でない platyPS を使うことで回避した。
-pocof に v1 刻むときにはヘルプファイルもきれいにする必要があるし、その時までに platyPS が v2 でほんとに Cmdlet 失われるのかとかチェックする必要が出てきた。</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>開発サーバが重いので、諸々調整をしている。</p><p>既に対応済みのものとしては、ビルドの軽量化。 <a href="https://github.com/krymtkts/blog-fable/pull/52">#52</a> <a href="https://github.com/krymtkts/blog-fable/pull/53">#53</a></p><p>毎回全部ビルドし直す必要はないので、 <code>*.fs</code>, <code>*.md</code> と <code>*.scss</code> どれが変更されたかを判別して、実行するビルドタスクを切り替えるような実装にした。</p><p>特に今後ブログのコードをいじることはあまりないだろうから、 Markdown を変更したときのビルド待ちは極力抑えたかった。
+その場合 <code>dotnet fable</code> でビルド済みの JavaScript があるからそれを実行する形を採用した。</p><p><a href="https://fake.build/index.html">FAKE</a> には npm コマンドを実行するモジュールがある。</p><p><a href="https://fake.build/reference/fake-javascript-npm.html">Npm (Fake)</a></p><p>これを利用して直接 <code>node</code> を呼び出すことはできないが、 <code>package.json</code> に書いておいて <code>npm run</code> すれば FAKE から呼び出せる。
+こんな感じ ↓ で <code>build-md</code> と <code>build-css</code> を用意して FAKE から呼び出すだけ。 (ちょっとタスク名は整理した方がいいか)</p><pre><code class="json">  "scripts": {
+    "postinstall": "dotnet tool restore",
+    "build-css": "sass --style=compressed --no-source-map ./sass/style.scss ./docs/blog-fable/css/style.css",
+    "serve": "dotnet fsi ./dev-server.fsx",
+    "build-fable": "dotnet fable src --runScript",
+    "build": "npm run build-css &amp;&amp; npm run build-fable",
+    "dev": "npm run build dev &amp;&amp; npm run serve",
+    "build-md": "node ./src/App.fs.js"
+  },
+</code></pre><pre><code class="fsharp">// 実行は非常に簡素なインタフェース
+Npm.run "build-md" id
+</code></pre><p>Npm(FAKE) があれば、 <code>dotnet fable</code> に関しても <code>npm run</code> 経由で呼べばよいのだけど、 1 つ難点がありそのまま DotNet モジュールを利用している。
+それは実行結果を得られないところだ。
+コマンドの成否を以て何かしている訳では無いが、わざわざ情報を劣化させる理由もないのでそのままステイだ。</p><p>毎回 <code>dotnet fable</code> することがなくなったから、 Markdown の編集だけならかなり快適になったはず。</p><hr /><p>次に、適切に処理していなかった WebSocket 接続の手当をしている話。 <a href="https://github.com/krymtkts/blog-fable/pull/53">#53</a></p><p>これちょっと難しくて、 WebSocket が難しいのでなくて Suave でクライアントからメッセージを受けつつサーバ起点で何かするのが厄介で、手こずってる。</p><p>ひとまずやりたかった「Suave でクライアントからメッセージを受けつつサーバ起点で何かする」に関しては 2 つのループで実現できるのがわかったのでそれを使った。
+これを参照した。 → <a href="https://github.com/SuaveIO/suave/issues/307">How to implement server-push over websocket in suave? · Issue #307 · SuaveIO/suave</a></p><p>2 つのループを設けることで、クライアントが切断したときにサーバ側の WebSocket ハンドラを終了するのと、サーバ側の変更イベントでクライアントにプッシュする、が同時に実現できる。
+ただまだ駄目なところがあって完成ではない。現時点の Suave の WebSocket のハンドラは以下の通り。</p><pre><code class="fsharp">    let socketHandler (ws: WebSocket) _ =
+        let mutable loop = true
+
+        Async.Start(
+            async {
+                while loop do // ループ①
+                    do! refreshEvent.Publish |&gt; Async.AwaitEvent
+
+                    printfn "fire event."
+
+                    let seg = ASCII.bytes "refreshed" |&gt; ByteSegment
+                    do! ws.send Text seg true |&gt; Async.Ignore
+            }
+        )
+
+        socket {
+            while loop do // ループ②
+                let! msg = ws.read ()
+
+                match msg with
+                | (Close, _, _) -&gt;
+                    let emptyResponse = [||] |&gt; ByteSegment
+                    do! ws.send Close emptyResponse true
+                    printfn "WebSocket connection closed gracefully."
+                    loop &lt;- false
+                | _ -&gt; ()
+        }
+</code></pre><p>何が駄目かって、 <code>Async.AwaitEvent</code> するところで非同期ブロックが入るのだけど、その後クライアントから切断を受信して <code>loop</code> 変数の値を変更・ループ ② を止めても、ループ ① は非同期ブロックされてて次の変更イベント発火まで生き続けるのよね。
+なので画面遷移やリロードのたびに変更イベントの待ちが溜まっていって、変更イベントで一気にドバっと流れるというのになってる。</p><p>因みに <code>Async.AwaitEvent</code> のあとで <code>if</code> なり仕込んで抜けられるかなと試したけど、同じ周回だと <code>loop</code> 変数への変更が伝播してなくて止まらなかった。 <code>ref</code> をあえて使ったらまた違うのかな。</p><p>F# の async/await ちゃんと触ってないから手こずってるけど、これ上手く手なづけたら <a href="https://github.com/krymtkts/pocof">pocof</a> へも良い影響出せそうなので、これを気にちゃんとやってこう。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/fable">fable</a>
     
     <a href="/tags/fsharp">fsharp</a>
     
@@ -231,10 +267,8 @@ pocof に v1 刻むときにはヘルプファイルもきれいにする必要�
 
     <div id="prev-next">
         
-        <a href="/posts/2022-12-04-often-forgotten-in-pwsh-part-1">&laquo; 2022-12-04 PowerShell で忘れがちなこと pt.1</a>
         
-        
-        <a class="right" href="/posts/2022-11-20-writing-cmdlet-in-fsharp-pt7">2022-11-20 F#でコマンドレットを書いてる pt.7 &raquo;</a>
+        <a class="right" href="/posts/2023-09-10-rebuild-blog-with-fable-pt12">2023-09-10 Fable でブログを再構築する pt.12 &raquo;</a>
         
     </div>
 

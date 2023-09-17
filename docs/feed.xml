@@ -1,4 +1,49 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 10 Sep 2023 16:12:57 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-09-10-rebuild-blog-with-fable-pt12</guid><link>https://krymtkts.github.io/posts/2023-09-10-rebuild-blog-with-fable-pt12</link><title>Fable でブログを再構築する pt.12</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;色調整して Accessibility 上げたかったけど Solarized Dark を使おうとしたらどうにもならんので諦めた。&lt;/p&gt;&lt;p&gt;&lt;a href="https://dequeuniversity.com/rules/axe/4.7/color-contrast"&gt;Elements must meet minimum color contrast ratio thresholds | Axe Rules | Deque University | Deque Systems&lt;/a&gt;&lt;/p&gt;&lt;p&gt;ここで Foreground と Background を色比較してコントラスト比を見ることができる。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 17 Sep 2023 14:51:51 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-09-17-rebuild-blog-with-fable-pt13</guid><link>https://krymtkts.github.io/posts/2023-09-17-rebuild-blog-with-fable-pt13</link><title>Fable でブログを再構築する pt.13</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;開発サーバが重いので、諸々調整をしている。&lt;/p&gt;&lt;p&gt;既に対応済みのものとしては、ビルドの軽量化。 &lt;a href="https://github.com/krymtkts/blog-fable/pull/52"&gt;#52&lt;/a&gt; &lt;a href="https://github.com/krymtkts/blog-fable/pull/53"&gt;#53&lt;/a&gt;&lt;/p&gt;&lt;p&gt;毎回全部ビルドし直す必要はないので、 &lt;code&gt;*.fs&lt;/code&gt;, &lt;code&gt;*.md&lt;/code&gt; と &lt;code&gt;*.scss&lt;/code&gt; どれが変更されたかを判別して、実行するビルドタスクを切り替えるような実装にした。&lt;/p&gt;&lt;p&gt;特に今後ブログのコードをいじることはあまりないだろうから、 Markdown を変更したときのビルド待ちは極力抑えたかった。
+その場合 &lt;code&gt;dotnet fable&lt;/code&gt; でビルド済みの JavaScript があるからそれを実行する形を採用した。&lt;/p&gt;&lt;p&gt;&lt;a href="https://fake.build/index.html"&gt;FAKE&lt;/a&gt; には npm コマンドを実行するモジュールがある。&lt;/p&gt;&lt;p&gt;&lt;a href="https://fake.build/reference/fake-javascript-npm.html"&gt;Npm (Fake)&lt;/a&gt;&lt;/p&gt;&lt;p&gt;これを利用して直接 &lt;code&gt;node&lt;/code&gt; を呼び出すことはできないが、 &lt;code&gt;package.json&lt;/code&gt; に書いておいて &lt;code&gt;npm run&lt;/code&gt; すれば FAKE から呼び出せる。
+こんな感じ ↓ で &lt;code&gt;build-md&lt;/code&gt; と &lt;code&gt;build-css&lt;/code&gt; を用意して FAKE から呼び出すだけ。 (ちょっとタスク名は整理した方がいいか)&lt;/p&gt;&lt;pre&gt;&lt;code class="json"&gt;  "scripts": {
+    "postinstall": "dotnet tool restore",
+    "build-css": "sass --style=compressed --no-source-map ./sass/style.scss ./docs/blog-fable/css/style.css",
+    "serve": "dotnet fsi ./dev-server.fsx",
+    "build-fable": "dotnet fable src --runScript",
+    "build": "npm run build-css &amp;amp;&amp;amp; npm run build-fable",
+    "dev": "npm run build dev &amp;amp;&amp;amp; npm run serve",
+    "build-md": "node ./src/App.fs.js"
+  },
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;// 実行は非常に簡素なインタフェース
+Npm.run "build-md" id
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Npm(FAKE) があれば、 &lt;code&gt;dotnet fable&lt;/code&gt; に関しても &lt;code&gt;npm run&lt;/code&gt; 経由で呼べばよいのだけど、 1 つ難点がありそのまま DotNet モジュールを利用している。
+それは実行結果を得られないところだ。
+コマンドの成否を以て何かしている訳では無いが、わざわざ情報を劣化させる理由もないのでそのままステイだ。&lt;/p&gt;&lt;p&gt;毎回 &lt;code&gt;dotnet fable&lt;/code&gt; することがなくなったから、 Markdown の編集だけならかなり快適になったはず。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;次に、適切に処理していなかった WebSocket 接続の手当をしている話。 &lt;a href="https://github.com/krymtkts/blog-fable/pull/53"&gt;#53&lt;/a&gt;&lt;/p&gt;&lt;p&gt;これちょっと難しくて、 WebSocket が難しいのでなくて Suave でクライアントからメッセージを受けつつサーバ起点で何かするのが厄介で、手こずってる。&lt;/p&gt;&lt;p&gt;ひとまずやりたかった「Suave でクライアントからメッセージを受けつつサーバ起点で何かする」に関しては 2 つのループで実現できるのがわかったのでそれを使った。
+これを参照した。 → &lt;a href="https://github.com/SuaveIO/suave/issues/307"&gt;How to implement server-push over websocket in suave? · Issue #307 · SuaveIO/suave&lt;/a&gt;&lt;/p&gt;&lt;p&gt;2 つのループを設けることで、クライアントが切断したときにサーバ側の WebSocket ハンドラを終了するのと、サーバ側の変更イベントでクライアントにプッシュする、が同時に実現できる。
+ただまだ駄目なところがあって完成ではない。現時点の Suave の WebSocket のハンドラは以下の通り。&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;    let socketHandler (ws: WebSocket) _ =
+        let mutable loop = true
+
+        Async.Start(
+            async {
+                while loop do // ループ①
+                    do! refreshEvent.Publish |&amp;gt; Async.AwaitEvent
+
+                    printfn "fire event."
+
+                    let seg = ASCII.bytes "refreshed" |&amp;gt; ByteSegment
+                    do! ws.send Text seg true |&amp;gt; Async.Ignore
+            }
+        )
+
+        socket {
+            while loop do // ループ②
+                let! msg = ws.read ()
+
+                match msg with
+                | (Close, _, _) -&amp;gt;
+                    let emptyResponse = [||] |&amp;gt; ByteSegment
+                    do! ws.send Close emptyResponse true
+                    printfn "WebSocket connection closed gracefully."
+                    loop &amp;lt;- false
+                | _ -&amp;gt; ()
+        }
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;何が駄目かって、 &lt;code&gt;Async.AwaitEvent&lt;/code&gt; するところで非同期ブロックが入るのだけど、その後クライアントから切断を受信して &lt;code&gt;loop&lt;/code&gt; 変数の値を変更・ループ ② を止めても、ループ ① は非同期ブロックされてて次の変更イベント発火まで生き続けるのよね。
+なので画面遷移やリロードのたびに変更イベントの待ちが溜まっていって、変更イベントで一気にドバっと流れるというのになってる。&lt;/p&gt;&lt;p&gt;因みに &lt;code&gt;Async.AwaitEvent&lt;/code&gt; のあとで &lt;code&gt;if&lt;/code&gt; なり仕込んで抜けられるかなと試したけど、同じ周回だと &lt;code&gt;loop&lt;/code&gt; 変数への変更が伝播してなくて止まらなかった。 &lt;code&gt;ref&lt;/code&gt; をあえて使ったらまた違うのかな。&lt;/p&gt;&lt;p&gt;F# の async/await ちゃんと触ってないから手こずってるけど、これ上手く手なづけたら &lt;a href="https://github.com/krymtkts/pocof"&gt;pocof&lt;/a&gt; へも良い影響出せそうなので、これを気にちゃんとやってこう。&lt;/p&gt;</description><pubDate>Sun, 17 Sep 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-09-10-rebuild-blog-with-fable-pt12</guid><link>https://krymtkts.github.io/posts/2023-09-10-rebuild-blog-with-fable-pt12</link><title>Fable でブログを再構築する pt.12</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;色調整して Accessibility 上げたかったけど Solarized Dark を使おうとしたらどうにもならんので諦めた。&lt;/p&gt;&lt;p&gt;&lt;a href="https://dequeuniversity.com/rules/axe/4.7/color-contrast"&gt;Elements must meet minimum color contrast ratio thresholds | Axe Rules | Deque University | Deque Systems&lt;/a&gt;&lt;/p&gt;&lt;p&gt;ここで Foreground と Background を色比較してコントラスト比を見ることができる。
 AAA に合格する比率まで色を明るくしたらもう印象が違い過ぎるから、やめた。&lt;/p&gt;&lt;p&gt;コードブロックやリンクがあると、それだけで Accessibility のスコアが下がるのでどうにもならん。&lt;/p&gt;&lt;p&gt;あと以下にも抵触してるみたい。&lt;/p&gt;&lt;p&gt;&lt;a href="https://dequeuniversity.com/rules/axe/4.7/link-in-text-block"&gt;Links must be distinguishable without relying on color | Axe Rules | Deque University | Deque Systems&lt;/a&gt;&lt;/p&gt;&lt;p&gt;今はリンクと本文の違いが色しかないから、これに下線を足したりすればましになる気配はある。&lt;/p&gt;&lt;p&gt;Accessibility て難しいなーと改めて思う。&lt;/p&gt;&lt;hr /&gt;&lt;p&gt;他には、本格的な乗り換えに備えて以下を行った。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;公開日や更新日の表示忘れ対応とドキュメント更新 &lt;a href="https://github.com/krymtkts/blog-fable/pull/48"&gt;#48&lt;/a&gt;&lt;/li&gt;&lt;li&gt;サンプルの更新 &lt;a href="https://github.com/krymtkts/blog-fable/pull/49"&gt;49&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;初めから乗り換えを目的にやってるけど、いざ手をつける段階になったらこれまた色々気になってくるので、なるべく処理してからやろうとしてる。
 やれ dev server が反応しなくなる時があるとか、 TODO は乗り換えまでに解消しておきたいなとか。&lt;/p&gt;&lt;p&gt;乗り換え時には &lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; と &lt;a href="https://github.com/krymtkts/krymtkts.github.io"&gt;krymtkts/krymtkts.github.io&lt;/a&gt; の歴史を合流するつもりやから、先にできるだけ課題を潰しておきたいというのがある。
 頻繁に両方メンテとかはやりたくなくて、なんか改善や変えたいことがあったら &lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; の方で試してからブログの方に投入するみたいなフローでやりたい。&lt;/p&gt;&lt;p&gt;歴史を合流する方法以外にコードを統合するマトモな術は、 Fable Module とか dotnet のテンプレ化あたり。

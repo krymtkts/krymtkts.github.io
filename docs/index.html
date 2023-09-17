@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-09-17-rebuild-blog-with-fable-pt13">Fable でブログを再構築する pt.13</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-09-10-rebuild-blog-with-fable-pt12">Fable でブログを再構築する pt.12</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-09-03-rebuild-blog-with-fable-pt11">Fable でブログを再構築する pt.11</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-08-27-github-streak-a-year">GitHub streak a year</a></li>
                         
                         
 
@@ -200,21 +200,59 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-09-10</div>
+        <div class="col-lg-6">2023-09-17</div>
         
     </div>
-    <h2>Fable でブログを再構築する pt.12</h2>
+    <h2>Fable でブログを再構築する pt.13</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>色調整して Accessibility 上げたかったけど Solarized Dark を使おうとしたらどうにもならんので諦めた。</p><p><a href="https://dequeuniversity.com/rules/axe/4.7/color-contrast">Elements must meet minimum color contrast ratio thresholds | Axe Rules | Deque University | Deque Systems</a></p><p>ここで Foreground と Background を色比較してコントラスト比を見ることができる。
-AAA に合格する比率まで色を明るくしたらもう印象が違い過ぎるから、やめた。</p><p>コードブロックやリンクがあると、それだけで Accessibility のスコアが下がるのでどうにもならん。</p><p>あと以下にも抵触してるみたい。</p><p><a href="https://dequeuniversity.com/rules/axe/4.7/link-in-text-block">Links must be distinguishable without relying on color | Axe Rules | Deque University | Deque Systems</a></p><p>今はリンクと本文の違いが色しかないから、これに下線を足したりすればましになる気配はある。</p><p>Accessibility て難しいなーと改めて思う。</p><hr /><p>他には、本格的な乗り換えに備えて以下を行った。</p><ul><li>公開日や更新日の表示忘れ対応とドキュメント更新 <a href="https://github.com/krymtkts/blog-fable/pull/48">#48</a></li><li>サンプルの更新 <a href="https://github.com/krymtkts/blog-fable/pull/49">49</a></li></ul><p>初めから乗り換えを目的にやってるけど、いざ手をつける段階になったらこれまた色々気になってくるので、なるべく処理してからやろうとしてる。
-やれ dev server が反応しなくなる時があるとか、 TODO は乗り換えまでに解消しておきたいなとか。</p><p>乗り換え時には <a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> と <a href="https://github.com/krymtkts/krymtkts.github.io">krymtkts/krymtkts.github.io</a> の歴史を合流するつもりやから、先にできるだけ課題を潰しておきたいというのがある。
-頻繁に両方メンテとかはやりたくなくて、なんか改善や変えたいことがあったら <a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> の方で試してからブログの方に投入するみたいなフローでやりたい。</p><p>歴史を合流する方法以外にコードを統合するマトモな術は、 Fable Module とか dotnet のテンプレ化あたり。
-けどその辺に手を出すと注力するところが主目的から外れるので、やらないつもり。</p><p>npm package を含んだ Fable Module の作成は色々気を使うことがあり、ここに力割くのもどうかなって。
-<a href="https://fable.io/docs/your-fable-project/author-a-fable-library.html">Fable · Author a Fable library</a></p><p>dotnet のテンプレ化に関しても、仮に誰か奇特な人が Fable でブログを作りたくて repo に辿り着いたとき便利だなとかその程度かな？
-template repository になってても同じ感じか。</p><p>私的ブログの新しいコードを書いてるだけなので、機能を公開することに重きを置かず、一番楽にコードを統合できる歴史を合流する術で進めるという感じ。</p><p>まだやっときたいこと諸々あれど、ひとまず <a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> を作り始めた当初の目標である年内乗り換えは現実味を帯びてきた気がする。
-2023-10 末で期間としては半年になるから、その辺から年末の間でいい感じに移行したいなー。</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>開発サーバが重いので、諸々調整をしている。</p><p>既に対応済みのものとしては、ビルドの軽量化。 <a href="https://github.com/krymtkts/blog-fable/pull/52">#52</a> <a href="https://github.com/krymtkts/blog-fable/pull/53">#53</a></p><p>毎回全部ビルドし直す必要はないので、 <code>*.fs</code>, <code>*.md</code> と <code>*.scss</code> どれが変更されたかを判別して、実行するビルドタスクを切り替えるような実装にした。</p><p>特に今後ブログのコードをいじることはあまりないだろうから、 Markdown を変更したときのビルド待ちは極力抑えたかった。
+その場合 <code>dotnet fable</code> でビルド済みの JavaScript があるからそれを実行する形を採用した。</p><p><a href="https://fake.build/index.html">FAKE</a> には npm コマンドを実行するモジュールがある。</p><p><a href="https://fake.build/reference/fake-javascript-npm.html">Npm (Fake)</a></p><p>これを利用して直接 <code>node</code> を呼び出すことはできないが、 <code>package.json</code> に書いておいて <code>npm run</code> すれば FAKE から呼び出せる。
+こんな感じ ↓ で <code>build-md</code> と <code>build-css</code> を用意して FAKE から呼び出すだけ。 (ちょっとタスク名は整理した方がいいか)</p><pre><code class="json">  "scripts": {
+    "postinstall": "dotnet tool restore",
+    "build-css": "sass --style=compressed --no-source-map ./sass/style.scss ./docs/blog-fable/css/style.css",
+    "serve": "dotnet fsi ./dev-server.fsx",
+    "build-fable": "dotnet fable src --runScript",
+    "build": "npm run build-css &amp;&amp; npm run build-fable",
+    "dev": "npm run build dev &amp;&amp; npm run serve",
+    "build-md": "node ./src/App.fs.js"
+  },
+</code></pre><pre><code class="fsharp">// 実行は非常に簡素なインタフェース
+Npm.run "build-md" id
+</code></pre><p>Npm(FAKE) があれば、 <code>dotnet fable</code> に関しても <code>npm run</code> 経由で呼べばよいのだけど、 1 つ難点がありそのまま DotNet モジュールを利用している。
+それは実行結果を得られないところだ。
+コマンドの成否を以て何かしている訳では無いが、わざわざ情報を劣化させる理由もないのでそのままステイだ。</p><p>毎回 <code>dotnet fable</code> することがなくなったから、 Markdown の編集だけならかなり快適になったはず。</p><hr /><p>次に、適切に処理していなかった WebSocket 接続の手当をしている話。 <a href="https://github.com/krymtkts/blog-fable/pull/53">#53</a></p><p>これちょっと難しくて、 WebSocket が難しいのでなくて Suave でクライアントからメッセージを受けつつサーバ起点で何かするのが厄介で、手こずってる。</p><p>ひとまずやりたかった「Suave でクライアントからメッセージを受けつつサーバ起点で何かする」に関しては 2 つのループで実現できるのがわかったのでそれを使った。
+これを参照した。 → <a href="https://github.com/SuaveIO/suave/issues/307">How to implement server-push over websocket in suave? · Issue #307 · SuaveIO/suave</a></p><p>2 つのループを設けることで、クライアントが切断したときにサーバ側の WebSocket ハンドラを終了するのと、サーバ側の変更イベントでクライアントにプッシュする、が同時に実現できる。
+ただまだ駄目なところがあって完成ではない。現時点の Suave の WebSocket のハンドラは以下の通り。</p><pre><code class="fsharp">    let socketHandler (ws: WebSocket) _ =
+        let mutable loop = true
+
+        Async.Start(
+            async {
+                while loop do // ループ①
+                    do! refreshEvent.Publish |&gt; Async.AwaitEvent
+
+                    printfn "fire event."
+
+                    let seg = ASCII.bytes "refreshed" |&gt; ByteSegment
+                    do! ws.send Text seg true |&gt; Async.Ignore
+            }
+        )
+
+        socket {
+            while loop do // ループ②
+                let! msg = ws.read ()
+
+                match msg with
+                | (Close, _, _) -&gt;
+                    let emptyResponse = [||] |&gt; ByteSegment
+                    do! ws.send Close emptyResponse true
+                    printfn "WebSocket connection closed gracefully."
+                    loop &lt;- false
+                | _ -&gt; ()
+        }
+</code></pre><p>何が駄目かって、 <code>Async.AwaitEvent</code> するところで非同期ブロックが入るのだけど、その後クライアントから切断を受信して <code>loop</code> 変数の値を変更・ループ ② を止めても、ループ ① は非同期ブロックされてて次の変更イベント発火まで生き続けるのよね。
+なので画面遷移やリロードのたびに変更イベントの待ちが溜まっていって、変更イベントで一気にドバっと流れるというのになってる。</p><p>因みに <code>Async.AwaitEvent</code> のあとで <code>if</code> なり仕込んで抜けられるかなと試したけど、同じ周回だと <code>loop</code> 変数への変更が伝播してなくて止まらなかった。 <code>ref</code> をあえて使ったらまた違うのかな。</p><p>F# の async/await ちゃんと触ってないから手こずってるけど、これ上手く手なづけたら <a href="https://github.com/krymtkts/pocof">pocof</a> へも良い影響出せそうなので、これを気にちゃんとやってこう。</p>
 </div>
 
 <div id="post-tags">
@@ -232,7 +270,7 @@ template repository になってても同じ感じか。</p><p>私的ブログ�
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-09-03-rebuild-blog-with-fable-pt11">2023-09-03 Fable でブログを再構築する pt.11 &raquo;</a>
+        <a class="right" href="/posts/2023-09-10-rebuild-blog-with-fable-pt12">2023-09-10 Fable でブログを再構築する pt.12 &raquo;</a>
         
     </div>
 </div>
