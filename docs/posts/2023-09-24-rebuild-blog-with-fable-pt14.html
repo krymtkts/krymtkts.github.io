@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Out-GridView の CUI 版 Out-ConsoleGridView</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-09-03-the-cui-ver-of-out-grid-view">
+    <title>krymtkts: Fable でブログを再構築する pt.14</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-09-24-rebuild-blog-with-fable-pt14">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Out-GridView の CUI 版 Out-ConsoleGridView" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-09-03-the-cui-ver-of-out-grid-view" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.14" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-09-24-rebuild-blog-with-fable-pt14" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -200,44 +200,52 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-09-03</div>
+        <div class="col-lg-6">2023-09-24</div>
         
     </div>
-    <h2>Out-GridView の CUI 版 Out-ConsoleGridView</h2>
+    <h2>Fable でブログを再構築する pt.14</h2>
 </div>
 <div>
     
-    <p>最近知ったのだけど、 <code>Out-GridView</code> の PowerShell Team 謹製 CUI 版 <code>Out-ConsoleGridView</code> があったらしい。これが使えるヤツだったら <code>poco</code> も今作ってる <code>pocof</code> も要らんやん、と思った。</p><p><a href="https://github.com/PowerShell/GraphicalTools">PowerShell/GraphicalTools: Modules that mix PowerShell and GUIs/CUIs! - built on Avalonia and gui.cs</a></p><p>元々 CUI 使ってるのに <code>Out-GridView</code> で GUI 表示しないとインタラクティブな絞り込みできないのがイヤで <a href="https://github.com/peco/peco">peco</a> を使ってたってのがある。
-<code>peco</code> は PowerShell に最適化されてないから、その後オブジェクトのまま取り扱える <a href="https://github.com/jasonmarcher/poco">jasonmarcher/poco</a> にたどり着いた。
-その後 <code>poco</code> の独自実装を自分で始めたのが <a href="https://github.com/krymtkts/pocof"><code>pocof</code></a>(F# の練習がてら)。</p><p>なもんで、 <code>Out-GridView</code> の CUI 版があってもしイイ感じに使えるのなら、この長年の変遷に終止符を打つんちゃうかな的な。</p><p>以下 <code>README.md</code> に従い試す。</p><pre><code class="powershell">Install-Module Microsoft.PowerShell.ConsoleGuiTools -AllowPrerelease -Scope AllUsers
-</code></pre><pre><code class="powershell">Get-ChildItem | Out-ConsoleGridView
-</code></pre><p><img src="/img/2022-09-03-capture/capture.png" alt="水色の背景に印字される ls の結果" /></p><p><code>space</code> キーでオブジェクトを選択するか <code>Ctrl+A</code> で全選択して、 <code>Enter</code> で選択した結果を出力する。
-<code>-Filter</code> オプションに渡した値で初期表示がフィルタリングされた形になる。そのままタイプしてもフィルタ入力できない。<code>Tab</code> キーを押してフィルタのテキストにフォーカスできる。
-フィルタは正規表現のみみたい。不正なパターンを入れたらちゃんとエラー表示されてエライ。
-必ず結果を洗濯した状態で<code>Enter</code> 押さないと結果が得られないのはちょっとメンドイ。
-わたしは使わないけどマウスコントロール(クリックどころかスクロールまで)できるのもすごいな。
-背景変わるの好きになれないので、今後色とかキーとかのオプション充実したりするかなあ。
-インクリメンタルサーチじゃないのも微妙に好みじゃない操作性だ。</p><p><code>poco</code>、 <code>pocof</code> 共にバッファを元に戻すとレイアウトの崩れが起きるのだけど、 <code>Out-ConsoleGridView</code> は崩れない。素晴らしい。
-表示域にないスクロール可能な部分は吹っ飛んでしまうけど、崩れない方法は真似させてもらいたい(MIT ライセンスなので)。けど、コード読んだ感じどこかわからなかった。</p><p><code>Out-ConsoleGridView</code> は CmdLet の出力に <a href="https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.formatviewdefinition?view=powershellsdk-7.0.0">FormatViewDefinition Class (System.Management.Automation) | Microsoft Docs</a>を自前で作ってるみたい。
-なので PowerShell で表示される内容とちょっと違う。
-それ故か、例えば <code>Get-InstalledModule</code> のような情報量の多い結果を表示するとちょっと悲しい感じになってしまった。 <code>format.ps1xml</code> が利用されないせいかな。しかしこのクラス使い方がわからなかったので勉強になるわ。</p><pre><code class="powershell">Get-InstalledModule | Out-ConsoleGridView
-</code></pre><p><img src="/img/2022-09-03-capture/jam-packed-capture.png" alt="すし詰めに印字される Get-InstalledModule の結果" /></p><p><code>pocof</code> でやりたいことと方向性が違うなあという感じなので、作ってるものを今すぐブン投げ捨てる必要はなかったようだ。こちらの開発は趣味プロで続けようと思った。しかしコード参考にできるものが増えたのでとても助かるなぁ。</p>
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。
+もういい加減ブログ移行作業着手したいけど、ちまちま直してたら修正スべき箇所見つかってきてちまちまちした更新を続けている。</p><p><a href="/posts/2023-09-17-rebuild-blog-with-fable-pt13">前のやつ</a> ↓。</p><blockquote><p>何が駄目かって、 <code>Async.AwaitEvent</code> するところで非同期ブロックが入るのだけど、その後クライアントから切断を受信して <code>loop</code> 変数の値を変更・ループ ② を止めても、ループ ① は非同期ブロックされてて次の変更イベント発火まで生き続けるのよね。
+なので画面遷移やリロードのたびに変更イベントの待ちが溜まっていって、変更イベントで一気にドバっと流れるというのになってる。</p></blockquote><p>どう解決するかわかりまして、 <code>CancellationToken</code> でもって破棄してやれば良いとのことだったのでそうした。 <a href="https://github.com/krymtkts/blog-fable/pull/54">#54</a></p><p><a href="https://learn.microsoft.com/en-us/dotnet/fsharp/tutorials/async#asyncstart">Async and Task Programming - F# | Microsoft Learn</a></p><p>ようやっと F# で非同期計算する入り口に立った気。</p><p>他に細々した更新やバグ修正してたのだけど、手間がかかったのだと依存関係の更新をしてた。
+特に Marked と Highlight.js の更新はちょっと気が重かった。
+ずっと古い ver に依存しておったことで型定義は <code>@types/highlightjs</code> <code>@types/marked</code> に依存してたのだけど、それを取り除いて純正の型を使う切り替えが必要だった。 Marked も Highlight.js もえらい前から型提供してたみたい。
+コピペ元が古いから自分での確認を怠っており全く気づかなかったか。</p><ul><li><a href="https://github.com/markedjs/marked/releases/tag/v6.0.0">Release v6.0.0 · markedjs/marked</a></li><li><a href="https://github.com/highlightjs/highlight.js/commit/c836e3aae667ce8c8f7b28534a25d280587f7d3f">(parser/docs) Add jsdoc annotations and TypeScript type file (#2517) · highlightjs/highlight.js@c836e3a</a></li></ul><p>個別の型定義を取り除いたあとは <a href="https://github.com/fable-compiler/ts2fable">ts2fable</a> で Fable binding を生成する。</p><pre><code class="powershell">npx ts2fable node_modules\highlight.js\types\index.d.ts src/bindings/HighlightJs.fs
+npx ts2fable node_modules\marked\lib\marked.d.ts src/bindings/Marked.fs
+</code></pre><p>ぐいっと一気に引き上げたので極力型を fable binding を再生成したかったが、結構負担大きかった。
+結局生成した binding を手で補正する必要があった。</p><p>Highlight.js に関しては再生成した型定義をエラーが出ない範囲で削った。自分が使う極小範囲に留めた binding を作ったわけだ。</p><p>Marked はちょっとそう簡単にはいかなかった。びっくりするくらい上手くいかない。
+ts2fable って <code>Omit</code> とか型の交差を理解しなくて、そのまま F# のコードに出力される。</p><p><a href="https://github.com/fable-compiler/ts2fable/issues/474">Combined and Omit&lt;&gt; types · Issue #474 · fable-compiler/ts2fable</a></p><p>あとは <code>Record</code> とかも理解しない。これらに対する対処を手でやりつつ、非公開な型を削るのしんどかった。
+ので、 Marked は元々使ってた <code>@types/marked</code> で生成した型から、不要な部分や削除された部分を最小限で削ったものにした。
+恐らく利用してない範囲に非互換な型定義があるんじゃないかと思うが、利用範囲だけは手直しして使えるようにした感じ。</p><p>Fable の binding を用意する方法、結局 ts2fable を使うよりも自分で更地から書いた方がいいのでは...という気配薄っすら感じる。
+が、まったく ts2fable 開発されてないわけじゃないし今のところコミュニティの方向はどこに向いてんだろ。
+追々調べておく必要がありそう。そうそう binding て書く機会もないしな。
+とはいえよ、 module で API には快適変更があるときに binding 再生成だけで住むのが理想よな。ちょっと遠そう。</p><p>他、 Marked で使ってた <code>headerIds</code> という Extension が v8.0.0 からなくなってた。 <a href="https://marked.js.org/using_advanced">Using Advanced - Marked Documentation</a></p><blockquote><p>Removed in v8.0.0 use marked-gfm-heading-id to add a string to prefix the id attribute when emitting headings (h1, h2, h3, etc).</p></blockquote><p>けどこれは <code>h*</code> 要素に anchor をつけるように作ってたから元々いらなくて、なくてもいけたのでコレを機に消した。
+<a href="https://marked.js.org/using_advanced">Using Advanced - Marked Documentation</a></p><hr /><p>あとこれは現在進行系で解決できてない困ってること。
+Bulma が document で書かれてるような部分的な利用ができなくなってるってのがわかった。
+非推奨となった <code>@import</code> を使ってたら起こらないけど <code>@use</code> だと起こる。</p><p><a href="https://bulma.io/documentation/customize/with-node-sass/">With node-sass | Bulma: Free, open source, and modern CSS framework based on Flexbox</a></p><p>SCSS ビルド時にこういうエラーが出る。</p><pre><code class="plaintext">Error: The target selector was not found.
+Use "@extend %overlay !optional" to avoid this error.
+</code></pre><p><a href="https://github.com/jgthms/bulma/issues/3391">Webpack @extend !optional error · Issue #3391 · jgthms/bulma</a></p><p>同じようなことに困ってる人いる。
+単純に Bulma 側が SCSS 対応がちゃんとできてないってことなんやろな。 <code>@import</code> ならいけるからな。</p><p>Dart 製の <code>sass</code> モジュールを使ってるせいか未だ調べてないけど、解決する予定もなさそうなので一旦全部入りでやり過ごす。
+できれば利用してるスタイルだけにとどめて高速・軽量化したいのやけどなー。
+Bulma 自体今年はメンテ止まってるし、最悪自分でなんとかする感じかな。</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/fable">fable</a>
+    
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2022-09-10-writing-cmdlet-in-fsharp-pt4">&laquo; 2022-09-10 F#でコマンドレットを書いてる pt.4</a>
         
-        
-        <a class="right" href="/posts/2022-08-27-bump-bootstrap">2022-08-27 Bootstrap のバージョンを上げる &raquo;</a>
+        <a class="right" href="/posts/2023-09-17-rebuild-blog-with-fable-pt13">2023-09-17 Fable でブログを再構築する pt.13 &raquo;</a>
         
     </div>
 
