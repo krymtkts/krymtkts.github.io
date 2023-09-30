@@ -1,4 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 24 Sep 2023 16:07:32 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-09-24-rebuild-blog-with-fable-pt14</guid><link>https://krymtkts.github.io/posts/2023-09-24-rebuild-blog-with-fable-pt14</link><title>Fable でブログを再構築する pt.14</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 01 Oct 2023 07:21:16 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-10-01-rebuild-blog-with-fable-pt15</guid><link>https://krymtkts.github.io/posts/2023-10-01-rebuild-blog-with-fable-pt15</link><title>Fable でブログを再構築する pt.15</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;TODO の回収と細々とした使い勝手の改善など
+&lt;a href="https://github.com/krymtkts/blog-fable/pull/61"&gt;#61&lt;/a&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/62"&gt;#62&lt;/a&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/64"&gt;#64&lt;/a&gt;
+をした。
+内部のリファクタリングなり実装忘れの機能追加をしてきて、かなり移行への気持ちも高まってきた(毎回言ってる)。&lt;/p&gt;&lt;p&gt;その中でも自分でいい感じにできたんじゃないかなという所は、 &lt;a href="https://github.com/krymtkts/blog-fable/pull/63"&gt;#63&lt;/a&gt;
+で &lt;code&gt;Intl.DateTimeFormat&lt;/code&gt; のごく小さな binding を書いてみたところ。&lt;/p&gt;&lt;p&gt;調べた感じ、昔の Fable.Import.Browser にはあったけど、分割されたあとなくなってるぽい。&lt;/p&gt;&lt;p&gt;&lt;a href="https://github.com/fable-compiler/Fable/issues/1925"&gt;Import of 'intl' package fails in production mode · Issue #1925 · fable-compiler/Fable&lt;/a&gt;&lt;a href="https://github.com/fable-compiler/fable-import/blob/a24f2c51bcfc79737427613e5c4aa5e99e114d40/Browser/Fable.Import.Browser.fs#L12129-L12241"&gt;fable-import/Browser/Fable.Import.Browser.fs at a24f2c51bcfc79737427613e5c4aa5e99e114d40 · fable-compiler/fable-import&lt;/a&gt;&lt;/p&gt;&lt;p&gt;分割先のモジュールを調べるにはこの Issue を見る → &lt;a href="https://github.com/fable-compiler/fable-import/issues/80"&gt;Track repo splits · Issue #80 · fable-compiler/fable-import&lt;/a&gt;。&lt;/p&gt;&lt;p&gt;これを参考に足りない部分を補う形で以下のように記述した。
+自分が使いたい &lt;code&gt;formatToParts&lt;/code&gt; &lt;code&gt;DataTimeFormatPart&lt;/code&gt; はなかったから自前で書いて、 &lt;code&gt;DateTimeFormatOptions&lt;/code&gt; は違いなし。この &lt;code&gt;Create&lt;/code&gt; の書き方は学びになった。
+MDN を参考にしたら簡単だったのでふつーにいけた。 &lt;a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/formatToParts"&gt;Intl.DateTimeFormat.prototype.formatToParts() - JavaScript | MDN&lt;/a&gt;&lt;/p&gt;&lt;pre&gt;&lt;code class="fsharp"&gt;// NOTE: minimum implementation for Intl.DateTimeFormat.formatToParts.
+[&amp;lt;RequireQualifiedAccess&amp;gt;]
+module Intl =
+    [&amp;lt;Global&amp;gt;]
+    let DateTimeFormat: DateTimeFormat = jsNative
+
+    [&amp;lt;AllowNullLiteral&amp;gt;]
+    type DateTimeFormatOptions =
+        abstract weekday: string with get, set
+        abstract year: string with get, set
+        abstract month: string with get, set
+        abstract day: string with get, set
+        abstract hour: string with get, set
+        abstract minute: string with get, set
+        abstract second: string with get, set
+        abstract hourCycle: string with get, set
+        abstract timeZone: string with get, set
+        abstract timeZoneName: string with get, set
+
+    [&amp;lt;AllowNullLiteral&amp;gt;]
+    type DateTimeFormatPart =
+        abstract ``type``: string with get, set
+        abstract value: string with get, set
+
+    [&amp;lt;AllowNullLiteral&amp;gt;]
+    type DateTimeFormat =
+        [&amp;lt;Emit "new Intl.$0($1, $2)"&amp;gt;]
+        abstract Create: lang: string -&amp;gt; options: DateTimeFormatOptions -&amp;gt; DateTimeFormat
+
+        abstract formatToParts: date: System.DateTime -&amp;gt; DateTimeFormatPart array
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;コレを書いたことでちょっとは安心感持って使えるかな？という感じやが、
+そもそも書き直すことあんまなさそうなのと結局戻り値はサイズ固定配列なので、そこまだなんとかしたい感じ。&lt;/p&gt;&lt;p&gt;ただ小さい binding でも書いてみることで Fable binding への理解度上がった感ある。&lt;/p&gt;&lt;p&gt;あと完全に忘れてたのが、画像ファイルがあった場合に出力先へコピる機能。
+初めは、 favicon とか画像類はスクリプトを手でいじって好きにやる想定にしてたけど途中で変えたから、まるっと忘れてた。
+機能的にはそんなもんちゃうかな？結構機能は削りまくってるのでなんか忘れてそうではあるが。&lt;/p&gt;&lt;p&gt;あと気になるのはパフォ面。
+Fable のビルドは遅いけどそれ以外は結構速いから期待できんじゃないかな。
+Cryogen での SSG は記事が多いともっさりしてて 151 記事で &lt;code&gt;lein run&lt;/code&gt; の終了まで 25 秒くらかかる。
+8 記事しかない状態で 4 秒未満のとこしか見てないから、 Cryogen と同じ記事数でどうなるか...&lt;/p&gt;</description><pubDate>Sun, 01 Oct 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-09-24-rebuild-blog-with-fable-pt14</guid><link>https://krymtkts.github.io/posts/2023-09-24-rebuild-blog-with-fable-pt14</link><title>Fable でブログを再構築する pt.14</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。
 もういい加減ブログ移行作業着手したいけど、ちまちま直してたら修正スべき箇所見つかってきてちまちまちした更新を続けている。&lt;/p&gt;&lt;p&gt;&lt;a href="/posts/2023-09-17-rebuild-blog-with-fable-pt13"&gt;前のやつ&lt;/a&gt; ↓。&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;何が駄目かって、 &lt;code&gt;Async.AwaitEvent&lt;/code&gt; するところで非同期ブロックが入るのだけど、その後クライアントから切断を受信して &lt;code&gt;loop&lt;/code&gt; 変数の値を変更・ループ ② を止めても、ループ ① は非同期ブロックされてて次の変更イベント発火まで生き続けるのよね。
 なので画面遷移やリロードのたびに変更イベントの待ちが溜まっていって、変更イベントで一気にドバっと流れるというのになってる。&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;どう解決するかわかりまして、 &lt;code&gt;CancellationToken&lt;/code&gt; でもって破棄してやれば良いとのことだったのでそうした。 &lt;a href="https://github.com/krymtkts/blog-fable/pull/54"&gt;#54&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://learn.microsoft.com/en-us/dotnet/fsharp/tutorials/async#asyncstart"&gt;Async and Task Programming - F# | Microsoft Learn&lt;/a&gt;&lt;/p&gt;&lt;p&gt;ようやっと F# で非同期計算する入り口に立った気。&lt;/p&gt;&lt;p&gt;他に細々した更新やバグ修正してたのだけど、手間がかかったのだと依存関係の更新をしてた。
 特に Marked と Highlight.js の更新はちょっと気が重かった。

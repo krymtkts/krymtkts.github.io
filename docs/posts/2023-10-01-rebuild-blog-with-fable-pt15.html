@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8"/>
-    <title>krymtkts: Windows のタスクを操作する(PowerShell で)</title>
-    <link rel="canonical" href="https://krymtkts.github.io/posts/2022-01-23-scheduled-task-in-powershell">
+    <title>krymtkts: Fable でブログを再構築する pt.15</title>
+    <link rel="canonical" href="https://krymtkts.github.io/posts/2023-10-01-rebuild-blog-with-fable-pt15">
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <meta name="description" content="krymtkts&#39;s personal blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="krymtkts&#39;s personal blog" />
     <meta property="og:site_name" content="krymtkts" />
-    <meta property="og:title" content="krymtkts: Windows のタスクを操作する(PowerShell で)" />
-    <meta property="og:url" content="https://krymtkts.github.io/posts/2022-01-23-scheduled-task-in-powershell" />
+    <meta property="og:title" content="krymtkts: Fable でブログを再構築する pt.15" />
+    <meta property="og:url" content="https://krymtkts.github.io/posts/2023-10-01-rebuild-blog-with-fable-pt15" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/fontawesome.min.css" integrity="sha512-R+xPS2VPCAFvLRy+I4PgbwkWjw1z5B5gNDYgJN5LfzV4gGNeRQyVrY7Uk59rX+c8tzz63j8DeZPLqmXvBxj8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -200,71 +200,72 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2022-01-23</div>
+        <div class="col-lg-6">2023-10-01</div>
         
     </div>
-    <h2>Windows のタスクを操作する(PowerShell で)</h2>
+    <h2>Fable でブログを再構築する pt.15</h2>
 </div>
 <div>
     
-    <p>決まった時間までにやらなければいけないことがあるとする。それを人間力でカバーするのは、それなりに資源の浪費になるので自動化したいとする。
-最近の Windows ならタスクスケジューラで直に書いてもいいけど、操作めんどすぎるので普通に考えたらスクリプトにするでしょう。
-これを Windows 11 と PowerShell 7.2.1 でやる。</p><p>それでは <a href="https://docs.microsoft.com/en-us/powershell/module/scheduledtasks/?view=windowsserver2019-ps">ScheduledTasks Module</a> を使う。
-このモジュールは Window なら以下のシステムフォルダにひっそりと存在する。令和のこの時代になんつー古い(v1)話なんや、とは思う。</p><pre><code class="powershell">Get-Module -Name ScheduledTasks -ListAvailable
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>TODO の回収と細々とした使い勝手の改善など
+<a href="https://github.com/krymtkts/blog-fable/pull/61">#61</a><a href="https://github.com/krymtkts/blog-fable/pull/62">#62</a><a href="https://github.com/krymtkts/blog-fable/pull/64">#64</a>
+をした。
+内部のリファクタリングなり実装忘れの機能追加をしてきて、かなり移行への気持ちも高まってきた(毎回言ってる)。</p><p>その中でも自分でいい感じにできたんじゃないかなという所は、 <a href="https://github.com/krymtkts/blog-fable/pull/63">#63</a>
+で <code>Intl.DateTimeFormat</code> のごく小さな binding を書いてみたところ。</p><p>調べた感じ、昔の Fable.Import.Browser にはあったけど、分割されたあとなくなってるぽい。</p><p><a href="https://github.com/fable-compiler/Fable/issues/1925">Import of 'intl' package fails in production mode · Issue #1925 · fable-compiler/Fable</a><a href="https://github.com/fable-compiler/fable-import/blob/a24f2c51bcfc79737427613e5c4aa5e99e114d40/Browser/Fable.Import.Browser.fs#L12129-L12241">fable-import/Browser/Fable.Import.Browser.fs at a24f2c51bcfc79737427613e5c4aa5e99e114d40 · fable-compiler/fable-import</a></p><p>分割先のモジュールを調べるにはこの Issue を見る → <a href="https://github.com/fable-compiler/fable-import/issues/80">Track repo splits · Issue #80 · fable-compiler/fable-import</a>。</p><p>これを参考に足りない部分を補う形で以下のように記述した。
+自分が使いたい <code>formatToParts</code> <code>DataTimeFormatPart</code> はなかったから自前で書いて、 <code>DateTimeFormatOptions</code> は違いなし。この <code>Create</code> の書き方は学びになった。
+MDN を参考にしたら簡単だったのでふつーにいけた。 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/formatToParts">Intl.DateTimeFormat.prototype.formatToParts() - JavaScript | MDN</a></p><pre><code class="fsharp">// NOTE: minimum implementation for Intl.DateTimeFormat.formatToParts.
+[&lt;RequireQualifiedAccess&gt;]
+module Intl =
+    [&lt;Global&gt;]
+    let DateTimeFormat: DateTimeFormat = jsNative
 
-    Directory: C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
+    [&lt;AllowNullLiteral&gt;]
+    type DateTimeFormatOptions =
+        abstract weekday: string with get, set
+        abstract year: string with get, set
+        abstract month: string with get, set
+        abstract day: string with get, set
+        abstract hour: string with get, set
+        abstract minute: string with get, set
+        abstract second: string with get, set
+        abstract hourCycle: string with get, set
+        abstract timeZone: string with get, set
+        abstract timeZoneName: string with get, set
 
-ModuleType Version    PreRelease Name                                PSEdition ExportedCommands
----------- -------    ---------- ----                                --------- ----------------
-Manifest   1.0.0.0               ScheduledTasks                      Core,Desk {Get-ScheduledTask, Set-ScheduledTask, Register-Sche…
-</code></pre><p>WindowsPowerShell(v5.1)なら <a href="https://docs.microsoft.com/en-us/powershell/module/psscheduledjob/?view=powershell-5.1">PSScheduledJob Module</a> が使えるが、 PowerShell 7 では使えない(<code>Import-Module</code> もできない)ので、 <code>ScheduledTask</code> 一択かと。</p><p>ではいくつかのレシピを以下に記す。</p><h3 id="日次で指定時間に実行人間味のあるズレを添えて">日次で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = (get-command pwsh).Source
-$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command "Invoke-MyCommand"'
-$trigger = New-ScheduledTaskTrigger -Daily -At 7:46 -RandomDelay 00:10
-$task = New-ScheduledTask -Action $action -Trigger $trigger
-Register-ScheduledTask -InputObject $task -TaskName 'morning-action'
-</code></pre><h3 id="指定時間に起動して実行待ちするタスク--実行許諾の通知的なもの">指定時間に起動して実行待ちするタスク ≒ 実行許諾の通知的なもの</h3><pre><code class="powershell">$pwsh = (get-command pwsh).Source
-$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-Command "{Read-Host `"press key`" | Out-Null; Invoke-MyCommand}.Invoke()"'
-$trigger = New-ScheduledTaskTrigger -Daily -At 17:00
-$task = New-ScheduledTask -Action $action -Trigger $trigger
-Register-ScheduledTask -InputObject $task -TaskName 'evening-action'
-</code></pre><h3 id="単発で指定時間に実行人間味のあるズレを添えて">単発で指定時間に実行(人間味のあるズレを添えて)</h3><pre><code class="powershell">$pwsh = (get-command pwsh).Source
-$action = New-ScheduledTaskAction -Execute $pwsh -Argument '-NonInteractive -Command "Invoke-MyCommand"'
-$jitter = (Get-Random -Minimum 30 -Maximum (60*5))
-$timing = (Get-Date '2022-01-30 17:05').AddSeconds($jitter)
-$trigger = New-ScheduledTaskTrigger -At $timing -Once
-$setting = New-ScheduledTaskSettingsSet -DeleteExpiredTaskAfter 00:00:10
-$task = New-ScheduledTask -Action $action -Trigger $trigger -Settings $setting | `
-    %{ $_.Triggers[0].EndBoundary = $timing.AddMinutes(1).ToString('s'); $_}
-Register-ScheduledTask -InputObject $task -TaskName 'single-action'
-</code></pre><p>このレシピではズレの算出は自前で行っている。<code>New-ScheduledTaskTrigger</code> に <code>-RandomDelay</code> を指定しておくのもアリだが、単発であるし具体的にいつ実行されるかがわかる方が好ましいかと考えた。</p><p>単発タスクなので、実行後にタスクを廃棄したいとする。その場合は例のように <code>-Settings</code> で自動削除の設定を有効にする必要がある。
-同時に、タスクの期限切れの日時も指定する必要があるが、これはコマンドレットのオプションでは設定できない。直接オブジェクトに代入することで設定する(各 <code>Triggers</code> で <code>EndBoundary</code> を設定)。</p><p>参照: <a href="https://stackoverflow.com/questions/29337135/powershell-v4-create-remote-task-scheduler-task-set-to-expire-and-delete/35777432#35777432">Powershell v4. Create remote task scheduler task set to expire and delete - Stack Overflow</a></p><h3 id="注意">注意</h3><p>いくつかの注意点がある。</p><h4 id="実行ファイルは絶対パス指定">実行ファイルは絶対パス指定</h4><p>実行ファイルは絶パス(絶対パスのわかりにくい略称)指定じゃないといけない。コマンドプロンプトでパスを通していたとしても、 <code>pwsh</code> とかだとタスクスケジューラちゃんは実行ファイルを見つけられない。</p><h4 id="pwsh-の引数-command-はダブルクォートで書く"><code>pwsh</code> の引数 <code>Command</code> はダブルクォートで書く</h4><p><code>New-ScheduledTaskAction</code> の引数 <code>Argument</code> に、 <code>pwsh</code> に渡す引数を定義する。
-この時、引数 <code>Command</code> に渡す文字列はダブルクォートで書くこと。
-コマンドプロンプトで試せばわかるが、ダブルクォートはコマンドプロンプトで文字列として解釈され <code>pwsh</code> に渡るのに対し、シングルクォートは文字列と解釈されないそのままが渡されている様子。</p><pre><code class="cmd">C:\Windows\system32&gt;pwsh -NonInteractive -Command "Write-Host 123"
-123
+    [&lt;AllowNullLiteral&gt;]
+    type DateTimeFormatPart =
+        abstract ``type``: string with get, set
+        abstract value: string with get, set
 
-C:\Windows\system32&gt;pwsh -NonInteractive -Command 'Write-Host 123'
-Write-Host 123
-</code></pre><p>この挙動のソースはコレ ↓ くらいしか見つからんかった。オフィシャルな情報はないのかな。あったら是非引用したい。(コマンドプロンプト界の常識過ぎるテーマなのか？)</p><p><a href="https://stackoverflow.com/questions/24173825/what-does-single-quoting-do-in-windows-batch-files/24181667#24181667">cmd - What does single-quoting do in Windows batch files? - Stack Overflow</a></p><h3 id="read-host-するからにゃぁ-interactive-で-pwsh-を起動しろよな"><code>Read-Host</code> するからにゃぁ Interactive で <code>pwsh</code> を起動しろよな</h3><p><code>Read-Host</code> する例なのに、間違って <code>-NoInteractive</code> をつけてしまうと、このようにおもしろエラーを頂戴するのでご注意。</p><pre><code class="powershell">C:\Windows\system32&gt;pwsh -NonInteractive -Command "{Read-Host `"press key`" | Out-Null; Invoke-MyCommand}.Invoke()"
-MethodInvocationException: Exception calling "Invoke" with "0" argument(s): "PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
-</code></pre>
+    [&lt;AllowNullLiteral&gt;]
+    type DateTimeFormat =
+        [&lt;Emit "new Intl.$0($1, $2)"&gt;]
+        abstract Create: lang: string -&gt; options: DateTimeFormatOptions -&gt; DateTimeFormat
+
+        abstract formatToParts: date: System.DateTime -&gt; DateTimeFormatPart array
+</code></pre><p>コレを書いたことでちょっとは安心感持って使えるかな？という感じやが、
+そもそも書き直すことあんまなさそうなのと結局戻り値はサイズ固定配列なので、そこまだなんとかしたい感じ。</p><p>ただ小さい binding でも書いてみることで Fable binding への理解度上がった感ある。</p><p>あと完全に忘れてたのが、画像ファイルがあった場合に出力先へコピる機能。
+初めは、 favicon とか画像類はスクリプトを手でいじって好きにやる想定にしてたけど途中で変えたから、まるっと忘れてた。
+機能的にはそんなもんちゃうかな？結構機能は削りまくってるのでなんか忘れてそうではあるが。</p><p>あと気になるのはパフォ面。
+Fable のビルドは遅いけどそれ以外は結構速いから期待できんじゃないかな。
+Cryogen での SSG は記事が多いともっさりしてて 151 記事で <code>lein run</code> の終了まで 25 秒くらかかる。
+8 記事しかない状態で 4 秒未満のとこしか見てないから、 Cryogen と同じ記事数でどうなるか...</p>
 </div>
 
 <div id="post-tags">
     <b>Tags: </b>
     
-    <a href="/tags/powershell">powershell</a>
+    <a href="/tags/fable">fable</a>
     
-    <a href="/tags/windows">windows</a>
+    <a href="/tags/fsharp">fsharp</a>
     
 </div>
 
 
     <div id="prev-next">
         
-        <a href="/posts/2022-01-30-pwsh-parameter-binding-parse-datetime">&laquo; 2022-01-30 PowerShell のパラメータバインディングは &quot;3 時&quot; を Datetime 型にパースする</a>
         
-        
-        <a class="right" href="/posts/2022-01-15-move-taskbar-to-the-top-in-win11-pwsh">2022-01-15 Windows 11 のタスクバーを天に(PowerShell で) &raquo;</a>
+        <a class="right" href="/posts/2023-09-24-rebuild-blog-with-fable-pt14">2023-09-24 Fable でブログを再構築する pt.14 &raquo;</a>
         
     </div>
 
