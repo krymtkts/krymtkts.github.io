@@ -51,11 +51,11 @@
                         
                         <li class="dropdown-header">Recent Posts</li>
                         
+                        <li><a class="dropdown-item" href="/posts/2023-10-08-rebuild-blog-with-fable-pt16">Fable でブログを再構築する pt.16</a></li>
+                        
                         <li><a class="dropdown-item" href="/posts/2023-10-01-rebuild-blog-with-fable-pt15">Fable でブログを再構築する pt.15</a></li>
                         
                         <li><a class="dropdown-item" href="/posts/2023-09-24-rebuild-blog-with-fable-pt14">Fable でブログを再構築する pt.14</a></li>
-                        
-                        <li><a class="dropdown-item" href="/posts/2023-09-17-rebuild-blog-with-fable-pt13">Fable でブログを再構築する pt.13</a></li>
                         
                         
 
@@ -200,56 +200,59 @@
 <div id="post">
     <div class="post-header">
     <div id="post-meta" class="row">
-        <div class="col-lg-6">2023-10-01</div>
+        <div class="col-lg-6">2023-10-08</div>
         
     </div>
-    <h2>Fable でブログを再構築する pt.15</h2>
+    <h2>Fable でブログを再構築する pt.16</h2>
 </div>
 <div>
     
-    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>TODO の回収と細々とした使い勝手の改善など
-<a href="https://github.com/krymtkts/blog-fable/pull/61">#61</a><a href="https://github.com/krymtkts/blog-fable/pull/62">#62</a><a href="https://github.com/krymtkts/blog-fable/pull/64">#64</a>
-をした。
-内部のリファクタリングなり実装忘れの機能追加をしてきて、かなり移行への気持ちも高まってきた(毎回言ってる)。</p><p>その中でも自分でいい感じにできたんじゃないかなという所は、 <a href="https://github.com/krymtkts/blog-fable/pull/63">#63</a>
-で <code>Intl.DateTimeFormat</code> のごく小さな binding を書いてみたところ。</p><p>調べた感じ、昔の Fable.Import.Browser にはあったけど、分割されたあとなくなってるぽい。</p><p><a href="https://github.com/fable-compiler/Fable/issues/1925">Import of 'intl' package fails in production mode · Issue #1925 · fable-compiler/Fable</a><a href="https://github.com/fable-compiler/fable-import/blob/a24f2c51bcfc79737427613e5c4aa5e99e114d40/Browser/Fable.Import.Browser.fs#L12129-L12241">fable-import/Browser/Fable.Import.Browser.fs at a24f2c51bcfc79737427613e5c4aa5e99e114d40 · fable-compiler/fable-import</a></p><p>分割先のモジュールを調べるにはこの Issue を見る → <a href="https://github.com/fable-compiler/fable-import/issues/80">Track repo splits · Issue #80 · fable-compiler/fable-import</a>。</p><p>これを参考に足りない部分を補う形で以下のように記述した。
-自分が使いたい <code>formatToParts</code> <code>DataTimeFormatPart</code> はなかったから自前で書いて、 <code>DateTimeFormatOptions</code> は違いなし。この <code>Create</code> の書き方は学びになった。
-MDN を参考にしたら簡単だったのでふつーにいけた。 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/formatToParts">Intl.DateTimeFormat.prototype.formatToParts() - JavaScript | MDN</a></p><pre><code class="fsharp">// NOTE: minimum implementation for Intl.DateTimeFormat.formatToParts.
-[&lt;RequireQualifiedAccess&gt;]
-module Intl =
-    [&lt;Global&gt;]
-    let DateTimeFormat: DateTimeFormat = jsNative
+    <p><a href="https://github.com/krymtkts/blog-fable">krymtkts/blog-fable</a> <a href="https://fable.io/">Fable</a> でブログを再構築している。</p><p>こまい修正をして、その後現ブログの Markdown を元にどれくらいのパフォを望めるのか試してみた。</p><p>パフォ比較時点での記事数は今書いているこの記事を含めて、 posts が 151 pages が 1 画像が 25 。</p><pre><code class="powershell"># krymtkts/krymtkts.github.io の root directory にて
+PS&gt; 'md/posts', 'md/pages', 'img' | ForEach-Object { Get-ChildItem ./content/$_ -Recurse -File | Measure-Object | Select-Object -ExpandProperty Count }
+151
+1
+25
+</code></pre><p>この状態で <code>lein run</code> だと 3 度試行して概ね 26.174 , 27.144, 28.722 秒に収まるくらい。</p><p>次に krymtkts/blog-fable の歴史を krymtkts/krymtkts.github.io に統合して測定する。
+統合する手法は前に <a href="/posts/2022-03-26-merge-blog-repo">Blog 用 Git repositories のマージ</a> でやったのと同じで慣れたもの。
+生成元の Markdown 配置だけ構造変わってるのでそこの置き換えだけは必要な感じだが、今回は検証なので symbolic link でやる。
+Markdown と画像以外は全部消す。</p><pre><code class="powershell"># krymtkts/krymtkts.github.io の root directory にて
+git switch --create feature/blog-fable
 
-    [&lt;AllowNullLiteral&gt;]
-    type DateTimeFormatOptions =
-        abstract weekday: string with get, set
-        abstract year: string with get, set
-        abstract month: string with get, set
-        abstract day: string with get, set
-        abstract hour: string with get, set
-        abstract minute: string with get, set
-        abstract second: string with get, set
-        abstract hourCycle: string with get, set
-        abstract timeZone: string with get, set
-        abstract timeZoneName: string with get, set
+mkdir contents
 
-    [&lt;AllowNullLiteral&gt;]
-    type DateTimeFormatPart =
-        abstract ``type``: string with get, set
-        abstract value: string with get, set
+# remove old resources
+ll -Exclude content,contents | rm -Recurse
 
-    [&lt;AllowNullLiteral&gt;]
-    type DateTimeFormat =
-        [&lt;Emit "new Intl.$0($1, $2)"&gt;]
-        abstract Create: lang: string -&gt; options: DateTimeFormatOptions -&gt; DateTimeFormat
+git add -u
+git commit -m "Remove old resources."
 
-        abstract formatToParts: date: System.DateTime -&gt; DateTimeFormatPart array
-</code></pre><p>コレを書いたことでちょっとは安心感持って使えるかな？という感じやが、
-そもそも書き直すことあんまなさそうなのと結局戻り値はサイズ固定配列なので、そこまだなんとかしたい感じ。</p><p>ただ小さい binding でも書いてみることで Fable binding への理解度上がった感ある。</p><p>あと完全に忘れてたのが、画像ファイルがあった場合に出力先へコピる機能。
-初めは、 favicon とか画像類はスクリプトを手でいじって好きにやる想定にしてたけど途中で変えたから、まるっと忘れてた。
-機能的にはそんなもんちゃうかな？結構機能は削りまくってるのでなんか忘れてそうではあるが。</p><p>あと気になるのはパフォ面。
+# Merge blog-fable repo.
+git remote add blog-fable ssh://git@github.com/krymtkts/blog-fable.git
+git fetch blog-fable
+git merge --allow-unrelated-histories blog-fable/main
+
+# make symbolic links with Administrator access
+rm contents/* -Recurse
+'posts','pages' | %{New-Item -ItemType SymbolicLink -Path contents -Name $_ -Value "$(pwd)/content/md/$_"}
+'img' | %{New-Item -ItemType SymbolicLink -Path contents -Name $_ -Value "$(pwd)/content/$_"}
+
+# エラーしないように Markdown を書き換える ← 後述
+
+npm install
+npm run build
+</code></pre><p>これで初回はビルドが発生するので 21.479 、若干速くなるけどキャッシュなしならあんま変わらんなという印象は否めない感じ。
+以降はキャッシュがあったら 6.424 , 7.597 という感じだった。</p><p><a href="/posts/2023-10-01-rebuild-blog-with-fable-pt15">前回</a>このように記した。</p><blockquote><p>あと気になるのはパフォ面。
 Fable のビルドは遅いけどそれ以外は結構速いから期待できんじゃないかな。
 Cryogen での SSG は記事が多いともっさりしてて 151 記事で <code>lein run</code> の終了まで 25 秒くらかかる。
-8 記事しかない状態で 4 秒未満のとこしか見てないから、 Cryogen と同じ記事数でどうなるか...</p>
+8 記事しかない状態で 4 秒未満のとこしか見てないから、 Cryogen と同じ記事数でどうなるか...</p></blockquote><p>少なくともローカルで Markdown を書いて開発サーバで確認する分には速くなりそう。
+GitHub Actions のワークフローで動かす分にはあんまり変わらないか。
+何なら npm と dotnet 両方の依存関係があるし遅くなったりして。</p><p>GitHub Actions でキャッシュするようにしたら良さそうか。
+でも GitHub Actions のキャッシュて 7 日間経過したら消えるらしいので、自分の使い方だと大体週一やからキャッシュの恩恵にあずかれなさげかな。
+ひとまずやるだけやろう。</p><p>あと一部先述しているように本格的な移行を進めるにあたり、以下の最低限対応が必要。</p><ul><li>highlight.js 未対応言語の書き換え
+<ul><li>わかりやすいように新ブログでは謎言語をエラーで許容しなくしたので、言語の識別子の typo や 空, <code>textile</code> <code>log</code> みたいな対応してないやつがエラーするようになった</li></ul></li><li>front matter を <a href="https://github.com/edn-format/edn">edn</a> から YAML 形式に書き換え</li><li>(念のため) サイト内 link に <code>.html</code> を足すようにする
+<ul><li>GitHub Pages だといい感じに処理してくれるが、新ブログで生成する <code>*.html</code> に合わせる</li></ul></li></ul><p>他に見落としあるかも？という気はせんでもないが、最低限これだけ処置すればいつでも現ブログを移行できるようになるはず。</p><p>front matter の書き換えだけちょっとめんどくさいな...というやる気ゼロモードだが、あえて edn を維持する必要がなくやらざるを得ない。
+量的に(150 あり)手作業はありえないので PowerShell でいい塩梅に処理できないか検討する。</p><p>ここまでくればあとは実施するのみだが、コレやってしまうと Feedly で見る限り少なくとも世界に 1 人は購読してくれている人がいるので、その人に影響あろうからちょっと気になるところではある。仕方ない点ではあるか。</p><p>あとアレな、 Fable と共に過ごすということは Node.js のエコシステムの上で生活するので、逐次脆弱性に対処するための依存関係の更新がこれから発生する。
+と考えるメンテし続けないといけないから dependabot 有効化とか考えても良さそう。</p>
 </div>
 
 <div id="post-tags">
@@ -267,7 +270,7 @@ Cryogen での SSG は記事が多いともっさりしてて 151 記事で <cod
     <div id="prev-next">
         
         
-        <a class="right" href="/posts/2023-09-24-rebuild-blog-with-fable-pt14">2023-09-24 Fable でブログを再構築する pt.14 &raquo;</a>
+        <a class="right" href="/posts/2023-10-01-rebuild-blog-with-fable-pt15">2023-10-01 Fable でブログを再構築する pt.15 &raquo;</a>
         
     </div>
 </div>
