@@ -16,7 +16,7 @@ PS> 'md/posts', 'md/pages', 'img' | ForEach-Object { Get-ChildItem ./content/$_ 
 25
 ```
 
-この状態で `lein run` だと 3 度試行して概ね 26.174 , 27.144, 28.722 秒に収まるくらい。
+この状態で `lein run` だと 3 度試行して概ね 26.174 , 27.144, 28.722 。 26~28 くらいか。
 
 次に krymtkts/blog-fable の歴史を krymtkts/krymtkts.github.io に統合して測定する。
 統合する手法は前に [Blog 用 Git repositories のマージ](/posts/2022-03-26-merge-blog-repo) でやったのと同じで慣れたもの。
@@ -29,23 +29,24 @@ git switch --create feature/blog-fable
 
 mkdir contents
 
-# remove old resources
+# 現行ブログのリソースを削除する
 ll -Exclude content,contents | rm -Recurse
 
 git add -u
 git commit -m "Remove old resources."
 
-# Merge blog-fable repo.
+# blog-fable repo を merge する
 git remote add blog-fable ssh://git@github.com/krymtkts/blog-fable.git
 git fetch blog-fable
 git merge --allow-unrelated-histories blog-fable/main
 
-# make symbolic links with Administrator access
+# Administrator access で検証のための symbolic link を作成する
 rm contents/* -Recurse
 'posts','pages' | %{New-Item -ItemType SymbolicLink -Path contents -Name $_ -Value "$(pwd)/content/md/$_"}
 'img' | %{New-Item -ItemType SymbolicLink -Path contents -Name $_ -Value "$(pwd)/content/$_"}
 
 # エラーしないように Markdown を書き換える ← 後述
+# App.fs の設定を変える
 
 npm install
 npm run build
@@ -84,5 +85,5 @@ front matter の書き換えだけちょっとめんどくさいな...という�
 
 ここまでくればあとは実施するのみだが、コレやってしまうと Feedly で見る限り少なくとも世界に 1 人は購読してくれている人がいるので、その人に影響あろうからちょっと気になるところではある。仕方ない点ではあるか。
 
-あとアレな、 Fable と共に過ごすということは Node.js のエコシステムの上で生活するので、逐次脆弱性に対処するための依存関係の更新がこれから発生する。
-と考えるメンテし続けないといけないから dependabot 有効化とか考えても良さそう。
+あとアレな、 Fable と共に過ごすということは Node.js のエコシステムの上で生活するので、依存関係の更新が今後ずっとつきまとう。
+メンテの省力化のために dependabot 導入とか考えても良さそう。

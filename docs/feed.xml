@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 08 Oct 2023 15:50:21 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-10-08-rebuild-blog-with-fable-pt16</guid><link>https://krymtkts.github.io/posts/2023-10-08-rebuild-blog-with-fable-pt16</link><title>Fable でブログを再構築する pt.16</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;こまい修正をして、その後現ブログの Markdown を元にどれくらいのパフォを望めるのか試してみた。&lt;/p&gt;&lt;p&gt;パフォ比較時点での記事数は今書いているこの記事を含めて、 posts が 151 pages が 1 画像が 25 。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# krymtkts/krymtkts.github.io の root directory にて
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><atom:link href="https://krymtkts.github.io/" rel="self" type="application/rss+xml"/><title>krymtkts</title><link>https://krymtkts.github.io/</link><description>krymtkts's personal blog</description><lastBuildDate>Sun, 08 Oct 2023 15:55:00 +0900</lastBuildDate><generator>clj-rss</generator><item><guid>https://krymtkts.github.io/posts/2023-10-08-rebuild-blog-with-fable-pt16</guid><link>https://krymtkts.github.io/posts/2023-10-08-rebuild-blog-with-fable-pt16</link><title>Fable でブログを再構築する pt.16</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;こまい修正をして、その後現ブログの Markdown を元にどれくらいのパフォを望めるのか試してみた。&lt;/p&gt;&lt;p&gt;パフォ比較時点での記事数は今書いているこの記事を含めて、 posts が 151 pages が 1 画像が 25 。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# krymtkts/krymtkts.github.io の root directory にて
 PS&amp;gt; 'md/posts', 'md/pages', 'img' | ForEach-Object { Get-ChildItem ./content/$_ -Recurse -File | Measure-Object | Select-Object -ExpandProperty Count }
 151
 1
 25
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;この状態で &lt;code&gt;lein run&lt;/code&gt; だと 3 度試行して概ね 26.174 , 27.144, 28.722 秒に収まるくらい。&lt;/p&gt;&lt;p&gt;次に krymtkts/blog-fable の歴史を krymtkts/krymtkts.github.io に統合して測定する。
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;この状態で &lt;code&gt;lein run&lt;/code&gt; だと 3 度試行して概ね 26.174 , 27.144, 28.722 。 26~28 くらいか。&lt;/p&gt;&lt;p&gt;次に krymtkts/blog-fable の歴史を krymtkts/krymtkts.github.io に統合して測定する。
 統合する手法は前に &lt;a href="/posts/2022-03-26-merge-blog-repo"&gt;Blog 用 Git repositories のマージ&lt;/a&gt; でやったのと同じで慣れたもの。
 生成元の Markdown 配置だけ構造変わってるのでそこの置き換えだけは必要な感じだが、今回は検証なので symbolic link でやる。
 Markdown と画像以外は全部消す。&lt;/p&gt;&lt;pre&gt;&lt;code class="powershell"&gt;# krymtkts/krymtkts.github.io の root directory にて
@@ -11,23 +11,24 @@ git switch --create feature/blog-fable
 
 mkdir contents
 
-# remove old resources
+# 現行ブログのリソースを削除する
 ll -Exclude content,contents | rm -Recurse
 
 git add -u
 git commit -m "Remove old resources."
 
-# Merge blog-fable repo.
+# blog-fable repo を merge する
 git remote add blog-fable ssh://git@github.com/krymtkts/blog-fable.git
 git fetch blog-fable
 git merge --allow-unrelated-histories blog-fable/main
 
-# make symbolic links with Administrator access
+# Administrator access で検証のための symbolic link を作成する
 rm contents/* -Recurse
 'posts','pages' | %{New-Item -ItemType SymbolicLink -Path contents -Name $_ -Value "$(pwd)/content/md/$_"}
 'img' | %{New-Item -ItemType SymbolicLink -Path contents -Name $_ -Value "$(pwd)/content/$_"}
 
 # エラーしないように Markdown を書き換える ← 後述
+# App.fs の設定を変える
 
 npm install
 npm run build
@@ -42,8 +43,8 @@ GitHub Actions のワークフローで動かす分にはあんまり変わら�
 ひとまずやるだけやろう。&lt;/p&gt;&lt;p&gt;あと一部先述しているように本格的な移行を進めるにあたり、以下の最低限対応が必要。&lt;/p&gt;&lt;ul&gt;&lt;li&gt;highlight.js 未対応言語の書き換え
 &lt;ul&gt;&lt;li&gt;わかりやすいように新ブログでは謎言語をエラーで許容しなくしたので、言語の識別子の typo や 空, &lt;code&gt;textile&lt;/code&gt; &lt;code&gt;log&lt;/code&gt; みたいな対応してないやつがエラーするようになった&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;front matter を &lt;a href="https://github.com/edn-format/edn"&gt;edn&lt;/a&gt; から YAML 形式に書き換え&lt;/li&gt;&lt;li&gt;(念のため) サイト内 link に &lt;code&gt;.html&lt;/code&gt; を足すようにする
 &lt;ul&gt;&lt;li&gt;GitHub Pages だといい感じに処理してくれるが、新ブログで生成する &lt;code&gt;*.html&lt;/code&gt; に合わせる&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;他に見落としあるかも？という気はせんでもないが、最低限これだけ処置すればいつでも現ブログを移行できるようになるはず。&lt;/p&gt;&lt;p&gt;front matter の書き換えだけちょっとめんどくさいな...というやる気ゼロモードだが、あえて edn を維持する必要がなくやらざるを得ない。
-量的に(150 あり)手作業はありえないので PowerShell でいい塩梅に処理できないか検討する。&lt;/p&gt;&lt;p&gt;ここまでくればあとは実施するのみだが、コレやってしまうと Feedly で見る限り少なくとも世界に 1 人は購読してくれている人がいるので、その人に影響あろうからちょっと気になるところではある。仕方ない点ではあるか。&lt;/p&gt;&lt;p&gt;あとアレな、 Fable と共に過ごすということは Node.js のエコシステムの上で生活するので、逐次脆弱性に対処するための依存関係の更新がこれから発生する。
-と考えるメンテし続けないといけないから dependabot 有効化とか考えても良さそう。&lt;/p&gt;</description><pubDate>Sun, 08 Oct 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-10-01-rebuild-blog-with-fable-pt15</guid><link>https://krymtkts.github.io/posts/2023-10-01-rebuild-blog-with-fable-pt15</link><title>Fable でブログを再構築する pt.15</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;TODO の回収と細々とした使い勝手の改善など
+量的に(150 あり)手作業はありえないので PowerShell でいい塩梅に処理できないか検討する。&lt;/p&gt;&lt;p&gt;ここまでくればあとは実施するのみだが、コレやってしまうと Feedly で見る限り少なくとも世界に 1 人は購読してくれている人がいるので、その人に影響あろうからちょっと気になるところではある。仕方ない点ではあるか。&lt;/p&gt;&lt;p&gt;あとアレな、 Fable と共に過ごすということは Node.js のエコシステムの上で生活するので、依存関係の更新が今後ずっとつきまとう。
+メンテの省力化のために dependabot 導入とか考えても良さそう。&lt;/p&gt;</description><pubDate>Sun, 08 Oct 2023 00:00:00 +0900</pubDate></item><item><guid>https://krymtkts.github.io/posts/2023-10-01-rebuild-blog-with-fable-pt15</guid><link>https://krymtkts.github.io/posts/2023-10-01-rebuild-blog-with-fable-pt15</link><title>Fable でブログを再構築する pt.15</title><description>&lt;p&gt;&lt;a href="https://github.com/krymtkts/blog-fable"&gt;krymtkts/blog-fable&lt;/a&gt; &lt;a href="https://fable.io/"&gt;Fable&lt;/a&gt; でブログを再構築している。&lt;/p&gt;&lt;p&gt;TODO の回収と細々とした使い勝手の改善など
 &lt;a href="https://github.com/krymtkts/blog-fable/pull/61"&gt;#61&lt;/a&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/62"&gt;#62&lt;/a&gt;&lt;a href="https://github.com/krymtkts/blog-fable/pull/64"&gt;#64&lt;/a&gt;
 をした。
 内部のリファクタリングなり実装忘れの機能追加をしてきて、かなり移行への気持ちも高まってきた(毎回言ってる)。&lt;/p&gt;&lt;p&gt;その中でも自分でいい感じにできたんじゃないかなという所は、 &lt;a href="https://github.com/krymtkts/blog-fable/pull/63"&gt;#63&lt;/a&gt;
