@@ -5,11 +5,11 @@ open StaticWebGenerator
 render
     { stage = dev
       lang = "ja"
-      siteName = "Blog Fable"
-      description = "A small Fable app project to generate static pages"
+      siteName = "krymtkts"
+      description = "krymtkts's personal blog"
       siteUrl = "https://krymtkts.github.io"
-      pathRoot = "/blog-fable"
-      copyright = "2023 krymtkts"
+      pathRoot = ""
+      copyright = "2019 - 2023 krymtkts"
       favicon = "/img/favicon.ico"
 
       src = "contents"
