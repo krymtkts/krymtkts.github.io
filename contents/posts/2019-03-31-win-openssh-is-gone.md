@@ -94,7 +94,7 @@ Coreで続きをやる
 $ choco install openssh --package-parameters="/SSHAgentFeature"
 ```
 
-```
+```plaintext
 Chocolatey v0.10.13
 2 validations performed. 1 success(es), 1 warning(s), and 0 error(s).
 

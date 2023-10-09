@@ -1,7 +1,7 @@
-{:title "About Me"
- :layout :page
- :page-index 0
- :navbar? true}
+---
+title: "About Me"
+date: 2023-10-09
+---
 
 - Takatoshi KURIYAMA / 栗山 貴年
   - Programmer

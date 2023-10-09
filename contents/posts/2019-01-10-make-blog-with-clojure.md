@@ -1,6 +1,6 @@
 ---
 title: "Clojureでブログを作った"
-tags:  ["clojure" "cryogen"]
+tags:  ["clojure", "cryogen"]
 ---
 
 このブログはClojure製の静的サイトジェネレータ[Cryogen](http://cryogenweb.org/)で作った。

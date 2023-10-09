@@ -48,7 +48,7 @@ PSJobCanAttendance の場合は公開するファイルが少ないからか、�
 ということなので、従来の pocof の公開方法である `(Get-Module).Path` を渡す方法は無理だってこと。これだと ddl のパスが得られるのだけどこれは弾かれたし、 `*.psd1` のパスを渡す方法だと親ディレクトリがバージョン番号になってモジュール名にならない。 API Key にモジュール名の制限をかけてたから権限で弾かれて変な数字の名前をしたモジュールの公開を免れた。
 そこんところを公開用のディレクトリにモジュール類をコピーして、その中の `pocof.psd1` を `Publish-PSResource` するようにしてみた。
 
-```
+```plaintext
 +---.github
 +---coverage
 +---docs
@@ -66,7 +66,7 @@ PSJobCanAttendance の場合は公開するファイルが少ないからか、�
 
 が、以下のようなエラーでまだ上手くいってない。
 
-```
+```plaintext
 Error: 2023-08-13 18:59:25:
 At C:\Users\takatoshi\dev\github.com\krymtkts\pocof\psakefile.ps1:108 char:5 +     Publish-PSResource @Params +     ~~~~~~~~~~~~~~~~~~~~~~~~~~ [<<==>>] Exception: Repository 'PSGallery': Response status code does not indicate success: 403 (The specified API key is invalid, has expired, or does not have permission to access the specified package.).
 ```
