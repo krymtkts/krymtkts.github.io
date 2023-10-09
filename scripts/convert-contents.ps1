@@ -5,10 +5,11 @@ Get-ChildItem ./contents/posts/*.md | ForEach-Object {
     }
     $fm = $match.Matches[0].Value
     $article = $match.Line.Remove(0, $fm.Length)
+    $newArticle = $article -replace '\((/posts/.+?)\)', '($1.html)'
     $newFm = $fm -replace '(\{|\})', '' -replace ':title', 'title:' -replace ' ?:tags', 'tags:' -replace ' ?:layout.+\n', ''
     @"
 ---
 $newFm
----$article
+---$newArticle
 "@ | Set-Content $_.FullName -Encoding UTF8 -NoNewline
 }
