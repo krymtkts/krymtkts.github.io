@@ -1,6 +1,7 @@
-{:title "`ping`の代わりに`Test-Connection`を使う"
- :layout :post
- :tags  ["powershell"]}
+---
+title: "`ping`の代わりに`Test-Connection`を使う"
+tags:  ["powershell"]
+---
 
 PowerShellには`Test-Connection`というやつがあるのを今更ながら知った。
 

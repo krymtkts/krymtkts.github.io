@@ -1,6 +1,7 @@
-{:title "PHP の uniqid をデコードする"
-:layout :post
-:tags ["powershell", "php"]}
+---
+title: "PHP の uniqid をデコードする"
+tags: ["powershell", "php"]
+---
 
 なんか一意っぽい値を PHP で生成する場合の楽な手段として、 `uniqid` がある。
 

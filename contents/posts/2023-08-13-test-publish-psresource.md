@@ -1,8 +1,9 @@
-{:title "Publish-PSResource を試す"
-:layout :post
-:tags ["powershell"]}
+---
+title: "Publish-PSResource を試す"
+tags: ["powershell"]
+---
 
-[以前から気になってた](/posts/2023-07-23-psresourceget) PSResourceGet の `Publish-PSResource` を試す機会があったので試した。
+[以前から気になってた](/posts/2023-07-23-psresourceget.html) PSResourceGet の `Publish-PSResource` を試す機会があったので試した。
 試したと書いてるけど、自分の利用ケースで問題なく使えるか見ただけ。
 
 [krymtkts/PSJobCanAttendance](https://github.com/krymtkts/PSJobCanAttendance/) を修正する機会があったので、ついでに `Publish-PSResource` へ切り替えた。上手くいってた。

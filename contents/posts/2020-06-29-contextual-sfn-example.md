@@ -1,6 +1,7 @@
-{:title "Step Functions のステートをまたいでパラメータを伝播するパターン"
-:layout :post
-:tags ["serverless", "aws", "stepfunctions"]}
+---
+title: "Step Functions のステートをまたいでパラメータを伝播するパターン"
+tags: ["serverless", "aws", "stepfunctions"]
+---
 
 [前の記事](2020-04-30-context-like-sfn)で記したアイデアの実装例を残しておいた。
 

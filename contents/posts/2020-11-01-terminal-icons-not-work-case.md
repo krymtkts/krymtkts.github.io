@@ -1,6 +1,7 @@
-{:title "Terminal Icons が動かなくなるケース"
-:layout :post
-:tags ["powershell"]}
+---
+title: "Terminal Icons が動かなくなるケース"
+tags: ["powershell"]
+---
 
 9 月&10 月と文字起こしするのをサボった 😪
 

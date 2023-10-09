@@ -1,6 +1,7 @@
-{:title "CementというCLIフレームワーク"
- :layout :post
- :tags  ["python", "cement"]}
+---
+title: "CementというCLIフレームワーク"
+tags:  ["python", "cement"]
+---
 
 仕事で、なんかDBに通信しながらAWSのAPIをぶん殴ってゴニョゴニョするバックエンド処理を書く必要があって、Pythonで書くことになった。
 

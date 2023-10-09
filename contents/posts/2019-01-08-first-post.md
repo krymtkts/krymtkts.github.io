@@ -1,6 +1,7 @@
-{:title "ブログを始めた"
- :layout :post
- :tags  ["diary"]}
+---
+title: "ブログを始めた"
+tags:  ["diary"]
+---
 
 ブログを始めてみた。
 

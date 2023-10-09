@@ -1,6 +1,7 @@
-{:title "Register-ArgumentCompleter"
- :layout :post
- :tags  ["powershell"]}
+---
+title: "Register-ArgumentCompleter"
+tags:  ["powershell"]
+---
 
 まだoutputが習慣化してなくて随分空いてしまった🤔
 

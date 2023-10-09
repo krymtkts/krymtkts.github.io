@@ -1,8 +1,9 @@
-{:title "F# の AWS CDK で EventPattern の記述を無理やり通す"
-:layout :post
-:tags ["fsharp","aws"]}
+---
+title: "F# の AWS CDK で EventPattern の記述を無理やり通す"
+tags: ["fsharp","aws"]
+---
 
-[前](/posts/2022-07-03-aws-cdk-with-fsharp)に書いた、 F# の AWS CDK で EventRule のパターンが正しいのにエラーとなるやつ。
+[前](/posts/2022-07-03-aws-cdk-with-fsharp.html)に書いた、 F# の AWS CDK で EventRule のパターンが正しいのにエラーとなるやつ。
 
 こういうのをしたいところ、
 

@@ -1,6 +1,7 @@
-{:title "F#でコマンドレットを書いてる pt.8"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.8"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 
@@ -25,7 +26,7 @@
 
 最後に、今回 PowerShell Gallery に公開する時手間取ったのが、 [platyPS](https://github.com/PowerShell/platyPS) 。
 
-[前にモジュールの掃除した](/posts/2022-11-12-clean-up-pwsh-modules)影響で [platyPS](https://github.com/PowerShell/platyPS/tree/v2) の version 2 preview より前のモジュールを消し去ってた。
+[前にモジュールの掃除した](/posts/2022-11-12-clean-up-pwsh-modules.html)影響で [platyPS](https://github.com/PowerShell/platyPS/tree/v2) の version 2 preview より前のモジュールを消し去ってた。
 コレにより `New-ExternalHelp` Cmdlet がなくなっていて、 psake のリリーススクリプトがエラーするようになってた。
 全く想定外。 v2 で消えるのかこの Cmdlet ？？て感じ。
 まだ [README.md](https://github.com/PowerShell/platyPS/blob/8ca28935c376ae8dc36ac142e4960fc6d3b725e5/README.md) に消えるような話書いてないし、対応待ってたらいだけなんかな ↓↓

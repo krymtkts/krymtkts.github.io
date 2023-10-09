@@ -1,6 +1,7 @@
-{:title "PowerShell で OAuth して Google Sheet を CSV で DL する"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PowerShell で OAuth して Google Sheet を CSV で DL する"
+tags: ["powershell"]
+---
 
 最近役目を終えたスクリプトに、 Google Sheet を CSV でダウンロードするやつがいた。考慮不足等、諸々至らぬ点あろうが、スクリプトを供養するため日記にする。
 

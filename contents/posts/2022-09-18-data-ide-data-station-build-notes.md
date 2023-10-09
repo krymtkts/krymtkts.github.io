@@ -1,6 +1,7 @@
-{:title "データ IDE DataStation のビルド関連メモ"
-:layout :post
-:tags ["electron","go"]}
+---
+title: "データ IDE DataStation のビルド関連メモ"
+tags: ["electron","go"]
+---
 
 ちょっと前に [DataStation](https://datastation.multiprocess.io/) という OSS の IDE を知った。
 GitHub の repo はこちら。[multiprocessio/datastation: App to easily query, script, and visualize data from every database, file, and API.](https://github.com/multiprocessio/datastation)

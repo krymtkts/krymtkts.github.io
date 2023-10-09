@@ -1,6 +1,7 @@
-{:title "Out-GridView の CUI 版 Out-ConsoleGridView"
-:layout :post
-:tags ["powershell"]}
+---
+title: "Out-GridView の CUI 版 Out-ConsoleGridView"
+tags: ["powershell"]
+---
 
 最近知ったのだけど、 `Out-GridView` の PowerShell Team 謹製 CUI 版 `Out-ConsoleGridView` があったらしい。これが使えるヤツだったら `poco` も今作ってる `pocof` も要らんやん、と思った。
 

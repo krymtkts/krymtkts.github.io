@@ -1,6 +1,7 @@
-{:title "Windows Terminal で OSC133 する"
-:layout :post
-:tags ["windows-terminal","oh-my-posh","powershell"]}
+---
+title: "Windows Terminal で OSC133 する"
+tags: ["windows-terminal","oh-my-posh","powershell"]
+---
 
 先週は盆の関係で時間が取れず書くのをサボった。まあその前の日曜に余分に書いてたし相殺したことにしておく。
 

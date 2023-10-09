@@ -1,6 +1,7 @@
-{:title "TODO の管理どないしてまっか？"
-:layout :post
-:tags ["todo", "vscode"]}
+---
+title: "TODO の管理どないしてまっか？"
+tags: ["todo", "vscode"]
+---
 
 最近、TODO 管理のやり方を変えたので記しておく。
 

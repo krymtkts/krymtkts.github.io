@@ -1,13 +1,14 @@
-{:title "Bootstrap のバージョンを上げる"
-:layout :post
-:tags ["cryogen"]}
+---
+title: "Bootstrap のバージョンを上げる"
+tags: ["cryogen"]
+---
 
 先週の記事を書いたあとで、何の気なしに [Measure page quality - web.dev](https://web.dev/measure/) で当ブログの測定をした。
 そこで既知の脆弱性があるライブラリ (`Bootstrap@3.3.0` と `jQuery@1.11.0`)使うなよ！みたいなレポートがでたので、 Bootstrap の更新を思い立った。
 
 変更した内容 → [Upgrade bootstrap from 3 to 5. · krymtkts/krymtkts.github.io@c4adeac](https://github.com/krymtkts/krymtkts.github.io/commit/c4adeacb06fe759b787646bba5fb698c1f688c94)
 
-ブログ作成当時の記事([Clojure でブログを作った](/posts/2019-01-10-make-blog-with-clojure))を見ると、このブログのテーマは Cryogen 備え付けのテーマである `blue_centered` をコピって作ったものだった。
+ブログ作成当時の記事([Clojure でブログを作った](/posts/2019-01-10-make-blog-with-clojure.html))を見ると、このブログのテーマは Cryogen 備え付けのテーマである `blue_centered` をコピって作ったものだった。
 そのままずっと使ってるので、当然の如くテンプレで利用しているライブラリも古いままだったという訳だ。
 
 さて、 Bootstrap のマイグレーションは当然ドキュメントがあるわけだが、

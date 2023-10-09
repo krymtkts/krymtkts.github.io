@@ -1,8 +1,9 @@
-{:title "Blog 用 Git repositories のマージ"
-:layout :post
-:tags ["git", "github"]}
+---
+title: "Blog 用 Git repositories のマージ"
+tags: ["git", "github"]
+---
 
-[Cryogen の更新](/posts/2022-03-05-customize-cryogen) で 2 つに別れていた repo を統合できるようになったので、した。
+[Cryogen の更新](/posts/2022-03-05-customize-cryogen.html) で 2 つに別れていた repo を統合できるようになったので、した。
 
 [krymtkts/krymtkts.github.io](https://github.com/krymtkts/krymtkts.github.io) に [krymtkts/blog-cryogen](https://github.com/krymtkts/blog-cryogen) の歴史をすべて引き込む。
 

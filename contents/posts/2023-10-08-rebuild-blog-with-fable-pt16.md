@@ -1,6 +1,7 @@
-{:title "Fable でブログを再構築する pt.16"
-:layout :post
-:tags ["fsharp", "fable"]}
+---
+title: "Fable でブログを再構築する pt.16"
+tags: ["fsharp", "fable"]
+---
 
 [krymtkts/blog-fable](https://github.com/krymtkts/blog-fable) [Fable](https://fable.io/) でブログを再構築している。
 
@@ -19,7 +20,7 @@ PS> 'md/posts', 'md/pages', 'img' | ForEach-Object { Get-ChildItem ./content/$_ 
 この状態で `lein run` だと 3 度試行して概ね 26.174 , 27.144, 28.722 。 26~28 くらいか。
 
 次に krymtkts/blog-fable の歴史を krymtkts/krymtkts.github.io に統合して測定する。
-統合する手法は前に [Blog 用 Git repositories のマージ](/posts/2022-03-26-merge-blog-repo) でやったのと同じで慣れたもの。
+統合する手法は前に [Blog 用 Git repositories のマージ](/posts/2022-03-26-merge-blog-repo.html) でやったのと同じで慣れたもの。
 生成元の Markdown 配置だけ構造変わってるのでそこの置き換えだけは必要な感じだが、今回は検証なので symbolic link でやる。
 Markdown と画像以外は全部消す。
 
@@ -55,7 +56,7 @@ npm run build
 これで初回はビルドが発生するので 21.479 、若干速くなるけどキャッシュなしならあんま変わらんなという印象は否めない感じ。
 以降はキャッシュがあったら 6.424 , 7.597 という感じだった。
 
-[前回](/posts/2023-10-01-rebuild-blog-with-fable-pt15)このように記した。
+[前回](/posts/2023-10-01-rebuild-blog-with-fable-pt15.html)このように記した。
 
 > あと気になるのはパフォ面。
 > Fable のビルドは遅いけどそれ以外は結構速いから期待できんじゃないかな。

@@ -1,6 +1,7 @@
-{:title "Fable でブログを再構築する pt.11"
-:layout :post
-:tags ["fsharp", "fable", "bulma"]}
+---
+title: "Fable でブログを再構築する pt.11"
+tags: ["fsharp", "fable", "bulma"]
+---
 
 [krymtkts/blog-fable](https://github.com/krymtkts/blog-fable) [Fable](https://fable.io/) でブログを再構築している。
 

@@ -1,6 +1,7 @@
-{:title "色々あって Nodist を使い始めた話"
-:layout :post
-:tags ["nodejs"]}
+---
+title: "色々あって Nodist を使い始めた話"
+tags: ["nodejs"]
+---
 
 重い腰を上げて、[Slackbot のマッコールさん](https://github.com/krymtkts/mccall-bot)の Typo を直す気になった。
 タイポの修正と追加のセンテンスを登録して、いざ deploy しようとしたら、Serverless Framework がエラーを吐くようになっていた。↓ らしい。

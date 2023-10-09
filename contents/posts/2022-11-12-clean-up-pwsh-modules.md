@@ -1,6 +1,7 @@
-{:title "師走に向けて PowerShell モジュールの大掃除"
-:layout :post
-:tags ["powershell"]}
+---
+title: "師走に向けて PowerShell モジュールの大掃除"
+tags: ["powershell"]
+---
 
 PowerShell あるあるなのだけど、過去のモジュールが溜まってしまって自分で掃除しないといけない。
 開発中でもない限りモジュールを切り戻することもないので、一気に消す。これが PowerFighter(勝手に作った PowerShell 使いの呼び名)の嗜み。

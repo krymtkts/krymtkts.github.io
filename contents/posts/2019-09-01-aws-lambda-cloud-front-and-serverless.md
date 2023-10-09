@@ -1,6 +1,7 @@
-{:title "Serverless FrameworkでAWS LambdaとCloudFront"
- :layout :post
- :tags  ["aws", "lambda", "serverless"]}
+---
+title: "Serverless FrameworkでAWS LambdaとCloudFront"
+tags:  ["aws", "lambda", "serverless"]
+---
 
 AWS Lambdaって書くのはホント簡単。
 

@@ -1,6 +1,7 @@
-{:title "世界中の誰にも使われていない？ Glue のタグ付け Cmdlet"
-:layout :post
-:tags ["powershell","aws"]}
+---
+title: "世界中の誰にも使われていない？ Glue のタグ付け Cmdlet"
+tags: ["powershell","aws"]
+---
 
 現職にて AWS のコストを可視化すべく、既存の AWS リソースにひたすらコスト配分タグを付与していく作業をしている(勝手に)。
 Cost Explorer を眺めてコストのかかり具合を見るのは、 AWS の醍醐味というか楽しみだと思ってるのだけど、あんまり共感を得られたことがない。

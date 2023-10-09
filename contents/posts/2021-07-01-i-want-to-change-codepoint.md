@@ -1,6 +1,7 @@
-{:title "Terminal-Icons のアイコングリフのコードポイントを変えたい"
-:layout :post
-:tags ["font","powershell"]}
+---
+title: "Terminal-Icons のアイコングリフのコードポイントを変えたい"
+tags: ["font","powershell"]
+---
 
 2021 年 5 月から、法律による上限スレスレの時間外＆休日労働だったため、すっかりブログを認めるのを忘れていた。
 なのでこの記事は 6 月分のつもりで書いている(言い訳)。

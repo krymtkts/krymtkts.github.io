@@ -1,6 +1,7 @@
-{:title "さよなら oh-my-posh モジュール"
-:layout :post
-:tags ["oh-my-posh","powershell"]}
+---
+title: "さよなら oh-my-posh モジュール"
+tags: ["oh-my-posh","powershell"]
+---
 
 いつものように PowerShell Module を更新して PowerShell を立ち上げると次のようなメッセージが表示された。
 

@@ -1,6 +1,7 @@
-{:title "boto3 の Waiter さんとの戯れ"
-:layout :post
-:tags ["python", "aws", "boto3"]}
+---
+title: "boto3 の Waiter さんとの戯れ"
+tags: ["python", "aws", "boto3"]
+---
 
 こないだの仕事。AWS Certificate Manager で証明書をごにょごにょするアプリを書いた。
 

@@ -1,6 +1,7 @@
-{:title "Windows10の更新でOpenSSHが逝った"
- :layout :post
- :tags  ["windows", "openssh"]}
+---
+title: "Windows10の更新でOpenSSHが逝った"
+tags:  ["windows", "openssh"]
+---
 
 今更ながら、Raser Blade Stealth 2018にもWindows10 ver1809の更新が来てたようだった。
 

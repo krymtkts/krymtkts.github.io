@@ -1,8 +1,9 @@
-{:title "Terminal-Icons のアイコングリフのコードポイントを変えたい"
-:layout :post
-:tags ["font","powershell"]}
+---
+title: "Terminal-Icons のアイコングリフのコードポイントを変えたい"
+tags: ["font","powershell"]
+---
 
-先日、[わたしの改造 Migu で Terminal-Icons の見栄えが悪い話](/posts/2021-07-01-i-want-to-change-codepoint)を書いた。
+先日、[わたしの改造 Migu で Terminal-Icons の見栄えが悪い話](/posts/2021-07-01-i-want-to-change-codepoint.html)を書いた。
 あの後、チマチマ作業を行い、ある程度納得の行くものが出来上がったのでまとめておく。
 
 ---

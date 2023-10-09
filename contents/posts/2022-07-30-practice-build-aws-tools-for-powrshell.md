@@ -1,6 +1,7 @@
-{:title "AWS Tools for PowerShell のビルド素振り"
-:layout :post
-:tags ["powershell","aws"]}
+---
+title: "AWS Tools for PowerShell のビルド素振り"
+tags: ["powershell","aws"]
+---
 
 今年は積極的に？ AWS Tools for PowerShell を使ってることもあって、また Issue 書くことあるかなー、なんなら PR 書いて貢献した方がいいよなと考えるに至り、 [aws/aws-tools-for-powershell](https://github.com/aws/aws-tools-for-powershell) のビルドを素振りしてみた。
 残念ながら、 contribution 関連でビルドの方法がレクチュアされてる文書とかなかったので、手探りでやってる。

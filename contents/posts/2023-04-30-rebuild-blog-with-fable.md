@@ -1,6 +1,7 @@
-{:title "Fable でブログを再構築する pt.1"
-:layout :post
-:tags ["fsharp", "fable"]}
+---
+title: "Fable でブログを再構築する pt.1"
+tags: ["fsharp", "fable"]
+---
 
 [Fable](https://fable.io/) の練習を始めた。
 

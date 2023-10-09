@@ -1,6 +1,7 @@
-{:title "PowerShell の My Profile を掃除する"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PowerShell の My Profile を掃除する"
+tags: ["powershell"]
+---
 
 PowerShell の profile を Gist で管理してるのだけど、この度掃除をした。
 
@@ -118,7 +119,7 @@ function New-TextFile {
 }
 ```
 
-前に書いた [PowerShell でクソデカテキストファイルを作る](/posts/2022-03-13-create-huge-text-file-in-pwsh) の関数版だと思われる。
+前に書いた [PowerShell でクソデカテキストファイルを作る](/posts/2022-03-13-create-huge-text-file-in-pwsh.html) の関数版だと思われる。
 わざわざ profile に入れておいたのはなんでだろう。スクリプトにするだけで良いのでは...過去の自分に問いたい。消した。
 
 #### `psake` の auto completer 壊れてるで...

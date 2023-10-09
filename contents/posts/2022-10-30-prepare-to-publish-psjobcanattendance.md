@@ -1,6 +1,7 @@
-{:title "PSJobCanAttendance の公開準備"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PSJobCanAttendance の公開準備"
+tags: ["powershell"]
+---
 
 [krymtkts/PSJobCanAttendance](https://github.com/krymtkts/PSJobCanAttendance) を PowerShell Gallery に公開する準備をしている。
 一括編集機能に若干の改善をした。

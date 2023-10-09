@@ -1,6 +1,7 @@
-{:title "Gist の便利な使い方 ~ Permalink"
-:layout :post
-:tags ["gist","powershell"]}
+---
+title: "Gist の便利な使い方 ~ Permalink"
+tags: ["gist","powershell"]
+---
 
 今更ながら最近知った。 Gist の Raw コンテンツの URL からコミットハッシュを取り除けば常に最新のリビジョンへの Permalink になる。
 
@@ -31,7 +32,7 @@ function Edit-EverMonkey {
 }
 ```
 
-あとこれ。[Terminal-Icons のアイコングリフのコードポイントを変えたい](/posts/2021-07-11-my-terminal-icons)
+あとこれ。[Terminal-Icons のアイコングリフのコードポイントを変えたい](/posts/2021-07-11-my-terminal-icons.html)
 
 version up の度にいっつも自分用グリフを上書きしてるけど、それが楽になる。
 

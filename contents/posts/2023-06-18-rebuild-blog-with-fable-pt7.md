@@ -1,6 +1,7 @@
-{:title "Fable でブログを再構築する pt.7"
-:layout :post
-:tags ["fsharp", "fable"]}
+---
+title: "Fable でブログを再構築する pt.7"
+tags: ["fsharp", "fable"]
+---
 
 [krymtkts/blog-fable](https://github.com/krymtkts/blog-fable) [Fable](https://fable.io/) でブログを再構築している。
 
@@ -50,7 +51,7 @@ Suave 、 Fable 共にそうだけどドキュメントに書いてないこと�
 
 Suave で以下のエラーが出たときは、権限じゃなくてサーバの 設定が足りない。
 
-```log
+```plaintext
 System.UnauthorizedAccessException: Access to the path 'C:\Program Files\dotnet\sdk\7.0.302\FSharp\_temporary_compressed_files' is denied.
 ```
 

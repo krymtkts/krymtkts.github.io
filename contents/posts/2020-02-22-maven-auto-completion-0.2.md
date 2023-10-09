@@ -1,6 +1,7 @@
-{:title "MavenAutoCompletion v0.2"
-:layout :post
-:tags ["powershell", "powershellgallery", "maven"]}
+---
+title: "MavenAutoCompletion v0.2"
+tags: ["powershell", "powershellgallery", "maven"]
+---
 
 およそ 1 年の時を経て、MavenAutoCompletion を更新した。とても小さな更新だ。
 
@@ -8,7 +9,7 @@
 
 この 3 連休はひとりで暇なので、しょうもない更新をするのも億劫でない。
 
-[前回](/posts/2019-04-02-pubslish-first-module-to-powershell-gallery)やった PSGallery への公開でのミスは、スクリプトを作成していたおかげもあり、1 年ぶりでもミスらなかった。
+[前回](/posts/2019-04-02-pubslish-first-module-to-powershell-gallery.html)やった PSGallery への公開でのミスは、スクリプトを作成していたおかげもあり、1 年ぶりでもミスらなかった。
 
 ただ...色々イケてないところも見つかっている。
 

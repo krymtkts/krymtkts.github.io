@@ -1,6 +1,7 @@
-{:title "F#でコマンドレットを書いてる pt.7"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.7"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 プロパティ指定の検索に対応しようとしていて、今日のはその思考整理のようなもの。 [Add a property support. · Issue #2 · krymtkts/pocof](https://github.com/krymtkts/pocof/issues/2)

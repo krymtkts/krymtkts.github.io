@@ -1,6 +1,7 @@
-{:title "Razer Blade Stealth 13 (2017)のバッテリーを換装する"
-:layout :post
-:tags ["razer"]}
+---
+title: "Razer Blade Stealth 13 (2017)のバッテリーを換装する"
+tags: ["razer"]
+---
 
 My Laptop は Razer Blade Stealth 13 2017 モデルなのだが、流石に経年劣化が目立つようになってきた。
 バッテリーの膨張だ。

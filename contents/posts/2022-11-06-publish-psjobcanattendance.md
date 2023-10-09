@@ -1,6 +1,7 @@
-{:title "PSJobCanAttendance の公開"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PSJobCanAttendance の公開"
+tags: ["powershell"]
+---
 
 自分が使う機能はおおよそできたので、 [krymtkts/PSJobCanAttendance](https://github.com/krymtkts/PSJobCanAttendance) を PowerShell Gallery に公開した。
 
@@ -8,7 +9,7 @@
 
 デバッグプリント仕込んだまま publish してしまって速攻パッチが上がっている。これ過去に何度かやらかしたので防ぎたいけど防げてない。横着せずにログレベルちゃんと使ってやれよというところか...
 
-公開のために、[前回見つけた](/posts/2022-10-30-prepare-to-publish-psjobcanattendance) 勤怠の実績を一覧する機能のバグを修正した。
+公開のために、[前回見つけた](/posts/2022-10-30-prepare-to-publish-psjobcanattendance.html) 勤怠の実績を一覧する機能のバグを修正した。
 
 - 休暇があると日付と実績がずれる
 - 最終日の実績が欠落する

@@ -1,6 +1,7 @@
-{:title "pocof の 1 年間"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "pocof の 1 年間"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 

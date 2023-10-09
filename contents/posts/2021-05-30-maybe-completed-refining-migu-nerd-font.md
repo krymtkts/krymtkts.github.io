@@ -1,10 +1,11 @@
-{:title "Migu Nerd Font の改善が完了したっぽい"
-:layout :post
-:tags ["font"]}
+---
+title: "Migu Nerd Font の改善が完了したっぽい"
+tags: ["font"]
+---
 
 (2021-05-16 に書いたまま投稿するのを忘れていた)
 
-[以前](/posts/2021-05-07-i-want-to-resize-migu-icon)の続き。まだやってる。
+[以前](/posts/2021-05-07-i-want-to-resize-migu-icon.html)の続き。まだやってる。
 
 横も縦も微妙にサイズが合わないのであれば、強制的に矯正するしかない！ということでまた fontmerger に機能追加した。[contour.boundingBox](https://fontforge.org/docs/scripting/python/fontforge.html#fontforge.contour.boundingBox)は結局やめた。今のコードでもフォント設定を分ければ実現が容易だったからだ。
 

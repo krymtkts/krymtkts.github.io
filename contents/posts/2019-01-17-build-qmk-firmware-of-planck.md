@@ -1,6 +1,7 @@
-{:title "Planckのキーマップをビルドする"
- :layout :post
- :tags  ["mechanicalkeyboard" "planck" "qmkfirmware"]}
+---
+title: "Planckのキーマップをビルドする"
+tags:  ["mechanicalkeyboard" "planck" "qmkfirmware"]
+---
 
 > 当時使ってたPCではプログラミングしなくなったのと、改めてQMK firmwareのdocument見たらbuild toolsんとこの記事が変わってるので、今度環境構築がてら再確認してfirmwareのとこだけ新しく書こうと思う。
 >

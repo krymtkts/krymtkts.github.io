@@ -1,6 +1,7 @@
-{:title "シェルスクリプトのフォーマッタをCLIでインストールする"
- :layout :post
- :tags  ["sh", "golang"]}
+---
+title: "シェルスクリプトのフォーマッタをCLIでインストールする"
+tags:  ["sh", "golang"]
+---
 
 小ネタ。
 

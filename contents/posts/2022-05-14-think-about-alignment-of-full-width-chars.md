@@ -1,6 +1,7 @@
-{:title "East Asian な全角文字をキーに使った場合のアラインメントについて考える"
-:layout :post
-:tags ["powershell"]}
+---
+title: "East Asian な全角文字をキーに使った場合のアラインメントについて考える"
+tags: ["powershell"]
+---
 
 掲題のとおりである。
 ここでいうアラインメントはメモリの話じゃなくて、字面上の整列のことを指す。

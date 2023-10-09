@@ -1,8 +1,9 @@
-{:title "F#でコマンドレットを書いてる"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる"
+tags: ["fsharp","powershell"]
+---
 
-[以前 F# で PowerShell コマンドレットを書き始めた](/posts/2022-05-07-start-to-write-cmdlet-by-fsharp)と書いた。
+[以前 F# で PowerShell コマンドレットを書き始めた](/posts/2022-05-07-start-to-write-cmdlet-by-fsharp.html)と書いた。
 
 ひと月くらいかけて主に休みの日にちょいちょい書き進めてきて、最近最低限動くようになったので public repo にした。
 [krymtkts/pocof](https://github.com/krymtkts/pocof)

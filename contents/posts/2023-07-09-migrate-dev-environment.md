@@ -1,6 +1,7 @@
-{:title "開発環境をプチ移行する"
-:layout :post
-:tags ["powershell", "vscode"]}
+---
+title: "開発環境をプチ移行する"
+tags: ["powershell", "vscode"]
+---
 
 旧聞だが、 PowerShellGet が PSResourceGet に改名した。
 2023 秋の PowerShell 7.4 リリース前には GA するらしいのでそれに移行することとした。

@@ -1,6 +1,7 @@
-{:title "F#で PowerShell コマンドレットを書き始めた"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#で PowerShell コマンドレットを書き始めた"
+tags: ["fsharp","powershell"]
+---
 
 勉強がてら、F# で PowerShell のコマンドレットを書きはじめる。
 ↓ を参考にやる。ただし .NET 6.0 を対象にする。

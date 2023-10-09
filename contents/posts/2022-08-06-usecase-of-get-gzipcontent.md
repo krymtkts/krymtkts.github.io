@@ -1,6 +1,7 @@
-{:title "Get-GzipContent のユースケース"
-:layout :post
-:tags ["powershell", "aws"]}
+---
+title: "Get-GzipContent のユースケース"
+tags: ["powershell", "aws"]
+---
 
 以前 [krymtkts/Get-GzipContent: Get-Content for gzip files.](https://github.com/krymtkts/Get-GzipContent) というのを作って [PowerShell Gallery](https://www.powershellgallery.com/packages/Get-GzipContent/0.1.2) に公開した。
 

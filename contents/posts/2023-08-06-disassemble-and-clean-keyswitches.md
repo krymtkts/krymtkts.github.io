@@ -1,6 +1,7 @@
-{:title "キースイッチを分解して掃除する"
-:layout :post
-:tags ["mechanicalkeyboard"]}
+---
+title: "キースイッチを分解して掃除する"
+tags: ["mechanicalkeyboard"]
+---
 
 ビルドログを書いた記憶ないけど、今は [Keebio の Iris](https://keeb.io/collections/iris-split-ergonomic-keyboard) Rev. 3 を 3 年くらい使ってる。
 

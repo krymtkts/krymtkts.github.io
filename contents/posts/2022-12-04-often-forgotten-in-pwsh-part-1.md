@@ -1,6 +1,7 @@
-{:title "PowerShell で忘れがちなこと pt.1"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PowerShell で忘れがちなこと pt.1"
+tags: ["powershell"]
+---
 
 小ネタ。
 

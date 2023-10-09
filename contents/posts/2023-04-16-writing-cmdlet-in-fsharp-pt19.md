@@ -1,6 +1,7 @@
-{:title "F#でコマンドレットを書いてる pt.19"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.19"
+tags: ["fsharp","powershell"]
+---
 
 本当は Fable のメモを記録したかった。 Fable の練習を始めようと思って [Fable · Start a new project](https://fable.io/docs/2-steps/your-first-fable-project.html) を参考にプロジェクトを作成(以下)した。
 

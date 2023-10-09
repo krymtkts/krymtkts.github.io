@@ -1,6 +1,7 @@
-{:title "Cryogen バージョンアップに伴う困りごと"
-:layout :post
-:tags ["cryogen","clojure"]}
+---
+title: "Cryogen バージョンアップに伴う困りごと"
+tags: ["cryogen","clojure"]
+---
 
 このブログを作るのに [Cryogen](https://github.com/cryogen-project/cryogen) を利用している。
 作った当初から一切のバージョンアップをしていなかったのだが、先週からちまちま手を動かし始めた。

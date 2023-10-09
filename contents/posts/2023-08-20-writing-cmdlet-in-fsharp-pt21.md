@@ -1,10 +1,11 @@
-{:title "F# でコマンドレットを書いてる pt.21"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F# でコマンドレットを書いてる pt.21"
+tags: ["fsharp","powershell"]
+---
 
 [pocof](https://github.com/krymtkts/pocof) の開発をした。
-[pocof のコンパイルを .NET 7 にした](/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20) こともあってなんかテンション的に触りやすくなった(逆に Fable でブログ書き直す方を放置)。
-[PSResourceGet への乗り換え](/posts/2023-08-13-test-publish-psresource) もできたのだけど、その時気になることがあった。
+[pocof のコンパイルを .NET 7 にした](/posts/2023-07-16-writing-cmdlet-in-fsharp-pt20.html) こともあってなんかテンション的に触りやすくなった(逆に Fable でブログ書き直す方を放置)。
+[PSResourceGet への乗り換え](/posts/2023-08-13-test-publish-psresource.html) もできたのだけど、その時気になることがあった。
 
 いつかはやらないといけないと考えていたが、配布 DLL が多すぎる。
 [PowerShell Gallery | pocof 0.5.0-alpha](https://www.powershellgallery.com/packages/pocof/0.5.0-alpha) の FileList 見たらわかるけどめちゃくちゃ DLL がある。
@@ -30,7 +31,7 @@ pocof で `Microsoft.PowerShell.SDK` を `PowerShellStandard.Library` に入れ�
 テストデータ作成のために `PSObject` を作成しているところだけ影響があった。
 つまり pocof 本体に影響はないので、テストプロジェクトで `Microsoft.PowerShell.SDK` を参照してれば OK ということ。
 
-[一番初めに pocof を書き始めた](/posts/2022-05-07-start-to-write-cmdlet-by-fsharp)ころの記事では `PowerShellStandard.Library` を参照してたのだけどなんか途中で変えてみたい。
+[一番初めに pocof を書き始めた](/posts/2022-05-07-start-to-write-cmdlet-by-fsharp.html)ころの記事では `PowerShellStandard.Library` を参照してたのだけどなんか途中で変えてみたい。
 初回リリースでは既に `Microsoft.PowerShell.SDK` に変わってたのだけど、この頃は [FsUnit](https://fsprojects.github.io/FsUnit/) 使ったテストなかった気がするし、違う理由かなんか分からず変えてそう。コミットログ追えばわかるかな。
 
 ### F# の localize されたリソースの DLLs

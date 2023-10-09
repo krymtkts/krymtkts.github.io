@@ -1,10 +1,11 @@
-{:title "cvs2git にまつわるアレコレ"
-:layout :post
-:tags ["cvs2git","docker"]}
+---
+title: "cvs2git にまつわるアレコレ"
+tags: ["cvs2git","docker"]
+---
 
 ちょっとだけ CVS から Git に変換するときの事がわかった。
 
-[先日の日記](/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed)にも追記したが、 remote repo の本体にファイルアクセスできないと使えない。それはつまり repo 所有者じゃないと git repo への変換ができないんだ。
+[先日の日記](/posts/2023-01-22-want-to-comvert-migu-cvs-to-git-and-failed.html)にも追記したが、 remote repo の本体にファイルアクセスできないと使えない。それはつまり repo 所有者じゃないと git repo への変換ができないんだ。
 もうこれだけで、自分で手を動かしてどうこうする計画は終了やなというところだが、なんか調べたことを供養するために記しておく。
 
 ---

@@ -1,8 +1,9 @@
-{:title "GitHub streak a year"
-:layout :post
-:tags ["diary"]}
+---
+title: "GitHub streak a year"
+tags: ["diary"]
+---
 
-[5 月の日記で触れた](/posts/2023-05-14-rebuild-blog-with-fable-pt3) GitHub Streak が 2023-08-21 ようやく 365 日に到達した。やったね。
+[5 月の日記で触れた](/posts/2023-05-14-rebuild-blog-with-fable-pt3.html) GitHub Streak が 2023-08-21 ようやく 365 日に到達した。やったね。
 次は 730 日を目指すのだけど、マイルストンとしてまずキリよい 400 を置き、次に 500, 600 と目指していく。
 
 Streak にこだわりだしたのは、生涯プログラマであろうとしたらやっぱり日々の鍛錬というか毎日コード書いて感覚を保ちたいよな、というのが根底にある。

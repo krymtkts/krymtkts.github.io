@@ -1,6 +1,7 @@
-{:title "F#でコマンドレットを書いてる pt.12"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.12"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 
@@ -70,4 +71,4 @@ Issue 立てた。 [not work with `PSCustomObject` · Issue #21 · krymtkts/poco
 テストに関してももうちょい強化が必要かもな。今のところ [Pester](https://github.com/pester/Pester) で書いてる E2E テストのみなのだけど、 `PSCustomObject` 使ったケースなかったし。
 
 コード自体もグチャァ...としてきたから [FsUnit](https://github.com/fsprojects/FsUnit) 導入してもう少し丁寧にやったほうが良さげ。
-[`pocof` 書き始めた頃](/posts/2022-05-07-start-to-write-cmdlet-by-fsharp)に「可能な限りテストを書きたい所存」て書いてたけど有言不実行になってて笑える(笑えない)。
+[`pocof` 書き始めた頃](/posts/2022-05-07-start-to-write-cmdlet-by-fsharp.html)に「可能な限りテストを書きたい所存」て書いてたけど有言不実行になってて笑える(笑えない)。

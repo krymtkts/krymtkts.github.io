@@ -1,6 +1,7 @@
-{:title "QUnit で CI したい その 2"
-:layout :post
-:tags ["nodejs", "qunit", "puppeteer", "nyc"]}
+---
+title: "QUnit で CI したい その 2"
+tags: ["nodejs", "qunit", "puppeteer", "nyc"]
+---
 
 [前回](./2019-03-21_want-to-run-qunit-in-cli.md)、QUnit のユニットテストを puppeteer で CLI 実行できるようにした
 

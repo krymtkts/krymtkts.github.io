@@ -1,6 +1,7 @@
-{:title "psake の Task 名を自動補完する"
-:layout :post
-:tags ["psake","powershell"]}
+---
+title: "psake の Task 名を自動補完する"
+tags: ["psake","powershell"]
+---
 
 ほぼ趣味レベルなのだが、所謂タスクランナーとして[psake](https://github.com/psake/psake)を使っている。趣味レベルなのは、Go とか Python とかでは `make` を使うので `psake` を製品コードでは使ったことなくて、自分の細々とした面倒な処理をスクリプト化してまとめるのに `psake` を使ってるからだ。
 

@@ -1,6 +1,7 @@
-{:title "振り返り 2020 年"
-:layout :post
-:tags ["retrospective"]}
+---
+title: "振り返り 2020 年"
+tags: ["retrospective"]
+---
 
 2020 年を振り返る。
 

@@ -1,6 +1,7 @@
-{:title "F# で AWS CDK して躓いてる"
-:layout :post
-:tags ["fsharp","aws"]}
+---
+title: "F# で AWS CDK して躓いてる"
+tags: ["fsharp","aws"]
+---
 
 最近仕事で AWS CDK を使ってみたが、非常に良い感触だった。
 仕事では TypeScript を採用したが、テンプレートが提供されている言語を見るとなんと F# がいるではないか。

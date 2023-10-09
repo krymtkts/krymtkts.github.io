@@ -1,6 +1,7 @@
-{:title "F#でコマンドレットを書いてる pt.18"
-:layout :post
-:tags ["fsharp","powershell","github"]}
+---
+title: "F#でコマンドレットを書いてる pt.18"
+tags: ["fsharp","powershell","github"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 

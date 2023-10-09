@@ -1,6 +1,7 @@
-{:title "PowerShell でクソデカテキストファイルを作る"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PowerShell でクソデカテキストファイルを作る"
+tags: ["powershell"]
+---
 
 先日、クソデカテキストファイルを作成しなければならない場面があり、以下のスクリプトをしたためた。
 Windows なので単にサイズが大きいだけのファイルなら `fsutil createnew` を使えるけど、クソデカテキストファイルを作る手段は知らなかったからだ。

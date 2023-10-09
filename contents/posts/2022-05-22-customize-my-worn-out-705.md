@@ -1,6 +1,7 @@
-{:title "使い古しの Logicool M 705 をカスタマイズする"
-:layout :post
-:tags ["mouse"]}
+---
+title: "使い古しの Logicool M 705 をカスタマイズする"
+tags: ["mouse"]
+---
 
 もう 15 年くらい使っている Logicool の M705 がある。
 

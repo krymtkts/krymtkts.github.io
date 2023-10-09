@@ -1,6 +1,7 @@
-{:title "BIAS Amp 2で保存したアンプが消える問題"
- :layout :post
- :tags  ["biasamp"]}
+---
+title: "BIAS Amp 2で保存したアンプが消える問題"
+tags:  ["biasamp"]
+---
 
 小ネタ。
 

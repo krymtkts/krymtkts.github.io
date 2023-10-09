@@ -1,6 +1,7 @@
-{:title "Tortoise Git から卒業できない"
-:layout :post
-:tags ["git","tortoisegit","powershell"]}
+---
+title: "Tortoise Git から卒業できない"
+tags: ["git","tortoisegit","powershell"]
+---
 
 今どきの Git の使い手は、 「CLI で使ってない奴はニワカ」みたいな硬派な人とか、[GitKraken](https://www.gitkraken.com/) とかのイケてる Git クライアントや VS Code で [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens) やら [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) 使ってる勢なんじゃないだろうか。
 

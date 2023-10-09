@@ -1,6 +1,7 @@
-{:title "Windows 11 の表示言語を完全に英語にする"
-:layout :post
-:tags ["windows"]}
+---
+title: "Windows 11 の表示言語を完全に英語にする"
+tags: ["windows"]
+---
 
 Windows 10 からデフォルト言語が日本の状態の PC でも表示言語を変えられる。
 極力英語 UI を使うようにしているのもあって、今の Razer Blade Stealth を買ったころから英語表示で利用している。 Windows 11 にアップグレードしてからも同じだ。

@@ -1,6 +1,7 @@
-{:title "Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)"
-:layout :post
-:tags ["powershell"]}
+---
+title: "Windows11 のコンテキストメニューを前のんに戻す(PowerShell で)"
+tags: ["powershell"]
+---
 
 Windows11 にてコンテキストメニューの UI が変わった。
 しかし自身は普段コンテキストメニューを使わないのであまり気にならなかった。

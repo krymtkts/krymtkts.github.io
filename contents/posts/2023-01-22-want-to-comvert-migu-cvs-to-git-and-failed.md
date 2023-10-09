@@ -1,6 +1,7 @@
-{:title "Migu の CVS repo を Git repo に変換したい(そして失敗)"
-:layout :post
-:tags ["font"]}
+---
+title: "Migu の CVS repo を Git repo に変換したい(そして失敗)"
+tags: ["font"]
+---
 
 ### 2023-01-29 追記
 
@@ -11,7 +12,7 @@ centralized VCS 久しぶりだったので、仕組みをすっかり忘れて�
 ---
 
 Migu フォントが好きでずっと使っている。
-それこそ [Migu で PowerLine を使うためにパッチスクリプトを改修する](/posts/2021-05-30-maybe-completed-refining-migu-nerd-font)くらいには気に入っている。
+それこそ [Migu で PowerLine を使うためにパッチスクリプトを改修する](/posts/2021-05-30-maybe-completed-refining-migu-nerd-font.html)くらいには気に入っている。
 
 [Migu フォント : M+と IPA の合成フォント](https://mix-mplus-ipa.osdn.jp/migu/)
 

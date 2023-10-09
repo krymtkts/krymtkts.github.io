@@ -1,6 +1,7 @@
-{:title "fnm でインストールした処理系は Temp フォルダからシンボリックリンクされるので ccleaner で消える話(当然)"
-:layout :post
-:tags ["nodejs","fnm"]}
+---
+title: "fnm でインストールした処理系は Temp フォルダからシンボリックリンクされるので ccleaner で消える話(当然)"
+tags: ["nodejs","fnm"]
+---
 
 最近、 Node.js 処理系のバージョン管理に fnm を使っている。
 

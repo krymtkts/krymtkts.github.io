@@ -1,11 +1,12 @@
-{:title "F#でコマンドレットを書いてる pt.2"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.2"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 
 平日仕事の方ばっかりやってるので亀な進捗だ。
-ひとまず[`System.Management.Automation.WildcardPattern` の使い方がわかった](/posts/2022-06-05-whitespace-comparison-in-pwsh) のを皮切りに、 `-like`,`-match`,`-eq` あたりのフィルタを実装した。
+ひとまず[`System.Management.Automation.WildcardPattern` の使い方がわかった](/posts/2022-06-05-whitespace-comparison-in-pwsh.html) のを皮切りに、 `-like`,`-match`,`-eq` あたりのフィルタを実装した。
 
 あとプロパティを指定しての絞り込みとかを実装してないが、これは `PSObject` から目当てのプロパティを拾ってマッチするだけなので、多分むずくないだろう。
 

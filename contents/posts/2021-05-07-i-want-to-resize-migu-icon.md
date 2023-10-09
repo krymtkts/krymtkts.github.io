@@ -1,8 +1,9 @@
-{:title "Migu Nerd Font のアイコンフォントを narrow にしたい"
-:layout :post
-:tags ["font"]}
+---
+title: "Migu Nerd Font のアイコンフォントを narrow にしたい"
+tags: ["font"]
+---
 
-[以前](/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu)、Nerd Fonts の`font-patcher`で Migu に Narrow サイズの Symbol グリフぶちこみゃええやんけ、まで来てた。
+[以前](/posts/2021-04-11-consideration-of-difference-between-cascadia-and-migu.html)、Nerd Fonts の`font-patcher`で Migu に Narrow サイズの Symbol グリフぶちこみゃええやんけ、まで来てた。
 その後を記す。
 
 ### Nerd Fonts

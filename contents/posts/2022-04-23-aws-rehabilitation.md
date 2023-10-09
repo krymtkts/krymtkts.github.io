@@ -1,6 +1,7 @@
-{:title "AWS リハビリのハマり集"
-:layout :post
-:tags ["aws","powershell"]}
+---
+title: "AWS リハビリのハマり集"
+tags: ["aws","powershell"]
+---
 
 現職は半年ぶりの AWS ということで、ちまちまリハビリをしている。
 諸々忘れてたりものによってはハマっている現状。記憶に定着させるため、ハマったところを記す。
@@ -12,7 +13,7 @@ AWS SAM は前職でも使っていたが、久しぶりに触ったら詰まる
 久しぶりに `sam init` すると 100%エラーで終わる。端末は Windows 11。
 こんな風に ↓。
 
-```log
+```plaintext
 Cloning from https://github.com/aws/aws-sam-cli-app-templates (process may take a moment)
 Error: Can't find application template quick-start-web - check valid values in interactive init.
 ```

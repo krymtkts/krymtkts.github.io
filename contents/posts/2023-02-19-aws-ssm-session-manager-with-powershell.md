@@ -1,6 +1,7 @@
-{:title "AWS SSM Session Manager を PowerShell で"
-:layout :post
-:tags ["aws","powershell"]}
+---
+title: "AWS SSM Session Manager を PowerShell で"
+tags: ["aws","powershell"]
+---
 
 AWS SSM Session Manager を使って EC2 Instance とかに接続するやつがある。
 AWS CLI であれば Session Mangger plugin[^1] を入れておけば `aws ssm start-session` で SSH 感覚でつなげる。 Security Group に自分とこの外部 IP を含めなくていいし、最高のやつだ。

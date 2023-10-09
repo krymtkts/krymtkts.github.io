@@ -1,13 +1,14 @@
-{:title "F#でコマンドレットを書いてる pt.17"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.17"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 
 もう 4 月なのでそろそろ Fable Compiler を試してみたいと思ってるが、 pocof のテスト書くのと bugfix が落ち着かず、できていない。
 ちょっと今までのテストを小綺麗にする作業にも取り組んだ。
 
-[前回](/posts/2023-03-19-writing-cmdlet-in-fsharp-pt16)、 `module` を多層化することでテストケースをグルーピングしている話を書いた。
+[前回](/posts/2023-03-19-writing-cmdlet-in-fsharp-pt16.html)、 `module` を多層化することでテストケースをグルーピングしている話を書いた。
 その時はテストケースを 1 つのファイルにまとめて書いていたのだけど、 `PocofQuery.run` のテストを書き始めるにあたり、テストケースが爆増するのに備えてファイルを分割したいと思っていた。
 
 はじめ F# ではどうテストプロジェクトのファイル分割をするのかわからなかったが、 F# の repo をいくつか参照してみて [fsprojects/FSharp.Data.Adaptive](https://github.com/fsprojects/FSharp.Data.Adaptive) が参考になりそうとわかった。

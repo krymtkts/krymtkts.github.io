@@ -1,10 +1,11 @@
-{:title "PoweShell Gallery へ公開するためのステップ覚書"
-:layout :post
-:tags ["powershell","powershellgallery"]}
+---
+title: "PoweShell Gallery へ公開するためのステップ覚書"
+tags: ["powershell","powershellgallery"]
+---
 
 タイトルの通り。これは未来の自分へのバトンだ。
 
-毎回 PoweShell Gallery への公開方法を忘れたりする。 [弊ブログの`powershellgallery`タグ](/tags/powershellgallery)を参照すればどれだけ同じミスを繰り返してるかアホさがわかる。
+毎回 PoweShell Gallery への公開方法を忘れたりする。 [弊ブログの`powershellgallery`タグ](/tags/powershellgallery.html)を参照すればどれだけ同じミスを繰り返してるかアホさがわかる。
 加えて [microsoft/PowerShellForGitHub](https://github.com/microsoft/PowerShellForGitHub) で repo を作るのもしょっちゅう忘れる。
 こちらに関してはもうそろそろ [`gh`](https://github.com/cli/cli)に乗り換えた方がいいのかも知れん。(けど、そうすると PowerShell の旨味であるオブジェクトでゴニョゴニョやりやすい世界がなくなってしまうのは困る)
 

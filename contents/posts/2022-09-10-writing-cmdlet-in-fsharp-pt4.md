@@ -1,10 +1,11 @@
-{:title "F#でコマンドレットを書いてる pt.4"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.4"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 
-めちゃめちゃ放置してたのだけど、 8 月末くらいから触れるようになってきたので、気になる部分ですぐ変えられる部分を書き換えて、 PowerShell Gallery に公開した。 [はじめたころ](/posts/2022-05-07-start-to-write-cmdlet-by-fsharp)から 4 ヶ月くらい経ったのか。
+めちゃめちゃ放置してたのだけど、 8 月末くらいから触れるようになってきたので、気になる部分ですぐ変えられる部分を書き換えて、 PowerShell Gallery に公開した。 [はじめたころ](/posts/2022-05-07-start-to-write-cmdlet-by-fsharp.html)から 4 ヶ月くらい経ったのか。
 
 [PowerShell Gallery | pocof 0.1.0-alpha](https://www.powershellgallery.com/packages/pocof/0.1.0-alpha)
 

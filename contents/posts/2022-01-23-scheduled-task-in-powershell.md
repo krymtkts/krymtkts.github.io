@@ -1,6 +1,7 @@
-{:title "Windows のタスクを操作する(PowerShell で)"
-:layout :post
-:tags ["powershell","windows"]}
+---
+title: "Windows のタスクを操作する(PowerShell で)"
+tags: ["powershell","windows"]
+---
 
 決まった時間までにやらなければいけないことがあるとする。それを人間力でカバーするのは、それなりに資源の浪費になるので自動化したいとする。
 最近の Windows ならタスクスケジューラで直に書いてもいいけど、操作めんどすぎるので普通に考えたらスクリプトにするでしょう。

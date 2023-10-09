@@ -1,8 +1,9 @@
-{:title "Cryogen のカスタマイズ"
-:layout :post
-:tags ["cryogen","clojure"]}
+---
+title: "Cryogen のカスタマイズ"
+tags: ["cryogen","clojure"]
+---
 
-[前回の投稿](/posts/2022-02-27-issue-with-cryogen-version-bump)で、 [Cryogen](https://cryogenweb.org/) のバージョンアップに伴い Cryogen 自体のカスタマイズが必要だとを書いた。
+[前回の投稿](/posts/2022-02-27-issue-with-cryogen-version-bump.html)で、 [Cryogen](https://cryogenweb.org/) のバージョンアップに伴い Cryogen 自体のカスタマイズが必要だとを書いた。
 
 カスタマイズ自体はかなり簡単にできたのだが、 Clojure 経験不足だからか正直なところドキュメントの記載だけではピンと来なかった。
 ということで、またわからなくなること必至のため記しておく。

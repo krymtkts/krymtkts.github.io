@@ -1,6 +1,7 @@
-{:title "Windows10でタッチスクリーンを無効化する"
- :layout :post
- :tags  ["windows", "tips"]}
+---
+title: "Windows10でタッチスクリーンを無効化する"
+tags:  ["windows", "tips"]
+---
 
 小ネタ。
 

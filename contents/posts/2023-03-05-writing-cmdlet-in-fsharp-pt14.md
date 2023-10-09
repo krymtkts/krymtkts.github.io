@@ -1,6 +1,7 @@
-{:title "F#でコマンドレットを書いてる pt.14"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.14"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 
@@ -87,7 +88,7 @@ dotnet add ./src/pocof.Test/pocof.Test.fsproj package FsUnit.xUnit
 ちょっとわからないのが VS Code からの実行だとハングしてるようだった。
 テストを実行するための DotNet CLI が後ろで実行されるみたいだが、そのプロセスは上手く行ってそうに見える。でも GUI がずっとくるくる止まる。どうも Inonide がエラーしてるっぽい。 xUnit の実行確認のときはいけたので FsUnit 起因か？ちょっと調べる必要ありだが、今回は先送りにする。
 
-```log
+```plaintext
 2023-03-04 15:50:47.005 [error] Error:
     at MapTreeModule_find (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:245:15)
     at FSharpMap__get_Item (c:\Users\takatoshi\.vscode\extensions\ionide.ionide-fsharp-7.5.1\webpack:\out\fable_modules\fable-library.4.0.0-theta-018\Map.js:1179:12)

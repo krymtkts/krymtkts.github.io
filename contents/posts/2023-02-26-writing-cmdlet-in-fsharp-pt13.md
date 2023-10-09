@@ -1,6 +1,7 @@
-{:title "F#でコマンドレットを書いてる pt.13"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.13"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 [pocof 0.4.0-alpha](https://www.powershellgallery.com/packages/pocof/0.4.0-alpha) を公開した。
@@ -19,7 +20,7 @@
 今の実装だと単純にクエリ文字列と検索中のプロパティを保持しているだけなので、そこを小綺麗に整理した後にそれらを付与するようなイメージ。判別共用体を上手く使ってできる感覚を持っている。
 
 ただしデータ構造の変更に伴いクエリ実行そのものも書き換える必要がある。
-[前の日記](/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12) でも触れてたように、やっぱこのタイミングで [FsUnit](https://github.com/fsprojects/FsUnit) 導入して動作保証しながらの開発は必須、避けられない。
+[前の日記](/posts/2023-02-05-writing-cmdlet-in-fsharp-pt12.html) でも触れてたように、やっぱこのタイミングで [FsUnit](https://github.com/fsprojects/FsUnit) 導入して動作保証しながらの開発は必須、避けられない。
 
 話は逸れるが、FsUnit 使うに当たり .NET のテストライブラリを入れる必要があるのだけど、全然知らん。
 [What is FsUnit?](https://fsprojects.github.io/FsUnit/index.html) を見るに [xunit](https://github.com/xunit/xunit) 、 [nunit](https://github.com/nunit/nunit) と [MSTest](https://github.com/microsoft/testfx) がある。

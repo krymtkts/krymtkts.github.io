@@ -1,6 +1,7 @@
-{:title "lein ringでエラーが発生した"
- :layout :post
- :tags  ["powershell"]}
+---
+title: "lein ringでエラーが発生した"
+tags:  ["powershell"]
+---
 
 [前回](./2019-02-20-instead-of-ping.md)以下のコメントを残した
 

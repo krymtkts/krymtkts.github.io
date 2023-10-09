@@ -1,6 +1,7 @@
-{:title "PowerShell で Money Forward クラウド勤怠を操作する"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PowerShell で Money Forward クラウド勤怠を操作する"
+tags: ["powershell"]
+---
 
 現職について 2 ヶ月が経とうとしているが、まだ爆殺されてない。ので馴染んできているのかも知れない。コミュニケーションが少なくても(定例を除き、最少 DM1 通/週とか)何とかやっていけるものだなという気づきを得た。
 

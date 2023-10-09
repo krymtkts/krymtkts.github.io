@@ -1,11 +1,12 @@
-{:title "Fable でブログを再構築する pt.14"
-:layout :post
-:tags ["fsharp", "fable"]}
+---
+title: "Fable でブログを再構築する pt.14"
+tags: ["fsharp", "fable"]
+---
 
 [krymtkts/blog-fable](https://github.com/krymtkts/blog-fable) [Fable](https://fable.io/) でブログを再構築している。
 もういい加減ブログ移行作業着手したいけど、ちまちま直してたら修正スべき箇所見つかってきてちまちまちした更新を続けている。
 
-[前のやつ](/posts/2023-09-17-rebuild-blog-with-fable-pt13) ↓。
+[前のやつ](/posts/2023-09-17-rebuild-blog-with-fable-pt13.html) ↓。
 
 > 何が駄目かって、 `Async.AwaitEvent` するところで非同期ブロックが入るのだけど、その後クライアントから切断を受信して `loop` 変数の値を変更・ループ ② を止めても、ループ ① は非同期ブロックされてて次の変更イベント発火まで生き続けるのよね。
 > なので画面遷移やリロードのたびに変更イベントの待ちが溜まっていって、変更イベントで一気にドバっと流れるというのになってる。

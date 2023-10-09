@@ -1,6 +1,7 @@
-{:title "PowerShell のパラメータバインディングは \"3 時\" を Datetime 型にパースする"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PowerShell のパラメータバインディングは \"3 時\" を Datetime 型にパースする"
+tags: ["powershell"]
+---
 
 ### いきなりまとめ
 
@@ -10,7 +11,7 @@ PowerShell の関数なりコマンドレットがパラメータを受け取る
 
 ### 経緯
 
-先日 [ScheduledTask を設定した](/posts/2022-01-23-scheduled-task-in-powershell)くだりで初めて知った。
+先日 [ScheduledTask を設定した](/posts/2022-01-23-scheduled-task-in-powershell.html)くだりで初めて知った。
 
 [New-ScheduledTaskTrigger (ScheduledTasks) | Microsoft Docs](https://docs.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtasktrigger?view=windowsserver2022-ps#example-1--register-a-scheduled-task-that-starts-a-task-once)
 

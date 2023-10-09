@@ -1,6 +1,7 @@
-{:title "git で local repo が自分のものじゃないとなったやつ"
-:layout :post
-:tags ["windows","git"]}
+---
+title: "git で local repo が自分のものじゃないとなったやつ"
+tags: ["windows","git"]
+---
 
 今日はブログ書くつもり無かったけど、これまた起こったらなんかハマりそうやなーと思ったので、したためた。
 

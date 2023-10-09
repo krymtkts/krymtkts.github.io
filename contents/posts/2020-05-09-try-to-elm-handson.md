@@ -1,6 +1,7 @@
-{:title "Elm のハンズオンを試した"
-:layout :post
-:tags ["elm"]}
+---
+title: "Elm のハンズオンを試した"
+tags: ["elm"]
+---
 
 会社の勉強会で Elm のハンズオンをしてみた。それだけ。
 

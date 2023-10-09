@@ -1,6 +1,7 @@
-{:title "今更 ForEach-Object -Parallel"
-:layout :post
-:tags ["powershell"]}
+---
+title: "今更 ForEach-Object -Parallel"
+tags: ["powershell"]
+---
 
 今更だが、直列だと長時間かかる処理を分散させるために `ForEach-Object -Parallel` を使う必要があった。
 困ったというほどでもないけど、真面目に使ったことなかったので、今回学んだ気をつけポイントをまとめる。

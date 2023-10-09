@@ -1,6 +1,7 @@
-{:title "Textile を Markdown に変換する(いい感じに)"
-:layout :post
-:tags ["pandoc", "powershell"]}
+---
+title: "Textile を Markdown に変換する(いい感じに)"
+tags: ["pandoc", "powershell"]
+---
 
 プレーンテキストで日記をつけ始めて今年で 9 年目になったぽい。
 その日記だが、昔 Redmine を使ってたこともあって、最初の 5 年位の間 [Textile](https://textile-lang.com/) で日記を書いていた時期がある。
@@ -290,14 +291,14 @@ prettier --write .
 
 before.
 
-```textile
+```plaintext
 ** 壊れる箇条書きリスト
 #### 壊れる順序付きリスト
 ```
 
 after.
 
-```textile
+```plaintext
 壊れる箇条書きリスト
 
 \#### 壊れる順序付きリスト

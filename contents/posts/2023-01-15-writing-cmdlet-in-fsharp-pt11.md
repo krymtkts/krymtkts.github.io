@@ -1,12 +1,13 @@
-{:title "F#でコマンドレットを書いてる pt.11"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F#でコマンドレットを書いてる pt.11"
+tags: ["fsharp","powershell"]
+---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の話。
 
 年末年始思ったほど時間取れなかったが、 pocof のプロパティ指定検索はちょっとずつ進んでいる。
 
-[前](/posts/2022-12-18-writing-cmdlet-in-fsharp-pt10)は入力できるプロパティの候補が表示されるだけだったが、最近ようやく入力できるプロパティの絞り込みと、プロパティを指定した検索ができるようになった。
+[前](/posts/2022-12-18-writing-cmdlet-in-fsharp-pt10.html)は入力できるプロパティの候補が表示されるだけだったが、最近ようやく入力できるプロパティの絞り込みと、プロパティを指定した検索ができるようになった。
 
 プロパティ名は case insensitive に指定できる。まだ複数条件入れたときが buggy でうまく動いてないけど、あとプロパティ入力候補の表示非表示と Ctrl+space での補完ができたら、
 ほしいものが出揃うかなーというところだ。

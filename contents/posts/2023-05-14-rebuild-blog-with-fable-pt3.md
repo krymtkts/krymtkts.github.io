@@ -1,6 +1,7 @@
-{:title "Fable でブログを再構築する pt.3"
-:layout :post
-:tags ["fsharp", "fable"]}
+---
+title: "Fable でブログを再構築する pt.3"
+tags: ["fsharp", "fable"]
+---
 
 [krymtkts/blog-fable](https://github.com/krymtkts/blog-fable) [Fable](https://fable.io/) でブログを再構築しようとしている。
 こちらに手をかけてることで最近 [krymtkts/pocof](https://github.com/krymtkts/pocof) 触っておらず多少不安になってきたが、もう少し Fable に慣れるまではお預け。

@@ -1,6 +1,7 @@
-{:title "Ortho-Linear Keyboard \"Planck\""
- :layout :post
- :tags  ["mechanicalkeyboard" "planck"]}
+---
+title: "Ortho-Linear Keyboard \"Planck\""
+tags:  ["mechanicalkeyboard" "planck"]
+---
 
 わたしが[Planck](https://olkb.com/planck/)を手に入れたのは割と遅めのタイミング。
 

@@ -1,6 +1,7 @@
-{:title "Step Functions のステートをまたいでパラメータを伝播する"
-:layout :post
-:tags ["serverless", "aws"]}
+---
+title: "Step Functions のステートをまたいでパラメータを伝播する"
+tags: ["serverless", "aws"]
+---
 
 仕事でシンプルなバッチを組む必要があり、ちょうどワークフローみたいな感じだったので Step Functions で Lambda をつないで作っている。
 

@@ -1,6 +1,7 @@
-{:title "振り返り 2019 年"
-:layout :post
-:tags ["retrospective"]}
+---
+title: "振り返り 2019 年"
+tags: ["retrospective"]
+---
 
 ことし 2019 年も残すところあと僅か。2019 年の自身の成長などを振り返ろう。
 

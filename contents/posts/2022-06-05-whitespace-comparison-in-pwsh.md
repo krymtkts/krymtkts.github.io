@@ -1,6 +1,7 @@
-{:title "PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PoweShell で半角スペース(U+0020) -eq 全角スペース(U+3000) が True となる"
+tags: ["powershell"]
+---
 
 転職して 3 ヶ月目を迎えた。
 入社以降は何の因果か CRM の導入をやることになり、既存データ(スプレッドシート)の以降のために PowerShell を駆使している。

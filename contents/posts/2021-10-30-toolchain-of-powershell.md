@@ -1,6 +1,7 @@
-{:title "PowerShell のツールチェーン"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PowerShell のツールチェーン"
+tags: ["powershell"]
+---
 
 今更読んだ ↓
 

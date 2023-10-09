@@ -1,6 +1,7 @@
-{:title "AWS LambdaをPowershellでテスト実行する"
- :layout :post
- :tags  ["powershell", "aws", "lambda"]}
+---
+title: "AWS LambdaをPowershellでテスト実行する"
+tags:  ["powershell", "aws", "lambda"]
+---
 
 へーしゃの支援によりGoogle Cloud Next Tokyo 2019へ参加できた。
 

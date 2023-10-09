@@ -1,6 +1,7 @@
-{:title "F# でコマンドレットを書いてる pt.20"
-:layout :post
-:tags ["fsharp","powershell"]}
+---
+title: "F# でコマンドレットを書いてる pt.20"
+tags: ["fsharp","powershell"]
+---
 
 久しぶりに [pocof](https://github.com/krymtkts/pocof) の開発をした。
 ゆーても .NET 6 → .NET 7 と、 PowerShellGet → PSResourceGet だけ。
@@ -47,7 +48,7 @@ GitHub Actions の job で `actions/setup-dotnet@v3` に指定してるバージ
 ### PowerShellGet → PSResourceGet [#54](https://github.com/krymtkts/pocof/pull/54)
 
 変えたのは `Publish-Module` → `Publish-PSResource` だけ。
-[前回の日記](/posts/2023-07-09-migrate-dev-environment) にも追記したが、 `Get-Module` は `Microsoft.PowerShell.Core` の持ち物だったので変える必要なかった。
+[前回の日記](/posts/2023-07-09-migrate-dev-environment.html) にも追記したが、 `Get-Module` は `Microsoft.PowerShell.Core` の持ち物だったので変える必要なかった。
 
 `WhatIf` までの確認に留めている。
 というのも、結構パラメータが変わっておりホンマにうまく動くんかこれ...というのがあるため。
@@ -59,4 +60,4 @@ GitHub Actions の job で `actions/setup-dotnet@v3` に指定してるバージ
 
 ### おわり
 
-[昔の日記](/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8) で書いてた platyPS の prerelease 使うとエラーになる件忘れていてまた引っかかったが、久しぶりの pocof 開発なんとかできてよかった。
+[昔の日記](/posts/2022-11-27-writing-cmdlet-in-fsharp-pt8.html) で書いてた platyPS の prerelease 使うとエラーになる件忘れていてまた引っかかったが、久しぶりの pocof 開発なんとかできてよかった。

@@ -1,6 +1,7 @@
-{:title "go の map のキーの Tips"
-:layout :post
-:tags ["go"]}
+---
+title: "go の map のキーの Tips"
+tags: ["go"]
+---
 
 - 知ってた
   - `map`のキーには`struct`が使える

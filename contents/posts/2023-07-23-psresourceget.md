@@ -1,12 +1,13 @@
-{:title "PSResourceGet メモ"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PSResourceGet メモ"
+tags: ["powershell"]
+---
 
 [PSResourceGet](https://github.com/PowerShell/PSResourceGet) を使い始めてまだちょっとだが、明らかに変わったことがある。
 これ PowerShellGet v2 より圧倒的に速いな。
 PowerShellGet v3 時代からインストールするようにはしてたけど日々使ってなかったから気づいてなかった。
 
-ただ [開発環境をプチ移行する](/posts/2023-07-09-migrate-dev-environment#PSResourceGet) にも追記したように、 v3 には `Get-PSResource` みたいなややこしい Cmdlet もいる。
+ただ [開発環境をプチ移行する](/posts/2023-07-09-migrate-dev-environment#PSResourceGet.html) にも追記したように、 v3 には `Get-PSResource` みたいなややこしい Cmdlet もいる。
 PSResourceGet を入れてるなら v3 の方は消しとくのが無難。
 
 なのでこの度普段定期的にしかやってなかった古いモジュールの整理をした。既に誰でもやってそうだが習慣的に行えるよう関数にした。
@@ -24,7 +25,7 @@ function Uninstall-OutdatedModules {
 ```
 
 上記の関数の通り、 `Get-InstalledPSResource` は複数 ver 入ってるとそのままあるだけ返してくれる。
-v2 時代は `Get-Module` しないとダメだったのは [以前書いた PowerShell モジュールの大掃除日記](/posts/2022-11-12-clean-up-pwsh-modules) でのこと。時代は変わったな。
+v2 時代は `Get-Module` しないとダメだったのは [以前書いた PowerShell モジュールの大掃除日記](/posts/2022-11-12-clean-up-pwsh-modules.html) でのこと。時代は変わったな。
 
 また、こういう処理も v2 であれば `Get-InstalledModule` は結構遅かったのが、 PSResourceGet になってとても速くなった。
 

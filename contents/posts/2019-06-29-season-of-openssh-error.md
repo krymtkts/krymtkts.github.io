@@ -1,10 +1,11 @@
-{:title "またOpenSSHが動かなくなる季節がやってきた"
- :layout :post
- :tags  ["powershell", "openssh"]}
+---
+title: "またOpenSSHが動かなくなる季節がやってきた"
+tags:  ["powershell", "openssh"]
+---
 
 アップデートの度に何かあるので、もはや風物詩と化したOpenSSHのエラー。
 
-[前回のエラー](/posts/2019-03-31-win-openssh-is-gone)
+[前回のエラー](/posts/2019-03-31-win-openssh-is-gone.html)
 
 きょうChocolateyでパッケージ更新したらWindowsのOpenSSHがアップデートされた様子。[Release v8.0.0.0p1-Beta · PowerShell/Win32-OpenSSH](https://github.com/PowerShell/Win32-OpenSSH/releases/tag/v8.0.0.0p1-Beta)かな？
 

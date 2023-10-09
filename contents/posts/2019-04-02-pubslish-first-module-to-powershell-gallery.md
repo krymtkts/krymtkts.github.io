@@ -1,6 +1,7 @@
-{:title "はじめてのPowerShell Galleryへの公開"
- :layout :post
- :tags  ["powershell", "powershellgallery", "maven"]}
+---
+title: "はじめてのPowerShell Galleryへの公開"
+tags:  ["powershell", "powershellgallery", "maven"]
+---
 
 先日、自前のモジュールをPowerShell Galleryに公開したので、その時のメモを記す。
 

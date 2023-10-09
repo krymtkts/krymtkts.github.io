@@ -1,6 +1,7 @@
-{:title "Cascadia Code PL と Migu Nerd Font の違い"
-:layout :post
-:tags ["font"]}
+---
+title: "Cascadia Code PL と Migu Nerd Font の違い"
+tags: ["font"]
+---
 
 注意: アイコンフォントのコピペを多用しているので、対応していないフォントを使われている豆腐が見えます。
 

@@ -1,6 +1,7 @@
-{:title "Clojureでブログを作った"
- :layout :post
- :tags  ["clojure" "cryogen"]}
+---
+title: "Clojureでブログを作った"
+tags:  ["clojure" "cryogen"]
+---
 
 このブログはClojure製の静的サイトジェネレータ[Cryogen](http://cryogenweb.org/)で作った。
 
@@ -48,7 +49,7 @@ CryogenもPerunも、検索したら日本語の情報にhitするのでやり�
 
 Leiningenでテンプレートを作成する。
 
-```poershell
+```powershell
 lein new cryogen blog
 Retrieving cryogen/lein-template/0.3.7/lein-template-0.3.7.pom from clojars
 Retrieving leinjacker/leinjacker/0.4.2/leinjacker-0.4.2.pom from clojars
@@ -65,7 +66,7 @@ Generating fresh 'lein new' Cryogen project.
 
 ブログを動かしてみよう
 
-```poershell
+```powershell
 lein ring server
 ```
 
@@ -131,7 +132,7 @@ Cryogenのドキュメントに従い、`config.edn`の`blog-prefix`キーの値
 
 この出力先`resource/public`を変更する方法がわからなかったので、`krymtkts.github.io`という名前のシンボリックリンクを作って、あたかもそういう名前のフォルダをGitで管理してる感を醸し出して茶を濁した。
 
-```poershell
+```powershell
 New-Item -Value '.\blog\resources\public\' -Path './' -Name 'krymtkts.github.io' -ItemType SymbolicLink
 cd krymtkts.github.io
 git init

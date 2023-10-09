@@ -1,6 +1,7 @@
-{:title "My own oh-my-posh theme"
-:layout :post
-:tags ["powershell", "oh-my-posh"]}
+---
+title: "My own oh-my-posh theme"
+tags: ["powershell", "oh-my-posh"]
+---
 
 oh-my-posh の話。
 ご存じない？ [JanDeDobbeleer/oh-my-posh: A prompt theming engine for Powershell](https://github.com/JanDeDobbeleer/oh-my-posh)

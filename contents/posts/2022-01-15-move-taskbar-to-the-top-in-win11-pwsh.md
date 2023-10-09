@@ -1,6 +1,7 @@
-{:title "Windows 11 のタスクバーを天に(PowerShell で)"
-:layout :post
-:tags ["powershell","windows"]}
+---
+title: "Windows 11 のタスクバーを天に(PowerShell で)"
+tags: ["powershell","windows"]
+---
 
 Windows11 ではメニューからタスクバーを天に持ち上げれなくなったので、みんなレジストリを操作して実現している。手順はどこでも手に入るが、以下のページを参照した。
 

@@ -1,6 +1,7 @@
-{:title "Register-ArgumentCompleterのScriptBlockの引数"
- :layout :post
- :tags  ["powershell"]}
+---
+title: "Register-ArgumentCompleterのScriptBlockの引数"
+tags:  ["powershell"]
+---
 
 [前回](./2019-02-04-Register-ArgumentCompleter.md)の続き。
 

@@ -1,16 +1,17 @@
-{:title "Chocolatey で Portable OpenSSH を更新する 2023"
-:layout :post
-:tags ["powershell", "openssh"]}
+---
+title: "Chocolatey で Portable OpenSSH を更新する 2023"
+tags: ["powershell", "openssh"]
+---
 
 久しぶりに、 Chocolatey に OpenSSH の β が降ってきてた。
 
-前回は 2019 年だった。 [Windows10 の更新で OpenSSH が逝った](/posts/2019-03-31-win-openssh-is-gone) [また OpenSSH が動かなくなる季節がやってきた](/posts/2019-06-29-season-of-openssh-error)
+前回は 2019 年だった。 [Windows10 の更新で OpenSSH が逝った](/posts/2019-03-31-win-openssh-is-gone.html) [また OpenSSH が動かなくなる季節がやってきた](/posts/2019-06-29-season-of-openssh-error.html)
 
 [Chocolatey Software | Win32 OpenSSH (Universal Installer) 9.2.2-beta1](https://community.chocolatey.org/packages/openssh#versionhistory)
 
 ので更新してみたところ、以下のエラーログが。
 
-```log
+```plaintext
 ERROR: There is a configured instance of the SSHD service, please specify the /SSHServerFeature to confirm it is OK to shutdown and upgrade the SSHD service at this time.
 The upgrade of openssh was NOT successful.
 Error while running 'C:\ProgramData\chocolatey\lib\openssh\tools\chocolateyinstall.ps1'.

@@ -1,6 +1,7 @@
-{:title "VS Code の拡張機能に ローカル patch する"
-:layout :post
-:tags ["vscode", "evernote"]}
+---
+title: "VS Code の拡張機能に ローカル patch する"
+tags: ["vscode", "evernote"]
+---
 
 VS Code の拡張機能にバグがある場合、メンテナが Marketplace に修正版を公開するのを待つ以外にも、自力で修正する方法がある。
 ちょうどよく使っている[michalyao/evermonkey](https://github.com/michalyao/evermonkey)が、壊れてしまってから 3 週間程経っても一向に対応されないので、その方法で一時的に回避した。

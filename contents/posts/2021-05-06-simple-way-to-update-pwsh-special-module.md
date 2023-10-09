@@ -1,6 +1,7 @@
-{:title "PowerShell の特殊なモジュールを更新する方法"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PowerShell の特殊なモジュールを更新する方法"
+tags: ["powershell"]
+---
 
 `PSReadLine` のような特殊な PowerShell モジュールを更新する術として、以下の方法を使うようにしている。
 

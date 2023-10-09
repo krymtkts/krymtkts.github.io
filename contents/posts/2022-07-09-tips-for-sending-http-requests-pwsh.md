@@ -1,6 +1,7 @@
-{:title "PowerShell で大量の HTTP リクエストを送る場合の Tips"
-:layout :post
-:tags ["powershell"]}
+---
+title: "PowerShell で大量の HTTP リクエストを送る場合の Tips"
+tags: ["powershell"]
+---
 
 大量のアクセスログがほしい事情で、テスト環境に大量のリクエストを送りつける必要があった。
 

@@ -1,6 +1,7 @@
-{:title "古のはてなダイアリー XML を Markdwon に変換する(いい感じに)"
-:layout :post
-:tags ["powershell"]}
+---
+title: "古のはてなダイアリー XML を Markdwon に変換する(いい感じに)"
+tags: ["powershell"]
+---
 
 先日 Google ドライブの中に眠っていた XML を発掘した。古のはてなダイアリーからエクスポートされたやつだこれ。
 
@@ -104,7 +105,7 @@ $xml.diary.day | ForEach-Object {
 基本ファイルを作成するが、既存のファイルが存在する場合は、追記する。
 先述の通りセクションがあるので追記しても自然だ。
 
-ディレクトリ構造は[前回の Textile → Markdown 変換](/posts/2022-04-02-convert-textile-to-md) で記した通り ↓ 。 1 つの XML からこの形にファイルを出力する。
+ディレクトリ構造は[前回の Textile → Markdown 変換](/posts/2022-04-02-convert-textile-to-md.html) で記した通り ↓ 。 1 つの XML からこの形にファイルを出力する。
 
 ```plaintext
 +---2013

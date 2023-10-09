@@ -1,6 +1,7 @@
-{:title "プロジェクトにバッジを貼ろう"
- :layout :post
- :tags  ["github", "shieldsio"]}
+---
+title: "プロジェクトにバッジを貼ろう"
+tags:  ["github", "shieldsio"]
+---
 
 [先日PowerShell Galleryにモジュールを公開した](https://www.powershellgallery.com/packages/MavenAutoCompletion/0.1)ついでに、プロジェクトのGitHubにバッジを貼ってみた。
 

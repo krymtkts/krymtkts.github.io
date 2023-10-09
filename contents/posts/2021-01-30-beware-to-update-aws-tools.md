@@ -1,6 +1,7 @@
-{:title "AWS.Tools.Installer で入れたモジュールの更新は気をつけろよ"
-:layout :post
-:tags ["powershell", "aws"]}
+---
+title: "AWS.Tools.Installer で入れたモジュールの更新は気をつけろよ"
+tags: ["powershell", "aws"]
+---
 
 ```powershell
 Install-Package: C:\Users\takatoshi\OneDrive\Documents\PowerShell\Modules\PowerShellGet\2.2.5\PSModule.psm1:13069

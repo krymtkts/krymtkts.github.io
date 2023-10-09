@@ -1,6 +1,7 @@
-{:title "Oura Ring Gen3 を買った"
-:layout :post
-:tags ["ouraring","powershell"]}
+---
+title: "Oura Ring Gen3 を買った"
+tags: ["ouraring","powershell"]
+---
 
 前から欲しかった [Oura Ring](https://ouraring.com/) を購入した。 買ったのは第 3 世代(Gen3)だ。
 

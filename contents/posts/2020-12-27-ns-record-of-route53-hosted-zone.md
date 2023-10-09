@@ -1,6 +1,7 @@
-{:title "Rote53 ホストゾーンの NS レコード"
-:layout :post
-:tags ["powershell", "aws"]}
+---
+title: "Rote53 ホストゾーンの NS レコード"
+tags: ["powershell", "aws"]
+---
 
 これで 12 月だいぶ躓いたので書いとくわ。思い出じゃ。
 

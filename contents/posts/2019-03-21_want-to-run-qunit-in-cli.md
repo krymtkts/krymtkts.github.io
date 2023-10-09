@@ -1,6 +1,7 @@
-{:title "QUnit で CI したい その 1"
-:layout :post
-:tags ["nodejs", "qunit", "puppeteer"]}
+---
+title: "QUnit で CI したい その 1"
+tags: ["nodejs", "qunit", "puppeteer"]
+---
 
 2 月に転職した。
 

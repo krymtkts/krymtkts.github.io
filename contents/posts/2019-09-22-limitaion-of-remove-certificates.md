@@ -1,6 +1,7 @@
-{:title "ALBのListenerから証明書を削除するときの制限"
- :layout :post
- :tags  ["aws", "elb", "acm"]}
+---
+title: "ALBのListenerから証明書を削除するときの制限"
+tags:  ["aws", "elb", "acm"]
+---
 
 タイトルの通り。
 
@@ -19,7 +20,7 @@
 
 以下はListener Certificatesの上限25件全部を一気に消そうとしたときのログ。センシティブな部分は削ってある。
 
-```log
+```plaintext
 Traceback (most recent call last):
   File "C:\workspace\alb-batch\albbatch\elbapi.py", line 102, in remove_cerificates
     Certificates=params)
