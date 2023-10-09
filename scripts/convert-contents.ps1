@@ -15,3 +15,12 @@ $newFm
 ---$newArticle
 "@ | Set-Content $_.FullName -Encoding UTF8 -NoNewline
 }
+
+<#
+# NOTE: for organization posts into subdirectories.
+2019..2023 | ForEach-Object {
+    mkdir ./contents/posts/$_ -Force | Out-Null
+    $Year = $_
+    Get-ChildItem "./contents/posts/${Year}*.md" -File | ForEach-Object { git mv (Resolve-Path $_.FullName -Relative) "./contents/posts/${Year}/$($_.Name)" }
+}
+#>
