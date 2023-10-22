@@ -3,7 +3,7 @@ title: "QUnit で CI したい その 2"
 tags: ["nodejs", "qunit", "puppeteer", "nyc"]
 ---
 
-[前回](./2019-03-21_want-to-run-qunit-in-cli.md)、QUnit のユニットテストを puppeteer で CLI 実行できるようにした
+[前回](/posts/2019-03-21_want-to-run-qunit-in-cli.md)、QUnit のユニットテストを puppeteer で CLI 実行できるようにした
 
 今回は code coverage を計測できるようにする。
 

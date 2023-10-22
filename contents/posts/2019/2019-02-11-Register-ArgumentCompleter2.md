@@ -3,7 +3,7 @@ title: "Register-ArgumentCompleterのScriptBlockの引数"
 tags:  ["powershell"]
 ---
 
-[前回](./2019-02-04-Register-ArgumentCompleter.md)の続き。
+[前回](/posts/2019-02-04-Register-ArgumentCompleter.md)の続き。
 
 ```powershell
 Register-ArgumentCompleter -Native -CommandName mvn -ScriptBlock {

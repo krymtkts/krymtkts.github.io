@@ -3,7 +3,7 @@ title: "lein ringでエラーが発生した"
 tags:  ["powershell"]
 ---
 
-[前回](./2019-02-20-instead-of-ping.md)以下のコメントを残した
+[前回](/posts/2019-02-20-instead-of-ping.md)以下のコメントを残した
 
 > この記事をしたためておるときに`lein ring server`でエラーが出るようになってたのを解消したので、メモがてら次回に記す。
 
