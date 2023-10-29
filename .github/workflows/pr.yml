@@ -2,7 +2,7 @@ name: Build pages on Pull Request
 
 on:
   pull_request:
-    branches: ["main"]
+    branches: ["master"]
 
 permissions:
   contents: read
