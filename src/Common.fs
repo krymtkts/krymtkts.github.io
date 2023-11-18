@@ -496,17 +496,10 @@ module Component =
           copyright: string
           favicon: string
           style: string
+          highlightStyle: string
           devInjection: string option }
 
     let frame (conf: FrameConfiguration) (content: Fable.React.ReactElement list) =
-        let cssLink path integrity =
-            Html.link [ prop.rel "stylesheet"
-                        prop.type' "text/css"
-                        prop.href path
-                        prop.integrity integrity
-                        prop.crossOrigin.anonymous
-                        prop.referrerPolicy.noReferrer ]
-
         Html.html [ prop.lang conf.lang
                     prop.children [ Html.head [ Html.title [ prop.text conf.title ]
                                                 Html.meta [ prop.charset "utf-8" ]
@@ -529,9 +522,9 @@ module Component =
                                                 Html.link [ prop.rel "stylesheet"
                                                             prop.type' "text/css"
                                                             prop.href conf.style ]
-                                                cssLink
-                                                    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/base16/solarized-dark.min.css"
-                                                    "sha512-kBHeOXtsKtA97/1O3ebZzWRIwiWEOmdrylPrOo3D2+pGhq1m+1CroSOVErIlsqn1xmYowKfQNVDhsczIzeLpmg==" ]
+                                                Html.link [ prop.rel "stylesheet"
+                                                            prop.type' "text/css"
+                                                            prop.href conf.highlightStyle ] ]
                                     Html.body [ Html.nav [ prop.className "tabs"
                                                            prop.children conf.navbar ]
                                                 Html.main [ prop.className "container"
@@ -549,16 +542,26 @@ module Component =
                                                       prop.src src ]
                                     | None -> null ] ]
 
+    type FooterButton =
+        | Prev
+        | Next
+
     let footer (postRoot: string) (prev: Meta option) (next: Meta option) =
-        let button className meta =
+
+        let button button meta =
             match meta with
             | Some meta ->
                 let ref = $"%s{postRoot}%s{meta.leaf}"
 
-                let text =
-                    match meta.frontMatter with
-                    | Some fm -> $"%s{meta.date} %s{fm.title}"
-                    | None -> $"%s{meta.date} %s{meta.leaf}"
+                let text, className =
+                    let t =
+                        match meta.frontMatter with
+                        | Some fm -> $"%s{meta.date} %s{fm.title}"
+                        | None -> $"%s{meta.date} %s{meta.leaf}"
+
+                    match button with
+                    | Prev -> $"<< %s{t}", "prev"
+                    | Next -> $"%s{t} >>", "next"
 
                 Html.a [ prop.classes [ className; "button" ]
                          prop.href ref
@@ -566,8 +569,8 @@ module Component =
                          prop.children [ Html.span [ prop.text text ] ] ]
             | None -> null
 
-        let prev = button "prev" prev
-        let next = button "next" next
+        let prev = button Prev prev
+        let next = button Next next
 
         [ Html.div [ prop.className "buttons"
                      prop.children [ prev; next ] ] ]
