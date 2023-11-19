@@ -45,6 +45,9 @@ mock やし単に true が欲しかっただけの箇所なので、 `Console.Tr
 .NET と PowerShell のバージョンが相互に関係し合うのは知ってるけど、他に利用してる NuGet module がどう影響受けるか把握してないので、ちょくちょく着手していきたい。
 ゆーても Chocolatey には 7.4 の更新きてるのを確認して自機の PowerShell 7.4 に上げたばっかりなので、ちょっと後で。
 
+(余談やけど [`PowerShellStandard.Library` 7.0.0-preview.1](https://www.nuget.org/packages/PowerShellStandard.Library/7.0.0-preview.1) が unlisted なの初めて知った。
+[Microsoft.PowerShell.Standard.Module.Template](https://github.com/PowerShell/PowerShellStandard/blob/59998dced0948864a33fe6aed5f0a07bd12a91a6/src/dotnetTemplate/Microsoft.PowerShell.Standard.Module.Template/Microsoft.PowerShell.Standard.Module.Template/Microsoft.PowerShell.Standard.Module.Template.csproj#L9) からは参照されたままなのだけど数年動き無いしどうなるんやろ。)
+
 [pocof/.github/dependabot.yml](https://github.com/krymtkts/pocof/blob/7dd35cdadeed14444fa85608eba256c6be24d82a/.github/dependabot.yml) から NuGet module のところだけ抜粋。
 
 ```yml
