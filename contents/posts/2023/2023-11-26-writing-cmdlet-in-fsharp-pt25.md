@@ -108,7 +108,7 @@ PipelineIterationInfo :
 
 今ん所は `NotImplementedException` を検知した場合の workaround として pocof 開く前のバッファの復元をしないようにして、最小限の Linux 対応とした。 [#86](https://github.com/krymtkts/pocof/pull/86)
 
-Linus でもバッファの復元したいし、もうちょっと調査する。
+Linux でもバッファの復元したいし、もうちょっと調査する。
 [PowerShell/src/Microsoft.PowerShell.ConsoleHost/host/msh/ConsoleHostRawUserInterface.cs のこの箇所](https://github.com/PowerShell/PowerShell/blob/811efa46df822bf7be6179b6219f9f9d160eb7d5/src/Microsoft.PowerShell.ConsoleHost/host/msh/ConsoleHostRawUserInterface.cs#L1560)見るに単純に実装されてなかったりして...
 
 ---
