@@ -7,9 +7,9 @@ tags: ["powershell", "openssh"]
 2024 を目前にして、久しぶりに Chocolatey に OpenSSH の β が降ってきてた。
 [Chocolatey Software | Win32 OpenSSH (Universal Installer) 9.5.0-beta1](https://community.chocolatey.org/packages/openssh/9.5.0-beta1)
 
-前回は 2023 年だった。 [2023-05-20 - Chocolatey で Portable OpenSSH を更新する 2023](/posts/2023-05-20-bump-openssh-chocolatey.html)
+前回は 2023-05 だった。 [2023-05-20 - Chocolatey で Portable OpenSSH を更新する 2023](/posts/2023-05-20-bump-openssh-chocolatey.html)
 
-2023 年に自分で bump したとき、 `/SSHServerFeature` を使うって書いてた。
+2023-05 に自分で bump したとき、 `/SSHServerFeature` を使うって書いてた。
 でも、これ `uninstall-sshd.ps1` で sshd service を消しておいたら `/SSHAgentFeature` でもエラーせずに更新できるわ、というのに今更気づいた。
 そも sshd が立つのも、自分の PowerShell profile で `ssh-agent` のサービスがいないときに `install-sshd.ps1` してるからなので。
 
