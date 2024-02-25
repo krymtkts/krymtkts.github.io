@@ -5,11 +5,9 @@ runs:
   using: "composite"
   steps:
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         global-json-file: ./global.json
-        cache: true
-        cache-dependency-path: src/packages.lock.json
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
