@@ -1,6 +1,6 @@
 ---
 title: "blog-fable を Bulma 1.0.0 に対応する"
-tags: ["dotnet", "coverlet", "tips"]
+tags: ["bulma", "sass", "fable"]
 ---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) に [query string selection](https://github.com/krymtkts/pocof/issues/44) を実装するのはそれなりに進んだ。
