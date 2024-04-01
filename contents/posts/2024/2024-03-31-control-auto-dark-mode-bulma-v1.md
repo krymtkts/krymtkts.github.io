@@ -1,5 +1,5 @@
 ---
-title: "Bulma 1.0.0 の automatic dark mode を制御する"
+title: "Bulma 1.0.0 の automatic Dark mode を制御する"
 tags: ["bulma", "sass", "fable"]
 ---
 
@@ -8,7 +8,7 @@ tags: ["bulma", "sass", "fable"]
 [前回 Bulma 1.0.0 に合わせてスタイル調整した](/posts/2024-03-24-migrate-bulma-to-v1.html)話を書いた。
 加えて Bulma 1.0.0 で [automatic Dark mode](https://bulma.io/documentation/features/dark-mode/) が導入されたのにも触れたが、これをうまく制御するのに多少のコツが必要だっので記しておく。
 
-ドキュメントにも記載あるが、 Bulma の automatic Dark mode は [`prefers-color-scheme`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) の media query を使ってる。これが automatic Dark mode の automatic 正体だ。
+ドキュメントにも記載あるが、 Bulma の automatic Dark mode は [`prefers-color-scheme`](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) の media query を使ってる。これが automatic Dark mode の automatic の正体だ。
 手動で light/dark mode を使い分けるには `data-theme` を指定する。この `data-theme="light` `data-theme="dark"` 属性を HTML に差し込んだり、 ユーザごとに設定を保存するのは、 JavaScript を書かないといけない。
 
 そういう仕組みなので light/dark mode に関する style は以下のようにするのが多分 Bulma の推奨パターンのはず。
