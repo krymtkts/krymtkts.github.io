@@ -3,7 +3,7 @@ title: "F# でコマンドレットを書いてる pt.36"
 tags: ["fsharp", "powershell", "dotnet"]
 ---
 
-最近の[krymtkts/pocof](https://github.com/krymtkts/pocof) の開発をまとめる。
+最近の [krymtkts/pocof](https://github.com/krymtkts/pocof) の開発をまとめる。
 
 主だったものでいうと、[クエリ文字列選択](https://github.com/krymtkts/pocof/issues/44)のプロトタイプを実装した。
 それと Windows Terminal で `Ctrl+S` して出力を停止しているときに type すると pocof がエラーで落ちる様になってたので、その修正をした。 [#160](https://github.com/krymtkts/pocof/pull/160)
