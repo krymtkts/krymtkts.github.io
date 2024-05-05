@@ -1,6 +1,7 @@
 ---
 title: "F# でコマンドレットを書いてる pt.38"
 tags: ["fsharp", "powershell", "dotnet"]
+date: 2024-05-05
 ---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) 0.12.0 をリリースした。
@@ -65,3 +66,12 @@ tags: ["fsharp", "powershell", "dotnet"]
 `Ctrl+LeftArrow`, `Ctrl+RightArrow` あたりで単語区切りの移動 [#173](https://github.com/krymtkts/pocof/issues/173) したい気分になってきた。
 また、よく考えると選択範囲がある状態でのプロパティ補完時の挙動も未定義なままだった。
 パフォ系の問題を処置する前にするか、処置したあとにするか...思いつき駆動なのでちょっと悩ましい。
+
+---
+
+### 追記 2024-05-05
+
+> ひとまず Discriminated Union で wrap するときしないときのメモリ消費量を計測するためのサンプル Cmdlet でも書いてみて検証するしかないかな。
+
+多少はメモリ食うがだいぶ的外れっぽい。
+ヤバいのは `PSObject.properties` にアクセスして補完候補を集めてるところみたい...うーん。
