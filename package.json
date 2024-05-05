@@ -13,7 +13,7 @@
   "version": "1.0.0",
   "devDependencies": {
     "bulma": "^1.0.0",
-    "sass": "^1.75.0",
+    "sass": "^1.76.0",
     "ts2fable": "^0.7.1"
   },
   "dependencies": {
@@ -21,8 +21,8 @@
     "marked": "^12.0.2",
     "marked-footnote": "^1.2.2",
     "marked-highlight": "^2.1.1",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
-    "yaml": "^2.4.1"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "yaml": "^2.4.2"
   }
 }
