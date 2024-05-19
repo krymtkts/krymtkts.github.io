@@ -1,7 +1,6 @@
 ---
 title: "F# でコマンドレットを書いてる pt.39"
 tags: ["fsharp", "powershell", "dotnet"]
-date: 2024-05-05
 ---
 
 [krymtkts/pocof](https://github.com/krymtkts/pocof) の開発をした。
