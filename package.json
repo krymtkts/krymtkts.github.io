@@ -3,24 +3,27 @@
   "type": "module",
   "scripts": {
     "postinstall": "dotnet tool restore",
-    "build-css": "sass --style=compressed --no-source-map ./sass/style.scss ./docs/css/style.css",
-    "serve": "dotnet fsi ./dev-server.fsx",
     "build-fable": "dotnet fable src --test:MSBuildCracker --runScript",
-    "build": "npm run build-css && npm run build-fable",
-    "dev": "npm run build dev && npm run serve",
-    "build-md": "node ./src/App.fs.js"
+    "build-md": "node ./src/App.fs.js",
+    "build-css": "sass --style=compressed --no-source-map ./sass/style.scss ./docs/css/style.css",
+    "build-index": "pagefind",
+    "build": "npm run build-css && npm run build-fable && npm run build-index",
+    "build-dev": "npm run build-css && npm run build-fable dev && npm run build-index",
+    "serve": "dotnet fsi ./dev-server.fsx",
+    "dev": "npm run build-dev && npm run serve"
   },
   "version": "1.0.0",
   "devDependencies": {
     "bulma": "^1.0.1",
-    "sass": "^1.77.5",
+    "pagefind": "^1.1.0",
+    "sass": "^1.77.6",
     "ts2fable": "^0.7.1"
   },
   "dependencies": {
     "highlight.js": "^11.9.0",
     "marked": "^13.0.0",
     "marked-footnote": "^1.2.2",
-    "marked-highlight": "^2.1.2",
+    "marked-highlight": "^2.1.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "yaml": "^2.4.5"
