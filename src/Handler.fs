@@ -50,7 +50,7 @@ window.addEventListener (
         else
             PagefindUI.Create(
                 !!{| element = "#search"
-                     baseUrl = "/blog-fable/"
+                     baseUrl = "/"
                      pageSize = 5
                      translations =
                       !!{| placeholder = "Search"
