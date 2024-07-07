@@ -18,15 +18,15 @@ tags: ["fsharp", "powershell", "dotnet"]
 
 ---
 
-まず code coverage の計測を [coverlet](https://github.com/coverlet-coverage/coverlet) から [altCover](https://github.com/SteveGilham/altcover) に変えてみようと思い、試してみた。
+まず code coverage の計測を [coverlet](https://github.com/coverlet-coverage/coverlet) から [altcover](https://github.com/SteveGilham/altcover) に変えてみようと思い、試してみた。
 coverlet は F# が生成する IL 向けにチューニングされてないので、コード上に現れない微妙な branches のせいで coverage を落とす。↓ これ。
 
 [Multiple branch points created for F# string slice · Issue #1208 · coverlet-coverage/coverlet](https://github.com/coverlet-coverage/coverlet/issues/1208)
 
 そのため F# らしく書けない事がある。
-altCover でそれが解消せんかな的なことを考えて試してみた。
+altcover でそれが解消せんかな的なことを考えて試してみた。
 また F# の OSS を使うという点でも良い。
-けどデフォルト設定で altCover で計測すると pocof 以外のバイナリも検査対象になり、そのせいか実行速度が 5 倍くらいになってしまった。
+けどデフォルト設定で altcover で計測すると pocof 以外のバイナリも検査対象になり、そのせいか実行速度が 5 倍くらいになってしまった。
 なんてこった。
 対象のアセンブリを絞る設定が要るようだ。
 でも設定してみても速くなったり F# の IL に最適化される確証ないなーと思ったのでこれは今のところナシとした。
