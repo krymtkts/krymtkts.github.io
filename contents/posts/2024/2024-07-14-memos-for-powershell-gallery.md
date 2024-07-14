@@ -97,4 +97,4 @@ https://aka.ms/psgallerystatus が ↓ に繋がってる
 調べてみても、最近の [PowerShell and OpenSSH team investments for 2024 - PowerShell Team](https://devblogs.microsoft.com/powershell/powershell-and-openssh-team-investments-for-2024/) で新しいタイプの PowerShell の repo に触れてる程度だった。
 ただこう、なんやろ。もうちょっと計画的なメンテとかは開発者がわかりやすく把握できるようにならんのかなという気はする。
 前から Markdown 直書きなのは知ってるけど、この更新を自動で受け取るのって PowerFighter(勝手に作った PowerShell ユーザの呼び名)のみんなは自前でシステム組んでるんかな？
-気になる所あるが、次回に多様な記事を書いたときまでには進展があるといいな。
+気になる所あるが、次回似たような記事を書くときまでにはなんか進展があるといいな。
