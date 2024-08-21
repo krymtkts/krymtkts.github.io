@@ -15,3 +15,13 @@
   notes: |
     DDD の紹介。イベントストーミングの途中。
     先をざっと見た感じ第 1 部はモデリングに徹するみたいなのでやはり丁寧な印象。
+- date: 2024-08-21
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 15 ~ 29
+  notes: |
+    イベントストーミング終わった。
+    原著者が Railway Oriented の人なのもあってワークフローを中心にしてる印象で、モデリングにもパイプラインのメタファーが基礎にありそう(勘)。
+    次モデリングのステップの理解を深めてく感じ。
