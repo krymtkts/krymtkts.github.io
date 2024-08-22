@@ -25,3 +25,22 @@
     イベントストーミング終わった。
     原著者が Railway Oriented の人なのもあってワークフローを中心にしてる印象で、モデリングにもパイプラインのメタファーが基礎にありそう(勘)。
     次モデリングのステップの理解を深めてく感じ。
+- date: 2024-08-22
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 30 ~ 41
+  notes: |
+    一通りモデリングのステップをなぞった。
+    わたしの DDD の理解はかなり浅いが、 Evans に始まりそれいいなと思った人々の我流をまとめてる広義にそう呼んでる認識なので、この dmmf のそれも FP でやるならこうよな、という感じを受けてる。パイプラインのメタファーは好きなのでいいけど。
+- date: 2024-08-22
+  bookTitle: People Powered 「ビジネス」「ブランド」「チーム」を変革するコミュニティの原則 遠くへ行きたければ、みんなで行け
+  bookAuthor: Jono Bacon
+  readCount: 1
+  previouslyRead: false
+  pages: 224 ~ 247
+  notes: |
+    輪読会のやつ。
+    この章はコミュニティの人をアゲさせるインセンティブ設計について。
+    会社のエンゲージメントとかと似た印象を受けた。
