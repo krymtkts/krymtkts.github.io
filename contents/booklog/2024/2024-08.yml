@@ -44,3 +44,12 @@
     輪読会のやつ。
     この章はコミュニティの人をアゲさせるインセンティブ設計について。
     会社のエンゲージメントとかと似た印象を受けた。
+- date: 2024-08-23
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 42 ~ 53
+  notes: |
+    FP 的にコンテキストの構造とかコードの構造とかこうするよなという話。
+    必要になるまで MSA やらず monolith よなというのはまとも。
