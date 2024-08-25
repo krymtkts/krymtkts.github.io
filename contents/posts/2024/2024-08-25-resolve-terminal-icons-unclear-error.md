@@ -1,5 +1,5 @@
 ---
-title: "Terminal Icons のよくわからないエラーを解決する"
+title: "Terminal-Icons のよくわからないエラーを解決する"
 tags: ["powershell", "terminal-icons"]
 ---
 

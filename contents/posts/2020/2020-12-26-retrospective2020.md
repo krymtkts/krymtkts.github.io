@@ -90,7 +90,7 @@ tags: ["retrospective"]
    - 🔺 OSS へのコントリビューション
      - おしい
        - ドキュメント修正やフォーマットだけの PR で 3 回だけ
-       - Terminal Icons の Issue にコメントして助けたのが 1 回
+       - Terminal-Icons の Issue にコメントして助けたのが 1 回
    - ❌ 自作ツールの更新
      - ほぼなしか。TODO はあるけど
    - ❌ 音楽活動

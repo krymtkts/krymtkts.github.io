@@ -530,7 +530,7 @@ Cascadia には Powerline の拡張グリフくらいしか入っていないの
 あれ、このフォント Powerline グリフが Windows Terminal でも崩れないし、見た目も結構好みでこれちょっとよいかも...と浮気しそうになるも、やはり字幅の広さが気に入らず Migu に返り咲くワイ。
 
 それはそうと Powerline グリフが崩れないのはなんでか？と思ってみてたところ、これ Symbol フォントが Narrow スペースなのね。Cascadia もそう。つまり問題なのはフォント幅じゃね？と気づく。
-更に々々、Nerd Fonts から提供されている Hack を使うと、PowerShell モジュールの Terminal Icons で表示されるファイルアイコンすらも小さくならずに表示できるではないかい！これやろ答え。
+更に々々、Nerd Fonts から提供されている Hack を使うと、PowerShell モジュールの Terminal-Icons で表示されるファイルアイコンすらも小さくならずに表示できるではないかい！これやろ答え。
 
 数年前に試してうまくいったことがないのが心配のタネだが、ここは原点回帰して Nerd Fonts の font-patcher で Migu に Narrow スペースでパッチしてみるか～という気持ちになった。
 

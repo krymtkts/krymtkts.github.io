@@ -13,7 +13,7 @@ tags: ["fsharp","powershell"]
 
 さっぱり作り方がわからん `Format-Table` とか `-like` とか PowerShell のクラスをそのまま使いたい気分。無理やったら組むねんけど。
 
-`ls | pocof` したら Terminal Icons で鮮やかになったままフィルタリングされてほしいのよなー。
+`ls | pocof` したら Terminal-Icons で鮮やかになったままフィルタリングされてほしいのよなー。
 この辺が組み込めたら、 PowerShell Gallery で公開したい。
 
 現状正規表現でのフィルタリングくらいしかまともに使えるものがなく亀速な進捗だけど、Cmdlet を書いたり F# で書いたのも初めてだったから、楽しく取り組めた。
