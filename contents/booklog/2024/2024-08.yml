@@ -62,3 +62,13 @@
   notes: |
     定義したドメインをモデルにするための F# のレシピ。
     単純型と言う名で single case DU 使ったりしてるがデータ量によっては遅いし、氏の blog であるよな Unit of Measure 使うトコじゃないかなという気はする。
+- date: 2024-08-25
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 72 ~ 83
+  notes: |
+    レシピをべースにモデル化していく。
+    パフォ問題に対するための Unit of Measure が出て来ず `Struct` とコレクションの単純型だけか。
+    数値しか使えんし触れないのかな。
