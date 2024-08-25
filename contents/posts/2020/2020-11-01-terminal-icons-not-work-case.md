@@ -1,7 +1,7 @@
 ---
 title: "Terminal-Icons が動かなくなるケース"
 
-tags: ["powershell"]
+tags: ["powershell", "terminal-icons"]
 ---
 
 9 月&10 月と文字起こしするのをサボった 😪
