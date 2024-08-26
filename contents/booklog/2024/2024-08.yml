@@ -72,3 +72,14 @@
     レシピをべースにモデル化していく。
     パフォ問題に対するための Unit of Measure が出て来ず `Struct` とコレクションの単純型だけか。
     数値しか使えんし触れないのかな。
+- date: 2024-08-26
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 83 ~ 97
+  notes: |
+    レシピをべースにモデル化していく続き。
+    値オブジェクト・エンティティ・集約はここで例示しつつ触れられた。
+    `NoEquality` を使う辺り .NET と一緒に使うことを考えなければその方が simple で楽なのはわかる。
+    でもいつまでどこまで .NET から離れれるかよな。資産を使った方が楽なものもあるし。
