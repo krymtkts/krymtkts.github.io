@@ -83,3 +83,14 @@
     値オブジェクト・エンティティ・集約はここで例示しつつ触れられた。
     `NoEquality` を使う辺り .NET と一緒に使うことを考えなければその方が simple で楽なのはわかる。
     でもいつまでどこまで .NET から離れれるかよな。資産を使った方が楽なものもあるし。
+- date: 2024-08-27
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 98 ~ 112
+  notes: |
+    型システムを利用してドメインに不正な値が入らないようにする等。
+    private construct のくだりはまあわかるが `match` 使えないの痛いのとテストも書きにくくなるのでそこはあまり好かん。
+    整合性の部分はまあせやろなという感じ。
+    整合性を保たねばならないトランザクション自体エンティティでは？というのはそうかも知れん。
