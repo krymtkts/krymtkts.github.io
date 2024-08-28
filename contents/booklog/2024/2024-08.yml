@@ -94,3 +94,13 @@
     private construct のくだりはまあわかるが `match` 使えないの痛いのとテストも書きにくくなるのでそこはあまり好かん。
     整合性の部分はまあせやろなという感じ。
     整合性を保たねばならないトランザクション自体エンティティでは？というのはそうかも知れん。
+- date: 2024-08-28
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 113 ~ 131
+  notes: |
+    ワークフローをパイプラインに落とし込む。
+    サブステップをパイプ処理に当てはめて in/out の型も作る。型しか出てきてない。
+    依存関係は高階関数でやるのは FP ならそうよなという感じ。
