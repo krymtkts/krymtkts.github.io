@@ -104,3 +104,34 @@
     ワークフローをパイプラインに落とし込む。
     サブステップをパイプ処理に当てはめて in/out の型も作る。型しか出てきてない。
     依存関係は高階関数でやるのは FP ならそうよなという感じ。
+- date: 2024-08-29
+  bookTitle: People Powered 「ビジネス」「ブランド」「チーム」を変革するコミュニティの原則 遠くへ行きたければ、みんなで行け
+  bookAuthor: Jono Bacon
+  readCount: 1
+  previouslyRead: false
+  pages: 248 ~ 269
+  notes: |
+    輪読会のやつ。
+    ミートアップのレシピみたいな感じ。
+    あと採用について。やぱ方向性と情熱が同じ方向向いてないと何やっても無理よなと思った。
+- date: 2024-08-29
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 131 ~ 138
+  notes: |
+    型だけで設計したので、最終的に関数合成しないのかなとかあんまピンとこないところもある。
+    Saga という言葉は知らなかった。
+    長時間稼働するやつは DDD 関係なく必然的にそうなるよなという感じ。
+- date: 2024-08-30
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 139 ~ 154
+  notes: |
+    FP の話。パイプラインでドメインを繋いぎた本なので後半に進む前にどうしても話したかったんやろなと思った。
+    ゼロ除算を愚直にサポートするならわたしは愚直に Either(`Result`) を使うかなと思ったが、 違った。
+    引数用に 0 存在しない型を作っとくみたい。DDD では多分キレイなドメインの世界ではエラーなぞ存在せぬという意思表示なんやろな。
+    どこで `match` で切り分けるかの違いだけなんで、そういう流派という理解。
