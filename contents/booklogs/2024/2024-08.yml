@@ -1,16 +1,12 @@
 - date: 2024-08-19
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: vi ~ 5
   notes: |
     冒頭を読んだだけ。なんとなく丁寧な印象を受けた。
 - date: 2024-08-20
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 6 ~ 14
   notes: |
     DDD の紹介。イベントストーミングの途中。
@@ -18,8 +14,6 @@
 - date: 2024-08-21
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 15 ~ 29
   notes: |
     イベントストーミング終わった。
@@ -28,8 +22,6 @@
 - date: 2024-08-22
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 30 ~ 41
   notes: |
     一通りモデリングのステップをなぞった。
@@ -37,8 +29,6 @@
 - date: 2024-08-22
   bookTitle: People Powered 「ビジネス」「ブランド」「チーム」を変革するコミュニティの原則 遠くへ行きたければ、みんなで行け
   bookAuthor: Jono Bacon
-  readCount: 1
-  previouslyRead: false
   pages: 224 ~ 247
   notes: |
     輪読会のやつ。
@@ -47,8 +37,6 @@
 - date: 2024-08-23
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 42 ~ 53
   notes: |
     FP 的にコンテキストの構造とかコードの構造とかこうするよなという話。
@@ -56,8 +44,6 @@
 - date: 2024-08-24
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 54 ~ 71
   notes: |
     定義したドメインをモデルにするための F# のレシピ。
@@ -65,8 +51,6 @@
 - date: 2024-08-25
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 72 ~ 83
   notes: |
     レシピをべースにモデル化していく。
@@ -75,8 +59,6 @@
 - date: 2024-08-26
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 83 ~ 97
   notes: |
     レシピをべースにモデル化していく続き。
@@ -86,8 +68,6 @@
 - date: 2024-08-27
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 98 ~ 112
   notes: |
     型システムを利用してドメインに不正な値が入らないようにする等。
@@ -97,8 +77,6 @@
 - date: 2024-08-28
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 113 ~ 131
   notes: |
     ワークフローをパイプラインに落とし込む。
@@ -107,8 +85,6 @@
 - date: 2024-08-29
   bookTitle: People Powered 「ビジネス」「ブランド」「チーム」を変革するコミュニティの原則 遠くへ行きたければ、みんなで行け
   bookAuthor: Jono Bacon
-  readCount: 1
-  previouslyRead: false
   pages: 248 ~ 269
   notes: |
     輪読会のやつ。
@@ -117,8 +93,6 @@
 - date: 2024-08-29
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 131 ~ 138
   notes: |
     型だけで設計したので、最終的に関数合成しないのかなとかあんまピンとこないところもある。
@@ -127,11 +101,18 @@
 - date: 2024-08-30
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
   bookAuthor: Scott Wlaschin
-  readCount: 1
-  previouslyRead: false
   pages: 139 ~ 154
   notes: |
     FP の話。パイプラインでドメインを繋いぎた本なので後半に進む前にどうしても話したかったんやろなと思った。
     ゼロ除算を愚直にサポートするならわたしは愚直に Either(`Result`) を使うかなと思ったが、 違った。
     引数用に 0 存在しない型を作っとくみたい。DDD では多分キレイなドメインの世界ではエラーなぞ存在せぬという意思表示なんやろな。
     どこで `match` で切り分けるかの違いだけなんで、そういう流派という理解。
+- date: 2024-08-31
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  pages: 155 ~ 166
+  notes: |
+    パイプラインでドメインを繋ぐ。
+    例だからか知らんが `failwith` 使ってるので、好みじゃない。バキバキ副作用やん。更に失敗する可能性のある関数と示せないのがな。
+    不安になったので先の章を見たら computation で `Result` 使いつつどうにかする話が出てそうなので、ちょっと安心した。
+    エラーをどう扱うかも設計時から考えてほしかったな。
