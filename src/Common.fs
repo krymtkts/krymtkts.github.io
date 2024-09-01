@@ -30,6 +30,34 @@ module DateTime =
     let toRFC822DateTimeString = DateTime.toRFC822DateTimeString
     let toRFC3339Date (d: DateTime) = d |> String.format "yyyy-MM-dd"
 
+    let toShortDayName (dayOfWeek: DayOfWeek) =
+        // NOTE: System.Globalization.DateTimeFormatInfo.GetAbbreviatedDayName is not supported by Fable.
+        match dayOfWeek with
+        | DayOfWeek.Sunday -> "Sun"
+        | DayOfWeek.Monday -> "Mon"
+        | DayOfWeek.Tuesday -> "Tue"
+        | DayOfWeek.Wednesday -> "Wed"
+        | DayOfWeek.Thursday -> "Thu"
+        | DayOfWeek.Friday -> "Fri"
+        | DayOfWeek.Saturday -> "Sat"
+        | _ -> ""
+
+    let toShortMonthName (date: DateTime) =
+        match date.Month with
+        | 1 -> "Jan"
+        | 2 -> "Feb"
+        | 3 -> "Mar"
+        | 4 -> "Apr"
+        | 5 -> "May"
+        | 6 -> "Jun"
+        | 7 -> "Jul"
+        | 8 -> "Aug"
+        | 9 -> "Sep"
+        | 10 -> "Oct"
+        | 11 -> "Nov"
+        | 12 -> "Dec"
+        | _ -> ""
+
 module private Util =
     open HighlightJs
     open Marked
@@ -47,11 +75,7 @@ module private Util =
                 let escapedText = Regex.Replace(text, @"[^\w]+", "-")
                 let l = (int) item.depth + 1
 
-                let meta =
-                    if l = 2 then
-                        " data-pagefind-meta=\"title\" "
-                    else
-                        ""
+                let meta = if l = 2 then " data-pagefind-meta=\"title\" " else ""
 
                 $"""<h%d{l} %s{meta}><a name="%s{escapedText}" href="#%s{escapedText}">%s{text}</a></h%d{l}>"""
 
@@ -119,9 +143,7 @@ module private Util =
 
         let highlighter =
             let highlight (code: string) (lang: string) =
-                let code =
-                    (hljs.highlight code !!{| language = lang |} false)
-                        .value
+                let code = (hljs.highlight code !!{| language = lang |} false).value
 
                 Regex.Replace(
                     code,
@@ -144,6 +166,7 @@ module private Util =
 
     let parseMarkdown (content: string) : string = marked.parse $ (content)
 
+    let parseMarkdownInline (content: string) : string = marked.parseInline $ (content)
 
 module Parser =
     open Yaml
@@ -172,12 +195,16 @@ module Parser =
     /// Parses a markdown string
     let parseMarkdown str = Util.parseMarkdown str
 
+    let parseYaml str : 'a = Yaml.parse str
+
     let parseMarkdownAsReactEl content =
         let (frontMatter, content) = extractFrontMatter content
 
         let content =
-            Html.div [ prop.className "section"
-                       prop.dangerouslySetInnerHTML (parseMarkdown content) ]
+            Html.div [
+                prop.className "section"
+                prop.dangerouslySetInnerHTML (parseMarkdown content)
+            ]
 
         frontMatter, content
 
@@ -188,8 +215,7 @@ module Parser =
     let parseReactStaticMarkup el = ReactDOMServer.renderToStaticMarkup el
 
     let parseReactStaticHtml el =
-        @"<!DOCTYPE html>"
-        + ReactDOMServer.renderToStaticMarkup el
+        @"<!DOCTYPE html>" + ReactDOMServer.renderToStaticMarkup el
 
 [<AutoOpen>]
 module Misc =
@@ -216,8 +242,7 @@ module Misc =
         Regex.IsMatch(s, @"^[a-zA-Z0-9-.\s]+\.md$") |> not
 
     let isInvalidPostsFilenamePattern (s: string) =
-        Regex.IsMatch(s, @"^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9-.\s]+\.md$")
-        |> not
+        Regex.IsMatch(s, @"^\d{4}-\d{2}-\d{2}-[a-zA-Z0-9-.\s]+\.md$") |> not
 
     type Meta =
         { frontMatter: Parser.FrontMatter option
@@ -232,25 +257,29 @@ module Misc =
           index: bool }
 
     let getDestinationPath (source: string) (dir: string) =
-        Directory.leaf source
-        |> Util.mdToHtml
-        |> Directory.join2 dir
-        |> IO.resolve
+        Directory.leaf source |> Util.mdToHtml |> Directory.join2 dir |> IO.resolve
 
     let isMarkdown (path: string) = path.EndsWith ".md"
 
-    let getMarkdownFiles dir =
+    let isYaml (path: string) =
+        path.EndsWith ".yml" || path.EndsWith ".yaml"
+
+    let getFiles predict dir =
         promise {
             let! paths = IO.getFiles dir
 
             let files =
                 paths
-                |> List.filter isMarkdown
+                |> List.filter predict
                 |> List.map (Directory.join2 dir)
                 |> List.map IO.resolve
 
             return files
         }
+
+    let getMarkdownFiles = getFiles isMarkdown
+
+    let getYamlFiles = getFiles isYaml
 
     let getImagePathPairs src dest =
         promise {
@@ -305,13 +334,12 @@ module Xml =
         let urls =
             locs
             |> Seq.map (fun loc ->
-                node
-                    "url"
-                    []
-                    [ node "loc" [] [ text $"{root}{loc.loc}" ]
-                      node "lastmod" [] [ text loc.lastmod ]
-                      //   node "changefreq" [] [ text "monthly" ]
-                      node "priority" [] [ text loc.priority ] ])
+                node "url" [] [
+                    node "loc" [] [ text $"{root}{loc.loc}" ]
+                    node "lastmod" [] [ text loc.lastmod ]
+                    //   node "changefreq" [] [ text "monthly" ]
+                    node "priority" [] [ text loc.priority ]
+                ])
             |> List.ofSeq
 
         let urlSet =
@@ -321,9 +349,7 @@ module Xml =
                   attr.value ("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance") ]
                 urls
 
-        urlSet
-        |> serializeXml
-        |> (+) @"<?xml version=""1.0"" encoding=""UTF-8""?>"
+        urlSet |> serializeXml |> (+) @"<?xml version=""1.0"" encoding=""UTF-8""?>"
 
     type RssItem =
         { guid: string
@@ -350,10 +376,7 @@ module Xml =
             match meta.frontMatter with
             | Some fm -> fm.title
             | None -> meta.leaf
-          description =
-            meta.content
-            |> Parser.parseReactStaticMarkup
-            |> simpleEscape
+          description = meta.content |> Parser.parseReactStaticMarkup |> simpleEscape
           pubDate = pubDate }
 
     type RssChannel =
@@ -368,34 +391,33 @@ module Xml =
         let itemNodes =
             items
             |> Seq.map (fun item ->
-                node
-                    "item"
-                    []
-                    [ node "guid" [] [ text item.guid ]
-                      node "link" [] [ text item.link ]
-                      node "title" [] [ text item.title ]
-                      node "description" [] [ text item.description ]
-                      node "pubDate" [] [ text item.pubDate ] ])
+                node "item" [] [
+                    node "guid" [] [ text item.guid ]
+                    node "link" [] [ text item.link ]
+                    node "title" [] [ text item.title ]
+                    node "description" [] [ text item.description ]
+                    node "pubDate" [] [ text item.pubDate ]
+                ])
             |> List.ofSeq
 
-        node
-            "rss"
-            [ attr.value ("version", "2.0")
-              attr.value ("xmlns:atom", "http://www.w3.org/2005/Atom") ]
-            [ node "channel" []
-              <| [ node
-                       "atom:link"
-                       [ attr.value ("href", $"{channel.link}{channel.xml}")
-                         attr.value ("rel", "self")
-                         attr.value ("type", "application/rss+xml") ]
-                       []
-                   node "title" [] [ text channel.title ]
+        node "rss" [
+            attr.value ("version", "2.0")
+            attr.value ("xmlns:atom", "http://www.w3.org/2005/Atom")
+        ] [
+            node "channel" []
+            <| [ node "atom:link" [
+                     attr.value ("href", $"{channel.link}{channel.xml}")
+                     attr.value ("rel", "self")
+                     attr.value ("type", "application/rss+xml")
+                 ] []
+                 node "title" [] [ text channel.title ]
 
-                   node "description" [] [ text channel.description ]
-                   node "link" [] [ text channel.link ]
-                   node "lastBuildDate" [] [ text channel.lastBuildDate ]
-                   node "generator" [] [ text channel.generator ] ]
-                 @ itemNodes ]
+                 node "description" [] [ text channel.description ]
+                 node "link" [] [ text channel.link ]
+                 node "lastBuildDate" [] [ text channel.lastBuildDate ]
+                 node "generator" [] [ text channel.generator ] ]
+               @ itemNodes
+        ]
         |> serializeXml
         |> (+) @"<?xml version=""1.0"" encoding=""UTF-8""?>"
 
@@ -404,21 +426,23 @@ module Component =
 
     type NavItem =
         | Text of string
+        | Html of string
         | Element of string * Fable.React.ReactElement
 
     let liA ref (title: NavItem) =
         let children =
             function
-            | Element (s, el) -> [ prop.title s; prop.children [ el ] ]
-            | Text (s) -> [ prop.title s; prop.text s ]
+            | Text(s) -> [ prop.title s; prop.text s ]
+            | Html(s) -> [ prop.dangerouslySetInnerHTML s ]
+            | Element(s, el) -> [ prop.title s; prop.children [ el ] ]
 
         Html.li [ Html.a <| prop.href ref :: children title ]
 
     let liSpanA (span: string) ref title =
-        Html.li [ Html.span [ prop.text span ]
-                  Html.a [ prop.href ref
-                           prop.title title
-                           prop.text title ] ]
+        Html.li [
+            Html.span [ prop.text span ]
+            Html.a [ prop.href ref; prop.title title; prop.text title ]
+        ]
 
     let tagToLi root tag count =
         let leaf = Directory.leaf $"{tag}.html"
@@ -432,17 +456,17 @@ module Component =
 
         let prefix =
             match meta.layout with
-            | Post (date) -> $"%s{date} - "
+            | Post(date) -> $"%s{date} - "
             | _ -> ""
 
         let title =
             match meta.frontMatter with
-            | Some fm -> $"%s{prefix}%s{fm.title}"
+            | Some fm -> $"%s{prefix}%s{fm.title |> Util.parseMarkdownInline}"
             | None -> leaf
 
         let ref = Directory.join3 "/" root <| Util.mdToHtml leaf
 
-        liA ref <| Text title
+        liA ref <| Html title
 
     let header (tagRoot: string) (pubDate: string option) (fm: Parser.FrontMatter option) =
         let date pubDate fmDate =
@@ -453,27 +477,32 @@ module Component =
                 | _, Some pub -> pub
                 | _ -> null
 
-            Html.div [ prop.className "date"
-                       prop.text date ]
+            Html.div [ prop.className "date"; prop.text date ]
 
         let header =
             match fm with
             | Some fm ->
                 [ date pubDate fm.date
-                  Html.h1 [ prop.className [ "title" ]
-                            prop.text fm.title ]
-                  Html.div [ prop.className [ "tags" ]
-                             prop.custom ("data-pagefind-ignore", "all")
-                             prop.children (
-                                 match fm.tags with
-                                 | Some tags -> tags
-                                 | None -> [||]
-                                 |> Seq.map (fun tag ->
-                                     Html.a [ prop.href $"%s{tagRoot}%s{tag}.html"
-                                              prop.title tag
-                                              prop.className "tag is-medium"
-                                              prop.text tag ])
-                             ) ] ]
+                  Html.h1 [
+                      prop.className [ "title" ]
+                      prop.dangerouslySetInnerHTML (fm.title |> Util.parseMarkdownInline)
+                  ]
+                  Html.div [
+                      prop.className [ "tags" ]
+                      prop.custom ("data-pagefind-ignore", "all")
+                      prop.children (
+                          match fm.tags with
+                          | Some tags -> tags
+                          | None -> [||]
+                          |> Seq.map (fun tag ->
+                              Html.a [
+                                  prop.href $"%s{tagRoot}%s{tag}.html"
+                                  prop.title tag
+                                  prop.className "tag is-medium"
+                                  prop.text tag
+                              ])
+                      )
+                  ] ]
             | None -> []
 
         header
@@ -495,67 +524,67 @@ module Component =
 
     let frame (conf: FrameConfiguration) (content: Fable.React.ReactElement list) =
         let themeSelector =
-            [ Html.li [ prop.children [ Html.button [ prop.className "theme-toggle"
-                                                      prop.custom ("data-theme", "light")
-                                                      prop.text "🌞"
-                                                      prop.title "Light theme" ]
-                                        Html.button [ prop.className "theme-toggle"
-                                                      prop.custom ("data-theme", "dark")
-                                                      prop.text "🌙"
-                                                      prop.title "Dark theme" ]
-                                        Html.button [ prop.className "theme-toggle"
-                                                      prop.custom ("data-theme", "system")
-                                                      prop.text "🖥️"
-                                                      prop.title "System Default" ] ] ] ]
+            [ Html.li [
+                  prop.children [
+                      Html.button [
+                          prop.className "theme-toggle"
+                          prop.custom ("data-theme", "light")
+                          prop.text "🌞"
+                          prop.title "Light theme"
+                      ]
+                      Html.button [
+                          prop.className "theme-toggle"
+                          prop.custom ("data-theme", "dark")
+                          prop.text "🌙"
+                          prop.title "Dark theme"
+                      ]
+                      Html.button [
+                          prop.className "theme-toggle"
+                          prop.custom ("data-theme", "system")
+                          prop.text "🖥️"
+                          prop.title "System Default"
+                      ]
+                  ]
+              ] ]
 
         let navbar = Html.ul [ prop.children (conf.navItems @ themeSelector) ]
 
         let main =
-            [ Html.head [ Html.title [ prop.text conf.title ]
-                          Html.meta [ prop.charset "utf-8" ]
-                          Html.meta [ prop.name "description"
-                                      prop.content conf.description ]
-                          Html.meta [ prop.name "viewport"
-                                      prop.content "width=device-width, initial-scale=1" ]
-                          Html.meta [ prop.custom ("property", "og:site_name")
-                                      prop.content conf.name ]
-                          Html.meta [ prop.custom ("property", "og:title")
-                                      prop.content conf.title ]
-                          Html.meta [ prop.custom ("property", "og:description")
-                                      prop.content conf.description ]
-                          Html.meta [ prop.custom ("property", "og:url")
-                                      prop.content conf.url ]
-                          Html.link [ prop.rel "canonical"
-                                      prop.href conf.url ]
-                          Html.link [ prop.rel "icon"
-                                      prop.href conf.favicon ]
-                          Html.link [ prop.rel "stylesheet"
-                                      prop.href conf.pagefindStyle ]
-                          Html.script [ prop.src conf.pagefindScript ]
-                          Html.link [ prop.rel "stylesheet"
-                                      prop.type' "text/css"
-                                      prop.href conf.style ]
-                          Html.link [ prop.rel "stylesheet"
-                                      prop.type' "text/css"
-                                      prop.href conf.highlightStyle ] ]
-              Html.body [ Html.nav [ prop.className "tabs"
-                                     prop.children [ navbar ] ]
-                          Html.main [ prop.className "container"
-                                      prop.children [ Html.div [ prop.className "content"
-                                                                 prop.children content ] ] ] ]
-              Html.footer [ prop.className "footer"
-                            prop.children [ Html.div [ prop.className "container"
-                                                       prop.text ($"Copyright © %s{conf.copyright}") ] ] ] ]
+            [ Html.head [
+                  Html.title [ prop.text conf.title ]
+                  Html.meta [ prop.charset "utf-8" ]
+                  Html.meta [ prop.name "description"; prop.content conf.description ]
+                  Html.meta [ prop.name "viewport"; prop.content "width=device-width, initial-scale=1" ]
+                  Html.meta [ prop.custom ("property", "og:site_name"); prop.content conf.name ]
+                  Html.meta [ prop.custom ("property", "og:title"); prop.content conf.title ]
+                  Html.meta [ prop.custom ("property", "og:description"); prop.content conf.description ]
+                  Html.meta [ prop.custom ("property", "og:url"); prop.content conf.url ]
+                  Html.link [ prop.rel "canonical"; prop.href conf.url ]
+                  Html.link [ prop.rel "icon"; prop.href conf.favicon ]
+                  Html.link [ prop.rel "stylesheet"; prop.href conf.pagefindStyle ]
+                  Html.script [ prop.src conf.pagefindScript ]
+                  Html.link [ prop.rel "stylesheet"; prop.type' "text/css"; prop.href conf.style ]
+                  Html.link [ prop.rel "stylesheet"; prop.type' "text/css"; prop.href conf.highlightStyle ]
+              ]
+              Html.body [
+                  Html.nav [ prop.className "tabs"; prop.children [ navbar ] ]
+                  Html.main [
+                      prop.className "container"
+                      prop.children [ Html.div [ prop.className "content"; prop.children content ] ]
+                  ]
+              ]
+              Html.footer [
+                  prop.className "footer"
+                  prop.children [
+                      Html.div [ prop.className "container"; prop.text ($"Copyright © %s{conf.copyright}") ]
+                  ]
+              ] ]
 
         let scripts =
             conf.scriptInjection
-            |> List.map (fun src ->
-                Html.script [ prop.lang "javascript"
-                              prop.type' "text/javascript"
-                              prop.src src ])
+            |> List.map (fun src -> Html.script [ prop.lang "javascript"; prop.type' "text/javascript"; prop.src src ])
 
-        Html.html [ prop.lang conf.lang
-                    prop.children (scripts @ main) ]
+        Html.html [ prop.lang conf.lang; prop.children (scripts @ main) ]
 
     type FooterButton =
         | Prev
@@ -571,22 +600,26 @@ module Component =
                 let text, className =
                     let t =
                         match meta.frontMatter with
-                        | Some fm -> $"%s{meta.date} %s{fm.title}"
+                        | Some fm -> $"%s{meta.date} %s{fm.title |> Util.parseMarkdownInline}"
                         | None -> $"%s{meta.date} %s{meta.leaf}"
 
                     match button with
                     | Prev -> $"<< %s{t}", "prev"
                     | Next -> $"%s{t} >>", "next"
 
-                Html.a [ prop.classes [ className; "button" ]
-                         prop.href ref
-                         prop.title text
-                         prop.children [ Html.span [ prop.text text ] ] ]
+                Html.a [
+                    prop.classes [ className; "button" ]
+                    prop.href ref
+                    prop.title text
+                    prop.children [ Html.span [ prop.text text ] ]
+                ]
             | None -> null
 
         let prev = button Prev prev
         let next = button Next next
 
-        [ Html.div [ prop.className "buttons"
-                     prop.custom ("data-pagefind-ignore", "all")
-                     prop.children [ prev; next ] ] ]
+        [ Html.div [
+              prop.className "buttons"
+              prop.custom ("data-pagefind-ignore", "all")
+              prop.children [ prev; next ]
+          ] ]
