@@ -135,3 +135,11 @@
     ゼロ除算を愚直にサポートするならわたしは愚直に Either(`Result`) を使うかなと思ったが、 違った。
     引数用に 0 存在しない型を作っとくみたい。DDD では多分キレイなドメインの世界ではエラーなぞ存在せぬという意思表示なんやろな。
     どこで `match` で切り分けるかの違いだけなんで、そういう流派という理解。
+- date: 2024-08-31
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  readCount: 1
+  previouslyRead: false
+  pages: 155 ~ 166
+  notes: |
+    パイプラインでドメインを繋ぐ。
