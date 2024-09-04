@@ -24,3 +24,10 @@
   notes: |
     シリアライズは地道に手で書く感じ。キレイな世界に出入りするための通過儀礼みたいなもんか。
     高級なモデルから平易なデータ構造に落とすため single case union すらもシリアライズ用の DTO に丁寧にマッピングする。
+- date: 2024-09-04
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+  pages: 240 ~ 251
+  notes: |
+    永続化。CQS と CQRS は違うと。モデル自体が分かれてるのが CQRS でいいかな。
+    イベントソーシングのも当然触れられてるが、十分に説明できないとスルーされる。
