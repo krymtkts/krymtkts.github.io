@@ -48,3 +48,13 @@
     このときにはじめに作ったドメイン文書には触れないんかー。これで本は終わり。
     本を通して、 computation や active pattern の F# 機能を活用することあれど、データと処理が分割された FP の特徴を活かして静的型駆動でドメインを表現するテクニックの話だったと理解した。
     個人的に気になった F# でのパフォの改善等は触れられてない(link は多少あるか)ので自分でやれってことやろな。
+- date: 2024-09-07
+  bookTitle: プログラミング F#
+  bookAuthor: Chris Smith
+  previouslyRead: true
+  pages: 267 ~ 287
+  notes: |
+    なんか降りてきてコード引用符の章を行ったり来たりして読んだ。
+    古いので Microsoft Learn で code quotation のページも合わせて見る。
+    pocof のクエリに code quotation 使えるよな。動的に関数生成したら速いかはわからんので試さないといけない。
+    読後、訳者の人 dmmf 本のレビュワの人だと気づいた。
