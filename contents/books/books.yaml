@@ -1,10 +1,13 @@
-- id: b-book
-  bookTitle: B book
-  bookAuthor: John Doe
-- id: a-book
-  bookTitle: A book
-  bookAuthor: Jane Doe
+- id: dmmf
+  bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
+  bookAuthor: Scott Wlaschin
+- id: people-powered
+  bookTitle: People Powered 「ビジネス」「ブランド」「チーム」を変革するコミュニティの原則 遠くへ行きたければ、みんなで行け
+  bookAuthor: Jono Bacon
   previouslyRead: true
-- id: c-book
-  bookTitle: C book
-  bookAuthor: No name
+- id: programming-fsharp
+  bookTitle: プログラミング F#
+  bookAuthor: Chris Smith
+- id: how-world-class-engineers-thinks
+  bookTitle: 世界一流エンジニアの思考法
+  bookAuthor: 牛尾剛
