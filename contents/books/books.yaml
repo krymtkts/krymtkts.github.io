@@ -4,10 +4,10 @@
 - id: people-powered
   bookTitle: People Powered 「ビジネス」「ブランド」「チーム」を変革するコミュニティの原則 遠くへ行きたければ、みんなで行け
   bookAuthor: Jono Bacon
-  previouslyRead: true
 - id: programming-fsharp
   bookTitle: プログラミング F#
   bookAuthor: Chris Smith
+  previouslyRead: true
 - id: how-world-class-engineers-thinks
   bookTitle: 世界一流エンジニアの思考法
   bookAuthor: 牛尾剛
