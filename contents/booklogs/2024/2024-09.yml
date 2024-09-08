@@ -1,6 +1,5 @@
 - date: 2024-09-01
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 167 ~ 187
   notes: |
     FP のテクニックでドメインのパイプラインを繋ぎ終えた。 lifting してて良い。
@@ -10,7 +9,6 @@
     この本でモナドでの実装は詳細に触れないようなので自分で考えな。
 - date: 2024-09-02
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 188 ~ 218
   notes: |
     FP 的エラーの扱い。 ようやく railway oriented. 明示的エラーといえば Java の検査例外を思い出す。
@@ -19,21 +17,18 @@
     それ自体は好きだが Go のように愚直にエラー処理書くのもわかりやすいといえばそうやと思うので流派かなあ。
 - date: 2024-09-03
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 219 ~ 239
   notes: |
     シリアライズは地道に手で書く感じ。キレイな世界に出入りするための通過儀礼みたいなもんか。
     高級なモデルから平易なデータ構造に落とすため single case union すらもシリアライズ用の DTO に丁寧にマッピングする。
 - date: 2024-09-04
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 240 ~ 251
   notes: |
     永続化。CQS と CQRS は違うと。モデル自体が分かれてるのが CQRS でいいかな。
     イベントソーシングのも当然触れられてるが、十分に説明できないとスルーされる。
 - date: 2024-09-05
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 252 ~ 266
   notes: |
     RDB への永続化。
@@ -41,7 +36,6 @@
     ORM 使わないのはわたしの好みなので良い。補償トランザクションは知ららなかったので調べておく。
 - date: 2024-09-06
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 267 ~ 287
   notes: |
     設計を更新するのに型駆動でコンパイルエラー活用してやるって話。
@@ -51,7 +45,6 @@
 - date: 2024-09-07
   bookTitle: プログラミング F#
   bookAuthor: Chris Smith
-  previouslyRead: true
   pages: 267 ~ 287
   notes: |
     なんか降りてきてコード引用符の章を行ったり来たりして読んだ。
@@ -60,7 +53,6 @@
     読後、訳者の人 dmmf 本のレビュワの人だと気づいた。
 - date: 2024-09-08
   bookTitle: 世界一流エンジニアの思考法
-  bookAuthor: 牛尾剛
   pages: 1 ~ 55
   notes: |
     メソッド屋のブログで Be Lazy 読んだころからファンなので読み始めた。とりあえず 1 章。

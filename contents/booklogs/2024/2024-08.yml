@@ -1,19 +1,16 @@
 - date: 2024-08-19
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: vi ~ 5
   notes: |
     冒頭を読んだだけ。なんとなく丁寧な印象を受けた。
 - date: 2024-08-20
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 6 ~ 14
   notes: |
     DDD の紹介。イベントストーミングの途中。
     先をざっと見た感じ第 1 部はモデリングに徹するみたいなのでやはり丁寧な印象。
 - date: 2024-08-21
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 15 ~ 29
   notes: |
     イベントストーミング終わった。
@@ -21,14 +18,12 @@
     次モデリングのステップの理解を深めてく感じ。
 - date: 2024-08-22
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 30 ~ 41
   notes: |
     一通りモデリングのステップをなぞった。
     わたしの DDD の理解はかなり浅いが、 Evans に始まりそれいいなと思った人々の我流をまとめてる広義にそう呼んでる認識なので、この dmmf のそれも FP でやるならこうよな、という感じを受けてる。パイプラインのメタファーは好きなのでいいけど。
 - date: 2024-08-22
   bookTitle: People Powered 「ビジネス」「ブランド」「チーム」を変革するコミュニティの原則 遠くへ行きたければ、みんなで行け
-  bookAuthor: Jono Bacon
   pages: 224 ~ 247
   notes: |
     輪読会のやつ。
@@ -36,21 +31,18 @@
     会社のエンゲージメントとかと似た印象を受けた。
 - date: 2024-08-23
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 42 ~ 53
   notes: |
     FP 的にコンテキストの構造とかコードの構造とかこうするよなという話。
     必要になるまで MSA やらず monolith よなというのはまとも。
 - date: 2024-08-24
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 54 ~ 71
   notes: |
     定義したドメインをモデルにするための F# のレシピ。
     単純型と言う名で single case DU 使ったりしてるがデータ量によっては遅いし、氏の blog であるよな Unit of Measure 使うトコじゃないかなという気はする。
 - date: 2024-08-25
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 72 ~ 83
   notes: |
     レシピをべースにモデル化していく。
@@ -58,7 +50,6 @@
     数値しか使えんし触れないのかな。
 - date: 2024-08-26
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 83 ~ 97
   notes: |
     レシピをべースにモデル化していく続き。
@@ -67,7 +58,6 @@
     でもいつまでどこまで .NET から離れれるかよな。資産を使った方が楽なものもあるし。
 - date: 2024-08-27
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 98 ~ 112
   notes: |
     型システムを利用してドメインに不正な値が入らないようにする等。
@@ -76,7 +66,6 @@
     整合性を保たねばならないトランザクション自体エンティティでは？というのはそうかも知れん。
 - date: 2024-08-28
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 113 ~ 131
   notes: |
     ワークフローをパイプラインに落とし込む。
@@ -84,7 +73,6 @@
     依存関係は高階関数でやるのは FP ならそうよなという感じ。
 - date: 2024-08-29
   bookTitle: People Powered 「ビジネス」「ブランド」「チーム」を変革するコミュニティの原則 遠くへ行きたければ、みんなで行け
-  bookAuthor: Jono Bacon
   pages: 248 ~ 269
   notes: |
     輪読会のやつ。
@@ -92,7 +80,6 @@
     あと採用について。やぱ方向性と情熱が同じ方向向いてないと何やっても無理よなと思った。
 - date: 2024-08-29
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 131 ~ 138
   notes: |
     型だけで設計したので、最終的に関数合成しないのかなとかあんまピンとこないところもある。
@@ -100,7 +87,6 @@
     長時間稼働するやつは DDD 関係なく必然的にそうなるよなという感じ。
 - date: 2024-08-30
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 139 ~ 154
   notes: |
     FP の話。パイプラインでドメインを繋いぎた本なので後半に進む前にどうしても話したかったんやろなと思った。
@@ -109,7 +95,6 @@
     どこで `match` で切り分けるかの違いだけなんで、そういう流派という理解。
 - date: 2024-08-31
   bookTitle: Domain Modeling Made Functional 関数型ドメインモデリング ドメイン駆動設計と F# でソフトウェアの複雑さに立ち向かおう
-  bookAuthor: Scott Wlaschin
   pages: 155 ~ 166
   notes: |
     パイプラインでドメインを繋ぐ。
