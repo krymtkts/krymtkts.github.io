@@ -2,21 +2,22 @@ module Booklog
 
 open Common
 
+type Booklog =
+    abstract date: string
+    abstract bookTitle: string
+    abstract readCount: int option
+    abstract pages: string
+    abstract notes: string option
+
+type Book =
+    abstract id: string
+    abstract bookTitle: string
+    abstract bookAuthor: string
+    abstract previouslyRead: bool option
+
+[<RequireQualifiedAccess>]
 module Parser =
     open Yaml
-
-    type Booklog =
-        abstract date: string
-        abstract bookTitle: string
-        abstract readCount: int option
-        abstract pages: string
-        abstract notes: string option
-
-    type Book =
-        abstract id: string
-        abstract bookTitle: string
-        abstract bookAuthor: string
-        abstract previouslyRead: bool option
 
     let parseBooklogs (str: string) =
         // NOTE: requires to define as ResizeArray to convert from raw JavaScript array.
@@ -34,9 +35,8 @@ module Parser =
 module Misc =
     open System
     open Feliz
-    open Parser
 
-    let datesInYear year =
+    let private datesInYear year =
         let startDate =
             let d = DateTime(year, 1, 1)
 
@@ -63,7 +63,7 @@ module Misc =
                     Some(date, date.AddDays(1.0)))
             startDate
 
-    let generateCalendar (year: int) (logs: Booklog list) =
+    let private generateCalendar (year: int) (logs: Booklog list) =
         let dateMap =
             logs
             |> List.map (_.date >> DateTime.Parse)
@@ -130,20 +130,30 @@ module Misc =
             ]
         ]
 
-    let generateLinks (className: string) (href: 'T -> string) (text: 'T -> string) pages =
-        let links =
-            pages
-            |> List.map (fun x -> Html.li [ Html.a [ prop.href (href x); prop.children [ Html.text (text x) ] ] ])
+    let private generateLink (href: 'T -> string) (text: 'T -> string) (x: 'T) =
+        Html.a [ prop.href (href x); prop.children [ Html.text (text x) ] ]
+
+    let private generateLinks (className: string) (href: 'T -> string) (text: 'T -> string) pages =
+        let links = pages |> List.map (fun x -> Html.li [ generateLink href text x ])
 
         Html.ul [ prop.className className; prop.children links ]
 
     let generateBooklogLinks baseUrl years =
         generateLinks "booklog-links" (fun year -> $"{baseUrl}/{year}.html") string years
 
+    let private generateBookLink baseUrl (book: Book) =
+        generateLink (fun (book: Book) -> $"{baseUrl}/{book.id}.html") _.bookTitle book
+
     let generateBookLinks baseUrl (books: Book list) =
         generateLinks "book-links" (fun (book: Book) -> $"{baseUrl}/{book.id}.html") _.bookTitle books
 
-    let generateBooklogList links (books: Map<string, Book>) (year: int) (logs: Booklog list) =
+    let generateBooklogNotes (notes: string option) =
+        notes
+        |> function
+            | Some notes -> Html.p [ prop.dangerouslySetInnerHTML (Parser.parseMarkdown notes) ]
+            | None -> Html.p []
+
+    let private generateBooklogList baseUrl links (books: Map<string, Book>) (year: int) (logs: Booklog list) =
         let header =
             Html.h1 [ prop.className "title"; prop.children (Html.text $"Booklog {year}") ]
 
@@ -156,17 +166,8 @@ module Misc =
             |> List.concat
             |> List.rev
             |> List.map (fun (i, log) ->
-                let notes =
-                    log.notes
-                    |> function
-                        | Some notes -> Html.p [ prop.dangerouslySetInnerHTML (parseMarkdown notes) ]
-                        | None -> Html.p []
-
-                let getPreviouslyRead bookTitle =
-                    Map.tryFind bookTitle books
-                    |> function
-                        | Some book -> book.previouslyRead
-                        | None -> None
+                let notes = log.notes |> generateBooklogNotes
+                let book = Map.tryFind log.bookTitle books
 
                 Html.div [
                     prop.className "section"
@@ -179,7 +180,9 @@ module Misc =
                         Html.p [
                             prop.className "subtitle content is-small"
                             prop.children [
-                                Html.text $"{log.bookTitle}"
+                                (match book with
+                                 | Some book -> book |> generateBookLink baseUrl
+                                 | None -> Html.text log.bookTitle)
                                 Html.text ", read count: "
                                 Html.text (
                                     let rc =
@@ -188,8 +191,10 @@ module Misc =
                                             | Some rc -> rc
                                             | None -> 1
 
-                                    log.bookTitle
-                                    |> getPreviouslyRead
+                                    book
+                                    |> function
+                                        | Some book -> book.previouslyRead
+                                        | _ -> None
                                     |> function
                                         | Some pr when pr -> $"n+{rc}"
                                         | _ -> $"{rc}"
@@ -204,7 +209,7 @@ module Misc =
 
         [ header; booklogCalendar; Html.div booklogRows; links ]
 
-    let generateBooklogSummary links (book: Book) (logs: Booklog list) =
+    let private generateBooklogSummary links (book: Book) (logs: Booklog list) =
         let header =
             Html.h1 [
                 prop.className "title"
@@ -215,11 +220,7 @@ module Misc =
             logs
             |> List.filter (_.notes >> Option.isSome)
             |> List.map (fun (log) ->
-                let notes =
-                    log.notes
-                    |> function
-                        | Some notes -> Html.p [ prop.dangerouslySetInnerHTML (parseMarkdown notes) ]
-                        | None -> Html.p []
+                let notes = log.notes |> generateBooklogNotes
 
                 [ notes
                   Html.p [
@@ -263,7 +264,7 @@ module Misc =
     let getBookMap (books: Book list) =
         books |> List.map (fun book -> book.bookTitle, book) |> Map.ofList
 
-    let inline parseBooklog<'D, 'T
+    let inline private parseBooklog<'D, 'T
         when 'D: (member basePath: string) and 'D: (member priority: string) and 'T: (member date: string)>
         (conf: FrameConfiguration)
         (def: 'D)
@@ -303,7 +304,7 @@ module Misc =
             conf
             def
             (fun def -> def.year |> string)
-            (fun def -> generateBooklogList def.links def.books def.year)
+            (fun def -> generateBooklogList def.basePath def.links def.books def.year)
             booklogs
 
     type BookDef =
