@@ -531,21 +531,18 @@ module Component =
             [ Html.li [
                   prop.children [
                       Html.button [
-                          prop.className "theme-toggle"
+                          prop.className "theme-toggle theme-toggle-light"
                           prop.custom ("data-theme", "light")
-                          prop.text "🌞"
                           prop.title "Light theme"
                       ]
                       Html.button [
-                          prop.className "theme-toggle"
+                          prop.className "theme-toggle theme-toggle-dark"
                           prop.custom ("data-theme", "dark")
-                          prop.text "🌙"
                           prop.title "Dark theme"
                       ]
                       Html.button [
-                          prop.className "theme-toggle"
+                          prop.className "theme-toggle theme-toggle-system"
                           prop.custom ("data-theme", "system")
-                          prop.text "🖥️"
                           prop.title "System Default"
                       ]
                   ]
@@ -608,8 +605,8 @@ module Component =
                         | None -> $"%s{meta.date} %s{meta.leaf}"
 
                     match button with
-                    | Prev -> $"<< %s{t}", "prev"
-                    | Next -> $"%s{t} >>", "next"
+                    | Prev -> t, "prev"
+                    | Next -> t, "next"
 
                 Html.a [
                     prop.classes [ className; "button" ]
