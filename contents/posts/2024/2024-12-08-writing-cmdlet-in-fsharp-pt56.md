@@ -164,7 +164,7 @@ Measure-PlatyPSMarkdown .\docs\*.md | ? Filetype -match CommandHelp | select -Ex
 
 # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.platyps/show-helppreview?view=ps-modules
 # 出力した MAML を Markdown preview する。何故かこいつは Path が Position 0 じゃなく Named なので注意
-Show-HelpPreview -Path .\src\pocof\pocof.dll-Help.xml
+Show-HelpPreview -Path .\src\pocof\pocof-Help.xml
 # 省略
 ```
 
