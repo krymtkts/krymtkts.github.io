@@ -9,10 +9,10 @@ tags: ["fsharp", "powershell", "dotnet"]
 リリースするするフラグが折れないようにするためにも後何を解消しないといけないか書いておく。
 
 1 つデカい破壊的な変更を入れた。
-それは `Select-Pocof` の parameter の `position=0` を変えたことだ。
+それは `Select-Pocof` の parameter の [`position=0`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters?view=powershell-7.4#position-argument) を変えたことだ。
 修正は軽微だがこれはデカい。 [#268](https://github.com/krymtkts/pocof/pull/268)
 
-この変更により従来は `$datasource | pocof -Query nanigashi` としなければならなかったところを、 `$datasource | pocof nanigashi` でできるようにした。
+この変更により従来は `$datasource | pocof -Query nanigashi` としなければならなかったところを、 parameter name を省略して `$datasource | pocof nanigashi` とできるようにした。
 もし pocof ユーザの方がいて pocof の `position=0` だった `InputObject` にフィルタリング対象のデータを渡している人がいたらすみません、以後 pipeline で渡してください。
 破壊的変更なのでテストに影響あるかなーと思ったが影響なかったので問題ない認識。
 
