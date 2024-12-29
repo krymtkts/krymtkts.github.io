@@ -359,3 +359,13 @@
     2011 ~ 2021 年の発展・変遷をまとめてるぽい。
     わたしはピアリングも知らなければ BGP も知らないので興味深く読ませていただく。
     目次に「堂島問題」と出てきたところでデータセンターのらへんのやつかと笑ってしまった。
+- date: 2024-12-29
+  bookTitle: ピアリング戦記 日本のインターネットを繋ぐ技術者たち
+  pages: 1 ~ 7
+  notes: |
+    ピアリングは BGP の形態の一種で組織のネットワークとネットワークを繋ぐので、 ISP 同士のビジネスの力学が働いたりする。
+    Internet は internetworking のことで、ネットワーク同士を繋ぐことで成り立っている。
+    これは雑に言うと router が routing table に基づき next hop に packet を送信することの集合で成り立つ。
+    ここで機械的に動的な routing の仕組みが必要になる。
+    ネットワーク内の routing protocol は IGP(Interior Gateway Protocol)、 ネットワーク間の routing protocol は EGP(Exterior Gateway Protocol) と呼ばれる。
+    この EGP で BGP(Border Gateway Protocol) が使われる。
