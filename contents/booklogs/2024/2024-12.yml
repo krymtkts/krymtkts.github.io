@@ -370,3 +370,18 @@
     ここで機械的に動的な routing の仕組みが必要になる。
     ネットワーク内の routing protocol は IGP(Interior Gateway Protocol)、 ネットワーク間の routing protocol は EGP(Exterior Gateway Protocol) と呼ばれる。
     この EGP で BGP(Border Gateway Protocol) が使われる。
+- date: 2024-12-30
+  bookTitle: ピアリング戦記 日本のインターネットを繋ぐ技術者たち
+  pages: 8 ~ 24
+  notes: |
+    第 1 章 ピアリングを巡る静かな戦い。
+    BGP で繋がる個々のネットワークを AS(Autonomous System) と呼ぶ。
+    AS は ISP やコンテンツ事業者、データセンター事業者、学術機関や大企業などが運用し、世界で一意の番号 ASN(AS Number) が割り当てられている。かつては 16 bit だったが 32 bit に拡張された。
+    BGP により接続しあった router を peer と呼ぶ。 peer は互いに経路情報を交換している。
+    AS 内の IGP は RIP, IS-IS, OSPF などがあるが、 EGP である BGP は AS 間の力関係や金銭を勘案した調整ができ、それを policy と呼ぶ(Local Preference, AS_PATH Prepend)。
+    AS の力関係はトラフィック量で決まり、大手から Tier 1, Tier 2, Tier 3 に分かれる。
+    AS 同士の接続は transit と peering がある。いずれも BGP で接続するが、 transit は金でより大きい AS と従量課金で接続、 peering は相互の AS のメリットがあり無償で接続する形態である。
+    peering では相互の AS でネットワークの到達性を高める動機がなく、 AS 自身とその下位の AS へのトラフィックは送信されるが、 transit を経由したり peering をまたぐトラフィックは送信しない形態が多い。
+    peering をする動機は、大手が自身のトラフィックを獲得して transit のサービスを成立させたり、 transit のトラフィックを減らしコストダウンを図ったり、通信品質の担保、スケールアウトのため等がある。
+    peering を解消するのを depeering といい、相互の AS にメリットがなくなったり政治的な事情で行われることがある。
+    めちゃくちゃビジネスライクなんやなというのを第 1 章で理解した。
