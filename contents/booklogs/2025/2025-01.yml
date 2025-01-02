@@ -13,3 +13,17 @@
     しかし 2013 年の東日本大震災で海底ケーブルが切れてギリギリだったのもあって以降、 BCP  的な観点から大阪でピアリングする数も増えた。
     利用者が増えて新たな DC もでき、大手キャリアが大阪にも進出したことで更に利用者が増えた。
     また堂島問題(構内配線の煩雑さ、 4 つのビルが 1 拠点に見えるややこしさ、 1 ビルのダークファイバ利用の審議)の解消も活況に一役買った。
+- date: 2025-01-02
+  bookTitle: ピアリング戦記 日本のインターネットを繋ぐ技術者たち
+  pages: 40 ~ 46
+  notes: |
+    第 3 章 IX とは何か？国ごとに違う IX 。
+    IX(Internet eXchange)は AS が BGP ルータを持ち寄って接続し合う場。商用 IX もあれば学術用 IX もある。 IX サービス事業者を IXP(Internet eXchange Provider)と呼ぶ。
+    日本では、最初に誕生した学術研究用 IX NSPIXP 、商用 IX 大手 JPIX, JPNAP, BBIX がある。
+    商用 IX は場を提供することで収益を得る。物理的なポートの帯域で月額固定料金を請求するポート課金が一般的。
+    IX は場を提供するだけで実際に接続し合うのは AS 間の契約により、 peering だけでなく transit での接続もある。
+    IX が提供するルートサーバに接続することで複数の AS と接続できる環境もある。
+    IX での接続を public peering と呼び、 IX を介さずに接続することを private peering , PNI(Private Network Interconnect), dynamic peering と呼ぶ。
+    public peering の場合複数の AS のトラフィックが 1 本の回線に集中する可能性があるが、多数の AS と接続する手間やコスト面でのメリットがある。
+    IX は国や政治的背景によって在り方に違いがある。合法的傍受(Lawful Intercept)の対応や、 MSK-IX(Moscow Internet eXchange) は Sovereign Internet という規制の元でインターネットからの切り離せる仕組みが強制されている。
+    IX が設置される場所は国それぞれだが技術的・運用的・政策的課題はどこも共通しており、 IX 事業者連合会で情報交換されている。
