@@ -284,3 +284,15 @@
     失われるサイクルは少なくとも「命令フェッチから命令実行までのステージ数」になる。またハードウェア的にも切り替えによるキャンセル処理が煩雑になる。
     文献やベンダによって分岐命令の区分や名前が異なるが、ここでいう分岐命令は無条件分岐命令(unconditional branch instruction)、条件分岐命令(conditional branch instruction)、コール命令(call instruction)/リターン命令(return instruction)(最近の CPU は無条件～のみ実装している)をさす。
     この辺は暗記。
+- date: 2025-01-28
+  bookTitle: プログラマーのための CPU 入門 CPU は如何にしてソフトウェアを高速に実行するか
+  pages: 49 ~ 57
+  notes: |
+    第 4 章 分岐命令。
+    空きステージを減少させる方法として分岐先の命令を先読みでフェッチする分岐予測(branch prediction)がある。
+    分岐予測では、分岐命令の存在(過去の分岐命令を保存し命令フェッチ時に判定)、分岐先アドレス(BTB(Branch Target Buffer), BTAC(Branch Target Address Cache), リターンスタック(return stack, return address stack)を使う)、条件分岐命令の分岐方向(branch direction)(BHT(Branch History table), PHT(Pattern History Table), BHB(Branch History Buffer)を使う)を予測する。
+    分岐予測の成功率は(プログラムや CPU によるが)傾向的に 90% 台中程度で予測ミス(mis-prediction)も発生する。
+    過去の命令履歴に依存するので新しい命令パターンや、ハードウェア面の制約からテーブルやスタックの容量を超える数の命令やパターンを予測することはできない。
+    分岐予測とアウトオブオーダー実行の組み合わせで初めて、狭義の投機実行(speculative execution)が実現される。
+    レイテンシが大きい基本ブロック先頭付近荷配置される命令の実行前倒しができるため、アウトオブオーダー実行を導入する最大の動機といえると。
+    CPU の中は先読みして実行の試行錯誤の繰り返しみたいなイメージになってきた。
