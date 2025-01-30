@@ -284,7 +284,7 @@
     失われるサイクルは少なくとも「命令フェッチから命令実行までのステージ数」になる。またハードウェア的にも切り替えによるキャンセル処理が煩雑になる。
     文献やベンダによって分岐命令の区分や名前が異なるが、ここでいう分岐命令は無条件分岐命令(unconditional branch instruction)、条件分岐命令(conditional branch instruction)、コール命令(call instruction)/リターン命令(return instruction)(最近の CPU は無条件～のみ実装している)をさす。
     この辺は暗記。
-- date: 2025-01-28
+- date: 2025-01-29
   bookTitle: プログラマーのための CPU 入門 CPU は如何にしてソフトウェアを高速に実行するか
   pages: 49 ~ 57
   notes: |
