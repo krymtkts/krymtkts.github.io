@@ -173,3 +173,17 @@
     例外では性能課題になりうるページフォールトがあるが、命令流切替と相対して小さいので割り切ってもよい。
     割り込みは発生頻度を抑えることで改善できるが、その場合デバイスの応答性を下げるトレードオフになる。
     最後は実験。ゼロ除算が Linux の場合整数と浮動小数点を SIGFPE 荷集約して区別しない場合があるの初めて知った。
+- date: 2025-02-20
+  bookTitle: プログラマーのための CPU 入門 CPU は如何にしてソフトウェアを高速に実行するか
+  pages: 141 ~ 149
+  notes: |
+    第 9 章 マルチプロセッサ。
+    multiprocessor は 2 つ以上の CPU を持つハードウェア形態。 CPU パイプライン観点では命令流を増やすことで命令流の密度を高める。
+    ざっくり様々な形式がある。異種・同種の CPU による構成、 SIMD 型・ MIMD 型、集中共有メモリ型(UMA 型)・分散共有メモリ型(NUMA 型)。
+    つまり最近の Ryzen AI 9 HX 370 なんかは異種の構成か。heterogeneous multiprocessor という。
+    MIMD(Multiple Instruction stream, Multiple Data stream)型 は各 CPU が個別の命令流を、 SIMD(Single Instruction stream, Multiple Data stream)型は同じ 1 つの命令流を処理する(SIMD 命令とは別)。
+    SIMD 型は PC レジスタを共有し命令制御のハードウェアを共通化できるため規則的な大量データ処理に向き、 GPU で使われる。
+    共有メモリ型(Shared Memory Architecture)は各 CPU でメモリアドレスを共有する。
+    集中 UMA(Uniform Memory Access)と SMP(Symmetric Multiprocessing)はメモリアクセス時間が一定で、分散 NUMA(Non-Uniform Memory Access)はメモリアクセス時間に差が出る。
+    メモリアドレスを共有しない構成は、メッセージ交換型(Message Passing System)、私有メモリ型(Private Memory)、 NORMA(NO Remote Memory Access)、分散メモリ(Distributed Memory)型等。
+    近年主流の MIMD 型かつ共有メモリ型の採用は、ハードウェアの実装効率や性能向上よりもソフトウェアの実装が容易な構成に寄せてると。なるほどなー、それだけソフトウェア実装も大変なんやろう。
