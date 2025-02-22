@@ -45,3 +45,7 @@
 - id: sous-vide-at-home
   bookTitle: 家庭の低温調理 完璧な食事のためのモダンなテクニックと肉、魚、野菜、デザートのレシピ 99
   bookAuthor: Lisa Q. Fetterman, Meesha Halm, Scott Peabody, 水原 文
+- id: pickled
+  bookTitle: 世界の作りおき野菜 みんなに愛される味付けの魔法
+  bookAuthor: Freddie Janssen, 清水玲奈
+  previouslyRead: true
