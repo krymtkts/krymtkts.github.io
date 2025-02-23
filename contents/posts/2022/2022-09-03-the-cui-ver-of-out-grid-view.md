@@ -23,7 +23,7 @@ Install-Module Microsoft.PowerShell.ConsoleGuiTools -AllowPrerelease -Scope AllU
 Get-ChildItem | Out-ConsoleGridView
 ```
 
-![水色の背景に印字される `ls` の結果](/img/2022-09-03-capture/capture.png)
+![水色の背景に印字される `ls` の結果](/img/2022-09-03-capture/capture.png "水色の背景に印字される `ls` の結果")
 
 `space` キーでオブジェクトを選択するか `Ctrl+A` で全選択して、 `Enter` で選択した結果を出力する。
 `-Filter` オプションに渡した値で初期表示がフィルタリングされた形になる。そのままタイプしてもフィルタ入力できない。`Tab` キーを押してフィルタのテキストにフォーカスできる。
@@ -44,6 +44,6 @@ Get-ChildItem | Out-ConsoleGridView
 Get-InstalledModule | Out-ConsoleGridView
 ```
 
-![すし詰めに印字される `Get-InstalledModule` の結果](/img/2022-09-03-capture/jam-packed-capture.png)
+![すし詰めに印字される `Get-InstalledModule` の結果](/img/2022-09-03-capture/jam-packed-capture.png "すし詰めに印字される `Get-InstalledModule` の結果")
 
 `pocof` でやりたいことと方向性が違うなあという感じなので、作ってるものを今すぐブン投げ捨てる必要はなかったようだ。こちらの開発は趣味プロで続けようと思った。しかしコード参考にできるものが増えたのでとても助かるなぁ。

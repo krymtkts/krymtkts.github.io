@@ -26,9 +26,9 @@ tags: ["cryogen"]
 今回の VerUp により Best Practices は 92 -> 100 に、 あと Performance も 93 -> 94 と意図せず微妙な好影響があった。
 
 - before
-  - ![変更前は Performance 93 Accessibility 97 Best Practices 92 SEO 92](/img/2022-08-27-capture/before.png)
+  - ![変更前は Performance 93 Accessibility 97 Best Practices 92 SEO 92](/img/2022-08-27-capture/before.png "変更前は Performance 93 Accessibility 97 Best Practices 92 SEO 92")
 - after
-  - ![変更後は Performance 94 Accessibility 97 Best Practices 100 SEO 92](/img/2022-08-27-capture/after.png)
+  - ![変更後は Performance 94 Accessibility 97 Best Practices 100 SEO 92](/img/2022-08-27-capture/after.png "変更後は Performance 94 Accessibility 97 Best Practices 100 SEO 92")
 
 Bootstrap 5 では CSS カスタムプロパティでフォントサイズとか色とか変えられるみたいなので、このブログ用に再定義してるスタイルのいくつかは不要になるんじゃないかな。
 これを機にちょっと見直すのもありかも知れない。あるいは別の静的サイトジェネレータに乗り換えるとか。他にやることなくなったらそれも一興か。

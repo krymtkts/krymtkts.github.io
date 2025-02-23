@@ -17,7 +17,7 @@ tags: ["font"]
 コードは愚直に書いただけで Cognitive Complexy が 16 を突破してしまったが、期待の通りのフォント変換ができた模様。
 これにより残念だった Powerline の隙間・見切れ問題が解決したものと思う。これで現時点では完璧や...という Migu になったので当分は使用を確かめてみようと思う。
 
-![現在のpowerline](/img/2021-05-16-terminal/mypowerline.png)
+![現在のpowerline](/img/2021-05-16-terminal/mypowerline.png "現在のpowerline")
 
 - [x] お亡くなりになられた fontmerger を Python3 化して動かす
 - [x] 最新の Migu に対して fontmerger で Nerd font patch する

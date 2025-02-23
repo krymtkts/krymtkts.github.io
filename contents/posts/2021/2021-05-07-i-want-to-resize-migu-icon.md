@@ -73,7 +73,7 @@ Nerd Fonts の font-patcher を読んでいるときに気づいたのが、`--m
 
 これにより全ての追加したアイコングリフが narrow 幅になることで、漸く Windows Terminal でもﾐﾆﾐﾆアイコンフォントにならずに表示できるようになった。
 
-![現在のpowerline。左向き三角が残念](/img/2021-05-07-terminal/mypowerline.png)
+![現在のpowerline。左向き三角が残念](/img/2021-05-07-terminal/mypowerline.png "現在のpowerline。左向き三角が残念")
 
 しかしご覧の通り、右に寄るべきフォントの見た目が非常に残念なので、今後もちょいちょいいじらねばならない。完成はいつになるのか...😪
 (幅 500 以上になってるためずれる)

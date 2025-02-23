@@ -16,11 +16,11 @@ fontmerger を使って日本語フォントにパッチする場合、漢字が
 
 するとですね、[devblackops/Terminal-Icons](https://github.com/devblackops/Terminal-Icons/)は [https://www.nerdfonts.com/cheat-sheet から自動生成した標準のコードポイント](https://github.com/devblackops/Terminal-Icons/blob/eeb5ce85d4a1882b5155bd6f06859a4b6f4b44d8/psakeFile.ps1#L28) で以てフィアルやディレクトリのアイコンを表示するので...わたしの Migu だと豆腐になるアイコンがちらほらいるわけですね。
 
-![豆腐アイコン](/img/2021-07-01-terminal/icon-tofu.png)
+![豆腐アイコン](/img/2021-07-01-terminal/icon-tofu.png "豆腐アイコン")
 
 偶然にも、「栗」がアイコンに割り当てられてしまっているところもあったり。この動機づけはシンクロニシティやろ！
 
-![停止は栗](/img/2021-07-01-terminal/stop-is-chestnut.png)
+![停止は栗](/img/2021-07-01-terminal/stop-is-chestnut.png "停止は栗")
 
 前まではアイコンがぶっ壊れ気味の Migu を使っていたので、割れ窓理論的に気にならなかった豆腐が、最近妙に気になってきたわけだ。
 

@@ -1,6 +1,6 @@
 ---
 title: "世界中の誰にも使われていない？ Glue のタグ付け Cmdlet"
-tags: ["powershell","aws"]
+tags: ["powershell", "aws"]
 ---
 
 現職にて AWS のコストを可視化すべく、既存の AWS リソースにひたすらコスト配分タグを付与していく作業をしている(勝手に)。
@@ -13,7 +13,7 @@ Glue 君のことね。 [Glue: Add-GLUEResourceTag Cmdlet | AWS Tools for PowerS
 
 この御方なんか知らんけど `Tag[]` じゃなくて `hashtable` を受けつける。コレまた当然のごとく Reference にはサンプルコード載ってないので、念のためググるかーと思いググったところ...
 
-![9 件しかヒットしない Add-GLUEResourceTag](/img/2022-07-23-capture/aws-tools-for-pwsh.png)
+![9 件しかヒットしない Add-GLUEResourceTag](/img/2022-07-23-capture/aws-tools-for-pwsh.png "9 件しかヒットしない Add-GLUEResourceTag")
 
 9 件しかヒットしなかった(2022-07-22 時点)。マジで？
 世界中で誰も使ってないのか、はたまたショボ過ぎて誰も記事にしないのか。
@@ -38,7 +38,7 @@ Get-GLUECrawlerList | ForEach-Object {
 
 AWS CLI の方はというと `"aws glue tag-resource"` で 3 件しかヒットしなかった。
 
-![3 件しかヒットしない "aws glue tag-resource"](/img/2022-07-23-capture/aws-cli.png)
+![3 件しかヒットしない "aws glue tag-resource"](/img/2022-07-23-capture/aws-cli.png '3 件しかヒットしない "aws glue tag-resource"')
 
 しかしながらヒットした記事は実行例が分かるものになってて、こう...なんか AWS Tools for PowerShell の人気の無さが際立つなーと感じた。
 

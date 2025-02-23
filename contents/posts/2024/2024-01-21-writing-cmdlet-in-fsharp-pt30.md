@@ -219,7 +219,7 @@ testConsoleWindowWithoutBufferCleaning ()
 
 こんな感じに動く。
 
-![F# での PoC キャプチャ](/img/2024-01-21-poc\poc-fsharp.gif)
+![F# での PoC キャプチャ](/img/2024-01-21-poc\poc-fsharp.gif "F# での PoC キャプチャ")
 
 Windows の他に Ubuntu on WSL でも動かしてみた(disk カツカツで Docker やめた)が、良さそう。
 前方スクロールしてたとしても、入力をはじめたらカーソル位置の操作が行われて全画面位置に戻る。いい。
