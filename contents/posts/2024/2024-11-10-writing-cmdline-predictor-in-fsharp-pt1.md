@@ -1,6 +1,6 @@
 ---
 title: "F# で command-line predictor を書いてる Part 1"
-tags: ["fsharp", "powershell", "dotnet"]
+tags: ["fsharp", "powershell", "dotnet", "command-line-predictor"]
 ---
 
 ちょっと前触れた [command-line predictor を書きたい](/posts/2024-10-13-i-want-to-write-predictor-in-fsharp.html)というやつを試し始めた。

@@ -1,6 +1,6 @@
 ---
 title: "F# で command-line predictor を書いてる Part 2"
-tags: ["fsharp", "powershell", "dotnet"]
+tags: ["fsharp", "powershell", "dotnet", "command-line-predictor"]
 ---
 
 [前](https://krymtkts.github.io/posts/2024-11-10-writing-cmdline-predictor-in-fsharp-pt1.html)は sample を作っただけだが、最近 F# で command-line predictor を書くのを本格化した。
