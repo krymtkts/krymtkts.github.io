@@ -40,3 +40,10 @@ Json parsing error in file C:\Users\takatoshi\dev\github.com\krymtkts\pocof\.con
 JSON のコメントと空白をどう扱うべきかに関してふにゃふにゃだったので XML に軍配が上がったて流れぽい。議論も止まった様子。
 
 とりあえず `global.json` だけでも JSONC が使えるということやが、この流れが他にも派生していくかというと、[最近 sln が slnx になった](https://devblogs.microsoft.com/dotnet/introducing-slnx-support-dotnet-cli/)流れを見てても XML 優勢なんかなと思えてくるな。
+
+---
+
+このネタ普通に[前の日記](/posts/2025-03-02-writing-cmdlet-in-fsharp-pt65.html)で書いてたわｗ
+ネタ帳から削り忘れてたか...
+
+まあ slnx とも繋げたので全く同じではないか...ということでご愛嬌。
