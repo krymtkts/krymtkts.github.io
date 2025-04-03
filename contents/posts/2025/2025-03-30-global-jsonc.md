@@ -24,7 +24,7 @@ tags: ["dotnet"]
 まじか。
 [pocof](https://github.com/krymtkts/pocof) において [macOS の GitHub Actions workflow でのみ `dotnet tool restore` がエラーになる問題](https://github.com/dotnet/sdk/issues/46857)があったとき、 .NET SDK を version 固定しないといけなかったので[そのメモを残す](https://github.com/krymtkts/pocof/commit/d4ff96628ce470a52e74b29fdd0b67f44161e6e0)のに使った。
 
-因みにもしやと思って他に思いつく .NET 系の設定ファイルで試したところ、 `dotnet-tools.json` はダメだった
+因みにもしやと思って他に思いつく .NET 系の設定ファイルで試したところ、 `dotnet-tools.json` はダメだった。
 
 ```powershell
 > dotnet tool restore

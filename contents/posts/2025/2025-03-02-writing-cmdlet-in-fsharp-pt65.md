@@ -93,7 +93,7 @@ Package signature validation failed.
 [dotnet tool restore started failing on macOS with NU3037 and NU3028 errors after 11th February · Issue #46857 · dotnet/sdk](https://github.com/dotnet/sdk/issues/46857)
 
 [これ](https://github.com/dotnet/sdk/issues/46857#issuecomment-2683545963) と [これ](https://github.com/dotnet/sdk/issues/46857#issuecomment-2683556715) を見ればわかるが、 macOS では NuGet package の署名検証がコケるから default で無効らしい。
-公式の文書は [NuGet signed-package verification - .NET CLI | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/tools/nuget-signed-package-verification#macos) か
+公式の文書は [NuGet signed-package verification - .NET CLI | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/tools/nuget-signed-package-verification#macos) か。
 
 でも 9.0.200 でデフォルト有効になってしまう変更があったらしい。これは [`DOTNET_NUGET_SIGNATURE_VERIFICATION = false` でも回避できない](https://github.com/dotnet/sdk/issues/46857#issuecomment-2683555678)とか。
 issue の Milestone は 9.0.3xx なのですぐには直って落ちてこないかな。
@@ -122,7 +122,7 @@ AI さんにこれをとかそうとしたらどこをどう調べるべきか�
 
 因みに、この過程で `global.json` に comment を書けることを初めて知った。要は JSON with Comments 。
 [global.json overview - .NET CLI | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/tools/global-json#comments-in-globaljson)
-多分時代の流れｄ `System.Text.Json` を使ってるので deserialize のときは comment が skip されてる。
+多分時代の流れで `System.Text.Json` を使ってるので deserialize のときは comment が skip されてる。
 なので serialize するのは()`dotnet new globaljson` のときくらいしかないと思うが)消えるだろう。
 
 tool manifest `dotnet-tools.json` でも同様かと思ったが、こちらはこちらで理由があって対応してないみたい。

@@ -14,7 +14,7 @@ tags: ["openssh", "chocolatey", "winget"]
 
 気づかず使ってた。
 repo 見ても最新は上記のママだし、変なバイナリ使ってたんかと思ってゾッとしたわ...
-一応以下のコマンドで一つ前の正しいやつに戻せる。
+一応以下のコマンドで 1 つ前の正しいやつに戻せる。
 
 ```powershell
 choco install openssh --version=9.5.0-beta1 -params '"/SSHAgentFeature"' -y -pre --force
@@ -40,7 +40,7 @@ Maven がないのは [`Scripted-Application`](https://github.com/microsoft/wing
 
 [Support other portable application formats · Issue #5083 · microsoft/winget-cli](https://github.com/microsoft/winget-cli/issues/5083)
 
-というわけで WinGet の今後に期待し、とりあえず新しいのを使いたいから一旦 OpenSSH だけ winget に移行した
+というわけで WinGet の今後に期待し、とりあえず新しいのを使いたいから一旦 OpenSSH だけ winget に移行した。
 
 ```powershell
 winget install --id Microsoft.OpenSSH.Preview --scope machine --override ADDLOCAL=Client
