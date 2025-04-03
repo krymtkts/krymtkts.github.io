@@ -1,6 +1,7 @@
 ---
 title: "`global.json` は JSONC"
 tags: ["dotnet"]
+date: 2025-04-01
 ---
 
 旅行中のため小ネタ。
@@ -42,6 +43,8 @@ JSON のコメントと空白をどう扱うべきかに関してふにゃふに
 とりあえず `global.json` だけでも JSONC が使えるということやが、この流れが他にも派生していくかというと、[最近 sln が slnx になった](https://devblogs.microsoft.com/dotnet/introducing-slnx-support-dotnet-cli/)流れを見てても XML 優勢なんかなと思えてくるな。
 
 ---
+
+2025-04-01 追記。
 
 このネタ普通に[前の日記](/posts/2025-03-02-writing-cmdlet-in-fsharp-pt65.html)で書いてたわｗ
 ネタ帳から削り忘れてたか...
