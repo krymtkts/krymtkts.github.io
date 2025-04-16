@@ -1,5 +1,6 @@
 ---
 title: "F# で command-line predictor を書いてる Part 5"
+subtitle: "coverage 100% にする"
 tags: ["fsharp", "powershell", "dotnet", "command-line-predictor"]
 ---
 

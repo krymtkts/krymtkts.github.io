@@ -1,5 +1,6 @@
 ---
 title: "F# で command-line predictor を書いてる Part 3"
+subtitle: "Expecto"
 tags: ["fsharp", "powershell", "dotnet", "command-line-predictor", "expecto"]
 ---
 

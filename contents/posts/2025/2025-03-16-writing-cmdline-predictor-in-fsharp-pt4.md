@@ -1,5 +1,6 @@
 ---
 title: "F# で command-line predictor を書いてる Part 4"
+subtitle: "v0.2.0 むけの新機能"
 tags: ["fsharp", "powershell", "dotnet", "command-line-predictor"]
 ---
 

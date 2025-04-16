@@ -1,5 +1,6 @@
 ---
 title: "F# で command-line predictor を書いてる Part 6"
+subtitle: "FSharp.Analyzer.SDK"
 tags: ["fsharp", "powershell", "dotnet", "command-line-predictor"]
 ---
 
