@@ -1,5 +1,6 @@
 ---
 title: "F# で command-line predictor を書いてる Part 1"
+subtitle: sample 実装を F# に翻訳する
 tags: ["fsharp", "powershell", "dotnet", "command-line-predictor"]
 ---
 
