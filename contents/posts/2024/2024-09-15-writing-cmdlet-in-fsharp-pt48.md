@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.48"
+subtitle: コード引用符
 tags: ["fsharp", "powershell", "dotnet"]
 ---
 

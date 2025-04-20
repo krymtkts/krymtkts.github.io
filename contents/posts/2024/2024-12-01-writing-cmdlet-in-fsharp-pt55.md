@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.55"
+subtitle: "FsCheck"
 tags: ["fsharp", "powershell", "dotnet", "fscheck"]
 ---
 

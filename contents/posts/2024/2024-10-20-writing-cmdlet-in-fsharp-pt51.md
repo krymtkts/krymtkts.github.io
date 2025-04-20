@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.51"
+subtitle: Windows PowerShell on GitHub Actions workflow
 tags: ["fsharp", "powershell", "dotnet"]
 ---
 

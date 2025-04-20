@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.49"
+subtitle: コードクォート
 tags: ["fsharp", "powershell", "dotnet"]
 ---
 

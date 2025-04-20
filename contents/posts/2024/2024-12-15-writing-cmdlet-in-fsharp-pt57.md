@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.57"
+subtitle: "PlatyPS v1 preview の bug"
 tags: ["fsharp", "powershell", "dotnet", "platyps"]
 ---
 
