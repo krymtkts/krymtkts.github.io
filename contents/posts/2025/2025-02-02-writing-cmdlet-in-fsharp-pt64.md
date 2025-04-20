@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.64"
+subtitle: "`UnixStats` がエラーになる"
 tags: ["fsharp", "powershell", "dotnet", "ilspy"]
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.60"
+subtitle: xUnit v3 と FsUnit と FsCheck
 tags: ["fsharp", "powershell", "dotnet"]
 ---
 

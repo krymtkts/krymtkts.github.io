@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.61"
+subtitle: ObjectLayoutInspector
 tags: ["fsharp", "powershell", "dotnet", "benchmark"]
 ---
 

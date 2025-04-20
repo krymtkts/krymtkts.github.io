@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.65"
+subtitle: ".NET SDK のエラーに引っかかった"
 tags: ["fsharp", "powershell", "dotnet"]
 ---
 
