@@ -34,6 +34,12 @@ render
         [ { text = "About"
             path = "/pages/about.html" } ]
 
+      additionalMetaContents =
+        [ { name = "google-site-verification"
+            content = "MGs7mZDRzR9kWtzDfPFcrtqiup4RFjjSMM8m8DZpmJg" }
+          { name = "msvalidate.01"
+            content = "ECC9D19FB8864FDFF9B374295C7A0399" } ]
+
       timeZone = "Asia/Tokyo"
 
       sitemap =
