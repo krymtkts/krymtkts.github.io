@@ -1,6 +1,6 @@
 ---
 title: "About Me"
-date: 2024-04-07
+date: 2025-05-07
 ---
 
 - Takatoshi KURIYAMA / 栗山 貴年
@@ -11,8 +11,8 @@ date: 2024-04-07
   - Play 7-string guitar
   - [krymtkts | GitHub](https://github.com/krymtkts)
     - [SnippetPredictor](https://github.com/krymtkts/SnippetPredictor)
-    - [krymtkts.github.io](https://github.com/krymtkts/krymtkts.github.io)
     - [pocof](https://github.com/krymtkts/pocof)
+    - [krymtkts.github.io](https://github.com/krymtkts/krymtkts.github.io)
     - [blog-fable](https://github.com/krymtkts/blog-fable)
     - [PSJobCanAttendance](https://github.com/krymtkts/PSJobCanAttendance)
     - [PSMFAttendance](https://github.com/krymtkts/PSMFAttendance)
