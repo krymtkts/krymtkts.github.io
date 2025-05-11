@@ -9,7 +9,7 @@ render
       description = "krymtkts's personal blog"
       siteUrl = "https://krymtkts.github.io"
       pathRoot = ""
-      copyright = "2019 - 2024 krymtkts"
+      copyright = "2019 - 2025 krymtkts"
       favicon = "/img/favicon.ico"
       highlightStyle = "node_modules/highlight.js/styles/base16/solarized-dark.min.css"
 
