@@ -19,7 +19,7 @@
   "devDependencies": {
     "bulma": "^1.0.4",
     "pagefind": "^1.3.0",
-    "sass": "^1.87.0",
+    "sass": "^1.88.0",
     "ts2fable": "^0.7.1"
   },
   "dependencies": {
@@ -29,6 +29,6 @@
     "marked-highlight": "^2.2.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "yaml": "^2.7.1"
+    "yaml": "^2.8.0"
   }
 }
