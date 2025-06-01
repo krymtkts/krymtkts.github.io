@@ -5,7 +5,7 @@ open System.Text.RegularExpressions
 open Fable.Core
 open Fable.Core.JsInterop
 open Feliz
-open Node
+open Node.Extra
 
 [<RequireQualifiedAccess>]
 module IO =
@@ -234,7 +234,6 @@ module Parser =
 
 [<AutoOpen>]
 module Misc =
-    open System
     let argv = Process.argv
 
     type Layout =
@@ -249,7 +248,7 @@ module Misc =
             match [ year; month; day ] |> List.map Int32.TryParse with
             | [ true, year; true, month; true, day ] ->
                 let date = $"%04d{year}-%02d{month}-%02d{day}"
-                Post(date)
+                Post date
             | _ -> Page
         | _ -> Page
 
@@ -309,10 +308,11 @@ module Misc =
                     src, dest)
         }
 
+    let normalizeUrlPath (s: string) = s.Replace("\\", "/")
+
     let sourceToSitemap root source =
         let leaf: string = Directory.leaf source
-        let path = Directory.join3 "/" root <| Util.mdToHtml leaf
-        path.Replace("\\", "/")
+        Util.mdToHtml leaf |> Directory.join3 "/" root |> normalizeUrlPath
 
     let now = DateTime.Now
 
@@ -462,7 +462,7 @@ module Component =
     let tagToLi root tag count =
         let leaf = Directory.leaf $"{tag}.html"
         let title = Regex.Replace(leaf, "\.(md|html)", "")
-        let ref = Directory.join3 "/" root <| Util.mdToHtml leaf
+        let ref = Util.mdToHtml leaf |> Directory.join3 "/" root |> normalizeUrlPath
 
         liA ref <| Text $"{title} ({count})"
 
@@ -479,7 +479,7 @@ module Component =
             | Some fm -> $"%s{prefix}%s{Parser.getFormattedTitle fm}"
             | None -> leaf
 
-        let ref = Directory.join3 "/" root <| Util.mdToHtml leaf
+        let ref = Util.mdToHtml leaf |> Directory.join3 "/" root |> normalizeUrlPath
 
         liA ref <| Html title
 
