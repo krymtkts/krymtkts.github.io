@@ -254,3 +254,18 @@
     ランダムな条件分岐。 1/2 はコイントスというのか。コード演奏やスケールの指定。ルートを変数化した転調ができたり。やっぱ音楽理論が必要と。
     live loop で途切れることなく演奏できる。 live loop は複数実行できて全部同期してる。
     複数の live loop が同時並行して実行される概念は新鮮やな。記述は手続き的やけど live loop と全体は宣言的なんだ。
+- date: 2025-06-26
+  bookTitle: 演奏するプログラミング、ライブコーディングの思想と実践
+  pages: 78 ~ 98
+  notes: |
+    Chapter 3 中級編 ライブコーディングをマスターする TidalCycles 。
+    インストール周りは古めなので調べながら見た。
+    TidalCycles は Haskell のライブラリ。要はライブコーディングの DSL か。
+    SuperCollider に SuperDirt 経由で OSC(Open Sound Control) 通信して音を鳴らす。
+    SuperDirt は Dirt Sampler の SuperCollider 実装らしい。 SuperCollider がサウンドエンジン。
+    GUI でサウンドエンジンを起動して SuperDirt を起動するってのがちょっとな。 CLI でできないのか。
+    ライブコーディングはエディタからやるみたい。 VS Code も使える様子。楽曲をコードで管理できていいな。
+    関わる software が多いし TidalCycles は package manager での install が推奨みたい。
+    ただ全部入りなのがちょっとなー。 今だと Pulsar(Atom の後継)が入るし自分でやるなら個々にやったほうがいい。
+    d1 ~ d0 までのコネクション(トラックのようなもの)がある。演奏のパターンは文字列の中に書く。
+    パターン文字列が 1 小節。 Haskell なので関数適用演算子が使えるし、 TidalCycles の独自の演算子もパターン構築に使えるっぽい。
