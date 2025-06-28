@@ -281,3 +281,13 @@
     あと実践的な組み合わせと 1.0 での変更点。
     急に functor 出てきてびっくりしたが Haskell なんだったわ。
     いま 1.10 だったり 2025-06-13 には hosting が GitHub から Codeberg 移ってたり随分変わってるな。
+- date: 2025-06-28
+  bookTitle: 演奏するプログラミング、ライブコーディングの思想と実践
+  pages: 124 ~ 139
+  notes: |
+    Chapter 4 応用編 オリジナルな表現へ。
+    TidalCycles に Sample を取り込む。公開音源を利用する場合はライセンスに気をつけましょう。
+    SuperCollider 組み込みの Synth を使うのと SuperCollider で書かれたコードの読解。
+    SuperCollider で独自の Synth を定義すれば TidalCycles で使える。 SuperDirt で使うためにそれ用の書き方が必要。
+    音を生成するオブジェクト UGen(Unit Generator) を mix して新たな Synth を定義する。
+    SuperCollider は音響合成に関して非常に多機能なので TidalCycles 以外からも利用される理由がよく分かるな。
