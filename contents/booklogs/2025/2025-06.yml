@@ -291,3 +291,12 @@
     SuperCollider で独自の Synth を定義すれば TidalCycles で使える。 SuperDirt で使うためにそれ用の書き方が必要。
     音を生成するオブジェクト UGen(Unit Generator) を mix して新たな Synth を定義する。
     SuperCollider は音響合成に関して非常に多機能なので TidalCycles 以外からも利用される理由がよく分かるな。
+- date: 2025-06-29
+  bookTitle: 演奏するプログラミング、ライブコーディングの思想と実践
+  pages: 140 ~ 155
+  notes: |
+    Chapter 5 応用編 2 映像のライブコーディング。
+    映像でライブコーディングすることは VJ と違って Visualist と呼ぶこともある。
+    LiveCodeLab は On-the-fly(すぐ) に映像をライブコーディングするためのツールで Processing や openFrameworks に比べて過激派で、 WebGL を利用しながら面倒な部分を極力排除し制御することにのみ注力できる環境。
+    CoffeeScript の文法でアルゴリズミックな形態の生成、 Autocode による自動改変で、ジョン・ケージの実験音楽のような偶然の要素を取り入れることもできる。
+    Autocode すごいな、この概念は汎用プログラミング言語やってるだけでは出会えないわ。
