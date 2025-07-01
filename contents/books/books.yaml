@@ -62,3 +62,6 @@
 - id: show-us-your-screens
   bookTitle: 演奏するプログラミング、ライブコーディングの思想と実践
   bookAuthor: 田所 淳
+- id: type-systems-distilled-with-typescript
+  bookTitle: 型システムのしくみ TypeScript で実装しながら学ぶ型とプログラミング言語
+  bookAuthor: 遠藤侑介
