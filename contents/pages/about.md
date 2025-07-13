@@ -1,6 +1,6 @@
 ---
 title: "About Me"
-date: 2025-05-07
+date: 2025-07-13
 ---
 
 - Takatoshi KURIYAMA / 栗山 貴年
@@ -10,6 +10,7 @@ date: 2025-05-07
   - Love HEAVY METAL. Most favorite is Brutal Death Metal.
   - Play 7-string guitar
   - [krymtkts | GitHub](https://github.com/krymtkts)
+    - [PSGameOfLife](https://github.com/krymtkts/PSGameOfLife)
     - [SnippetPredictor](https://github.com/krymtkts/SnippetPredictor)
     - [pocof](https://github.com/krymtkts/pocof)
     - [krymtkts.github.io](https://github.com/krymtkts/krymtkts.github.io)
@@ -19,6 +20,7 @@ date: 2025-05-07
     - [Get-GzipContent](https://github.com/krymtkts/Get-GzipContent)
     - [MavenAutoCompletion](https://github.com/krymtkts/MavenAutoCompletion)
   - [krymtkts | PowerShell Gallery](https://www.powershellgallery.com/profiles/krymtkts)
+    - [PSGameOfLife](https://www.powershellgallery.com/packages/PSGameOfLife/)
     - [SnippetPredictor](https://www.powershellgallery.com/packages/SnippetPredictor/)
     - [pocof](https://www.powershellgallery.com/packages/pocof/)
     - [PSJobCanAttendance](https://www.powershellgallery.com/packages/PSJobCanAttendance/)
