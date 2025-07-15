@@ -65,3 +65,7 @@
 - id: type-systems-distilled-with-typescript
   bookTitle: 型システムのしくみ TypeScript で実装しながら学ぶ型とプログラミング言語
   bookAuthor: 遠藤侑介
+- id: basic-fermentation
+  bookTitle: サンダー・キャッツの発酵教室
+  bookAuthor: Sandor Ellix Katz, 和田侑子, 谷奈緒子
+  previouslyRead: true
