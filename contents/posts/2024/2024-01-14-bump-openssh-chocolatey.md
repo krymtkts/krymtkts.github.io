@@ -52,7 +52,7 @@ Get-Service ssh-agent | select -Property Name,ServiceHandle,DisplayName,ServiceT
 期間が開くと色々ノウハウが失われていく教科書的なパターン。
 
 今後はちゃんと `/SSHAgentService` 使ってやるようにせなあかんな。
-ひとまず profile で `ssh-agent` サービス立ち上がってなかったら `install-sshd.ps1` 流すような記述してのを消した。
+ひとまず profile で `ssh-agent` サービス立ち上がってなかったら `install-sshd.ps1` 流すような記述してたのを消した。
 
 ---
 
