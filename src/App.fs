@@ -3,7 +3,7 @@ module App
 open StaticWebGenerator
 
 render
-    { stage = dev
+    { stage = stage
       lang = "ja"
       siteName = "krymtkts"
       description = "krymtkts's personal blog"
@@ -48,4 +48,6 @@ render
           tags = 0.8
           posts = 0.9
           pages = 0.8
-          booklogs = 0.9 } }
+          booklogs = 0.9 }
+
+      future = future }
