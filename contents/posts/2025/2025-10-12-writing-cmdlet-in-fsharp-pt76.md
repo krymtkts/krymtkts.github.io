@@ -7,8 +7,8 @@ tags: ["fsharp", "powershell", "dotnet"]
 
 早速 [krymtkts/pocof](https://github.com/krymtkts/pocof) を開発した。
 主に `String` 操作の効率化だ。 hot path ではなるべく F# の `String` module も使わないようにしてみている。 [#368](https://github.com/krymtkts/pocof/pull/368)
-benchmark をとってもみて極端に良くできたところもあれば、何故速くなった・遅くなったかわからないところもある。
 
+benchmark をとってもみて極端に良くできたところもあれば、何故速くなった・遅くなったかわからないところもある。
 効果が顕著そうなところを benchmark ピックアップする。
 
 修正前。
@@ -49,7 +49,7 @@ benchmark をとってもみて極端に良くできたところもあれば、�
 | invokeAction_BackwardChar | 535.8 ns | 10.61 ns | 18.57 ns | 0.0248 |     104 B |
 | invokeAction_BackwardWord | 689.1 ns | 12.58 ns | 22.68 ns | 0.0477 |     200 B |
 
-`String.length` が不要な箇所は直に `String.Length` を使ってみるのは、実際に `StringModule.Length` の呼び出しがなくなる分僅かに速くなる。
+[`String.length`](https://fsharp.github.io/fsharp-core-docs/reference/fsharp-core-stringmodule.html#length) が不要な箇所は直に `String.Length` を使ってみるのは、実際に `StringModule.Length` の呼び出しがなくなる分僅かに速くなる。
 `invokeAction` の `AddQuery` や `BackwardChar` はそれに当たるとだろう。
 何故か `BackwardWord` は遅くなってしまったが軽微な差なので誤差かな。
 
@@ -66,7 +66,7 @@ benchmark をとってもみて極端に良くできたところもあれば、�
 +                q.Substring(start, c - start)
 ```
 
-また `QueryCondition.toString` に関しては `List` の生成と中間文字列の生成を一切なくすことで、比較にならないほど劇的に速くメモリも少なくできた。
+また `QueryCondition.toString` に関しては [`list`](https://fsharp.github.io/fsharp-core-docs/reference/fsharp-collections-list-1.html) の生成と中間文字列の生成を一切なくすことで、比較にならないほど劇的に速くメモリも少なくできた。
 代わりに愚直な match expression を採用したので、全てのケースがベタ書きされているので、一見するとギョッとする。
 でもある意味 match expression で経路も網羅できてるし「正しい」使い方ではあるかな。
 速さと省メモリは正義なのだ。
@@ -108,7 +108,7 @@ public static string queryInfo(InternalState state, int count)
 }
 ```
 
-`String.Concat` の方が期待しない形になっているのがよく分かる。
+[`String.Concat`](https://learn.microsoft.com/en-us/dotnet/api/system.string.concat?view=net-9.0) の方が期待しない形になっているのがよく分かる。
 なので断然 String interpolation の方が速い。
 
 | Method                  |      Mean |     Error |    StdDev | Median | Allocated |
