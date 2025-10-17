@@ -81,3 +81,6 @@
 - id: deadline
   bookTitle: デッドライン ソフト開発を成功に導く 101 の法則
   bookAuthor: Tom DeMarco, 伊豆原弓
+- id: slack
+  bookTitle: Slack ゆとりの法則
+  bookAuthor: Tom DeMarco, 伊豆原弓
