@@ -84,3 +84,6 @@
 - id: slack
   bookTitle: Slack ゆとりの法則
   bookAuthor: Tom DeMarco, 伊豆原弓
+- id: waltzing-with-bears
+  bookTitle: 熊とワルツを リスクを楽しむプロジェクト管理
+  bookAuthor: Tom DeMarco, Timothy Lister, 伊豆原弓
