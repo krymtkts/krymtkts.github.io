@@ -1,5 +1,6 @@
 ---
 title: "F# で Cmdlet を書いてる pt.80"
+subtitle: "Multi targeting"
 tags: ["fsharp", "powershell", "dotnet"]
 ---
 
