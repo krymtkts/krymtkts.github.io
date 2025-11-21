@@ -1,6 +1,6 @@
 ---
 title: "下手な文章を Lint する"
-tags: ["vscode", "nodejs", "textlin"]
+tags: ["vscode", "nodejs", "textlint"]
 ---
 
 転職してから 2 ヶ月の間、海外労働者の同僚から、日本語のドキュメントも英語のドキュメントもレビューコメントをいただいていてつらい。
