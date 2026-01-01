@@ -104,3 +104,6 @@
 - id: no-hard-work
   bookTitle: NO HARD WORK! 無駄ゼロで結果を出す僕らの働き方
   bookAuthor: Jason Fried, David Heinemeier Hansson, 久保美代子
+- id: the-unicorn-project
+  bookTitle: The DevOps 勝利をつかめ！ 技術的負債を一掃せよ
+  bookAuthor: Gene Kim, 榊原彰, 長尾高弘
