@@ -2,6 +2,7 @@
 title: PowerShell Preview を使い始めた
 subtitle: PowerShell 7.6.0-preview.6
 tags: ["powershell"]
+date: 2026-01-11
 ---
 
 刺激を求めて PowerShell の Preview([v7.6.0-preview.6](https://github.com/PowerShell/PowerShell/releases/tag/v7.6.0-preview.6)) を使うように変えた。
@@ -135,3 +136,18 @@ if (Get-Command Get-WinGetPackage -ErrorAction SilentlyContinue) {
 
 特に違いも感じずまだ刺激になってないけど、これからは preview を使っていこう。
 VS Code も GitHub Copilot の機能をいち早く使うため Insider にしてるし、なんか unstable だれけになりつつある。
+
+---
+
+2026-01-11 追記。
+
+VS Code で PowerShell Extension が利かなくなった。
+どうも Preview だけだと `pwsh` バイナリが見つからないみたい。
+なので設定で直に `pwsh` への path を指定してやる必要があった。
+
+```json
+  "powershell.powerShellAdditionalExePaths": {
+    "pwsh-preview": "C:\\Program Files\\PowerShell\\7-preview\\pwsh.exe"
+  },
+  "powershell.powerShellDefaultVersion": "pwsh-preview",
+```
