@@ -74,7 +74,7 @@ body の組み立てに必要な `(||)` や `(&&)` は [`F# の repo`](https://g
 コードクォート同士の組み合わせは [Splicing operator](https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/code-quotations#splicing-operators) を使って、最後に [Expr.Lambda](https://fsharp.github.io/fsharp-core-docs/reference/fsharp-quotations-fsharpexpr.html#Lambda) に食わせることで lambda が出来上がるという仕組み。
 AST の組み立ては型のサポートあれど、不正な文法だと実行時のエラーでしか気付けないのでちょっと面倒だった。しかし面倒さを払う価値ある強力な機能。
 
-以降は 2018 Razer Blade Stealth RAM 16 GB で計測した結果の話をする。
+以降は 2017 Razer Blade Stealth RAM 16 GB で計測した結果の話をする。
 
 結果の数値をコピってなかったが、件数が多いとコードクォートの方が明らかに速かった。
 デメリットとして、コードクォートから lambda を構築するのに 100ms 程度のオーバーヘッドが生じるようだった。

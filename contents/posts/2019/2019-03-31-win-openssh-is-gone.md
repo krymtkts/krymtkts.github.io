@@ -3,7 +3,7 @@ title: "Windows10の更新でOpenSSHが逝った"
 tags:  ["windows", "openssh"]
 ---
 
-今更ながら、Raser Blade Stealth 2018にもWindows10 ver1809の更新が来てたようだった。
+今更ながら、Raser Blade Stealth 2017にもWindows10 ver1809の更新が来てたようだった。
 
 何の気なしに更新してみたところ、更新自体はすぐに終わってあっさりいったなと思っていたのだが、terminalを立ち上げると...
 

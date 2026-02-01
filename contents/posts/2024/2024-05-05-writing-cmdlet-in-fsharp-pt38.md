@@ -55,7 +55,7 @@ date: 2024-05-05
 ちなみにこれらの点いずれも、 [PowerShell/ConsoleGuiTools](https://github.com/PowerShell/ConsoleGuiTools) のフィルタは初期ロードが死ぬほど遅いのを除けば[^1]、省メモリで高速にキビキビと動く。
 なんか参考になる要素あるかもな。
 
-[^1]: わたしのいまや貧弱になった Razer Blade Stealth 2018 だと `1..1000000 | Out-ConsoleGridView` でもしようものなら起動までに 7 分かかる。
+[^1]: わたしのいまや貧弱になった Razer Blade Stealth 2017 だと `1..1000000 | Out-ConsoleGridView` でもしようものなら起動までに 7 分かかる。
 
 2 年超の間のらりくらり F# で PowerShell の Cmdlet 書いてきてるが、(体系的な学習してないのもあって)知らないことに毎度のようにぶち当たる。
 知るべきことを知ってない怠惰なのかも知れんが、ここは広範な知識の海で新たな発見が尽きないのだと、ポジティブに考えていきましょ。
