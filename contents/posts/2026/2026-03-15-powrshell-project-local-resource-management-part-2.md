@@ -5,6 +5,7 @@ tags: ["powershell"]
 
 [krymtkts/pslrm](https://github.com/krymtkts/pslrm) の開発をした。
 
+これまでは、 [Pester](https://pester.dev/) のように設定が独自 object だと型の解決に問題があるので、 pslrm では実行できなかった。
 [Invoke-Build](https://github.com/nightroman/Invoke-Build) のような task runner 経由であればそういうことができるようにした。
 この対応、個人的にかなり難しく GitHub Copilot の導く方向もちょいちょい間違ってたので、要所要所手作りの温もりで調整したつもり。
 
