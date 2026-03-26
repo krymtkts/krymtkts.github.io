@@ -25,11 +25,11 @@
   },
   "dependencies": {
     "highlight.js": "^11.11.1",
-    "marked": "^17.0.4",
+    "marked": "^17.0.5",
     "marked-footnote": "^1.4.0",
     "marked-highlight": "^2.2.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.3"
   }
 }
