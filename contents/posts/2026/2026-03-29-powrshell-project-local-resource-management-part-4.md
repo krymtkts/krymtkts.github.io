@@ -95,10 +95,10 @@ jobs:
 [`pull_request`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request) の節には書いてないようだが [`check_run`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#check_run) [`check_suite`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#check_suite) には書いてある様子。
 
 CI が `pull_request` じゃなく [`pull_request_target`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target) を使っていれば起動できるが、そこは本質じゃない。
-あるべき像としては pslrm の GitHub Actions workflow 側で GitHub CLI の `GH_TOKEN` に PAT を使うのがいいっぽい。
+あるべき像としては pslrm の GitHub Actions workflow 側で GitHub CLI の `GH_TOKEN` に権限を持った [PAT](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) を使うのがいいっぽい。
 GitHub App を使う手もあるが、その方式が一番一般的ぽい。
 次のステップとしては [PowerShell Gallery](https://www.powershellgallery.com/) に公開している pslrm を使う third-party Action を作りたく、その場合も PAT がいいみたい。
-なのでその方向でも調整していこうと思っているが、旅の途中なので着手はできてない。
+なのでその方向でも調整していこうと思っているが、リアルで旅の途中なので着手はできてない。
 
 他にも PR のために作成する branch name が固定だったり、 description が簡素過ぎたりもある。
 Dependabot ぽくするなら label もつけたいしな。
