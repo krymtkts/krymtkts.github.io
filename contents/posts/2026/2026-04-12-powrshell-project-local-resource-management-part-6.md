@@ -2,6 +2,7 @@
 title: "PowerShell Local Resource Manager Part 6"
 subtitle: pslrm-bump-action
 tags: ["powershell", "github"]
+date: 2026-04-14
 ---
 
 [krymtkts/pslrm](https://github.com/krymtkts/pslrm) を使って lockfile を更新・ PR を作成する third-party action [krymtkts/pslrm-bump-action](https://github.com/krymtkts/pslrm-bump-action) を作ってる。
@@ -43,3 +44,8 @@ sandbox できなものがあればいいのだけど見つけられなかった
 でも [actions/checkout](https://github.com/actions/checkout) とか代表的な action 見る限り `.github/workflow` が含まれてるし、はて？となっている。
 他にも、なんか文脈的に tag 打ちで GitHub CLI で作成する release には Marketplace への publish ができなそうに見えるとか諸々心配点がある。
 よくわからんがまずは SHA base で自前テストしてみてから考えるかー。
+
+---
+
+随分気づくのが遅くなったが、 [krymtkts/pslrm-bump-action](https://github.com/krymtkts/pslrm-bump-action) がおもくそ private のママだったので public にした。
+まだ CI コケてるし、はよ直して test repo で試してみたいところ。
