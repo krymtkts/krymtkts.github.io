@@ -158,3 +158,6 @@
 - id: nhk-3-months-math
   bookTitle: NHK 3 ヶ月でマスターする 数学
   bookAuthor: NHK, 秋山仁, ヨビノリたくみ, 横山明日希
+- id: postmortem-mizuho
+  bookTitle: ポストモーテム みずほ銀行システム障害事後検証報告
+  bookAuthor: 日経コンピュータ
