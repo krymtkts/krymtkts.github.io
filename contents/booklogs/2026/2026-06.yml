@@ -72,3 +72,14 @@
     はじめに ~ 第 1 章。集合と論理。この辺はプログラミングを仕事にし出してから自分で本を読んでわかるようになったので本書の内容も理解できなくて苦しいところはない。
     しかし∩(cap)∪(cup)を見て改めて∈(属する/element of)、∉(属さない/not an element of)の読み方、 A̅(A bar) が A^c とかを調べた。覚えとこ。
     しかし本書結構淡白に進むな。わかるならササッと進むだけだが、わからないとわからないままサラリと終わってしまう気もした。わからないところが見つかるまで進んでみるか。
+- date: 2026-06-08
+  bookTitle: 数学図鑑 やりなおしの高校数学
+  pages: 20 ~ 41
+  notes: |
+    第 2 章。場合の数と確率。
+    場合の数。順列(Permutation)、組み合わせ(Combination)、重複順列(repeated permutation)、重複組合せ(repeated combination)。
+    わたしは P とか C とか覚えられないヒトだが英語が分かれば記憶に定着しやすい。 H の Homogeneous product は由来が難しいとのことで自習対象やな。
+    因みに調べたところ P とかの表記記号は日本ローカルな感じで世界では二項係数がメジャーらしい。これも宿題。
+    確率。諸々の言葉を覚える。試行(trial)・標本空間(sample space)・事象(event)。同様に確からしい。積事象(product event)と和事象(sum event)。排反事象(exclusive event)。確率の加法定理(addition formula)。独立(independent)。
+    余事象(complementary event)・反復試行(repeated-trials)。条件付き確率(confitional probability)・確率の乗法定理(multiplication rule)。ベイズの定理(Bayes' theorem)
+    反復試行以降は式を見てふんわりわかったつもりになってそうなのでしっかり解いて理解しよう。今のところは面白くわかったつもりになってると思う。わかったかどうか測る術も必要なので問題を解くしかないかな。
