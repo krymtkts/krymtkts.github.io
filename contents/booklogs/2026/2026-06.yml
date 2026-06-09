@@ -83,3 +83,14 @@
     確率。諸々の言葉を覚える。試行(trial)・標本空間(sample space)・事象(event)。同様に確からしい。積事象(product event)と和事象(sum event)。排反事象(exclusive event)。確率の加法定理(addition formula)。独立(independent)。
     余事象(complementary event)・反復試行(repeated-trials)。条件付き確率(confitional probability)・確率の乗法定理(multiplication rule)。ベイズの定理(Bayes' theorem)
     反復試行以降は式を見てふんわりわかったつもりになってそうなのでしっかり解いて理解しよう。今のところは面白くわかったつもりになってると思う。わかったかどうか測る術も必要なので問題を解くしかないかな。
+- date: 2026-06-09
+  bookTitle: 数学図鑑 やりなおしの高校数学
+  pages: 42 ~ 75
+  notes: |
+    第 3 章。関数(数Ⅰ、数Ⅱ)。
+    関数の基礎にはじまり、 2 時間数・三角関数・指数関数・対数関数。
+    三角関数くらいから証明や確認の数式がどばーっと並べられるところが出てきてそれらは追えなかった。
+    関数(function)は確かに古い計算機科学の本で函数と書かれてた。覚えてない言葉がめちゃくちゃ増えたので 1 つずつ覚える。
+    独立変数(independent variable)・従属変数(dependent variable)・定義域(domain)・値域(range)・平方完成(completing the square)・三角関数(trigonometric function)・弧度法(radian)・負角・余角・指数法則(exponential low)・累乗根(radical root)・底(base)・対数法則(logarithm low)・底の交換公式(change of base formula)・常用対数(common logarithm)。
+    地味に平方根が square root だから `sqrt` かあというのを改めて理解した。レベルがしょぼすぎるのがあれやが 1 つずつやり直しや。
+    なんとなく自分の認知特性として記号の操作が頭に入ってこないみたいなので地道にパターンが刻まれるまでそれが何であるか追うのが良い気がしてきてる。時間がかかるなあこりゃ。
