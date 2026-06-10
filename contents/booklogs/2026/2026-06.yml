@@ -94,3 +94,15 @@
     独立変数(independent variable)・従属変数(dependent variable)・定義域(domain)・値域(range)・平方完成(completing the square)・三角関数(trigonometric function)・弧度法(radian)・負角・余角・指数法則(exponential low)・累乗根(radical root)・底(base)・対数法則(logarithm low)・底の交換公式(change of base formula)・常用対数(common logarithm)。
     地味に平方根が square root だから `sqrt` かあというのを改めて理解した。レベルがしょぼすぎるのがあれやが 1 つずつやり直しや。
     なんとなく自分の認知特性として記号の操作が頭に入ってこないみたいなので地道にパターンが刻まれるまでそれが何であるか追うのが良い気がしてきてる。時間がかかるなあこりゃ。
+- date: 2026-06-10
+  bookTitle: 数学図鑑 やりなおしの高校数学
+  pages: 76 ~ 107
+  notes: |
+    第 4 章。微分・積分(数Ⅱ、数Ⅲ)。
+    極限(limit)。収束(convergence)。三角関数の極限の証明なんとなくわかったかも？
+    微分法。平均変化率(average change rate)。微分係数(differencial coefficient)。導関数(derivative)。微分する(differentiate)とは導関数を求めること。
+    積の導関数を求めることが微分積分学における積の法則(product rule)。商の導関数。合成関数(composite function)の微分。全然わからんな。定数関数は y が常に一定の関数。
+    自然対数の底(base of natural logarithm)を底にもつ対数は自然体数(natural logarithm)。
+    積分(integral)の方が微分より古い。原始関数(primitive function)・不定積分(indefinite integral)・定積分(definite integral)は面積を表す・置換積分法(integration by substitution)・部分積分法(integration by parts)。
+    円周率πと自然対数の底 e は超越数(transcendental number)。
+    「発展」の数式のところがまるで追えないので補修が必要や。
