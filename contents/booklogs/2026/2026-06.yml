@@ -106,3 +106,13 @@
     積分(integral)の方が微分より古い。原始関数(primitive function)・不定積分(indefinite integral)・定積分(definite integral)は面積を表す・置換積分法(integration by substitution)・部分積分法(integration by parts)。
     円周率πと自然対数の底 e は超越数(transcendental number)。
     「発展」の数式のところがまるで追えないので補修が必要や。
+- date: 2026-06-11
+  bookTitle: 数学図鑑 やりなおしの高校数学
+  pages: 108 ~ 127
+  notes: |
+    第 5 章。数列(数 B)。
+    多角数、数列(progression)、項(term)、初項、末項、一般項、等差数列(arithmetic progression)、公差(common difference)。等比数列(geometric progression)、公比(common ratio)。
+    階差数列(progression of differences)は数列の性質でなく作られ方に由来した名前。
+    漸化式(recurrence relation)。隣接二項間漸化式。隣接三項間漸化式。特性方程式。数学的帰納法(mathematical induction)。
+    数列ならいけるかなと思ったがやはり後半の「発展」のところはわかんなくなってしまった。
+    ここある程度理解を深めておかないと確か統計でもちょいちょい出てきた記憶なので困るのよな。
