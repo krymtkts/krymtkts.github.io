@@ -116,3 +116,14 @@
     漸化式(recurrence relation)。隣接二項間漸化式。隣接三項間漸化式。特性方程式。数学的帰納法(mathematical induction)。
     数列ならいけるかなと思ったがやはり後半の「発展」のところはわかんなくなってしまった。
     ここある程度理解を深めておかないと確か統計でもちょいちょい出てきた記憶なので困るのよな。
+- date: 2026-06-12
+  bookTitle: 数学図鑑 やりなおしの高校数学
+  pages: 128 ~ 149
+  notes: |
+    第 6 章 前半。ベクトル(数 B)
+    有向線分(oriented segment)、始点、終点、ベクトル(vector)、単位ベクトル(unit vector)。
+    逆ベクトル(inverse vector)。零ベクトル(zero vector)。ベクトルの加法・減法では平行四辺形が重要。
+    始点の変換、実数倍、平行条件、分解、成分表示(representation by components)。
+    内積(inner product)、余弦定理(cosine theorem)、外積(exterior product)は 3 次元のベクトル演算。位置ベクトル(position vector).
+    ベクトル方程式(vector equation)、媒介変数(parameter)、方向ベクトル(direction vector)、共線条件(collinear condition)、法線ベクトル(normal vector)。
+    ここはまだいけた。しかし昔習ってると思うが何も覚えてなくて恐ろしい。
