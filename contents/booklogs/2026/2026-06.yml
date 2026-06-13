@@ -128,3 +128,13 @@
     ベクトル方程式(vector equation)、媒介変数(parameter)、方向ベクトル(direction vector)、共線条件(collinear condition)、法線ベクトル(normal vector)。
     ここはまだいけた。しかし昔習ってると思うが何も覚えてなくて恐ろしい。
     「成分による演算」の左の図の座標が間違ってるように思うが正誤表がなくてわからん。`(xa + xa, ya + yb)` じゃなくて `(xa + xb, ya + yb)` じゃない？
+- date: 2026-06-13
+  bookTitle: 数学図鑑 やりなおしの高校数学
+  pages: 150 ~ 165
+  notes: |
+    第 6 章 後半。行列(旧数 C)。最近は高校す学から行列がなくなった？ 2018 年の本なので 2025 年の文部科学省のスライドには数 C で載ってたようだけど。
+    行列(matrix)、成分(component)。「行列の積は非可換である」。単位行列(unit matrix)、零行列(zero matrix)、零因子(zero divisor)。
+    逆行列(inverse matrix)、行列式(determinant)、転置行列(transpose matrix)、正方行列(square matrix)、対称行列(symmetric matrix)。
+    固有ベクトル(characteristic vector)、固有値(characteristic value)。固有方程式(characteristic equation)、対角化(diagonalization)。
+    1 次変換、線形変換(linear transformation)、線型性(linearity)、相似拡大、回転移動、対称移動。
+    なんかわかったようなわからんような。ほぼわかってないが平面で表すとベクトルと同じことを表してるように見えるが座標と変換ルールの違いかなと思ってる。
