@@ -127,3 +127,4 @@
     内積(inner product)、余弦定理(cosine theorem)、外積(exterior product)は 3 次元のベクトル演算。位置ベクトル(position vector).
     ベクトル方程式(vector equation)、媒介変数(parameter)、方向ベクトル(direction vector)、共線条件(collinear condition)、法線ベクトル(normal vector)。
     ここはまだいけた。しかし昔習ってると思うが何も覚えてなくて恐ろしい。
+    「成分による演算」の左の図の座標が間違ってるように思うが正誤表がなくてわからん。`(xa + xa, ya + yb)` じゃなくて `(xa + xb, ya + yb)` じゃない？
