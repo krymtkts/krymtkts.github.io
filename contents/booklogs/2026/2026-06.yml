@@ -138,3 +138,11 @@
     固有ベクトル(characteristic vector)、固有値(characteristic value)。固有方程式(characteristic equation)、対角化(diagonalization)。
     1 次変換、線形変換(linear transformation)、線型性(linearity)、相似拡大、回転移動、対称移動。
     なんかわかったようなわからんような。ほぼわかってないが平面で表すとベクトルと同じことを表してるように見えるが座標と変換ルールの違いかなと思ってる。
+- date: 2026-06-14
+  bookTitle: 数学図鑑 やりなおしの高校数学
+  pages: 166 ~ 177
+  notes: |
+    補章。複素数平面(数Ⅲ)。
+    虚数単位(imaginary unit)、複素数(complex number)、複素平面(complex plane)、実軸(real axis)、虚軸(imaginary axis)、共役複素数(conjugate complex number)、絶対値(absolute value)。
+    極形式(polar form)、偏角(argument)、ド・モアブルの公式(de Moivre's formula)。
+    わからん中でも回転に便利なのだけはわかったわ。だから変換ルールとして行列と複素数が指導要領に交互に出たり入ったりしてるんかな。全くわからんけど。
