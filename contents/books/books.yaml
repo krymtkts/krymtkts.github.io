@@ -164,3 +164,6 @@
 - id: the-visual-encyclopedia-of-mathematics
   bookTitle: 数学図鑑 やりなおしの高校数学
   bookAuthor: 永野裕之
+- id: math-for-programmers
+  bookTitle: プログラマの数学
+  bookAuthor: 結城浩
