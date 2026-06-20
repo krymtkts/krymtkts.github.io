@@ -6,6 +6,7 @@ render
     { stage = stage
       lang = "ja"
       siteName = "krymtkts"
+      author = "krymtkts" |> Some
       description = "krymtkts's personal blog"
       siteUrl = "https://krymtkts.github.io"
       pathRoot = ""
