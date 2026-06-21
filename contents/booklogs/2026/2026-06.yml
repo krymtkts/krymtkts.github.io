@@ -81,7 +81,7 @@
     わたしは P とか C とか覚えられないヒトだが英語が分かれば記憶に定着しやすい。 H の Homogeneous product は由来が難しいとのことで自習対象やな。
     因みに調べたところ P とかの表記記号は日本ローカルな感じで世界では二項係数がメジャーらしい。これも宿題。
     確率。諸々の言葉を覚える。試行(trial)・標本空間(sample space)・事象(event)。同様に確からしい。積事象(product event)と和事象(sum event)。排反事象(exclusive event)。確率の加法定理(addition formula)。独立(independent)。
-    余事象(complementary event)・反復試行(repeated-trials)。条件付き確率(confitional probability)・確率の乗法定理(multiplication rule)。ベイズの定理(Bayes' theorem)
+    余事象(complementary event)・反復試行(repeated-trials)。条件付き確率(conditional probability)・確率の乗法定理(multiplication rule)。ベイズの定理(Bayes' theorem)
     反復試行以降は式を見てふんわりわかったつもりになってそうなのでしっかり解いて理解しよう。今のところは面白くわかったつもりになってると思う。わかったかどうか測る術も必要なので問題を解くしかないかな。
 - date: 2026-06-09
   bookTitle: 数学図鑑 やりなおしの高校数学
@@ -100,7 +100,7 @@
   notes: |
     第 4 章。微分・積分(数Ⅱ、数Ⅲ)。
     極限(limit)。収束(convergence)。三角関数の極限の証明なんとなくわかったかも？
-    微分法。平均変化率(average change rate)。微分係数(differencial coefficient)。導関数(derivative)。微分する(differentiate)とは導関数を求めること。
+    微分法。平均変化率(average change rate)。微分係数(differential coefficient)。導関数(derivative)。微分する(differentiate)とは導関数を求めること。
     積の導関数を求めることが微分積分学における積の法則(product rule)。商の導関数。合成関数(composite function)の微分。全然わからんな。定数関数は y が常に一定の関数。
     自然対数の底(base of natural logarithm)を底にもつ対数は自然体数(natural logarithm)。
     積分(integral)の方が微分より古い。原始関数(primitive function)・不定積分(indefinite integral)・定積分(definite integral)は面積を表す・置換積分法(integration by substitution)・部分積分法(integration by parts)。
