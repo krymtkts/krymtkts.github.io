@@ -1,6 +1,6 @@
 ---
 title: "F# で command-line predictor を書いてる Part 9"
-subtitle: "0.4.0"
+subtitle: "0.6.0"
 tags: ["fsharp", "powershell", "dotnet", "command-line-predictor"]
 ---
 
