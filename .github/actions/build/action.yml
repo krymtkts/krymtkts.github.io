@@ -38,7 +38,8 @@ runs:
         ./test/bin/Debug/*/playwright.ps1 install
     - name: Snapshot tests
       shell: bash
-      run: dotnet test --nologo --verbosity detailed --blame-hang-timeout 5s --blame-hang-dump-type full
+      # NOTE: Simplify test command to prevent no zero tests ran in MTP v2.
+      run: dotnet test
     - name: Run Snyk to check for vulnerabilities (Node.js)
       uses: snyk/actions/node@master
       continue-on-error: ${{ inputs.snyk_continue_on_error == 'true' }}
