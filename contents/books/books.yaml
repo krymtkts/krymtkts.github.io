@@ -185,3 +185,6 @@
 - id: once-upon-an-algorithm
   bookTitle: ワンス・アポン・アン・アルゴリズム 物語で読み解く計算
   bookAuthor: Martin Erwig, 高島亮祐
+- id: semiotics-of-programming
+  bookTitle: 記号と再帰 新装版 記号論の形式・プログラムの必然
+  bookAuthor: 田中久美子
