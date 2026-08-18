@@ -1,6 +1,6 @@
 ---
 title: "About Me"
-date: 2025-07-13
+date: 2026-08-18
 ---
 
 - Takatoshi KURIYAMA / 栗山 貴年
@@ -10,6 +10,9 @@ date: 2025-07-13
   - Love HEAVY METAL. Most favorite is Brutal Death Metal.
   - Play 7-string guitar
   - [krymtkts | GitHub](https://github.com/krymtkts)
+    - [PSKeepAChangelogTools](https://github.com/krymtkts/PSKeepAChangelogTools)
+    - [pslrm-bump-action](https://github.com/krymtkts/pslrm-bump-action)
+    - [pslrm](https://github.com/krymtkts/pslrm)
     - [PSGameOfLife](https://github.com/krymtkts/PSGameOfLife)
     - [SnippetPredictor](https://github.com/krymtkts/SnippetPredictor)
     - [pocof](https://github.com/krymtkts/pocof)
@@ -20,6 +23,8 @@ date: 2025-07-13
     - [Get-GzipContent](https://github.com/krymtkts/Get-GzipContent)
     - [MavenAutoCompletion](https://github.com/krymtkts/MavenAutoCompletion)
   - [krymtkts | PowerShell Gallery](https://www.powershellgallery.com/profiles/krymtkts)
+    - [PSKeepAChangelogTools](https://www.powershellgallery.com/packages/PSKeepAChangelogTools/)
+    - [pslrm](https://www.powershellgallery.com/packages/pslrm/)
     - [PSGameOfLife](https://www.powershellgallery.com/packages/PSGameOfLife/)
     - [SnippetPredictor](https://www.powershellgallery.com/packages/SnippetPredictor/)
     - [pocof](https://www.powershellgallery.com/packages/pocof/)
