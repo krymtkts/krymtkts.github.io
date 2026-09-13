@@ -323,6 +323,7 @@ module Rendering =
                         title = title
                         author = author
                         description = meta.description
+                        pagefindSection = Some "archive"
                         url = $"%s{conf.url}%s{root.siteRoot}/%s{path}" }
                 |> Parser.parseReactStaticHtml
 
@@ -878,6 +879,7 @@ let render (opts: RenderOptions) =
               pagefindScript = RenderOptions.pagefindScriptPath opts
               scriptInjection = jsInjection
               additionalMetaContents = additionalMetaContents
+              pagefindSection = None
               future = opts.future }
 
         let confWithAuthor = { conf with author = opts.author }
