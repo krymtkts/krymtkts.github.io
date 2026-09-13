@@ -224,6 +224,12 @@ html {
   overflow: visible;
 }
 
+// NOTE: hide filters that have no values for the current result set.
+:is(*, #\#):is(*, #\#):is(*, #\#)
+  pagefind-filter-dropdown:has(.pf-dropdown-options:empty) {
+  display: none;
+}
+
 :is(*, #\#):is(*, #\#):is(*, #\#) .pf-checkbox-input {
   color-scheme: var(--pf-checkbox-color-scheme, light);
 }

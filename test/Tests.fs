@@ -275,6 +275,9 @@ let tests =
             if modalScrollbarColor = "auto" then
                 failtest "Pagefind modal scrollbar did not use the site theme"
 
+            let tagDropdown = page.Locator("pagefind-filter-dropdown[filter='tag']")
+            do! tagDropdown.WaitForAsync()
+
             let sectionDropdown = page.Locator("pagefind-filter-dropdown[filter='section']")
             let sectionTrigger = sectionDropdown.Locator(".pf-dropdown-trigger")
             do! sectionTrigger.WaitForAsync()
@@ -302,6 +305,10 @@ let tests =
             | Some label when label = "Section, 1 filter selected" -> ()
             | Some label -> failtestf "Unexpected selected section label: %s" label
             | None -> failtest "The selected section label was null"
+
+            let hiddenOptions = LocatorWaitForOptions()
+            hiddenOptions.State <- WaitForSelectorState.Hidden
+            do! tagDropdown.WaitForAsync(hiddenOptions)
         }
 
     ]
