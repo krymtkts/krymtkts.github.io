@@ -191,7 +191,6 @@ module Generation =
                                     HtmlHelper.createElement "pagefind-filter-dropdown" [
                                         prop.custom ("filter", "tag")
                                         prop.custom ("label", "Tag")
-                                        prop.custom ("single-select", "true")
                                     ]
                                     HtmlHelper.createElement "pagefind-summary" []
                                     HtmlHelper.createElement "pagefind-results" []
