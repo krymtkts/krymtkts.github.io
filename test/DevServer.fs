@@ -172,6 +172,7 @@ let suaveConfig (home: string) (ct: CancellationToken) =
         | ".pagefind"
         | ".pf_fragment"
         | ".pf_index"
+        | ".pf_filter"
         | ".pf_meta" -> Writers.createMimeType "application/octet-stream" false
         | ext -> Writers.defaultMimeTypesMap ext
 

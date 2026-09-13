@@ -527,7 +527,7 @@ module Component =
                   | None -> Html.none
                   Html.div [
                       prop.className [ "tags" ]
-                      prop.custom ("data-pagefind-ignore", "all")
+                      prop.custom ("data-pagefind-ignore", "index")
                       prop.children (
                           match fm.tags with
                           | Some tags -> tags
@@ -537,6 +537,7 @@ module Component =
                                   prop.href $"%s{tagRoot}%s{tag}.html"
                                   prop.title tag
                                   prop.className "tag is-medium"
+                                  prop.custom ("data-pagefind-filter", "tag")
                                   prop.text tag
                               ])
                       )
@@ -561,6 +562,7 @@ module Component =
           pagefindScript: string
           scriptInjection: string list
           additionalMetaContents: ReactElement list
+          pagefindSection: string option
           future: bool }
 
     let frame (conf: FrameConfiguration) (content: Fable.React.ReactElement list) =
@@ -587,6 +589,11 @@ module Component =
 
         let navbar = Html.ul [ prop.children (conf.navItems @ themeSelector) ]
 
+        let pagefindSection =
+            conf.pagefindSection
+            |> Option.map (fun section -> Html.span [ prop.custom ("data-pagefind-filter", $"section:%s{section}") ])
+            |> Option.toList
+
         let main =
             [ Html.head (
                   [ Html.title [ prop.text conf.title ]
@@ -612,7 +619,9 @@ module Component =
                   Html.nav [ prop.className "tabs"; prop.children [ navbar ] ]
                   Html.main [
                       prop.className "container"
-                      prop.children [ Html.div [ prop.className "content"; prop.children content ] ]
+                      prop.children [
+                          Html.div [ prop.className "content"; prop.children (pagefindSection @ content) ]
+                      ]
                   ]
               ]
               Html.footer [
