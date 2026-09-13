@@ -499,10 +499,12 @@ module Misc =
             if primary def then
                 { conf with
                     title = $"%s{conf.title} - %s{id}"
+                    pagefindSection = Some "booklog"
                     url = $"%s{conf.url}%s{def.basePath}.html" }
             else
                 { conf with
                     title = $"%s{conf.title} - %s{id}"
+                    pagefindSection = Some "booklog"
                     url = $"%s{conf.url}%s{def.basePath}/%s{id}.html" }
 
         let content = booklogs |> generate def |> frame conf |> Parser.parseReactStaticHtml

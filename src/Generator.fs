@@ -170,12 +170,38 @@ module Generation =
                         prop.custom ("bundle-path", $"%s{pathRoot}/pagefind/")
                         prop.custom ("base-url", $"%s{pathRoot}/")
                         prop.custom ("lang", "en")
+                        prop.custom ("faceted", "true")
                     ]
                     HtmlHelper.createElement "pagefind-modal-trigger" [
                         prop.custom ("shortcut", "/")
                         prop.custom ("compact", "true")
                     ]
-                    HtmlHelper.createElement "pagefind-modal" []
+                    HtmlHelper.createElement "pagefind-modal" [
+                        prop.children [
+                            HtmlHelper.createElement "pagefind-modal-header" [
+                                prop.children [ HtmlHelper.createElement "pagefind-input" [] ]
+                            ]
+                            HtmlHelper.createElement "pagefind-modal-body" [
+                                prop.children [
+                                    HtmlHelper.createElement "pagefind-filter-dropdown" [
+                                        prop.custom ("filter", "section")
+                                        prop.custom ("label", "Section")
+                                        prop.custom ("single-select", "true")
+                                    ]
+                                    HtmlHelper.createElement "pagefind-filter-dropdown" [
+                                        prop.custom ("filter", "tag")
+                                        prop.custom ("label", "Tag")
+                                        prop.custom ("single-select", "true")
+                                    ]
+                                    HtmlHelper.createElement "pagefind-summary" []
+                                    HtmlHelper.createElement "pagefind-results" []
+                                ]
+                            ]
+                            HtmlHelper.createElement "pagefind-modal-footer" [
+                                prop.children [ HtmlHelper.createElement "pagefind-keyboard-hints" [] ]
+                            ]
+                        ]
+                    ]
                 ]),
         navs |> Seq.choose toSitemap
 
@@ -323,6 +349,7 @@ module Rendering =
                         title = title
                         author = author
                         description = meta.description
+                        pagefindSection = Some "archive"
                         url = $"%s{conf.url}%s{root.siteRoot}/%s{path}" }
                 |> Parser.parseReactStaticHtml
 
@@ -878,6 +905,7 @@ let render (opts: RenderOptions) =
               pagefindScript = RenderOptions.pagefindScriptPath opts
               scriptInjection = jsInjection
               additionalMetaContents = additionalMetaContents
+              pagefindSection = None
               future = opts.future }
 
         let confWithAuthor = { conf with author = opts.author }
