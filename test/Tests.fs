@@ -108,7 +108,7 @@ let overwriteSnapshotsEnabled () =
 
 [<Tests>]
 let tests =
-    testList "snapshot testing" [
+    testSequenced <| testList "snapshot testing" [
 
         testTask "comparison" {
 
@@ -188,6 +188,102 @@ let tests =
             if failures.Count > 0 then
                 failtestf "Snapshot test failed for the following URLs:\n%s" (String.concat "\n" failures)
 
+        }
+
+        testTask "Pagefind filters classify archive and booklog results" {
+            use server = new DevServer()
+            let baseUrl: string = $"http://localhost:%d{server.Port}%s{server.Root}"
+
+            let! (playwright: IPlaywright) = Playwright.CreateAsync()
+            use _ = PlaywrightAsyncDisposable playwright
+            let! (page: IPage) = playwright.NewChromiumPage()
+
+            let! response = $"%s{baseUrl}/index.html" |> page.GotoAndCheck
+
+            match response with
+            | Result.Error msg -> failwith $"%s{msg}"
+            | _ -> ()
+
+            let filtersTask: Task<string> =
+                page.EvaluateAsync<string> """
+                    async () => {
+                        const pagefind = await import("/blog-fable/pagefind/pagefind.js");
+                        return JSON.stringify(await pagefind.filters());
+                    }
+                """
+
+            let! filters = filtersTask
+
+            for expected: string in [
+                "\"section\""
+                "\"archive\""
+                "\"booklog\""
+                "\"tag\""
+                "\"sample\""
+            ] do
+                if (filters: string).Contains expected |> not then
+                    failtestf "Pagefind filters did not contain %s: %s" expected filters
+
+            let booklogUrlsTask: Task<string array> =
+                page.EvaluateAsync<string array> """
+                    async () => {
+                        const pagefind = await import("/blog-fable/pagefind/pagefind.js");
+                        const search = await pagefind.search(null, {
+                            filters: { section: "booklog" }
+                        });
+                        const data = await Promise.all(search.results.map(result => result.data()));
+                        return data.map(item => item.url);
+                    }
+                """
+
+            let! booklogUrls = booklogUrlsTask
+
+            if (booklogUrls: string array).Length = 0
+               || booklogUrls |> Array.exists (fun (url: string) -> url.Contains("/booklogs/") |> not) then
+                failtestf "Booklog filter returned unexpected URLs: %s" (String.concat ", " booklogUrls)
+
+            let taggedArchiveUrlsTask: Task<string array> =
+                page.EvaluateAsync<string array> """
+                    async () => {
+                        const pagefind = await import("/blog-fable/pagefind/pagefind.js");
+                        const search = await pagefind.search(null, {
+                            filters: { section: "archive", tag: "sample" }
+                        });
+                        const data = await Promise.all(search.results.map(result => result.data()));
+                        return data.map(item => item.url);
+                    }
+                """
+
+            let! taggedArchiveUrls = taggedArchiveUrlsTask
+
+            if (taggedArchiveUrls: string array).Length = 0
+               || taggedArchiveUrls |> Array.exists (fun (url: string) -> url.Contains("/booklogs/")) then
+                failtestf "Tagged archive filter returned unexpected URLs: %s" (String.concat ", " taggedArchiveUrls)
+
+            let! dropdownCount = page.Locator("pagefind-filter-dropdown").CountAsync()
+
+            if dropdownCount <> 2 then
+                failtestf "Expected two Pagefind filter dropdowns, but found %d" dropdownCount
+
+            let modalTrigger = page.Locator("pagefind-modal-trigger .pf-trigger-btn")
+            do! modalTrigger.WaitForAsync()
+            do! modalTrigger.ClickAsync()
+
+            let sectionDropdown = page.Locator("pagefind-filter-dropdown[filter='section']")
+            let sectionTrigger = sectionDropdown.Locator(".pf-dropdown-trigger")
+            do! sectionTrigger.WaitForAsync()
+            do! sectionTrigger.ClickAsync()
+
+            let booklogOption = sectionDropdown.Locator("[role='option'][data-value='booklog']")
+            do! booklogOption.WaitForAsync()
+            do! booklogOption.ClickAsync()
+
+            let! sectionTriggerLabel = sectionTrigger.GetAttributeAsync("aria-label")
+
+            match sectionTriggerLabel |> Option.ofObj with
+            | Some label when label = "Section, 1 filter selected" -> ()
+            | Some label -> failtestf "Unexpected selected section label: %s" label
+            | None -> failtest "The selected section label was null"
         }
 
     ]
