@@ -212,6 +212,18 @@ html {
   scrollbar-color: var(--scrollbar-color) var(--scrollbar-bg);
 }
 
+// NOTE: Pagefind components use their own overflow containers.
+:is(*, #\#):is(*, #\#):is(*, #\#)
+  :is(.pf-dropdown-menu, .pf-dropdown-options, .pf-modal-body, .pf-searchbox-results) {
+  scrollbar-color: var(--scrollbar-color) var(--scrollbar-bg);
+}
+
+// NOTE: keep the Pagefind dropdown options as the only scroll container.
+:is(*, #\#):is(*, #\#):is(*, #\#) .pf-dropdown-menu {
+  max-height: none;
+  overflow: visible;
+}
+
 :is(*, #\#):is(*, #\#):is(*, #\#) .pf-checkbox-input {
   color-scheme: var(--pf-checkbox-color-scheme, light);
 }

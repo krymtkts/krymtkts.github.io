@@ -269,10 +269,28 @@ let tests =
             do! modalTrigger.WaitForAsync()
             do! modalTrigger.ClickAsync()
 
+            let! modalScrollbarColor =
+                page.Locator(".pf-modal-body").EvaluateAsync<string>("element => getComputedStyle(element).scrollbarColor")
+
+            if modalScrollbarColor = "auto" then
+                failtest "Pagefind modal scrollbar did not use the site theme"
+
             let sectionDropdown = page.Locator("pagefind-filter-dropdown[filter='section']")
             let sectionTrigger = sectionDropdown.Locator(".pf-dropdown-trigger")
             do! sectionTrigger.WaitForAsync()
             do! sectionTrigger.ClickAsync()
+
+            let! dropdownScrollbarColor =
+                sectionDropdown.Locator(".pf-dropdown-options").EvaluateAsync<string>("element => getComputedStyle(element).scrollbarColor")
+
+            if dropdownScrollbarColor = "auto" then
+                failtest "Pagefind filter scrollbar did not use the site theme"
+
+            let! dropdownOverflow =
+                sectionDropdown.Locator(".pf-dropdown-menu").EvaluateAsync<string>("element => getComputedStyle(element).overflowY")
+
+            if dropdownOverflow <> "visible" then
+                failtestf "Pagefind filter menu should not be a second scroll container: %s" dropdownOverflow
 
             let booklogOption = sectionDropdown.Locator("[role='option'][data-value='booklog']")
             do! booklogOption.WaitForAsync()
