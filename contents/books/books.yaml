@@ -191,3 +191,6 @@
 - id: the-medici-effect
   bookTitle: メディチ・インパクト
   bookAuthor: Frans Johansson, 幾島幸子
+- id: beyond-legacy-code
+  bookTitle: レガシーコードからの脱却 ソフトウェアの寿命を延ばし価値を高める 9 つのプラクティス
+  bookAuthor: David Scott Bernstein, 吉羽龍太郎, 永瀬美穂, 原田騎郎, 有野雅士
