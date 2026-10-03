@@ -194,3 +194,6 @@
 - id: beyond-legacy-code
   bookTitle: レガシーコードからの脱却 ソフトウェアの寿命を延ばし価値を高める 9 つのプラクティス
   bookAuthor: David Scott Bernstein, 吉羽龍太郎, 永瀬美穂, 原田騎郎, 有野雅士
+- id: boundary-spanning-leadership
+  bookTitle: 組織の壁を超える 「バウンダリー・スパニング」の 6 つの実践
+  bookAuthor: Chris Ernst, Donna Chrobot-Mason,  三木俊哉, 加藤雅則
