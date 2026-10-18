@@ -89,3 +89,10 @@ Windows と Linux はこれまでどおりで、変更したのはテスト用�
 サポート期間中の .NET 9 に backport されない bugfix があるんやなというのを知れたのも大きいな。
 ただ、書いていて気づいたけど、 test project を .NET 10 に上げて修正済みの runtime で動かすだけでも解消できたかもな。
 なんで .NET 9 になってるか理由を忘れてしまった。単に忘れてるだけかもな。後ほど試すこととする。
+
+---
+
+追記。
+.NET 10 が出たときに test project も `net10.0` にしたけど `net9.0` に戻したんだった。
+当時 [PowerShell 7.6 のリリースがすごく遅れてた](https://devblogs.microsoft.com/powershell/powershell-7-6-release-postmortem/)のもあって 戻してそのままだったんだ。
+この度 .NET 10 に上げた。
