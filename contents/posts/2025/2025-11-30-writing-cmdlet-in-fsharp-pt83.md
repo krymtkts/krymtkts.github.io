@@ -1,5 +1,5 @@
 ---
-title: "F# で Cmdlet を書いてる pt.82"
+title: "F# で Cmdlet を書いてる pt.83"
 subtitle: "pocof 0.22.0"
 tags: ["fsharp", "powershell", "dotnet"]
 ---
