@@ -13,6 +13,15 @@
 
   <ItemGroup>
     <Compile Include="DevServer.fs" />
+    <Compile Include="TestHelpers.fs" />
+    <Compile Include="ServerTests.fs" />
+    <Compile Include="SnapshotTests.fs" />
+    <Compile Include="LlmTests.fs" />
+    <Compile Include="BooklogTests.fs" />
+    <Compile Include="SearchTests.fs" />
+    <Compile Include="ThemeTests.fs" />
+    <Compile Include="XmlTests.fs" />
+    <Compile Include="LinkTests.fs" />
     <Compile Include="Tests.fs" />
   </ItemGroup>
 
