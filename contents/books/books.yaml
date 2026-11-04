@@ -203,3 +203,7 @@
 - id: kitchen-design-knowledge
   bookTitle: 新版 これだけは知っておきたい 厨房設計の知識
   bookAuthor: 神谷麻理子, 堀田正治, 平岡雅哉
+- id: the-world-of-fermentation
+  bookTitle: 発酵はおいしい！ イラストで読む世界の発酵食品
+  bookAuthor: ferment books, おのみさ
+  previouslyRead: true
